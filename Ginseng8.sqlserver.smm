@@ -1,0 +1,88 @@
+{
+  "SourceType": 0,
+  "SourceConnection": "AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAuh1rMNS/g0u1srbbM7YVnQAAAAACAAAAAAAQZgAAAAEAACAAAACw9k5CmBDcXA5f2UQ6Ta9VYw/6EHjIzw7qQzFH3TlRbQAAAAAOgAAAAAIAACAAAACn6bkf2ba5nDrMIArjzljAAb4Au4RpJ94KXh8oznj4GnAAAAB46lQ2JbuS0O7h+snAQdVrPbsuG2YALCL9aiJeHTvtZ8k0VQvfpYL1iCl9IBsyyaPCVswzCb6MR6nUox/hD9a5n3cYOZV3BLQSuIsfysYs/vYZNpRRYlytcsWNF52LaJlC9hRDFokkHgSy49tK2W4+QAAAAHaO44aQFbd7HPoHE8Kzsteh06BwthVqAaSntY5E7vKOvKwwDNUG4slShgh81iuV1FRlc/jFeRhTRekguJMsYLU=",
+  "DestConnection": "AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAuh1rMNS/g0u1srbbM7YVnQAAAAACAAAAAAAQZgAAAAEAACAAAAB+vYm1MfM4PZq6jPGaQgshR/ZyRvdH80sTkWIhkJjG0AAAAAAOgAAAAAIAACAAAABFHWzMSdMbkn8I1n4j3UtkoOFmR4RlrmuU2N5t+Qq2WnAAAACGsVwjMoEYU1l9rQF1qNu/d21AgWXjVwDFHyCjVaBnDxNj5DaqB9W2/8CoFJW/++AdgPPZQHAtDpwnRot4SW8J01dWzo1ZRvu4RQZeVKSxpaJSzZF3XMeW2vkG5qC3K36oWEtBa8fSQ4ym0hGbYZ3oQAAAABpns6Eaq2ISvi0Bc1nqcubT2TR0xPYzIZ8tB2YECefH7HzuT4Ec7VM0hi8j4ZOcNSDPf/kJFm5lx/HjZnGAJOk=",
+  "ExcludeObjects": [
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.Id"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.NormalizedUserName"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.NormalizedEmail"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.EmailConfirmed"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.PasswordHash"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.SecurityStamp"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.ConcurrencyStamp"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.PhoneNumber"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.PhoneNumberConfirmed"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.TwoFactorEnabled"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.LockoutEnd"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.LockoutEnabled"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Column",
+      "Name": "dbo.AspNetUsers.AccessFailedCount"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Index",
+      "Name": "dbo.AspNetUsers.PK_AspNetUsers"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Index",
+      "Name": "dbo.AspNetUsers.EmailIndex"
+    },
+    {
+      "ActionType": 2,
+      "Type": "Index",
+      "Name": "dbo.AspNetUsers.UserNameIndex"
+    }
+  ],
+  "WindowColor": null
+}
