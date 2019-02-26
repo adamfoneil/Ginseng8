@@ -1,8 +1,8 @@
-﻿using Ginseng8.Models.Conventions;
+﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
 
-namespace Ginseng8.Models
+namespace Ginseng.Models
 {
 	public class OrganizationUser : BaseTable
 	{

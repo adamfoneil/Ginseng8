@@ -1,9 +1,8 @@
-﻿using Ginseng8.Models.Conventions;
+﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
-using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Ginseng8.Models
+namespace Ginseng.Models
 {
 	public class Organization : BaseTable
 	{
@@ -13,5 +12,8 @@ namespace Ginseng8.Models
 
 		[References(typeof(UserProfile))]
 		public int OwnerUserId { get; set; }
+
+		[DefaultExpression("1000")]
+		public int NextTaskNumber { get; set; } = 1000;
 	}
 }

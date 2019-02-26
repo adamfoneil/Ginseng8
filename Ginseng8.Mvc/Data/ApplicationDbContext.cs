@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ginseng8.Mvc.Data
+namespace Ginseng.Mvc.Data
 {
 	public class ApplicationDbContext : IdentityDbContext
 	{

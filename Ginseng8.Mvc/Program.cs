@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Ginseng8.Mvc
+namespace Ginseng.Mvc
 {
 	public class Program
 	{

@@ -4,6 +4,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <UserSecretsId>aspnet-Ginseng8.Mvc-5476259C-272A-4F37-BF79-5080A83BBAEB</UserSecretsId>
     <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <RootNamespace>Ginseng.Mvc</RootNamespace>
+    <AssemblyName>Ginseng.Mvc</AssemblyName>
   </PropertyGroup>
 
 

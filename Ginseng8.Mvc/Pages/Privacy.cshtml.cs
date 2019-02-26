@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Ginseng8.Mvc.Pages
+namespace Ginseng.Mvc.Pages
 {
 	public class PrivacyModel : PageModel
 	{

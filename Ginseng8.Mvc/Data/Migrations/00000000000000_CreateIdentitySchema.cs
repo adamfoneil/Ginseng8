@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Ginseng8.Mvc.Data.Migrations
+namespace Ginseng.Mvc.Data.Migrations
 {
 	public partial class CreateIdentitySchema : Migration
 	{

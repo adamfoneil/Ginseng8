@@ -5,7 +5,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 
-namespace Ginseng8.Models.Conventions
+namespace Ginseng.Models.Conventions
 {
 	[Identity(nameof(Id), IdentityPosition.FirstColumn)]
 	public abstract class BaseTable : Record

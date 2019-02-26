@@ -4,7 +4,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Ginseng8.Models
+namespace Ginseng.Models
 {
 	[Table("AspNetUsers")]
 	[Identity(nameof(UserId), constraintName:"U_UserProfile_UserId")]
