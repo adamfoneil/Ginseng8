@@ -2,11 +2,12 @@
 using Postulate.Base.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
 	/// <summary>
-	/// Some point in time or a named stopping point when tasks can be due
+	/// A due date of some kind, such as a sprint end date or some other event with a known date
 	/// </summary>
 	public class Milestone : BaseTable
 	{
@@ -14,8 +15,7 @@ namespace Ginseng.Models
 		[PrimaryKey]
 		public string Name { get; set; }
 
-		public DateTime? DueDate { get; set; }
-
-		public bool IsActive { get; set; }
+		[Column(TypeName = "date")]
+		public DateTime Date { get; set; }
 	}
 }

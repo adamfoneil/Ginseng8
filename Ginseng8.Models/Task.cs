@@ -24,8 +24,14 @@ namespace Ginseng.Models
 
 		public string HtmlBody { get; set; }
 
+		[MaxLength(255)]
+		public string BranchName { get; set; }
+
 		[References(typeof(Application))]
 		public int ApplicationId { get; set; }
+
+		[References(typeof(Project))]
+		public int? ProjectId { get; set; }
 
 		[References(typeof(Activity))]
 		public int? ActivityId { get; set; }
