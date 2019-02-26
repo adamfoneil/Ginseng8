@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Ginseng.Models</AssemblyName>
+    <RootNamespace>Ginseng.Models</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
