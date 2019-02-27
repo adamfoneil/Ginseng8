@@ -21,6 +21,7 @@ namespace Ginseng.Models
 		public int Number { get; set; }
 
 		[MaxLength(255)]
+		[Required]
 		public string Title { get; set; }
 
 		/// <summary>

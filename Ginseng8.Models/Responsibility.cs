@@ -8,7 +8,8 @@ using System.Data;
 namespace Ginseng.Models
 {
 	/// <summary>
-	/// Defines the possible values for Activity responsibilities
+	/// Defines the possible values for Activity responsibilities.
+	/// In Ginseng there are always and only two responsibilities: Development and Business
 	/// </summary>
 	public class Responsibility : AppTable
 	{
@@ -21,9 +22,7 @@ namespace Ginseng.Models
 			return new Responsibility[]
 			{
 				new Responsibility() { Name = "Development" },
-				new Responsibility() { Name = "Business" },
-				new Responsibility() { Name = "Design" },
-				new Responsibility() { Name = "Testing" },
+				new Responsibility() { Name = "Business" }
 			}.ToDataTable(new SqlServerIntegrator(), excludeIdentity: true);
 		}
 	}
