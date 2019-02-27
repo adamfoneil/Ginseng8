@@ -18,6 +18,11 @@ namespace Ginseng.Models
 		[MaxLength(50)]
 		public string Name { get; set; }
 
+		/// <summary>
+		/// Overall priority of project (lower number = higher priority)
+		/// </summary>
+		public int? Priority { get; set; }
+
 		[MaxLength(255)]
 		public string BranchUrl { get; set; }
 

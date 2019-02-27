@@ -5,19 +5,26 @@ using Postulate.Base.Attributes;
 namespace Ginseng.Models
 {
 	/// <summary>
-	/// Indicates that development work is done, development is seeking business sign-off on changes.
-	/// Contains testing instructions and any info that helps business understand what was done
+	/// Test instructions and sign-off
 	/// </summary>
-	public class ApprovalRequest : BaseTable, IBody, IFeedItem
+	public class TestWork : BaseTable, IBody, IFeedItem
 	{
 		[PrimaryKey]
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }
 
-		public string IconClass => "signoff";
+		public string IconClass => "test";
+
+		/// <summary>
+		/// Business person who owns this item
+		/// </summary>
+		[References(typeof(UserProfile))]
+		public int UserId { get; set; }
 
 		public string TextBody { get; set; }
 
 		public string HtmlBody { get; set; }
+
+		public bool IsDone { get; set; }
 	}
 }
