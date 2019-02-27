@@ -2,9 +2,9 @@
 
 namespace Ginseng.Models.Interfaces
 {
-	public interface ITaskUpdate
+	public interface IStatusUpdate
 	{
-		int TaskId { get; set; }
+		int WorkItemId { get; set; }
 		string IconClass { get; }
 		string HtmlBody { get; }
 		string CreatedBy { get; }

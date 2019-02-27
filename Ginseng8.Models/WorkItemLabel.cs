@@ -3,11 +3,11 @@ using Postulate.Base.Attributes;
 
 namespace Ginseng.Models
 {
-	public class TaskLabel : BaseTable
+	public class WorkItemLabel : BaseTable
 	{
-		[References(typeof(Task))]
+		[References(typeof(WorkItem))]
 		[PrimaryKey]
-		public int TaskId { get; set; }
+		public int WorkItemId { get; set; }
 
 		[References(typeof(Label))]
 		[PrimaryKey]

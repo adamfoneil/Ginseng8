@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 
 namespace Ginseng.Models
 {
@@ -18,7 +19,23 @@ namespace Ginseng.Models
 		public string DisplayName { get; set; }
 
 		/// <summary>
-		/// This is a join request
+		/// WorkDay.Flag sum
+		/// </summary>
+		public int WorkDays { get; set; }
+
+		/// <summary>
+		/// Average daily productive work hours
+		/// </summary>
+		[DecimalPrecision(4,2)]
+		public decimal DailyWorkHours { get; set; }
+
+		/// <summary>
+		/// Max number of work items considered in progress
+		/// </summary>
+		public int? MaxWorkInProgress { get; set; }
+
+		/// <summary>
+		/// This is a join request (or invite)
 		/// </summary>
 		public bool IsRequest { get; set; }
 
@@ -26,5 +43,17 @@ namespace Ginseng.Models
 		/// User is allowed into the org (join request accepted)
 		/// </summary>
 		public bool IsEnabled { get; set; }
+
+		public override bool Validate(IDbConnection connection, out string message)
+		{
+			message = null;
+			if ((MaxWorkInProgress ?? 1) < 1)
+			{								
+				message = "Max WIP cannot be less than one.";
+				return false;				
+			}
+
+			return true;
+		}
 	}
 }

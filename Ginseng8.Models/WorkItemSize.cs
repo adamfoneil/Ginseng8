@@ -5,9 +5,9 @@ using System.ComponentModel.DataAnnotations;
 namespace Ginseng.Models
 {
 	/// <summary>
-	/// A software product managed by an organization
+	/// Broad category of task estimate size (for example, Small, Medium, Large)
 	/// </summary>
-	public class Application : BaseTable
+	public class WorkItemSize : BaseTable
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -17,15 +17,15 @@ namespace Ginseng.Models
 		[MaxLength(50)]
 		public string Name { get; set; }
 
+		/// <summary>
+		/// What characterizes tasks of this size?
+		/// </summary>
 		[MaxLength(255)]
 		public string Description { get; set; }
 
 		/// <summary>
-		/// App's live URL, as applicable
+		/// Relative numeric impression of this size (for example 1 = Small, 3 = Medium, 7 = Large)
 		/// </summary>
-		[MaxLength(255)]
-		public string Url { get; set; }
-
-		public bool IsActive { get; set; } = true;
+		public int WorkDays { get; set; }
 	}
 }

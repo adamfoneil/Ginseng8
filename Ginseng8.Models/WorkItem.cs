@@ -6,7 +6,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ginseng.Models
 {
-	public class Task : BaseTable, IBody
+	/// <summary>
+	/// User story, development task, bug, or feature request
+	/// </summary>
+	public class WorkItem : BaseTable, IBody
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -30,11 +33,11 @@ namespace Ginseng.Models
 		[References(typeof(Application))]
 		public int ApplicationId { get; set; }
 
-		[References(typeof(Project))]
-		public int? ProjectId { get; set; }
-
 		[References(typeof(Activity))]
 		public int? ActivityId { get; set; }
+
+		[References(typeof(Project))]
+		public int? ProjectId { get; set; }
 
 		[References(typeof(Milestone))]
 		public int? MilestoneId { get; set; }

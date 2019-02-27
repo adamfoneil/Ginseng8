@@ -14,6 +14,9 @@ namespace Ginseng.Models
 		[MaxLength(50)]
 		public string Name { get; set; }
 
+		[References(typeof(Responsibility))]
+		public int ResponsibilityId { get; set; }
+
 		[MaxLength(255)]
 		public string Description { get; set; }
 
