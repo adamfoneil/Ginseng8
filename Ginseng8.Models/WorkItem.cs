@@ -27,9 +27,6 @@ namespace Ginseng.Models
 
 		public string HtmlBody { get; set; }
 
-		[MaxLength(255)]
-		public string BranchUrl { get; set; }
-
 		[References(typeof(Application))]
 		public int ApplicationId { get; set; }
 

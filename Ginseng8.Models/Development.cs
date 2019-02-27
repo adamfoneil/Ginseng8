@@ -2,6 +2,7 @@
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
@@ -23,8 +24,11 @@ namespace Ginseng.Models
 		[References(typeof(UserProfile))]
 		public int UserId { get; set; }
 
+		[MaxLength(255)]
+		public string BranchUrl { get; set; }
+
 		/// <summary>
-		/// Broad estimate of amount of work involved (impact)
+		/// Broad estimate of amount of work involved
 		/// </summary>
 		[References(typeof(WorkItemSize))]
 		public int? SizeId { get; set; }
@@ -34,6 +38,6 @@ namespace Ginseng.Models
 
 		public string HtmlBody { get; set; }
 
-		public string TextBody { get; set; }		
+		public string TextBody { get; set; }
 	}
 }

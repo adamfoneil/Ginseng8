@@ -24,7 +24,7 @@ namespace Ginseng.Models
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Relative numeric impression of this size (for example 1 = Small, 3 = Medium, 7 = Large)
+		/// Number of days expected for this work item
 		/// </summary>
 		public int WorkDays { get; set; }
 	}
