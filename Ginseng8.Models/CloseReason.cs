@@ -7,23 +7,26 @@ using System.Data;
 
 namespace Ginseng.Models
 {
-	/// <summary>
-	/// Defines the possible values for Activity responsibilities
-	/// </summary>
-	public class Responsibility : AppTable
+	public class CloseReason : AppTable
 	{
 		[MaxLength(50)]
 		[PrimaryKey]
 		public string Name { get; set; }
 
+		[MaxLength(255)]
+		public string Description { get; set; }
+
+		public const string Completed = "Completed";
+		public const string Obsolete = "Obsolete";
+		public const string Duplicate = "Duplicate";
+
 		public static DataTable GetSeedData()
 		{
-			return new Responsibility[]
+			return new CloseReason[]
 			{
-				new Responsibility() { Name = "Development" },
-				new Responsibility() { Name = "Business" },
-				new Responsibility() { Name = "Design" },
-				new Responsibility() { Name = "Testing" },
+				new CloseReason() { Name = Completed },
+				new CloseReason() { Name = Obsolete},
+				new CloseReason() { Name = Duplicate }
 			}.ToDataTable(new SqlServerIntegrator(), excludeIdentity: true);
 		}
 	}

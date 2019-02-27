@@ -2,7 +2,7 @@
 
 namespace Ginseng.Models.Interfaces
 {
-	public interface IStatusUpdate
+	public interface IFeedItem
 	{
 		int WorkItemId { get; set; }
 		string IconClass { get; }

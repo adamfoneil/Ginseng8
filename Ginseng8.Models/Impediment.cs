@@ -6,9 +6,9 @@ namespace Ginseng.Models
 {
 	/// <summary>
 	/// Indicates blockage on a work item,
-	/// for example requirements issues, dependencies, cost implications, design options
+	/// for example requirements issues, dependencies, cost implications, design options, testing failure
 	/// </summary>
-	public class Impediment : BaseTable, IBody, IStatusUpdate
+	public class Impediment : BaseTable, IBody, IFeedItem
 	{
 		[References(typeof(WorkItem))]
 		[PrimaryKey]

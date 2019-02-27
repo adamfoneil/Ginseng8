@@ -9,7 +9,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// Description of work scope and estimate for a work item, and the assignment of a developer to a task
 	/// </summary>
-	public class Development : BaseTable, IStatusUpdate, IBody
+	public class Development : BaseTable, IFeedItem, IBody
 	{
 		[References(typeof(WorkItem))]
 		[PrimaryKey]
@@ -34,6 +34,6 @@ namespace Ginseng.Models
 
 		public string HtmlBody { get; set; }
 
-		public string TextBody { get; set; }
+		public string TextBody { get; set; }		
 	}
 }

@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Ginseng.Models
 {
 	/// <summary>
-	/// A collection of tasks centered around a single goal, feature, or some other unifying idea
+	/// A collection of work items centered around a single goal, feature, or some other unifying idea
 	/// </summary>
 	public class Project : BaseTable, IBody
 	{
@@ -17,6 +17,9 @@ namespace Ginseng.Models
 		[PrimaryKey]
 		[MaxLength(50)]
 		public string Name { get; set; }
+
+		[MaxLength(255)]
+		public string BranchUrl { get; set; }
 
 		public string TextBody { get; set; }
 

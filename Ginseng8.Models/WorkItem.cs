@@ -28,11 +28,14 @@ namespace Ginseng.Models
 		public string HtmlBody { get; set; }
 
 		[MaxLength(255)]
-		public string BranchName { get; set; }
+		public string BranchUrl { get; set; }
 
 		[References(typeof(Application))]
 		public int ApplicationId { get; set; }
 
+		/// <summary>
+		/// What should be happening with this item?
+		/// </summary>
 		[References(typeof(Activity))]
 		public int? ActivityId { get; set; }
 
@@ -41,5 +44,8 @@ namespace Ginseng.Models
 
 		[References(typeof(Milestone))]
 		public int? MilestoneId { get; set; }
+
+		[References(typeof(CloseReason))]
+		public int? CloseReasonId { get; set; }
 	}
 }
