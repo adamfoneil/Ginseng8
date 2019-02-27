@@ -10,7 +10,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// Description of work scope and estimate for a work item, and the assignment of a developer to a task
 	/// </summary>
-	public class DevelopmentWork : BaseTable, IFeedItem, IBody
+	public class DevWork : BaseTable, IFeedItem, IBody
 	{
 		[References(typeof(WorkItem))]
 		[PrimaryKey]

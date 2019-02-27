@@ -5,9 +5,9 @@ using Postulate.Base.Attributes;
 namespace Ginseng.Models
 {
 	/// <summary>
-	/// Test instructions and sign-off
+	/// Test instructions and business sign-off on a work item
 	/// </summary>
-	public class TestWork : BaseTable, IBody, IFeedItem
+	public class BizWork : BaseTable, IBody, IFeedItem
 	{
 		[PrimaryKey]
 		[References(typeof(WorkItem))]
