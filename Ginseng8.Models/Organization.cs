@@ -14,6 +14,6 @@ namespace Ginseng.Models
 		public int OwnerUserId { get; set; }
 
 		[DefaultExpression("1000")]
-		public int NextTaskNumber { get; set; } = 1000;
+		public int NextWorkItemNumber { get; set; } = 1000;
 	}
 }
