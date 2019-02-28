@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using System;
 using System.Text.Encodings.Web;
 
 namespace Ginseng.Mvc.Helpers
@@ -18,9 +16,11 @@ namespace Ginseng.Mvc.Helpers
 			TagBuilder a = new TagBuilder("a");
 			a.MergeAttribute("href", href);
 			a.AddCssClass("nav-link");
-			
+
 			if (CurrentPage(html).Equals(href)) a.AddCssClass("active");
-			a.WriteTo(html.ViewContext.Writer, HtmlEncoder.Default);			
+			a.WriteTo(html.ViewContext.Writer, HtmlEncoder.Default);
+
+			return null;
 		}
 	}
 }

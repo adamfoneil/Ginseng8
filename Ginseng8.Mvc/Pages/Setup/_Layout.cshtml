@@ -7,21 +7,20 @@
 <div class="row">
     <div class="col-md-3">
         <ul class="nav nav-pills flex-column">
-            <li>
-                @Html.ActiveLink("/Setup/Organization", "Organization");
-                <a class="nav-link" href="/Setup/Organization">Organization</a>                
+            <li>                
+                <activelink page="/Setup/Organization" text="Organization"/>                      
             </li>
             <li>
-                <a class="nav-link" href="/Setup/Users">Users</a>
+                @Html.ActiveLink("/Setup/Users", "Users")                
             </li>
             <li>
-                <a class="nav-link" href="/Setup/Applications">Applications</a>
+                @Html.ActiveLink("/Setup/Applications", "Applications")                
             </li>
             <li>
-                <a class="nav-link" href="/Setup/Activities">Activities</a>
+                @Html.ActiveLink("/Setup/Activities", "Activities")                
             </li>
             <li>
-                <a class="nav-link" href="/Setup/Labels">Labels</a>
+                @Html.ActiveLink("/Setup/Labels", "Labels")                
             </li>
         </ul>
     </div>
