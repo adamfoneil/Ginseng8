@@ -8,7 +8,8 @@
     <div class="col-md-3">
         <ul class="nav nav-pills flex-column">
             <li>
-                <a class="nav-link actve" href="/Setup/Organization">Organization</a>                
+                @Html.ActiveLink("/Setup/Organization", "Organization");
+                <a class="nav-link" href="/Setup/Organization">Organization</a>                
             </li>
             <li>
                 <a class="nav-link" href="/Setup/Users">Users</a>
@@ -19,10 +20,17 @@
             <li>
                 <a class="nav-link" href="/Setup/Activities">Activities</a>
             </li>
+            <li>
+                <a class="nav-link" href="/Setup/Labels">Labels</a>
+            </li>
         </ul>
     </div>
 
     <div class="col-md-9">
-        @RenderBody()
+        @RenderBody()        
     </div>
+</div>
+
+<div>
+    <p>current page = @Html.CurrentPage()</p>
 </div>
