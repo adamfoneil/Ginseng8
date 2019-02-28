@@ -21,6 +21,9 @@ namespace Ginseng.Models
 		[DefaultExpression("0")]
 		public int TimeZoneOffset { get; set; }
 
+		[References(typeof(Organization))]
+		public int? OrganizationId { get; set; }
+
 		public DateTime LocalTime
 		{
 			get

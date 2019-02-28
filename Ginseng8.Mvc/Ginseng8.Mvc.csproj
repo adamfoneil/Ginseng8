@@ -15,6 +15,11 @@
   </ItemGroup>
 
 
+  <ItemGroup>
+    <Folder Include="Pages\Setup\" />
+  </ItemGroup>
+
+
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
