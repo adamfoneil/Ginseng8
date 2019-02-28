@@ -102,21 +102,5 @@ namespace Ginseng.Mvc
 				return false;
 			}
 		}
-
-		protected void SetErrorMessage(Exception exc)
-		{
-			CaptureMessage("error", exc.Message);
-		}
-
-		protected void SetSuccessMessage(string message)
-		{
-			CaptureMessage("success", message);
-		}
-
-		private void CaptureMessage(string key, string message)
-		{
-			TempData.Remove(key);
-			TempData.Add(key, message);
-		}
 	}
 }

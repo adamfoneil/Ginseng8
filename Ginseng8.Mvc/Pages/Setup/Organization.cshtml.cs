@@ -23,7 +23,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostAsync()
 		{
-			await TrySaveAsync(Organization);			
+			await TrySaveAsync(Organization, "Organization was updated succesfully.");			
 			return RedirectToPage("/Setup/Organization");
 		}
 
