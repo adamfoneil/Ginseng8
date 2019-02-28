@@ -41,7 +41,7 @@ namespace Ginseng.Mvc
 		[TempData]
 		public string SaveMessage { get; set; }
 
-		protected static Dictionary<SaveMessageType, string> AlertClasses =>
+		private static Dictionary<SaveMessageType, string> AlertCssClasses =>
 			new Dictionary<SaveMessageType, string>()
 			{
 				{ SaveMessageType.Success, "alert-success" },
@@ -50,7 +50,7 @@ namespace Ginseng.Mvc
 
 		public string AlertClass
 		{
-			get { return (!string.IsNullOrEmpty(SaveMessage)) ? AlertClasses[SaveMessageType] : null; }
+			get { return (!string.IsNullOrEmpty(SaveMessage)) ? AlertCssClasses[SaveMessageType] : null; }
 		}
 
 		public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
