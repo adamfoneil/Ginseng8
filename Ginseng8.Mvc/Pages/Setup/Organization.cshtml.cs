@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Ginseng.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -11,9 +13,19 @@ namespace Ginseng.Mvc.Pages.Setup
 		{			
 		}
 
-		public async Task OnGetAsync()
-		{			
-			
+		[BindProperty]
+		public Organization Organization { get; set; }
+
+		public void OnGet()
+		{
+			Organization = CurrentOrg ?? new Organization();
 		}
+
+		public async Task<ActionResult> OnPostAsync()
+		{
+			await TrySaveAsync(Organization);			
+			return RedirectToPage("/Setup/Organization");
+		}
+
 	}
 }

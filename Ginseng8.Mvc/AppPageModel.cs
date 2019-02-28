@@ -1,13 +1,22 @@
 ﻿using Ginseng.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
 {
+	public enum SaveMessageType
+	{		
+		Success,
+		Error
+	}
+
 	public class AppPageModel : PageModel
 	{
 		private IConfiguration _config;
@@ -26,27 +35,88 @@ namespace Ginseng.Mvc
 			return new SqlConnection(connectionStr);
 		}
 
-		public override async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context, PageHandlerExecutionDelegate next)
+		[TempData]
+		public SaveMessageType SaveMessageType { get; set; }
+
+		[TempData]
+		public string SaveMessage { get; set; }
+
+		protected static Dictionary<SaveMessageType, string> AlertClasses =>
+			new Dictionary<SaveMessageType, string>()
+			{
+				{ SaveMessageType.Success, "alert-success" },
+				{ SaveMessageType.Error, "alert-danger" }
+			};
+
+		public string AlertClass
 		{
-			await base.OnPageHandlerExecutionAsync(context, next);
+			get { return (!string.IsNullOrEmpty(SaveMessage)) ? AlertClasses[SaveMessageType] : null; }
+		}
+
+		public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
+		{
+			base.OnPageHandlerExecuting(context);
 
 			using (var cn = GetConnection())
 			{
-				CurrentUser = await cn.FindWhereAsync<UserProfile>(new { userName = User.Identity.Name });
-				if (CurrentUser.OrganizationId != null)
-				{
-					CurrentOrg = await cn.FindAsync<Organization>(CurrentUser.OrganizationId.Value);
-				}
+				GetCurrentUser(cn);
 			}
 		}
 
+		private void GetCurrentUser(SqlConnection cn)
+		{
+			CurrentUser = cn.FindWhere<UserProfile>(new { userName = User.Identity.Name });
+			if (CurrentUser.OrganizationId != null)
+			{
+				CurrentOrg = cn.Find<Organization>(CurrentUser.OrganizationId.Value);
+			}
+		}
 
 		protected async Task<T> FindAsync<T>(int id)
 		{
 			using (var cn = GetConnection())
-			{
-				return await cn.FindAsync<T>(id);
+			{				
+				return await cn.FindAsync<T>(id, CurrentUser);
 			}
+		}
+
+		protected async Task<bool> TrySaveAsync<T>(T record, string successMessage = null)
+		{
+			try
+			{
+				using (var cn = GetConnection())
+				{				
+					await cn.SaveAsync(record, CurrentUser);
+					if (!string.IsNullOrEmpty(successMessage))
+					{
+						SaveMessageType = SaveMessageType.Success;
+						SaveMessage = successMessage;
+					}
+					return true;
+				}
+			}
+			catch (Exception exc)
+			{
+				SaveMessageType = SaveMessageType.Error;
+				SaveMessage = exc.Message;
+				return false;
+			}
+		}
+
+		protected void SetErrorMessage(Exception exc)
+		{
+			CaptureMessage("error", exc.Message);
+		}
+
+		protected void SetSuccessMessage(string message)
+		{
+			CaptureMessage("success", message);
+		}
+
+		private void CaptureMessage(string key, string message)
+		{
+			TempData.Remove(key);
+			TempData.Add(key, message);
 		}
 	}
 }

@@ -6,4 +6,20 @@
 
 <h4>Organization</h4>
 
-<p>I am the org</p>
+<div class="@Model.AlertClass">@Model.SaveMessage</div>
+
+<form method="post">
+    <input asp-for="Organization.Id" type="hidden"/>
+
+    <div class="form-group">
+        <label>Org Name:</label>
+        <input asp-for="Organization.Name" class="form-control" type="text" required="required"/>
+    </div>
+
+    <div class="form-group">
+        <label>Next Work Item #:</label>
+        <input asp-for="Organization.NextWorkItemNumber" class="form-control" type="text" required="required"/>
+    </div>
+
+    <button type="submit" class="btn btn-dark">Save</button>
+</form>
