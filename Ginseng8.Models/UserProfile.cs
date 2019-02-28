@@ -11,6 +11,7 @@ namespace Ginseng.Models
 	public class UserProfile : IUser
 	{		
 		[MaxLength(256)]
+		[UniqueKey]
 		public string UserName { get; set; }
 
 		[MaxLength(256)]

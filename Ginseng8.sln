@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.421
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ginseng8.Mvc", "Ginseng8.Mvc\Ginseng8.Mvc.csproj", "{28871BC1-5418-4459-A442-CBA660E6847A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ginseng.Mvc", "Ginseng8.Mvc\Ginseng.Mvc.csproj", "{28871BC1-5418-4459-A442-CBA660E6847A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ginseng8.Models", "Ginseng8.Models\Ginseng8.Models.csproj", "{9CC40F0A-F350-4E82-85C9-3EF815FEC86B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ginseng.Models", "Ginseng8.Models\Ginseng.Models.csproj", "{9CC40F0A-F350-4E82-85C9-3EF815FEC86B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
