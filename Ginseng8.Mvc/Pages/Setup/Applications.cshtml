@@ -6,3 +6,42 @@
 
 <h4>Applications</h4>
 <p>Use Applications to define the different products your organization develops and supports.</p>
+
+<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+
+<form method="post" asp-page-handler="CreateApp" class="my-4">
+    <div class="form-row">
+        <div class="col-4">
+            <input type="text" asp-for="NewApplication.Name" required="required" class="form-control" placeholder="new app name"/>
+        </div>
+        <div class="col-4">
+            <input type="text" asp-for="NewApplication.Description" class="form-control" placeholder="description"/>
+        </div>
+        <div class="col-3">
+            <input type="text" asp-for="NewApplication.Url" class="form-control" placeholder="URL"/>
+        </div>
+        <div class="col-1">
+            <button class="btn btn-dark">Add</button>
+        </div>
+    </div>    
+</form>
+
+<table class="table table-striped">
+    <tr>
+        <th>App Name</th>
+        <th>Description</th>
+        <th>URL</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Applications)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Description</td>
+            <td><a href="@item.Url">@item.Url</a></td>
+            <td>
+                <a asp-page-handler="Delete" asp-route-id="@item.Id" class="btn btn-danger" onclick="return confirm('Click OK to delete the application. This will work only if app has no work items.');">Delete...</a>                
+            </td>
+        </tr>
+    }
+</table>

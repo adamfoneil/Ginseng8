@@ -177,5 +177,25 @@ namespace Ginseng.Mvc
 				return false;
 			}
 		}
+
+		protected async Task<bool> TryDelete<T>(int id, string successMessage = null)
+		{
+			try
+			{
+				using (var cn = GetConnection())
+				{
+					await cn.DeleteAsync<T>(id, CurrentUser);
+					SaveMessageType = SaveMessageType.Success;
+					SaveMessage = successMessage;
+					return true;
+				}
+			}
+			catch (Exception exc)
+			{
+				SaveMessageType = SaveMessageType.Error;
+				SaveMessage = exc.Message;
+				return false;
+			}
+		}
 	}
 }
