@@ -12,6 +12,8 @@
 
 <p>Activities have an Order that defines the forward path through your workflow.</p>
 
+<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+
 @{ 
     var grid = new GridEditor<Activity>(this, Xsrf);
 }

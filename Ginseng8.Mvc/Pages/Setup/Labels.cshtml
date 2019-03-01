@@ -1,8 +1,51 @@
 ﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @model Ginseng.Mvc.Pages.Setup.LabelsModel
 @{
     ViewData["Title"] = "Labels";
 }
 
 <h4>Labels</h4>
+<p>Use Labels to apply color-coded descriptors to classify Work Items more usefully. Common labels
+    might be <strong>Bug</strong>, <strong>Enhancement</strong>, <strong>Performance</strong>, or <strong>Security</strong>.
+    Applying labels to work items consistently can help people tell at a glance what what sort of work may be involved or its impact.</p>
 
+<p>You can use hex codes or standard color names in the color fields below. To help you find colors, use <a href="https://www.google.com/search?q=html+color+picker" target="_blank"    >Google Color Picker</a></p>
+
+<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+
+@{ 
+    var grid = new GridEditor<Label>(this, Xsrf);
+}
+
+<table class="table">
+    <tr>
+        <th>Label Name</th>
+        <th>Back Color</th>
+        <th>Fore Color</th>
+        <th>Preview</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Labels)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
+            <td><span class="badge badge-pill" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }
+    <tr id="@grid.NewRowId()">
+        <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
+        <td></td>
+        <td>@grid.Controls()</td>
+    </tr>
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+}
