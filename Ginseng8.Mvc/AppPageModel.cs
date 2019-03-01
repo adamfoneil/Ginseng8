@@ -23,6 +23,7 @@ namespace Ginseng.Mvc
 
 		protected UserProfile CurrentUser;
 		protected Organization CurrentOrg;
+		protected OrganizationUser CurrentOrgUser;
 
 		public AppPageModel(IConfiguration config)
 		{
@@ -69,6 +70,7 @@ namespace Ginseng.Mvc
 			if (CurrentUser.OrganizationId != null)
 			{
 				CurrentOrg = cn.Find<Organization>(CurrentUser.OrganizationId.Value);
+				CurrentOrgUser = cn.FindWhere<OrganizationUser>(new { organizationId = CurrentUser.OrganizationId.Value, userId = CurrentUser.UserId });
 			}
 		}
 

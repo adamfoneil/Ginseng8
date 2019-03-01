@@ -6,7 +6,6 @@ using Postulate.SqlServer.IntKey;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
@@ -24,7 +23,7 @@ namespace Ginseng.Models
 		public int NextWorkItemNumber { get; set; } = 1000;
 
 		public override bool Validate(IDbConnection connection, out string message)
-		{			
+		{
 			if (Name.Contains("--"))
 			{
 				message = "Name may not contain consecutive dashes.";
@@ -63,7 +62,7 @@ namespace Ginseng.Models
 			if (action == SaveAction.Insert)
 			{
 				var profile = connection.Find<UserProfile>(OwnerUserId);
-				if (!profile.OrganizationId.HasValue) 
+				if (!profile.OrganizationId.HasValue)
 				{
 					profile.OrganizationId = Id;
 					connection.Update(profile, null, r => r.OrganizationId);
