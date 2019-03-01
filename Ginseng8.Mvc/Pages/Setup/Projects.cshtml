@@ -1,10 +1,42 @@
 ﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @model Ginseng.Mvc.Pages.Setup.ProjectsModel
 @{
     ViewData["Title"] = "Projects";
 }
 
 <h4>Projects</h4>
-<p>Use Projects to group related ongoing work related to a feature area, goal, or some other unifying idea.
-    Projects do not have due dates or time frames. If you need to use deadlines, use <a asp-route-page="/Setup/Milestones">Milestones</a>.</p>
+<p>Use Projects to group related ongoing work related to a feature area, goal, or some other unifying idea or objective.
+    Projects do not have due dates or time frames. If you need to use due dates, use <a asp-route-page="/Setup/Milestones">Milestones</a>.</p>
 
+<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+
+@{ 
+    var grid = new GridEditor<Project>(this, Xsrf);
+}
+
+<table class="table">
+    <tr>
+        <th>Project Name</th>
+        <th>Description</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Projects)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }
+    <tr id="@grid.NewRowId()">
+        <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+        <td>@grid.Controls()</td>
+    </tr>
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+}
