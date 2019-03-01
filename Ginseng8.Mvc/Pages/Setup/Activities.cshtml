@@ -1,8 +1,46 @@
 ﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @model Ginseng.Mvc.Pages.Setup.ActivitiesModel
 @{
     ViewData["Title"] = "Activities";
 }
 
 <h4>Activities</h4>
+<p>Use Activities to distinguish the different kinds of work done on Work Items. At minimum, this
+    usually means <strong>Development</strong>, <strong>Testing</strong>, and <strong>Deployment</strong>.
+    Use <a href="/Setup/OrgUser">Org Settings</a> to setup monitoring on Activities you normally do.</p>
 
+<p>Activities have an Order that defines the forward path through your workflow.</p>
+
+@{ 
+    var grid = new GridEditor<Activity>(this, Xsrf);
+}
+
+<table class="table">
+    <tr>
+        <th>Activity Name</th>
+        <th>Description</th>
+        <th>Order</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Activities)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Order, new { @class = "form-control", style = "width:90px" })</td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }
+    <tr id="@grid.NewRowId()">
+        <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Order, new { @class = "form-control", style = "width:90px" })</td>
+        <td>@grid.Controls()</td>
+    </tr>
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+}
