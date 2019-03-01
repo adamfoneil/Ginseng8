@@ -13,9 +13,6 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 		}
 
-		[BindProperty]
-		public Application NewApplication { get; set; }
-
 		public bool IsActive { get; set; }
 
 		public IEnumerable<Application> Applications { get; set; }
@@ -28,19 +25,6 @@ namespace Ginseng.Mvc.Pages.Setup
 			{
 				Applications = await new Applications() { OrgId = CurrentOrg.Id, IsActive = isActive }.ExecuteAsync(cn);
 			}
-		}
-
-		public async Task<ActionResult> OnPostCreateApp()
-		{
-			NewApplication.OrganizationId = CurrentOrg.Id;
-			await TrySaveAsync(NewApplication);
-			return RedirectToPage("/Setup/Applications");
-		}
-
-		public async Task<ActionResult> OnGetDelete(int id)
-		{
-			await TryDelete<Application>(id);
-			return RedirectToPage("/Setup/Applications");
 		}
 		
 		public async Task<ActionResult> OnPostSave(Application app)
