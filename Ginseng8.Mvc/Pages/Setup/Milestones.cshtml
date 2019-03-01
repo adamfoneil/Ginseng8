@@ -6,5 +6,41 @@
 }
 
 <h4>Milestones</h4>
-<p>Use Milestones to define deadlines or any kind of due date or event, such as sprint dates, or perhaps a customer-imposed deadline.</p>
+<p>Use Milestones to define deadlines or any kind of due date or event, such as sprint dates, or perhaps customer-imposed deadlines.</p>
 
+<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+
+@{ 
+    var grid = new GridEditor<Milestone>(this, Xsrf);
+}
+
+<table class="table">
+    <tr>
+        <th>Milestone Name</th>
+        <th>Date</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Milestones)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "false" })</td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }
+    <tr id="@grid.NewRowId()">
+        <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "false" })</td>
+        <td>@grid.Controls()</td>
+    </tr>
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".datepicker").datepicker();
+        });
+    </script>
+}

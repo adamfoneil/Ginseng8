@@ -11,11 +11,16 @@ namespace Ginseng.Models
 	/// </summary>
 	public class Milestone : BaseTable
 	{
+		[PrimaryKey]
+		[References(typeof(Organization))]
+		public int OrganizationId { get; set; }
+
 		[MaxLength(50)]
 		[PrimaryKey]
 		public string Name { get; set; }
 
 		[Column(TypeName = "date")]
+		[DisplayFormat(DataFormatString = "{0:M/d/yy}")]
 		public DateTime Date { get; set; }
 	}
 }
