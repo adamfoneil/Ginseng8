@@ -23,11 +23,6 @@
   </ItemGroup>
 
 
-  <ItemGroup>
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-
-
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

@@ -34,6 +34,8 @@ namespace Ginseng.Mvc
 			_config = config;
 		}
 
+		public string OrgName => CurrentOrg?.Name ?? "(no org)";
+
 		protected SqlConnection GetConnection()
 		{
 			string connectionStr = _config.GetConnectionString("DefaultConnection");
