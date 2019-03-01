@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<ul class="nav nav-pills nav-fill" style="margin-top:15px;margin-bottom:15px">
+    <li class="nav-item">
+        <activelink page="/Work/MyWork" text="My Work" />
+    </li>
+    <li class="nav-item">
+        <activelink page="/Work/Projects" text="Projects" />
+    </li>
+    <li class="nav-item">
+        <activelink page="/Work/Milestones" text="Milestones" />
+    </li>
+    <li class="nav-item">
+        <activelink page="/Work/AllItems" text="All Items" />
+    </li>
+    <li class="nav-item">
+        <activelink page="/Work/Feed" text="Feed" />
+    </li>
+</ul>
+
+@RenderBody()
+
+@section Scripts {
+    @RenderSection("Scripts", false)
+}

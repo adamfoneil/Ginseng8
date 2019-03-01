@@ -24,6 +24,9 @@ namespace Ginseng.Models
 		[Required]
 		public string Title { get; set; }
 
+		[References(typeof(UserProfile))]
+		public int? OwnerUserId { get; set; }
+
 		/// <summary>
 		/// Overall priority of work item (lower number = higher priority)
 		/// </summary>
