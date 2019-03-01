@@ -4,19 +4,22 @@
     ViewData["Title"] = "OrgUser";
 }
 
-<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+<h4>Org Settings</h4>
+<p>Use this to customize aspects of your relationship with this organization.</p>
 
 <form method="post" asp-page-handler="SelectOrg">
-    <label>Organization:</label>
+    <label>Current Organization:</label>
     <select name="orgId" asp-items="Model.MyOrgSelect" class="form-control">
         <option value="" disabled="disabled">(select)</option>
     </select>
 </form>
 
+<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+
 <form method="post">
     <div class="form-group">
         <label>Display Name:</label>
-        <input type="text" asp-for="OrgUser.DisplayName" class="form-control" required="required"/>
+        <input type="text" asp-for="OrgUser.DisplayName" class="form-control" required="required" maxlength="50"/>
     </div>
 
     <div class="row">
@@ -40,16 +43,15 @@
             <label>Work Days:</label>
             <input type="hidden" asp-for="OrgUser.WorkDays"/>
             <ul class="list-inline">
-            @for (int i = 0; i < Model.WorkDays.Count(); i++)
-            {
-                var wk = Model.WorkDays[i];
-                <li class="list-inline-item">
+                @foreach  (var wk in Model.WorkDays)
+                {
+                    <li class="list-inline-item">
                     <label>
                         @wk.Abbreviation
-                        <input type="checkbox" name="SelectedWorkDays[@i]" value="@wk.Flag" checked="@((wk.Flag & Model.OrgUser.WorkDays) == wk.Flag)"/>
+                        <input type="checkbox" name="SelectedWorkDays" value="@wk.Flag" checked="@((wk.Flag & Model.OrgUser.WorkDays) == wk.Flag)"/>
                     </label>            
                 </li>
-            }
+                }
             </ul>
         </div>
     </div>

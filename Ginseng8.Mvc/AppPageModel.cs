@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+using Postulate.Base.Exceptions;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;

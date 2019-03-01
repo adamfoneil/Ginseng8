@@ -22,9 +22,6 @@ namespace Ginseng.Mvc.Pages.Setup
 		[BindProperty]
 		public OrganizationUser OrgUser { get; set; }
 
-		[BindProperty]
-		public int[] SelectedWorkDays { get; set; }
-
 		public WorkDay[] WorkDays { get; set; }
 
 		public void OnGet()
@@ -45,20 +42,30 @@ namespace Ginseng.Mvc.Pages.Setup
 			};
 		}
 
-		public async Task<ActionResult> OnPostAsync()
+		public async Task<ActionResult> OnPostAsync(int[] selectedWorkDays)
 		{
+			OrgUser.Id = CurrentOrgUser?.Id ?? 0;
 			OrgUser.OrganizationId = CurrentOrg.Id;
 			OrgUser.UserId = CurrentUser.UserId;
+			OrgUser.WorkDays = selectedWorkDays?.Sum() ?? 0;			
 
-			await TrySaveAsync(OrgUser, new string[]
+			var fields = new string[]
 			{
 				nameof(OrganizationUser.OrganizationId),
 				nameof(OrganizationUser.UserId),
 				nameof(OrganizationUser.DisplayName),
 				nameof(OrganizationUser.MaxWorkInProgress),
 				nameof(OrganizationUser.DailyWorkHours),
-				nameof(OrganizationUser.WorkDays)
-			}, "Record updated successfully.");
+				nameof(OrganizationUser.WorkDays)				
+			}.ToList();			
+
+			if (OrgUser.Id == 0)
+			{
+				fields.Add(nameof(OrganizationUser.IsEnabled));
+				fields.Add(nameof(OrganizationUser.IsRequest));
+			}
+
+			await TrySaveAsync(OrgUser, fields.ToArray(), "Record updated successfully.");
 			
 			return RedirectToPage("/Setup/OrgUser");
 		}
