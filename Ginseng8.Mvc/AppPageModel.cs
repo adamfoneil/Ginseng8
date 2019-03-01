@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Models.Conventions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -7,6 +8,8 @@ using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
@@ -82,6 +85,55 @@ namespace Ginseng.Mvc
 			}
 		}
 
+		protected async Task<bool> TrySaveAsync<T>(T record, string[] propertyNames, string successMessage = null) where T : BaseTable
+		{
+			try
+			{
+				using (var cn = GetConnection())
+				{
+					var update = AuditProperties(record, propertyNames);					
+					await cn.SaveAsync(update.Item1, update.Item2);
+					if (!string.IsNullOrEmpty(successMessage))
+					{
+						SaveMessageType = SaveMessageType.Success;
+						SaveMessage = successMessage;
+					}
+					return true;
+				}
+			}
+			catch (Exception exc)
+			{
+				SaveMessageType = SaveMessageType.Error;
+				SaveMessage = exc.Message;
+				return false;
+			}
+		}
+
+		/// <summary>
+		/// Sets the audit tracking fields when we're updating dynamic columns
+		/// </summary>
+		private (T, string[]) AuditProperties<T>(T record, string[] propertyNames) where T : BaseTable
+		{
+			var properties = propertyNames.ToList();
+
+			if (record.Id == 0)
+			{
+				record.CreatedBy = User.Identity.Name;
+				record.DateCreated = CurrentUser.LocalTime;
+				properties.Add(nameof(BaseTable.CreatedBy));
+				properties.Add(nameof(BaseTable.DateCreated));
+			}
+			else
+			{
+				record.ModifiedBy = User.Identity.Name;
+				record.DateModified = CurrentUser.LocalTime;
+				properties.Add(nameof(BaseTable.ModifiedBy));
+				properties.Add(nameof(BaseTable.DateModified));
+			}
+			
+			return (record, properties.ToArray());
+		}
+
 		protected async Task<bool> TrySaveAsync<T>(T record, string successMessage = null)
 		{
 			try
@@ -94,6 +146,26 @@ namespace Ginseng.Mvc
 						SaveMessageType = SaveMessageType.Success;
 						SaveMessage = successMessage;
 					}
+					return true;
+				}
+			}
+			catch (Exception exc)
+			{
+				SaveMessageType = SaveMessageType.Error;
+				SaveMessage = exc.Message;
+				return false;
+			}
+		}
+
+		protected async Task<bool> TryUpdateAsync<T>(T record, params Expression<Func<T, object>>[] setColumns)
+		{
+			try
+			{
+				using (var cn = GetConnection())
+				{
+					await cn.UpdateAsync(record, CurrentUser, setColumns);
+					SaveMessageType = SaveMessageType.Success;
+					SaveMessage = "Record was updated successfully.";
 					return true;
 				}
 			}
