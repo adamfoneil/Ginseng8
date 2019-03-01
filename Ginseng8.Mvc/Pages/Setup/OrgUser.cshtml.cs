@@ -70,7 +70,7 @@ namespace Ginseng.Mvc.Pages.Setup
 			return RedirectToPage("/Setup/OrgUser");
 		}
 
-		public async Task<ActionResult> OnSelectOrg(int orgId)
+		public async Task<ActionResult> OnPostSelectOrg(int orgId)
 		{
 			CurrentUser.OrganizationId = orgId;
 			await TryUpdateAsync(CurrentUser, r => r.OrganizationId);

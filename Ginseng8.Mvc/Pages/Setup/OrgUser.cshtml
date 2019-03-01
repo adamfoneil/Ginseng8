@@ -9,7 +9,7 @@
 
 <form method="post" asp-page-handler="SelectOrg">
     <label>Current Organization:</label>
-    <select name="orgId" asp-items="Model.MyOrgSelect" class="form-control">
+    <select name="orgId" asp-items="Model.MyOrgSelect" class="form-control" onchange="this.form.submit();">
         <option value="" disabled="disabled">(select)</option>
     </select>
 </form>
