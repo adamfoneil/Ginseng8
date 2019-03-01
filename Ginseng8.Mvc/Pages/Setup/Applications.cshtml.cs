@@ -43,10 +43,16 @@ namespace Ginseng.Mvc.Pages.Setup
 			return RedirectToPage("/Setup/Applications");
 		}
 		
-		public async Task<ActionResult> Save(Application app)
+		public async Task<ActionResult> OnPostSave(Application app)
 		{
 			app.OrganizationId = CurrentOrg.Id;
 			await TrySaveAsync(app);
+			return RedirectToPage("/Setup/Applications");
+		}
+
+		public async Task<ActionResult> OnPostDelete(int id)
+		{
+			await TryDelete<Application>(id);
 			return RedirectToPage("/Setup/Applications");
 		}
 	}

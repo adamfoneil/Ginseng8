@@ -1,4 +1,5 @@
 ﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @model Ginseng.Mvc.Pages.Setup.ApplicationsModel
 @{
     ViewData["Title"] = "Applications";
@@ -11,7 +12,7 @@
 
 
 @{ 
-    var grid = new GridEditor<Application>(this);    
+    var grid = new GridEditor<Application>(this, Xsrf);    
 }
 
 <table class="table">
@@ -37,10 +38,9 @@
         <td>@grid.Controls()</td>
     </tr>
 </table>
-@grid.ActionForms("Save", "Delete")
+@grid.HandlerForms("Save", "Delete")
 
 <form asp-page-handler="Save"></form>
-<form asp-page-handler="Delete"></form>
 
 @section Scripts {
     <script src="~/js/GridEditor.js"></script>

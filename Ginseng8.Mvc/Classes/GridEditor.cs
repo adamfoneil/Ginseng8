@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models.Conventions;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -35,6 +36,7 @@ namespace Ginseng.Mvc.Classes
 		private readonly ViewContext _viewContext = null;
 		private readonly TextWriter _writer = null;
 		private readonly HtmlEncoder _encoder = null;
+		private readonly IAntiforgery _antiForgery = null;
 
 		public string OnEditCallback { get; set; }
 		public string OnSaveCallback { get; set; }
@@ -44,7 +46,7 @@ namespace Ginseng.Mvc.Classes
 		public string UpdateFunction { get; set; } = "DataGridSaveRow";
 		public string DeleteFunction { get; set; } = "DataGridDeleteRow";
 
-		public GridEditor(PageBase pageBase, string namePrefix = null, object defaults = null)
+		public GridEditor(PageBase pageBase, IAntiforgery antiForgery, string namePrefix = null, object defaults = null)
 		{
 			_pageBase = pageBase;
 			_viewContext = pageBase.ViewContext;
@@ -52,6 +54,7 @@ namespace Ginseng.Mvc.Classes
 			_encoder = _pageBase.HtmlEncoder;
 			_namePrefix = namePrefix ?? string.Empty;
 			_defaults = defaults;
+			_antiForgery = antiForgery;
 		}
 
 		public string RowId(TRecord record)
@@ -209,13 +212,18 @@ namespace Ginseng.Mvc.Classes
 
 		#endregion
 
-		public object ActionForms(string saveHandler, string deleteHandler, string returnUrl = null)
+		/// <summary>
+		/// Renders hidden forms that handle the save and delete post submissions
+		/// </summary>
+		/// <param name="saveHandler">Be sure to name your Razor page handler like OnPost{saveHandler}</param>
+		/// <param name="deleteHandler">Be sure to name your Razor page handler like OnPose{deleteHandler}</param>
+		public object HandlerForms(string saveHandler, string deleteHandler, string returnUrl = null)
 		{
 			TagBuilder formSpan = new TagBuilder("span");
 			formSpan.MergeAttribute("style", "display:none");
 
 			var url = new UrlHelper(_viewContext);
-			if (string.IsNullOrEmpty(returnUrl)) returnUrl = UriHelper.GetEncodedUrl(_pageBase.Request);
+			if (string.IsNullOrEmpty(returnUrl)) returnUrl = UriHelper.GetEncodedUrl(_pageBase.Request);			
 
 			// save form
 			TagBuilder saveForm = new TagBuilder("form");
@@ -223,6 +231,8 @@ namespace Ginseng.Mvc.Classes
 			saveForm.MergeAttribute("method", "post");
 			saveForm.MergeAttribute("id", SaveFormId());
 			if (!string.IsNullOrEmpty(returnUrl)) AddReturnUrlField(saveForm, returnUrl);
+			AddAntiForgeryField(saveForm);
+
 			foreach (var prop in _propertyNames)
 			{
 				TagBuilder hidden = new TagBuilder("input");
@@ -268,6 +278,7 @@ namespace Ginseng.Mvc.Classes
 			deleteForm.MergeAttribute("method", "post");
 			deleteForm.MergeAttribute("id", DeleteFormId());
 			if (!string.IsNullOrEmpty(returnUrl)) AddReturnUrlField(deleteForm, returnUrl);
+			AddAntiForgeryField(deleteForm);
 			deleteForm.InnerHtml.AppendHtml(hiddenRowId);
 
 			formSpan.InnerHtml.AppendHtml(deleteForm);
@@ -275,6 +286,15 @@ namespace Ginseng.Mvc.Classes
 			formSpan.WriteTo(_writer, _encoder);
 
 			return null;
+		}
+
+		private void AddAntiForgeryField(TagBuilder formTagBuilder)
+		{
+			TagBuilder hidden = new TagBuilder("input");
+			hidden.MergeAttribute("type", "hidden");
+			hidden.MergeAttribute("name", "__RequestVerificationToken");
+			hidden.MergeAttribute("value", _antiForgery.GetAndStoreTokens(_pageBase.HttpContext).RequestToken);
+			formTagBuilder.InnerHtml.AppendHtml(hidden);
 		}
 
 		private string HandlerAction(string handlerName)
