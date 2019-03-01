@@ -42,5 +42,12 @@ namespace Ginseng.Mvc.Pages.Setup
 			await TryDelete<Application>(id);
 			return RedirectToPage("/Setup/Applications");
 		}
+		
+		public async Task<ActionResult> Save(Application app)
+		{
+			app.OrganizationId = CurrentOrg.Id;
+			await TrySaveAsync(app);
+			return RedirectToPage("/Setup/Applications");
+		}
 	}
 }
