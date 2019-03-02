@@ -15,12 +15,6 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
 {
-	public enum SaveMessageType
-	{		
-		Success,
-		Error
-	}
-
 	public class AppPageModel : PageModel
 	{
 		private IConfiguration _config;
@@ -43,16 +37,16 @@ namespace Ginseng.Mvc
 		}
 
 		[TempData]
-		public SaveMessageType SaveMessageType { get; set; }
+		public ActionMessageType SaveMessageType { get; set; }
 
 		[TempData]
 		public string SaveMessage { get; set; }
 
-		private static Dictionary<SaveMessageType, string> AlertCssClasses =>
-			new Dictionary<SaveMessageType, string>()
+		private static Dictionary<ActionMessageType, string> AlertCssClasses =>
+			new Dictionary<ActionMessageType, string>()
 			{
-				{ SaveMessageType.Success, "alert-success" },
-				{ SaveMessageType.Error, "alert-danger" }
+				{ ActionMessageType.Success, "alert-success" },
+				{ ActionMessageType.Error, "alert-danger" }
 			};
 
 		public string AlertClass
@@ -98,7 +92,7 @@ namespace Ginseng.Mvc
 					await cn.SaveAsync(update.Item1, update.Item2);
 					if (!string.IsNullOrEmpty(successMessage))
 					{
-						SaveMessageType = SaveMessageType.Success;
+						SaveMessageType = ActionMessageType.Success;
 						SaveMessage = successMessage;
 					}
 					return true;
@@ -106,7 +100,7 @@ namespace Ginseng.Mvc
 			}
 			catch (Exception exc)
 			{
-				SaveMessageType = SaveMessageType.Error;
+				SaveMessageType = ActionMessageType.Error;
 				SaveMessage = exc.Message;
 				return false;
 			}
@@ -146,7 +140,7 @@ namespace Ginseng.Mvc
 					await cn.SaveAsync(record, CurrentUser);
 					if (!string.IsNullOrEmpty(successMessage))
 					{
-						SaveMessageType = SaveMessageType.Success;
+						SaveMessageType = ActionMessageType.Success;
 						SaveMessage = successMessage;
 					}
 					return true;
@@ -154,7 +148,7 @@ namespace Ginseng.Mvc
 			}
 			catch (Exception exc)
 			{
-				SaveMessageType = SaveMessageType.Error;
+				SaveMessageType = ActionMessageType.Error;
 				SaveMessage = exc.Message;
 				return false;
 			}
@@ -167,14 +161,14 @@ namespace Ginseng.Mvc
 				using (var cn = GetConnection())
 				{
 					await cn.UpdateAsync(record, CurrentUser, setColumns);
-					SaveMessageType = SaveMessageType.Success;
+					SaveMessageType = ActionMessageType.Success;
 					SaveMessage = "Record was updated successfully.";
 					return true;
 				}
 			}
 			catch (Exception exc)
 			{
-				SaveMessageType = SaveMessageType.Error;
+				SaveMessageType = ActionMessageType.Error;
 				SaveMessage = exc.Message;
 				return false;
 			}
@@ -187,14 +181,14 @@ namespace Ginseng.Mvc
 				using (var cn = GetConnection())
 				{
 					await cn.DeleteAsync<T>(id, CurrentUser);
-					SaveMessageType = SaveMessageType.Success;
+					SaveMessageType = ActionMessageType.Success;
 					SaveMessage = successMessage;
 					return true;
 				}
 			}
 			catch (Exception exc)
 			{
-				SaveMessageType = SaveMessageType.Error;
+				SaveMessageType = ActionMessageType.Error;
 				SaveMessage = exc.Message;
 				return false;
 			}
