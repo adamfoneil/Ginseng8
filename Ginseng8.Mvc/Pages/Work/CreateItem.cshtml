@@ -1,0 +1,25 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Work.CreateItemModel
+
+<form asp-page-handler="CreateItem" method="post">
+    <div class="form-row">
+        <div class="col-1">
+            <select asp-for="ApplicationId" asp-items="Model.AppSelect" class="form-control" required="required">
+                <option value="">(select)</option>
+            </select>
+        </div>
+        <div class="col-1">
+            <select asp-for="ProjectId" asp-items="Model.ProjectSelect" class="form-control">
+                <option value="">(optional)</option>
+            </select>
+        </div>
+        <div class="col-8">
+            <input type="text" asp-for="Title" required="required" placeholder="item title"/>
+        </div>
+        <div class="col-2">
+            <button class="btn btn-dark" type="submit">Add</button>
+            <button class="btn btn-light">Add Detail</button>
+        </div>
+    </div>
+</form>
+
