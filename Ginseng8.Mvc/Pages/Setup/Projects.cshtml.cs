@@ -17,7 +17,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public void OnGet(bool isActive = true)
 		{
-			using (var cn = Data.Open())
+			using (var cn = Data.GetConnection())
 			{
 				Projects = new Projects() { OrgId = CurrentOrg.Id, IsActive = isActive }.Execute(cn);
 			}

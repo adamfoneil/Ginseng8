@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Ginseng.Mvc.Queries.SelectLists;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
@@ -7,11 +8,11 @@ namespace Ginseng.Mvc.ViewComponents
 {
 	public class NewItemViewComponent : ViewComponent
 	{
-		private readonly IConfiguration _config;
+		private readonly DataAccess _data;
 
-		public NewItemViewComponent(IConfiguration config)
+		public NewItemViewComponent(IConfiguration config) 
 		{
-			_config = config;
+			_data = new DataAccess(config);
 		}
 
 		public SelectList AppSelect { get; set; }
@@ -22,8 +23,15 @@ namespace Ginseng.Mvc.ViewComponents
 		public string Title { get; set; }
 
 		public async Task<IViewComponentResult> InvokeAsync()
-		{
-			return View();
+		{			
+			using (var cn = _data.GetConnection())
+			{
+				_data.Initialize(User, TempData);
+				AppSelect = await new AppSelect() { OrgId = _data.CurrentOrg.Id }.ExecuteSelectListAsync(cn);
+				ProjectSelect = await new ProjectSelect() { OrgId = _data.CurrentOrg.Id }.ExecuteSelectListAsync(cn);
+			}
+
+			return View(this);
 		}
 	}
 }

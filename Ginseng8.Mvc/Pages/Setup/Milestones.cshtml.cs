@@ -17,7 +17,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public void OnGet()
 		{
-			using (var cn = Data.Open())
+			using (var cn = Data.GetConnection())
 			{
 				Milestones = new Milestones() { OrgId = CurrentOrg.Id }.Execute(cn);
 			}

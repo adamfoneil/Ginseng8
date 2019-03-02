@@ -28,7 +28,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 			WorkDays = WorkDay.WorkDays.ToArray();
 
-			using (var cn = Data.Open())
+			using (var cn = Data.GetConnection())
 			{
 				MyOrgSelect = new MyOrgSelect() { UserId = CurrentUser.UserId }.ExecuteSelectList(cn, CurrentUser.OrganizationId);
 			}

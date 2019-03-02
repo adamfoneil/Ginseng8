@@ -23,7 +23,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		public void OnGet()
 		{
 			Organization = CurrentOrg ?? new Organization();
-			using (var cn = Data.Open())
+			using (var cn = Data.GetConnection())
 			{
 				MyOrgs = new MyOrgs() { UserId = CurrentUser.UserId }.Execute(cn);
 			}				

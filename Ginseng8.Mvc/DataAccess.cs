@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
@@ -28,7 +29,7 @@ namespace Ginseng.Mvc
 			_config = config;
 		}
 
-		public SqlConnection Open()
+		public SqlConnection GetConnection()
 		{
 			string connectionStr = _config.GetConnectionString("DefaultConnection");
 			return new SqlConnection(connectionStr);
@@ -36,24 +37,29 @@ namespace Ginseng.Mvc
 
 		public ITempDataDictionary TempData { get; private set; }
 
-		public void Initialize(ClaimsPrincipal user, ITempDataDictionary tempData)
+		public void Initialize(SqlConnection connection, IPrincipal user, ITempDataDictionary tempData)
 		{
 			TempData = tempData;
 
-			using (var cn = Open())
+			CurrentUser = connection.FindWhere<UserProfile>(new { userName = user.Identity.Name });
+			if (CurrentUser.OrganizationId != null)
 			{
-				CurrentUser = cn.FindWhere<UserProfile>(new { userName = user.Identity.Name });
-				if (CurrentUser.OrganizationId != null)
-				{
-					CurrentOrg = cn.Find<Organization>(CurrentUser.OrganizationId.Value);
-					CurrentOrgUser = cn.FindWhere<OrganizationUser>(new { organizationId = CurrentUser.OrganizationId.Value, userId = CurrentUser.UserId });
-				}
+				CurrentOrg = connection.Find<Organization>(CurrentUser.OrganizationId.Value);
+				CurrentOrgUser = connection.FindWhere<OrganizationUser>(new { organizationId = CurrentUser.OrganizationId.Value, userId = CurrentUser.UserId });
 			}
+		}
+
+		public void Initialize(IPrincipal user, ITempDataDictionary tempData)
+		{
+			using (var cn = GetConnection())
+			{
+				Initialize(cn, user, tempData);
+			}			
 		}
 
 		public async Task<T> FindAsync<T>(int id)
 		{
-			using (var cn = Open())
+			using (var cn = GetConnection())
 			{
 				return await cn.FindAsync<T>(id, CurrentUser);
 			}
@@ -63,7 +69,7 @@ namespace Ginseng.Mvc
 		{
 			try
 			{
-				using (var cn = Open())
+				using (var cn = GetConnection())
 				{
 					var update = AuditProperties(record, propertyNames);
 					await cn.SaveAsync(update.Item1, update.Item2);
@@ -82,7 +88,7 @@ namespace Ginseng.Mvc
 		{
 			try
 			{
-				using (var cn = Open())
+				using (var cn = GetConnection())
 				{
 					await cn.SaveAsync(record, CurrentUser);
 					SetSuccessMessage(successMessage);
@@ -100,7 +106,7 @@ namespace Ginseng.Mvc
 		{
 			try
 			{
-				using (var cn = Open())
+				using (var cn = GetConnection())
 				{
 					await cn.UpdateAsync(record, CurrentUser, setColumns);					
 					return true;
@@ -117,7 +123,7 @@ namespace Ginseng.Mvc
 		{
 			try
 			{
-				using (var cn = Open())
+				using (var cn = GetConnection())
 				{
 					await cn.DeleteAsync<T>(id, CurrentUser);
 					SetSuccessMessage(successMessage);

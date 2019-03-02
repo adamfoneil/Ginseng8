@@ -21,7 +21,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 			IsActive = true;
 
-			using (var cn = Data.Open())
+			using (var cn = Data.GetConnection())
 			{
 				Applications = await new Applications() { OrgId = CurrentOrg.Id, IsActive = isActive }.ExecuteAsync(cn);
 			}
