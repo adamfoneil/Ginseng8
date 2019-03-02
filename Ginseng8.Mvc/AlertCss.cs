@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Ginseng.Mvc
+﻿namespace Ginseng.Mvc
 {
 	public static class AlertCss
 	{
@@ -8,6 +6,6 @@ namespace Ginseng.Mvc
 		public const string Error = "danger";
 		public const string Info = "info";
 
-		public static string[] AllMessageTypes => new string[] { Success, Error, Info };		
+		public static string[] AllMessageTypes => new string[] { Success, Error, Info };
 	}
 }
