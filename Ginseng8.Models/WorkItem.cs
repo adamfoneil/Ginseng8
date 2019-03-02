@@ -1,8 +1,12 @@
-﻿using Ginseng.Models.Conventions;
+﻿using Dapper;
+using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
@@ -53,5 +57,20 @@ namespace Ginseng.Models
 
 		[References(typeof(CloseReason))]
 		public int? CloseReasonId { get; set; }
+
+		public async Task SetNumber(IDbConnection connection)
+		{
+			if (Number == 0 && Id == 0)
+			{
+				int result = await connection.QuerySingleAsync<int>(
+					@"SELECT [NextWorkItemNumber] FROM [dbo].[Organization] WHERE [Id]=@orgId;
+					UPDATE [dbo].[Organization] SET [NextWorkItemNumber]=[NextWorkItemNumber]+1 WHERE [Id]=@orgId", new { orgId = OrganizationId });
+				Number = result;
+			}
+			else
+			{
+				throw new InvalidOperationException("Can't set the WorkItem.Number more than once.");
+			}
+		}
 	}
 }

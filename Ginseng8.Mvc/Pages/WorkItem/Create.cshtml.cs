@@ -1,5 +1,5 @@
-﻿using Dapper;
-using Ginseng.Models;
+﻿using Ginseng.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -15,21 +15,13 @@ namespace Ginseng.Mvc.Pages.WorkItems
 
 		public async Task OnPostAsync(WorkItem workItem)
 		{
+			workItem.Number = 0; // make sure incoming number has not been set
 			workItem.OrganizationId = Data.CurrentOrg.Id;
-			workItem.Number = await GetWorkItemNumberAsync();
-			await Data.TrySaveAsync(workItem);
-			WorkItem = workItem;
-		}
-
-		private async Task<int> GetWorkItemNumberAsync()
-		{
-			using (var cn = Data.GetConnection())
+			await Data.TrySaveAsync(workItem, async (cn, r) =>
 			{
-				int result = await cn.QuerySingleAsync<int>(
-					@"SELECT [NextWorkItemNumber] FROM [dbo].[Organization] WHERE [Id]=@orgId;
-					UPDATE [dbo].[Organization] SET [NextWorkItemNumber]=[NextWorkItemNumber]+1 WHERE [Id]=@orgId", new { orgId = Data.CurrentOrg.Id });
-				return result;
-			}
+				await r.SetNumber(cn);
+			});
+			WorkItem = workItem;
 		}
 	}
 }

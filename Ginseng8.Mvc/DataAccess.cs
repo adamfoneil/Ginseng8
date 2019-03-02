@@ -84,12 +84,13 @@ namespace Ginseng.Mvc
 			}
 		}
 
-		public async Task<bool> TrySaveAsync<T>(T record, string successMessage = null)
+		public async Task<bool> TrySaveAsync<T>(T record, Action<SqlConnection, T> beforeSave = null, string successMessage = null)
 		{
 			try
 			{
 				using (var cn = GetConnection())
 				{
+					beforeSave?.Invoke(cn, record);
 					await cn.SaveAsync(record, CurrentUser);
 					SetSuccessMessage(successMessage);
 					return true;

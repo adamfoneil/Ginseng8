@@ -37,9 +37,11 @@
                 method: 'post',
                 body: new URLSearchParams(formData)
             }).then(function (response) {
-                var output = document.getElementById("output");
-                output.innerHTML = response.text();
-            });
+                response.text().then(function (text) {
+                    var output = document.getElementById("workItemResult");
+                    output.innerHTML = text;
+                });
+            });                
             return false;
         };
     </script>
