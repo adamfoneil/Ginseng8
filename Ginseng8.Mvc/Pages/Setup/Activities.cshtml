@@ -12,7 +12,7 @@
 
 <p>Activities have an Order that defines the forward path through your workflow.</p>
 
-@Html.ActionAlert(Model.ActionMessage)
+@Html.ActionAlert(TempData)
 
 @{ 
     var grid = new GridEditor<Activity>(this, Xsrf);

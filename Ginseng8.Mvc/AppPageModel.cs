@@ -19,7 +19,7 @@ namespace Ginseng.Mvc
 	{
 		public AppPageModel(IConfiguration config)
 		{	
-			Data = new DataAccess(User, config);
+			Data = new DataAccess(config);
 		}
 
 		public string OrgName => Data.CurrentOrg?.Name ?? "(no org)";
@@ -29,26 +29,10 @@ namespace Ginseng.Mvc
 		protected UserProfile CurrentUser { get { return Data.CurrentUser; } }
 		protected OrganizationUser CurrentOrgUser { get { return Data.CurrentOrgUser; } }
 
-		public ActionMessage ActionMessage { get { return Data.ActionMessage; } }
-
-		[TempData]
-		public string ActionMessageContent
-		{
-			get { return Data.ActionMessage.Content; }
-			set { Data.ActionMessage.Content = value; }
-		}
-
-		[TempData]
-		public ActionMessageType ActionMessageType
-		{
-			get { return Data.ActionMessage.Type; }
-			set { Data.ActionMessage.Type = value; }
-		}
-		
 		public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
 		{
-			base.OnPageHandlerExecuting(context);
-			Data.GetCurrentUser();
+			base.OnPageHandlerExecuting(context);			
+			Data.Initialize(User, TempData);
 		}
 	}
 }

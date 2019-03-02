@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Conventions;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System;
@@ -16,18 +17,14 @@ namespace Ginseng.Mvc
 	/// </summary>
 	public class DataAccess
 	{
-		private readonly IConfiguration _config;
-		private readonly ClaimsPrincipal _user;
+		private readonly IConfiguration _config;				
 
 		public UserProfile CurrentUser { get; private set; }
 		public Organization CurrentOrg { get; private set; }
 		public OrganizationUser CurrentOrgUser { get; private set; }
 
-		public ActionMessage ActionMessage { get; set; }
-
-		public DataAccess(ClaimsPrincipal user, IConfiguration config)
-		{
-			_user = user;
+		public DataAccess(IConfiguration config)
+		{			
 			_config = config;
 		}
 
@@ -37,13 +34,15 @@ namespace Ginseng.Mvc
 			return new SqlConnection(connectionStr);
 		}
 
-		public void GetCurrentUser()
+		public ITempDataDictionary TempData { get; set; }
+
+		public void Initialize(ClaimsPrincipal user, ITempDataDictionary tempData)
 		{
-			if (_user == null) return;
+			TempData = tempData;
 
 			using (var cn = Open())
 			{
-				CurrentUser = cn.FindWhere<UserProfile>(new { userName = _user.Identity.Name });
+				CurrentUser = cn.FindWhere<UserProfile>(new { userName = user.Identity.Name });
 				if (CurrentUser.OrganizationId != null)
 				{
 					CurrentOrg = cn.Find<Organization>(CurrentUser.OrganizationId.Value);
@@ -103,8 +102,7 @@ namespace Ginseng.Mvc
 			{
 				using (var cn = Open())
 				{
-					await cn.UpdateAsync(record, CurrentUser, setColumns);
-					ActionMessage = null;
+					await cn.UpdateAsync(record, CurrentUser, setColumns);					
 					return true;
 				}
 			}
@@ -142,14 +140,14 @@ namespace Ginseng.Mvc
 
 			if (record.Id == 0)
 			{
-				record.CreatedBy = _user.Identity.Name;
+				record.CreatedBy = CurrentUser.UserName;
 				record.DateCreated = CurrentUser.LocalTime;
 				properties.Add(nameof(BaseTable.CreatedBy));
 				properties.Add(nameof(BaseTable.DateCreated));
 			}
 			else
 			{
-				record.ModifiedBy = _user.Identity.Name;
+				record.ModifiedBy = CurrentUser.UserName;
 				record.DateModified = CurrentUser.LocalTime;
 				properties.Add(nameof(BaseTable.ModifiedBy));
 				properties.Add(nameof(BaseTable.DateModified));
@@ -160,28 +158,15 @@ namespace Ginseng.Mvc
 
 		private void SetSuccessMessage(string message)
 		{
-			if (string.IsNullOrEmpty(message))
-			{
-				ActionMessage = null;
-			}
-			else
-			{
-				SetMessage(ActionMessageType.Success, message);
-			}
+			TempData.Remove(AlertCss.Success);
+			if (string.IsNullOrEmpty(message)) return;
+			TempData.Add(AlertCss.Success, message);
 		}
 
 		private void SetErrorMessage(Exception exception)
 		{
-			SetMessage(ActionMessageType.Error, exception.Message);
-		}
-
-		private void SetMessage(ActionMessageType type, string message)
-		{
-			ActionMessage = new ActionMessage()
-			{
-				Type = type,
-				Content = message
-			};
+			TempData.Remove(AlertCss.Error);
+			TempData.Add(AlertCss.Error, exception.Message);
 		}
 	}
 }

@@ -12,7 +12,7 @@
 
 <p>You can use hex codes or standard color names in the color fields below. To help you find colors, use <a href="https://www.google.com/search?q=html+color+picker" target="_blank"    >Google Color Picker</a></p>
 
-@Html.ActionAlert(Model.ActionMessage)
+@Html.ActionAlert(TempData)
 
 @{ 
     var grid = new GridEditor<Label>(this, Xsrf);
