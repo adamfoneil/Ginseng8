@@ -34,7 +34,7 @@ namespace Ginseng.Mvc
 			return new SqlConnection(connectionStr);
 		}
 
-		public ITempDataDictionary TempData { get; set; }
+		public ITempDataDictionary TempData { get; private set; }
 
 		public void Initialize(ClaimsPrincipal user, ITempDataDictionary tempData)
 		{
