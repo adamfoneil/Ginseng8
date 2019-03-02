@@ -2,8 +2,6 @@
     Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
-@await Component.InvokeAsync("NewItem")
-
 <ul class="nav nav-pills nav-fill" style="margin-top:15px;margin-bottom:15px">
     <li class="nav-item">
         <activelink page="/Work/MyItems" text="My Items" />
@@ -24,6 +22,8 @@
         <activelink page="/Work/Feed" text="Feed" />
     </li>
 </ul>
+
+@await Component.InvokeAsync("NewItem")
 
 @RenderBody()
 
