@@ -21,7 +21,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 			IsActive = true;
 
-			using (var cn = GetConnection())
+			using (var cn = Data.Open())
 			{
 				Applications = await new Applications() { OrgId = CurrentOrg.Id, IsActive = isActive }.ExecuteAsync(cn);
 			}
@@ -30,13 +30,13 @@ namespace Ginseng.Mvc.Pages.Setup
 		public async Task<ActionResult> OnPostSave(Application app)
 		{
 			app.OrganizationId = CurrentOrg.Id;
-			await TrySaveAsync(app);
+			await Data.TrySaveAsync(app);
 			return RedirectToPage("/Setup/Applications");
 		}
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await TryDelete<Application>(id);
+			await Data.TryDelete<Application>(id);
 			return RedirectToPage("/Setup/Applications");
 		}
 	}

@@ -17,181 +17,25 @@ namespace Ginseng.Mvc
 {
 	public class AppPageModel : PageModel
 	{
-		private IConfiguration _config;
-
-		protected UserProfile CurrentUser;
-		protected Organization CurrentOrg;
-		protected OrganizationUser CurrentOrgUser;
-
 		public AppPageModel(IConfiguration config)
-		{
-			_config = config;
+		{	
+			Data = new DataAccess(User, config);
 		}
 
-		public string OrgName => CurrentOrg?.Name ?? "(no org)";
+		public string OrgName => Data.CurrentOrg?.Name ?? "(no org)";
 
-		protected SqlConnection GetConnection()
-		{
-			string connectionStr = _config.GetConnectionString("DefaultConnection");
-			return new SqlConnection(connectionStr);
-		}
+		protected DataAccess Data { get; }
+		protected Organization CurrentOrg { get { return Data.CurrentOrg; } }
+		protected UserProfile CurrentUser { get { return Data.CurrentUser; } }
+		protected OrganizationUser CurrentOrgUser { get { return Data.CurrentOrgUser; } }
 
 		[TempData]
-		public ActionMessageType SaveMessageType { get; set; }
-
-		[TempData]
-		public string SaveMessage { get; set; }
-
-		private static Dictionary<ActionMessageType, string> AlertCssClasses =>
-			new Dictionary<ActionMessageType, string>()
-			{
-				{ ActionMessageType.Success, "alert-success" },
-				{ ActionMessageType.Error, "alert-danger" }
-			};
-
-		public string AlertClass
-		{
-			get { return (!string.IsNullOrEmpty(SaveMessage)) ? AlertCssClasses[SaveMessageType] : null; }
-		}
+		public ActionMessage Message { get { return Data.ActionMessage; } }
 
 		public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
 		{
 			base.OnPageHandlerExecuting(context);
-
-			using (var cn = GetConnection())
-			{
-				GetCurrentUser(cn);
-			}
-		}
-
-		private void GetCurrentUser(SqlConnection cn)
-		{
-			CurrentUser = cn.FindWhere<UserProfile>(new { userName = User.Identity.Name });
-			if (CurrentUser.OrganizationId != null)
-			{
-				CurrentOrg = cn.Find<Organization>(CurrentUser.OrganizationId.Value);
-				CurrentOrgUser = cn.FindWhere<OrganizationUser>(new { organizationId = CurrentUser.OrganizationId.Value, userId = CurrentUser.UserId });
-			}
-		}
-
-		protected async Task<T> FindAsync<T>(int id)
-		{
-			using (var cn = GetConnection())
-			{				
-				return await cn.FindAsync<T>(id, CurrentUser);
-			}
-		}
-
-		protected async Task<bool> TrySaveAsync<T>(T record, string[] propertyNames, string successMessage = null) where T : BaseTable
-		{
-			try
-			{
-				using (var cn = GetConnection())
-				{
-					var update = AuditProperties(record, propertyNames);					
-					await cn.SaveAsync(update.Item1, update.Item2);
-					if (!string.IsNullOrEmpty(successMessage))
-					{
-						SaveMessageType = ActionMessageType.Success;
-						SaveMessage = successMessage;
-					}
-					return true;
-				}
-			}
-			catch (Exception exc)
-			{
-				SaveMessageType = ActionMessageType.Error;
-				SaveMessage = exc.Message;
-				return false;
-			}
-		}
-
-		/// <summary>
-		/// Sets the audit tracking fields when we're updating dynamic columns
-		/// </summary>
-		private (T, string[]) AuditProperties<T>(T record, string[] propertyNames) where T : BaseTable
-		{
-			var properties = propertyNames.ToList();
-
-			if (record.Id == 0)
-			{
-				record.CreatedBy = User.Identity.Name;
-				record.DateCreated = CurrentUser.LocalTime;
-				properties.Add(nameof(BaseTable.CreatedBy));
-				properties.Add(nameof(BaseTable.DateCreated));
-			}
-			else
-			{
-				record.ModifiedBy = User.Identity.Name;
-				record.DateModified = CurrentUser.LocalTime;
-				properties.Add(nameof(BaseTable.ModifiedBy));
-				properties.Add(nameof(BaseTable.DateModified));
-			}
-			
-			return (record, properties.ToArray());
-		}
-
-		protected async Task<bool> TrySaveAsync<T>(T record, string successMessage = null)
-		{
-			try
-			{
-				using (var cn = GetConnection())
-				{				
-					await cn.SaveAsync(record, CurrentUser);
-					if (!string.IsNullOrEmpty(successMessage))
-					{
-						SaveMessageType = ActionMessageType.Success;
-						SaveMessage = successMessage;
-					}
-					return true;
-				}
-			}
-			catch (Exception exc)
-			{
-				SaveMessageType = ActionMessageType.Error;
-				SaveMessage = exc.Message;
-				return false;
-			}
-		}
-
-		protected async Task<bool> TryUpdateAsync<T>(T record, params Expression<Func<T, object>>[] setColumns)
-		{
-			try
-			{
-				using (var cn = GetConnection())
-				{
-					await cn.UpdateAsync(record, CurrentUser, setColumns);
-					SaveMessageType = ActionMessageType.Success;
-					SaveMessage = "Record was updated successfully.";
-					return true;
-				}
-			}
-			catch (Exception exc)
-			{
-				SaveMessageType = ActionMessageType.Error;
-				SaveMessage = exc.Message;
-				return false;
-			}
-		}
-
-		protected async Task<bool> TryDelete<T>(int id, string successMessage = null)
-		{
-			try
-			{
-				using (var cn = GetConnection())
-				{
-					await cn.DeleteAsync<T>(id, CurrentUser);
-					SaveMessageType = ActionMessageType.Success;
-					SaveMessage = successMessage;
-					return true;
-				}
-			}
-			catch (Exception exc)
-			{
-				SaveMessageType = ActionMessageType.Error;
-				SaveMessage = exc.Message;
-				return false;
-			}
+			Data.GetCurrentUser();
 		}
 	}
 }

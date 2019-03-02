@@ -9,7 +9,7 @@
 <p>Use Projects to group related ongoing work related to a feature area, goal, or some other unifying idea or objective.
     Projects do not have due dates or time frames. If you need to use due dates, use <a asp-route-page="/Setup/Milestones">Milestones</a>.</p>
 
-<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+@Html.ActionMessage(Model.Message)
 
 @{ 
     var grid = new GridEditor<Project>(this, Xsrf);

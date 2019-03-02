@@ -17,7 +17,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public void OnGet()
 		{
-			using (var cn = GetConnection())
+			using (var cn = Data.Open())
 			{
 				Milestones = new Milestones() { OrgId = CurrentOrg.Id }.Execute(cn);
 			}
@@ -26,13 +26,13 @@ namespace Ginseng.Mvc.Pages.Setup
 		public async Task<ActionResult> OnPostSave(Milestone record)
 		{
 			record.OrganizationId = CurrentOrg.Id;
-			await TrySaveAsync(record);
+			await Data.TrySaveAsync(record);
 			return RedirectToPage("/Setup/Milestones");
 		}
 
 		public	async Task<ActionResult> OnPostDelete(int id)
 		{
-			await TryDelete<Milestone>(id);
+			await Data.TryDelete<Milestone>(id);
 			return RedirectToPage("/Setup/Milestones");
 		}
 	}

@@ -28,7 +28,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 			WorkDays = WorkDay.WorkDays.ToArray();
 
-			using (var cn = GetConnection())
+			using (var cn = Data.Open())
 			{
 				MyOrgSelect = new MyOrgSelect() { UserId = CurrentUser.UserId }.ExecuteSelectList(cn, CurrentUser.OrganizationId);
 			}
@@ -65,7 +65,7 @@ namespace Ginseng.Mvc.Pages.Setup
 				fields.Add(nameof(OrganizationUser.IsRequest));
 			}
 
-			await TrySaveAsync(OrgUser, fields.ToArray(), "Record updated successfully.");
+			await Data.TrySaveAsync(OrgUser, fields.ToArray(), "Record updated successfully.");
 			
 			return RedirectToPage("/Setup/OrgUser");
 		}
@@ -73,7 +73,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		public async Task<ActionResult> OnPostSelectOrg(int orgId)
 		{
 			CurrentUser.OrganizationId = orgId;
-			await TryUpdateAsync(CurrentUser, r => r.OrganizationId);
+			await Data.TryUpdateAsync(CurrentUser, r => r.OrganizationId);
 			return RedirectToPage("/Setup/OrgUser");
 		}
 	}

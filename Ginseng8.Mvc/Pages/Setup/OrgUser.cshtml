@@ -14,7 +14,7 @@
     </select>
 </form>
 
-<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+@Html.ActionMessage(Model.Message)
 
 <form method="post">
     <div class="form-group">

@@ -17,7 +17,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public void OnGet(bool isActive = true)
 		{
-			using (var cn = GetConnection())
+			using (var cn = Data.Open())
 			{
 				Labels = new Labels() { OrgId = CurrentOrg.Id, IsActive = isActive }.Execute(cn);
 			}
@@ -26,13 +26,13 @@ namespace Ginseng.Mvc.Pages.Setup
 		public async Task<ActionResult> OnPostSave(Label label)
 		{
 			label.OrganizationId = CurrentOrg.Id;
-			await TrySaveAsync(label);
+			await Data.TrySaveAsync(label);
 			return RedirectToAction("/Setup/Labels");
 		}
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await TryDelete<Label>(id);
+			await Data.TryDelete<Label>(id);
 			return RedirectToAction("/Setup/Labels");
 		}
 	}

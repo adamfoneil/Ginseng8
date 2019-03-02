@@ -8,7 +8,7 @@
 <h4>Applications</h4>
 <p>Use Applications to define the different products your organization develops and supports.</p>
 
-<div class="alert @Model.AlertClass">@Model.SaveMessage</div>
+@Html.ActionMessage(Model.Message)
 
 @{ 
     var grid = new GridEditor<Application>(this, Xsrf);    

@@ -23,7 +23,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		public void OnGet()
 		{
 			Organization = CurrentOrg ?? new Organization();
-			using (var cn = GetConnection())
+			using (var cn = Data.Open())
 			{
 				MyOrgs = new MyOrgs() { UserId = CurrentUser.UserId }.Execute(cn);
 			}				
@@ -31,20 +31,20 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostAsync()
 		{
-			await TrySaveAsync(Organization, "Organization was updated succesfully.");			
+			await Data.TrySaveAsync(Organization, "Organization was updated succesfully.");			
 			return RedirectToPage("/Setup/Organization");
 		}
 
 		public async Task<ActionResult> OnPostSave(Organization org)
 		{
 			org.OwnerUserId = CurrentUser.UserId;
-			await TrySaveAsync(org);
+			await Data.TrySaveAsync(org);
 			return RedirectToPage("/Setup/Organization");
 		}
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await TryDelete<Organization>(id);
+			await Data.TryDelete<Organization>(id);
 			return RedirectToPage("/Setup/Organization");
 		}
 	}

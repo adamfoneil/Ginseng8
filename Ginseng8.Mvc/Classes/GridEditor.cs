@@ -104,7 +104,7 @@ namespace Ginseng.Mvc.Classes
 			jsArgsSave += ", " + (!string.IsNullOrEmpty(validationFunction) ? validationFunction : "null") + ", " + (!string.IsNullOrEmpty(OnActionCompleteCallback) ? OnActionCompleteCallback : "null");
 
 			string jsArgsInsert = jsArgsSave;
-			Dictionary<string, object> hiddenDefaults;
+			//Dictionary<string, object> hiddenDefaults;
 
 			if (IsSavedRow())
 			{

@@ -17,7 +17,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public void OnGet(bool isActive = true)
 		{
-			using (var cn = GetConnection())
+			using (var cn = Data.Open())
 			{
 				Projects = new Projects() { OrgId = CurrentOrg.Id, IsActive = isActive }.Execute(cn);
 			}
@@ -26,13 +26,13 @@ namespace Ginseng.Mvc.Pages.Setup
 		public async Task<ActionResult> OnPostSave(Project record)
 		{
 			record.OrganizationId = CurrentOrg.Id;
-			await TrySaveAsync(record);
+			await Data.TrySaveAsync(record);
 			return RedirectToPage("/Setup/Projects");
 		}
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await TryDelete<Project>(id);
+			await Data.TryDelete<Project>(id);
 			return RedirectToPage("/Setup/Projects");
 		}
 	}

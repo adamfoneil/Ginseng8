@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Conventions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System;
@@ -24,6 +25,7 @@ namespace Ginseng.Mvc
 		public Organization CurrentOrg { get; private set; }
 		public OrganizationUser CurrentOrgUser { get; private set; }
 
+		[TempData]
 		public ActionMessage ActionMessage { get; private set; }
 
 		public DataAccess(ClaimsPrincipal user, IConfiguration config)
@@ -32,9 +34,7 @@ namespace Ginseng.Mvc
 			_config = config;
 		}
 
-		public string OrgName => CurrentOrg?.Name ?? "(no org)";
-
-		public SqlConnection GetConnection()
+		public SqlConnection Open()
 		{
 			string connectionStr = _config.GetConnectionString("DefaultConnection");
 			return new SqlConnection(connectionStr);
@@ -42,7 +42,7 @@ namespace Ginseng.Mvc
 
 		public void GetCurrentUser()
 		{
-			using (var cn = GetConnection())
+			using (var cn = Open())
 			{
 				CurrentUser = cn.FindWhere<UserProfile>(new { userName = _user.Identity.Name });
 				if (CurrentUser.OrganizationId != null)
@@ -55,7 +55,7 @@ namespace Ginseng.Mvc
 
 		public async Task<T> FindAsync<T>(int id)
 		{
-			using (var cn = GetConnection())
+			using (var cn = Open())
 			{
 				return await cn.FindAsync<T>(id, CurrentUser);
 			}
@@ -65,7 +65,7 @@ namespace Ginseng.Mvc
 		{
 			try
 			{
-				using (var cn = GetConnection())
+				using (var cn = Open())
 				{
 					var update = AuditProperties(record, propertyNames);
 					await cn.SaveAsync(update.Item1, update.Item2);
@@ -84,7 +84,7 @@ namespace Ginseng.Mvc
 		{
 			try
 			{
-				using (var cn = GetConnection())
+				using (var cn = Open())
 				{
 					await cn.SaveAsync(record, CurrentUser);
 					SetSuccessMessage(successMessage);
@@ -102,7 +102,7 @@ namespace Ginseng.Mvc
 		{
 			try
 			{
-				using (var cn = GetConnection())
+				using (var cn = Open())
 				{
 					await cn.UpdateAsync(record, CurrentUser, setColumns);
 					ActionMessage = null;
@@ -120,7 +120,7 @@ namespace Ginseng.Mvc
 		{
 			try
 			{
-				using (var cn = GetConnection())
+				using (var cn = Open())
 				{
 					await cn.DeleteAsync<T>(id, CurrentUser);
 					SetSuccessMessage(successMessage);
@@ -156,7 +156,7 @@ namespace Ginseng.Mvc
 			ActionMessage = new ActionMessage()
 			{
 				Type = type,
-				Message = message
+				Content = message
 			};
 		}
 
