@@ -26,7 +26,7 @@ namespace Ginseng.Mvc.ViewComponents
 		{			
 			using (var cn = _data.GetConnection())
 			{
-				_data.Initialize(User, TempData);
+				_data.Initialize(cn, User, TempData);
 				AppSelect = await new AppSelect() { OrgId = _data.CurrentOrg.Id }.ExecuteSelectListAsync(cn);
 				ProjectSelect = await new ProjectSelect() { OrgId = _data.CurrentOrg.Id }.ExecuteSelectListAsync(cn);
 			}
