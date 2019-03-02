@@ -8,7 +8,7 @@
 <h4>Milestones</h4>
 <p>Use Milestones to define deadlines or any kind of due date or event, such as sprint dates, or perhaps customer-imposed deadlines.</p>
 
-@Html.ActionMessage(Model.Message)
+@Html.ActionAlert(Model.ActionMessage)
 
 @{ 
     var grid = new GridEditor<Milestone>(this, Xsrf);

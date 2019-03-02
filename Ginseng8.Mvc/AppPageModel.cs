@@ -29,9 +29,22 @@ namespace Ginseng.Mvc
 		protected UserProfile CurrentUser { get { return Data.CurrentUser; } }
 		protected OrganizationUser CurrentOrgUser { get { return Data.CurrentOrgUser; } }
 
-		[TempData]
-		public ActionMessage Message { get { return Data.ActionMessage; } }
+		public ActionMessage ActionMessage { get { return Data.ActionMessage; } }
 
+		[TempData]
+		public string ActionMessageContent
+		{
+			get { return Data.ActionMessage.Content; }
+			set { Data.ActionMessage.Content = value; }
+		}
+
+		[TempData]
+		public ActionMessageType ActionMessageType
+		{
+			get { return Data.ActionMessage.Type; }
+			set { Data.ActionMessage.Type = value; }
+		}
+		
 		public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
 		{
 			base.OnPageHandlerExecuting(context);

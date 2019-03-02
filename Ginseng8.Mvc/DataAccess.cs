@@ -1,10 +1,8 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Conventions;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
@@ -25,8 +23,7 @@ namespace Ginseng.Mvc
 		public Organization CurrentOrg { get; private set; }
 		public OrganizationUser CurrentOrgUser { get; private set; }
 
-		[TempData]
-		public ActionMessage ActionMessage { get; private set; }
+		public ActionMessage ActionMessage { get; set; }
 
 		public DataAccess(ClaimsPrincipal user, IConfiguration config)
 		{
@@ -42,6 +39,8 @@ namespace Ginseng.Mvc
 
 		public void GetCurrentUser()
 		{
+			if (_user == null) return;
+
 			using (var cn = Open())
 			{
 				CurrentUser = cn.FindWhere<UserProfile>(new { userName = _user.Identity.Name });
@@ -134,32 +133,6 @@ namespace Ginseng.Mvc
 			}
 		}
 
-		private void SetErrorMessage(Exception exception)
-		{
-			SetMessage(ActionMessageType.Error, exception.Message);
-		}
-
-		private void SetSuccessMessage(string message)
-		{
-			if (string.IsNullOrEmpty(message))
-			{
-				ActionMessage = null;
-			}
-			else
-			{
-				SetMessage(ActionMessageType.Success, message);
-			}
-		}
-
-		private void SetMessage(ActionMessageType type, string message)
-		{
-			ActionMessage = new ActionMessage()
-			{
-				Type = type,
-				Content = message
-			};
-		}
-
 		/// <summary>
 		/// Sets the audit tracking fields when we're updating dynamic columns
 		/// </summary>
@@ -183,6 +156,32 @@ namespace Ginseng.Mvc
 			}
 
 			return (record, properties.ToArray());
+		}
+
+		private void SetSuccessMessage(string message)
+		{
+			if (string.IsNullOrEmpty(message))
+			{
+				ActionMessage = null;
+			}
+			else
+			{
+				SetMessage(ActionMessageType.Success, message);
+			}
+		}
+
+		private void SetErrorMessage(Exception exception)
+		{
+			SetMessage(ActionMessageType.Error, exception.Message);
+		}
+
+		private void SetMessage(ActionMessageType type, string message)
+		{
+			ActionMessage = new ActionMessage()
+			{
+				Type = type,
+				Content = message
+			};
 		}
 	}
 }

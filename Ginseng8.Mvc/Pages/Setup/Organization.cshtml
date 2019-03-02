@@ -8,7 +8,7 @@
 <h4>Organization</h4>
 <p>If you're the owner of this organization, you can make changes to it.</p>
 
-@Html.ActionMessage(Model.Message)
+@Html.ActionAlert(Model.ActionMessage)
 
 <form method="post">
     <input asp-for="Organization.Id" type="hidden"/>

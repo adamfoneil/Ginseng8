@@ -9,7 +9,7 @@ namespace Ginseng.Mvc.Helpers
 		/// <summary>
 		/// Conveys a success or error message in a Bootstrap alert div
 		/// </summary>											 
-		public static IHtmlContent ActionMessage<T>(this IHtmlHelper<T> html, ActionMessage message)
+		public static IHtmlContent ActionAlert<T>(this IHtmlHelper<T> html, ActionMessage message)
 		{
 			if (message == null) return null;
 
