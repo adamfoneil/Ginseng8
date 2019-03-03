@@ -8,7 +8,7 @@ namespace Ginseng.Mvc.Pages.Work
 	{
 		public AllItemsModel(IConfiguration config) : base(config)
 		{
-		}
+		}		
 
 		public void OnGet()
 		{

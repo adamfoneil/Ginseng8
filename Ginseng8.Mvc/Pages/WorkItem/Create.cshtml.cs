@@ -1,5 +1,4 @@
 ﻿using Ginseng.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -15,12 +14,17 @@ namespace Ginseng.Mvc.Pages.WorkItems
 
 		public async Task OnPostAsync(WorkItem workItem)
 		{
-			workItem.Number = 0; // make sure incoming number has not been set
+			// make sure incoming number has not been set so that SetNumber method works
+			workItem.Number = 0; 
+
+			// make sure item is part of this org
 			workItem.OrganizationId = Data.CurrentOrg.Id;
+
 			await Data.TrySaveAsync(workItem, async (cn, r) =>
 			{
 				await r.SetNumber(cn);
 			});
+
 			WorkItem = workItem;
 		}
 	}

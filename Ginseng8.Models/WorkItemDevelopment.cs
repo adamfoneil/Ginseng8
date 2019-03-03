@@ -33,8 +33,12 @@ namespace Ginseng.Models
 		[References(typeof(WorkItemSize))]
 		public int? SizeId { get; set; }
 
-		[Column(TypeName = "date")]
-		public DateTime? TargetDate { get; set; }
+		/// <summary>
+		/// Item-specific estimate (overrides WorkItemSize.WorkDays)
+		/// </summary>
+		public int? EstimateDays { get; set; }
+
+		public int? Priority { get; set; }
 
 		public string HtmlBody { get; set; }
 

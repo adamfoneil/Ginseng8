@@ -26,6 +26,6 @@ namespace Ginseng.Models
 		/// <summary>
 		/// Number of days expected for this work item
 		/// </summary>
-		public int WorkDays { get; set; }
+		public int EstimateDays { get; set; }
 	}
 }
