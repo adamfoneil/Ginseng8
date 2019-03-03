@@ -3,12 +3,10 @@ using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Queries
 {
-	public class WorkItemsResult
+	public class AllWorkItemsResult
 	{
 		public int Id { get; set; }
 		public int Number { get; set; }
@@ -25,18 +23,19 @@ namespace Ginseng.Mvc.Queries
 		public int? MilestoneDaysAway { get; set; }
 		public int? CloseReasonId { get; set; }
 		public string CloseReasonName { get; set; }
+		public string ActivityName { get; set; }
 		public string OwnerName { get; set; }
 		public string DeveloperName { get; set; }
 		public string WorkItemSize { get; set; }
 		public int? DeveloperUserId { get; set; }
 		public int? DevelopmentPriority { get; set; }
-		public int? EstimateDays { get; set; }
+		public int? EstimateHours { get; set; }
 	}
 
-	public class WorkItems : Query<WorkItemsResult>, ITestableQuery
+	public class AllWorkItems : Query<AllWorkItemsResult>, ITestableQuery
 	{
-		public WorkItems() : base(
-			@"SELECT 
+		public AllWorkItems() : base(
+			@"SELECT
 				[wi].[Id],
 				[wi].[Number],
 				[wi].[Title],
@@ -45,14 +44,15 @@ namespace Ginseng.Mvc.Queries
 				[wi].[ApplicationId], [app].[Name] AS [ApplicationName],
 				[wi].[ProjectId], [p].[Name] AS [ProjectName],
 				[wi].[MilestoneId], [ms].[Name] AS [MilestoneName], [ms].[Date] AS [MilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
-				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],           
+				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
+				[act].[Name] AS [ActivityName],
 				COALESCE([owner_ou].[DisplayName], [ousr].[UserName]) AS [OwnerName],
 				COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperName],
 				[sz].[Name] AS [WorkItemSize],
-				[wid].[UserId] AS [DeveloperUserId],    
+				[wid].[UserId] AS [DeveloperUserId],
 				[wid].[Priority] AS [DevelopmentPriority],
 				COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) AS [EstimateHours]
-			FROM 
+			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
@@ -60,7 +60,7 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
 				LEFT JOIN [app].[CloseReason] [cr] ON [wi].[CloseReasonId]=[cr].[Id]
 				LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
-				LEFT JOIN [dbo].[OrganizationUser] [owner_ou] ON 
+				LEFT JOIN [dbo].[OrganizationUser] [owner_ou] ON
 					[wi].[OrganizationId]=[owner_ou].[OrganizationId] AND
 					[wi].[OwnerUserId]=[owner_ou].[UserId]
 				LEFT JOIN [dbo].[AspNetUsers] [ousr] ON [wi].[OwnerUserId]=[ousr].[UserId]
@@ -80,7 +80,7 @@ namespace Ginseng.Mvc.Queries
 
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
-			yield return new WorkItems() { OrgId = 0 };
+			yield return new AllWorkItems() { OrgId = 0 };
 		}
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)

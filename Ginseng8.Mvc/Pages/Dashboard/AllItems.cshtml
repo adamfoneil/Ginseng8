@@ -6,3 +6,22 @@
 
 <h4>All Items</h4>
 
+<table class="table">
+    <tr>
+        <th>App</th>
+        <th>Project</th>        
+        <th>Title</th>
+        <th>Activity</th><!--if open then current activity and assigned person, or close reason or "backlog"-->
+        <th>Estimate</th><!--est hours and target date-->
+    </tr>
+    @foreach (var item in Model.WorkItems)
+    {
+        <tr>
+            <td>@item.ApplicationName</td>
+            <td>@item.ProjectName</td>            
+            <td><span class="text-muted">@item.Number </span>@item.Title</td>
+            <td>@item.ActivityName</td>
+            <td>@item.EstimateHours</td>            
+        </tr>
+    }
+</table>

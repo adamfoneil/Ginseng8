@@ -20,6 +20,9 @@ namespace Ginseng.Models
 		[MaxLength(255)]
 		public string Description { get; set; }
 
+		[References(typeof(Responsibility))]
+		public int ResponsibilityId { get; set; }
+
 		/// <summary>
 		/// Overall order of activity
 		/// </summary>
