@@ -19,6 +19,7 @@ namespace Ginseng.Mvc.Pages.Work
 		public IEnumerable<Activity> Activities { get; set; }
 		public IEnumerable<WorkItemSize> Sizes { get; set; }
 		public IEnumerable<CloseReason> CloseReasons { get; set; }
+		public IEnumerable<Milestone> Milestones { get; set; }
 
 		public async Task OnGetAsync()
 		{
@@ -28,6 +29,7 @@ namespace Ginseng.Mvc.Pages.Work
 				Activities = await new Activities() { OrgId = Data.CurrentOrg.Id, IsActive = true }.ExecuteAsync(cn);
 				Sizes = await new WorkItemSizes() { OrgId = Data.CurrentOrg.Id }.ExecuteAsync(cn);
 				CloseReasons = await new CloseReasons().ExecuteAsync(cn);
+				Milestones = await new Milestones() { OrgId = Data.CurrentOrg.Id }.ExecuteAsync(cn);
 			}
 		}
 	}

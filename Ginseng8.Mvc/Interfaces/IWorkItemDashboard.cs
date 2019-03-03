@@ -9,6 +9,7 @@ namespace Ginseng.Mvc.Interfaces
 		IEnumerable<AllWorkItemsResult> WorkItems { get; }
 		IEnumerable<Activity> Activities { get; }
 		IEnumerable<WorkItemSize> Sizes { get; }
-		IEnumerable<CloseReason> CloseReasons { get; set; }
+		IEnumerable<CloseReason> CloseReasons { get; }
+		IEnumerable<Milestone> Milestones { get; }
 	}
 }

@@ -12,6 +12,7 @@
         <th>Title</th>
         <th>Estimate</th>
         <th>Activity</th>        
+        <th>Milestone</th>
     </tr>
     @foreach (var item in Model.WorkItems)
     {
@@ -25,7 +26,8 @@
             </td>
             <td><partial name="Items/_Title" model="item"/></td>
             <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Sizes }"/></td>
-            <td><partial name="Items/_Activity" model="new DashboardActivityField() { Item = item, Activities = Model.Activities, CloseReasons = Model.CloseReasons }"/></td>            
+            <td><partial name="Items/_Activity" model="new DashboardActivityField() { Item = item, Activities = Model.Activities, CloseReasons = Model.CloseReasons }"/></td>
+            <td><partial name="Items/_Milestone" model="new DashboardMilestoneField() { Item = item, Milestones = Model.Milestones }"/></td>
         </tr>
     }
 </table>
