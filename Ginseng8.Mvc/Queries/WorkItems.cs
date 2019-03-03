@@ -51,7 +51,7 @@ namespace Ginseng.Mvc.Queries
 				[sz].[Name] AS [WorkItemSize],
 				[wid].[UserId] AS [DeveloperUserId],    
 				[wid].[Priority] AS [DevelopmentPriority],
-				COALESCE([wid].[EstimateDays], [sz].[EstimateDays]) AS [EstimateDays]
+				COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) AS [EstimateHours]
 			FROM 
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]

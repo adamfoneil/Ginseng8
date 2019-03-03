@@ -24,8 +24,8 @@ namespace Ginseng.Models
 		public string Description { get; set; }
 
 		/// <summary>
-		/// Number of days expected for this work item
+		/// Number of hours expected for this work item
 		/// </summary>
-		public int EstimateDays { get; set; }
+		public int EstimateHours { get; set; }
 	}
 }

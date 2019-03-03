@@ -34,9 +34,9 @@ namespace Ginseng.Models
 		public int? SizeId { get; set; }
 
 		/// <summary>
-		/// Item-specific estimate (overrides WorkItemSize.WorkDays)
+		/// Item-specific estimate (overrides WorkItemSize.EstimateHours)
 		/// </summary>
-		public int? EstimateDays { get; set; }
+		public int? EstimateHours { get; set; }
 
 		public int? Priority { get; set; }
 
