@@ -8,20 +8,24 @@
 
 <table class="table">
     <tr>
-        <th>App</th>
-        <th>Project</th>        
+        <th>App / Project</th>
         <th>Title</th>
-        <th>Activity</th><!--if open then current activity and assigned person, or close reason or "backlog"-->
-        <th>Estimate</th><!--est hours and target date-->
+        <th>Estimate</th>
+        <th>Activity</th>        
     </tr>
     @foreach (var item in Model.WorkItems)
     {
         <tr>
-            <td>@item.ApplicationName</td>
-            <td>@item.ProjectName</td>            
-            <td><span class="text-muted">@item.Number </span>@item.Title</td>
-            <td>@item.ActivityName</td>
-            <td>@item.EstimateHours</td>            
+            <td>
+                @item.ApplicationName
+                @if (item.ProjectId.HasValue)
+                {
+                    <span> / @item.ProjectName</span>
+                }
+            </td>
+            <td><partial name="Items/_Title" model="item"/></td>
+            <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Sizes }"/></td>
+            <td><partial name="Items/_Activity" model="new DashboardActivityField() { Item = item, Activities = Model.Activities }"/></td>            
         </tr>
     }
 </table>

@@ -18,6 +18,7 @@
     <tr>
         <th>Size Name</th>
         <th>Max Hours</th>
+        <th>Description</th>
         <th></th>
     </tr>
     @foreach (var item in Model.WorkItemSizes)
@@ -25,12 +26,14 @@
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.EstimateHours, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.EstimateHours, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
         <td>@grid.Controls()</td>
     </tr>
 </table>

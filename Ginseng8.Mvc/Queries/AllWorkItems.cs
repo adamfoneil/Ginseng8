@@ -23,13 +23,17 @@ namespace Ginseng.Mvc.Queries
 		public int? MilestoneDaysAway { get; set; }
 		public int? CloseReasonId { get; set; }
 		public string CloseReasonName { get; set; }
+		public int? ActivityId { get; set; }		
 		public string ActivityName { get; set; }
 		public string OwnerName { get; set; }
 		public string DeveloperName { get; set; }
+		public string ResponsibleName { get; set; }
 		public string WorkItemSize { get; set; }
 		public int? DeveloperUserId { get; set; }
 		public int? DevelopmentPriority { get; set; }
-		public int? EstimateHours { get; set; }
+		public int? SizeId { get; set; }
+		public int? DevEstimateHours { get; set; }		
+		public int? SizeEstimateHours { get; set; }
 	}
 
 	public class AllWorkItems : Query<AllWorkItemsResult>, ITestableQuery
@@ -45,18 +49,26 @@ namespace Ginseng.Mvc.Queries
 				[wi].[ProjectId], [p].[Name] AS [ProjectName],
 				[wi].[MilestoneId], [ms].[Name] AS [MilestoneName], [ms].[Date] AS [MilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
 				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
+				[wi].[ActivityId],
 				[act].[Name] AS [ActivityName],
 				COALESCE([owner_ou].[DisplayName], [ousr].[UserName]) AS [OwnerName],
 				COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperName],
+				CASE [act].[ResponsibilityId]
+					WHEN 1 THEN COALESCE([owner_ou].[DisplayName], [ousr].[UserName])
+					WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
+				END AS [ResponsibleName],
 				[sz].[Name] AS [WorkItemSize],
 				[wid].[UserId] AS [DeveloperUserId],
 				[wid].[Priority] AS [DevelopmentPriority],
-				COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) AS [EstimateHours]
+				[wid].[SizeId],
+				[wid].[EstimateHours] AS [DevEstimateHours],
+				[sz].[EstimateHours] AS [SizeEstimateHours]				
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
 				LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
+				LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
 				LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
 				LEFT JOIN [app].[CloseReason] [cr] ON [wi].[CloseReasonId]=[cr].[Id]
 				LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
@@ -72,7 +84,9 @@ namespace Ginseng.Mvc.Queries
 			WHERE
 				[wi].[OrganizationId]=@orgId
 			ORDER BY
-				COALESCE([wid].[Priority], [wi].[Priority]), [wi].[Number]")
+				[p].[Priority],
+				COALESCE([wid].[Priority], [wi].[Priority]), 
+				[wi].[Number]")
 		{
 		}
 
