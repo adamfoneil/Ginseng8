@@ -210,6 +210,56 @@ namespace Ginseng.Mvc.Classes
 			return null;
 		}
 
+		public object DropDownList<TValue>(Expression<Func<TRecord, TValue>> expression, SelectList selectList, object htmlAttributes = null)
+		{
+			string propertyName = PropertyNameFromLambda(expression);
+			if (!_propertyNames.Contains(propertyName)) _propertyNames.Add(propertyName);
+
+			var select = new TagBuilder("select");
+			select.MergeAttribute("name", propertyName);
+			select.MergeAttribute("id", ControlId(propertyName));
+			if (htmlAttributes != null) select.MergeAttributes(new RouteValueDictionary(htmlAttributes));
+
+			if (IsSavedRow())
+			{
+				var function = expression.Compile();
+				var value = function.Invoke(_record);				
+				BuildOptions(select, selectList, value, out string displayValue);
+				WriteSpans(propertyName, select, displayValue);
+			}
+			else
+			{
+				object defaultValue;
+				DefaultValueExists(propertyName, out defaultValue);
+				BuildOptions(select, selectList, defaultValue, out string displayValue);
+				select.WriteTo(_writer, _encoder);
+			}
+
+			return null;
+		}
+
+		private void BuildOptions(TagBuilder select, SelectList selectList, object selectedValue, out string displayValue)
+		{
+			displayValue = selectedValue?.ToString();
+
+			var blankOption = new TagBuilder("option");
+			blankOption.InnerHtml.Append("(select)");
+			select.InnerHtml.AppendHtml(blankOption);
+
+			foreach (SelectListItem item in selectList.Items)
+			{
+				var option = new TagBuilder("option");
+				option.MergeAttribute("value", item.Value);
+				if (item.Value.Equals(selectedValue?.ToString() ?? string.Empty))
+				{
+					option.MergeAttribute("selected", "true");
+					displayValue = item.Text;
+				}
+				option.InnerHtml.Append(item.Text);
+				select.InnerHtml.AppendHtml(option);
+			}
+		}
+
 		#endregion
 
 		/// <summary>

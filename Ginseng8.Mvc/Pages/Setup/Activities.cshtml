@@ -10,7 +10,8 @@
     usually means <strong>Development</strong>, <strong>Testing</strong>, and <strong>Deployment</strong>.
     Use <a href="/Setup/OrgUser">Org Settings</a> to setup monitoring on Activities you normally do.</p>
 
-<p>Activities have an Order that defines the forward path through your workflow.</p>
+<p>Use the <strong>Order</strong> column to define the forward path through your workflow. Use the <strong>Responsibility</strong>
+    column to indicate which party is responsible for that activity.</p>
 
 @Html.ActionAlert(TempData)
 
@@ -22,6 +23,7 @@
     <tr>
         <th>Activity Name</th>
         <th>Description</th>
+        <th>Responsibility</th>
         <th>Order</th>
         <th></th>
     </tr>
@@ -30,6 +32,7 @@
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+            <td>@grid.DropDownList(m => m.ResponsibilityId, Model.ResponsibilitySelect, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Order, new { @class = "form-control", style = "width:90px" })</td>
             <td>@grid.Controls()</td>
         </tr>
@@ -37,6 +40,7 @@
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+        <td>@grid.DropDownList(m => m.ResponsibilityId, Model.ResponsibilitySelect, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Order, new { @class = "form-control", style = "width:90px" })</td>
         <td>@grid.Controls()</td>
     </tr>

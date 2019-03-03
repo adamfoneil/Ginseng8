@@ -1,6 +1,8 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,6 +15,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 		}
 
+		public SelectList ResponsibilitySelect { get; set; }
 		public IEnumerable<Activity> Activities { get; set; }
 
 		public void OnGet(bool isActive = true)
@@ -20,6 +23,7 @@ namespace Ginseng.Mvc.Pages.Setup
 			using (var cn = Data.GetConnection())
 			{
 				Activities = new Activities() { OrgId = CurrentOrg.Id, IsActive = isActive }.Execute(cn);
+				ResponsibilitySelect = new ResponsibilitySelect().ExecuteSelectList(cn);
 			}
 		}
 
