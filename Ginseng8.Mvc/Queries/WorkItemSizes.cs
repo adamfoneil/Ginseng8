@@ -9,7 +9,7 @@ namespace Ginseng.Mvc.Queries
 			@"SELECT *
 			FROM [dbo].[WorkItemSize]
 			WHERE [OrganizationId]=@orgId
-			ORDER BY [WorkDays]")
+			ORDER BY [EstimateHours]")
 		{
 		}
 
