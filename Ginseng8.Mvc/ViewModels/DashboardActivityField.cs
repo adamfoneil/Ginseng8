@@ -8,5 +8,6 @@ namespace Ginseng.Mvc.ViewModels
 	{
 		public AllWorkItemsResult Item { get; set; }
 		public IEnumerable<Activity> Activities { get; set; }
+		public IEnumerable<CloseReason> CloseReasons { get; set; }
 	}
 }

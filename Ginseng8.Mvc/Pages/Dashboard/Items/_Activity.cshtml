@@ -1,21 +1,37 @@
 ﻿@model DashboardActivityField
 
 <div id="Activity-@Model.Item.Number">
-@if (Model.Item.ActivityId.HasValue)
-{
-    <span>@Model.Item.ActivityName</span>
-    <span> - </span>
-    <span>@Model.Item.ResponsibleName</span>
-}
-else
-{
-    <span class="text-muted">Unassigned</span>
-    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">I'll start</button>
-    <div class="dropdown-menu">
-        @foreach (var act in Model.Activities)
+    @if (!Model.Item.CloseReasonId.HasValue)
+    {
+        if (Model.Item.ActivityId.HasValue)
         {
-            <a class="dropdown-item" href="#" title="@act.Description">@act.Name</a>
+            <span>@Model.Item.ActivityName</span>
+            <span> - </span>
+            <span>@Model.Item.ResponsibleName</span>
+
+            <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Close</button>
+            <div class="dropdown-menu">
+                @foreach (var cr in Model.CloseReasons)
+                {
+                    <a class="dropdown-item" href="#">@cr.Name</a>
+                }
+            </div>
         }
-    </div>
+        else            
+        {
+            <span class="text-muted">Unassigned</span>
+            <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">I'll start</button>
+            <div class="dropdown-menu">
+                @foreach (var act in Model.Activities)
+                {
+                    <a class="dropdown-item" href="#" title="@act.Description">@act.Name</a>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <span>Closed: @Model.Item.CloseReasonName</span>
+    }
 }
 </div>

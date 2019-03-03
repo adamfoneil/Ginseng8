@@ -18,6 +18,7 @@ namespace Ginseng.Mvc.Pages.Work
 		public IEnumerable<AllWorkItemsResult> WorkItems { get; set; }
 		public IEnumerable<Activity> Activities { get; set; }
 		public IEnumerable<WorkItemSize> Sizes { get; set; }
+		public IEnumerable<CloseReason> CloseReasons { get; set; }
 
 		public async Task OnGetAsync()
 		{
@@ -26,6 +27,7 @@ namespace Ginseng.Mvc.Pages.Work
 				WorkItems = await new AllWorkItems() { OrgId = Data.CurrentOrg.Id }.ExecuteAsync(cn);
 				Activities = await new Activities() { OrgId = Data.CurrentOrg.Id, IsActive = true }.ExecuteAsync(cn);
 				Sizes = await new WorkItemSizes() { OrgId = Data.CurrentOrg.Id }.ExecuteAsync(cn);
+				CloseReasons = await new CloseReasons().ExecuteAsync(cn);
 			}
 		}
 	}
