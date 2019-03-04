@@ -57,6 +57,19 @@ namespace Ginseng.Mvc
 			}			
 		}
 
+		public async Task<T> FindWhereAsync<T>(SqlConnection connection, object criteria)
+		{
+			return await connection.FindWhereAsync<T>(criteria, CurrentUser);
+		}
+
+		public async Task<T> FindWhereAsync<T>(object criteria)
+		{
+			using (var cn = GetConnection())
+			{
+				return await cn.FindWhereAsync<T>(criteria, CurrentUser);
+			}
+		}
+
 		public async Task<T> FindAsync<T>(int id)
 		{
 			using (var cn = GetConnection())
@@ -76,6 +89,22 @@ namespace Ginseng.Mvc
 					SetSuccessMessage(successMessage);
 					return true;
 				}
+			}
+			catch (Exception exc)
+			{
+				SetErrorMessage(exc);
+				return false;
+			}
+		}
+
+		public async Task<bool> TrySaveAsync<T>(SqlConnection connection, T record, Action<SqlConnection, T> beforeSave = null, string successMessage = null)
+		{
+			try
+			{
+				beforeSave?.Invoke(connection, record);
+				await connection.SaveAsync(record, CurrentUser);
+				SetSuccessMessage(successMessage);
+				return true;
 			}
 			catch (Exception exc)
 			{

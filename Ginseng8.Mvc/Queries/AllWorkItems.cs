@@ -1,4 +1,5 @@
 ﻿using Postulate.Base;
+using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -82,7 +83,7 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wid].[UserId]=[dusr].[UserId]
 				LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wid].[SizeId]=[sz].[Id]
 			WHERE
-				[wi].[OrganizationId]=@orgId
+				[wi].[OrganizationId]=@orgId {andWhere}
 			ORDER BY
 				[p].[Priority],
 				COALESCE([wid].[Priority], [wi].[Priority]), 
@@ -91,6 +92,9 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+		[Where("[wi].[Number]=@number")]
+		public int? Number { get; set; }
 
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{

@@ -3,13 +3,12 @@
 <div id="Milestone-@Model.Item.Number">
     @if (Model.Item.MilestoneId.HasValue)
     {
-        <span>@Html.FormatValue(Model.Item.MilestoneDate, "{0:ddd M/d}")</span>
+        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="@Model.Item.MilestoneDaysAway day(s) away">@Html.FormatValue(Model.Item.MilestoneDate, "{0:ddd M/d}")</button>
     }
     else
     {
-        <span class="text-muted">No milestone</span>
-    }
-    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Select</button>
+        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">No milestone</button>
+    }    
     <div class="dropdown-menu">
         @foreach (var ms in Model.Milestones)
         {

@@ -27,6 +27,15 @@
 
 @RenderBody()
 
+<div style="display:none">
+
+<form method="post" id="frmSetMilestone">
+    <input type="hidden" name="number"/>
+    <input type="hidden" name="milestoneId"/>
+</form>
+
+</div>
+
 @section Scripts {
     @RenderSection("Scripts", false)
     <script src="~/js/NewItem.js"></script>

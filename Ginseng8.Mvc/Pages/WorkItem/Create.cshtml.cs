@@ -1,8 +1,7 @@
-﻿using Ginseng.Models;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
-namespace Ginseng.Mvc.Pages.WorkItems
+namespace Ginseng.Mvc.Pages.WorkItem
 {
 	public class CreateModel : AppPageModel
 	{
@@ -10,12 +9,12 @@ namespace Ginseng.Mvc.Pages.WorkItems
 		{
 		}
 
-		public WorkItem WorkItem { get; private set; }
+		public Models.WorkItem WorkItem { get; private set; }
 
-		public async Task OnPostAsync(WorkItem workItem)
+		public async Task OnPostAsync(Models.WorkItem workItem)
 		{
 			// make sure incoming number has not been set so that SetNumber method works
-			workItem.Number = 0; 
+			workItem.Number = 0;
 
 			// make sure item is part of this org
 			workItem.OrganizationId = Data.CurrentOrg.Id;
