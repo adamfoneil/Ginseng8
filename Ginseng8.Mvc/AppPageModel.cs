@@ -27,6 +27,11 @@ namespace Ginseng.Mvc
 		public int OrgId { get { return CurrentUser?.OrganizationId ?? 0; } }
 		public DateTime LocalTime { get { return CurrentUser.LocalTime; } }
 
+		protected bool IsMyResponsibility(int responsibilityId)
+		{
+			throw new NotImplementedException();
+		}
+
 		public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
 		{
 			base.OnPageHandlerExecuting(context);
