@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Attributes;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace Ginseng.Mvc.Pages.Setup
 {
 	[Authorize]
+	[OrgNotRequired]
 	public class OrganizationModel : AppPageModel
 	{				
 		public OrganizationModel(IConfiguration config) : base(config)
@@ -18,10 +20,14 @@ namespace Ginseng.Mvc.Pages.Setup
 		[BindProperty]
 		public Organization Organization { get; set; }
 
+		public bool MustCreateOrg { get; set; }
+
 		public IEnumerable<Organization> MyOrgs { get; set; }
 
-		public void OnGet()
+		public void OnGet(bool mustCreate = false)
 		{
+			if (mustCreate) MustCreateOrg = true;
+
 			Organization = CurrentOrg ?? new Organization();
 			using (var cn = Data.GetConnection())
 			{

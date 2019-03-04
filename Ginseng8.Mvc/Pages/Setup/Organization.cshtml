@@ -10,6 +10,14 @@
 
 @Html.ActionAlert(TempData)
 
+@if (Model.MustCreateOrg)
+{
+    <div class="alert alert-info">
+        You were redirected here because you need to create an Organization record to hold all your data.
+        Please give a name to your organization here and click Save below.
+    </div>
+}
+
 <form method="post">
     <input asp-for="Organization.Id" type="hidden"/>
 
