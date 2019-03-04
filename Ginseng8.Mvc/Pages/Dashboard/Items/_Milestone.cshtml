@@ -14,5 +14,6 @@
         {
             <a class="dropdown-item setMilestone" href="javascript:void" data-number="@Model.Item.Number" data-milestone-id="@ms.Id">@Html.FormatValue(ms.Date, "{0:M/d}") - @ms.Name</a>
         }
+        <a class="dropdown-item setMilestone" href="javascript:void" data-number="@Model.Item.Number" data-milestone-id="0">Clear Milestone</a>
     </div>
 </div>

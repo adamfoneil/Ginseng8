@@ -7,22 +7,17 @@ milestoneLinks.forEach(function (e) {
         var frm = document.getElementById("frmSetMilestone");
         frm.number.value = number;
         frm.milestoneId.value = msId;
-        frm.submit();
+
+        let formData = new FormData(frm);
+        fetch('/WorkItem/SetMilestone', {
+            method: 'post',
+            body: new URLSearchParams(formData)
+        }).then(function (response) {
+            response.text().then(function (text) {
+                var output = document.getElementById("Milestone-" + number);
+                output.innerHTML = text;
+            });
+        });
+
     });
 });
-
-var frmMilestone = document.getElementById("frmSetMilestone");
-frmMilestone.onsubmit = () => {
-    var msId = frmMilestone.milestoneId.value;
-    let formData = new FormData(frmMilestone);
-    fetch('/WorkItem/SetMilestone', {
-        method: 'post',
-        body: new URLSearchParams(formData)
-    }).then(function (response) {
-        response.text().then(function (text) {
-            var output = document.getElementById("Milestone-" + msId);
-            output.innerHTML = text;
-        });
-    });
-    return false;
-};

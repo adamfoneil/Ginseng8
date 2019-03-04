@@ -19,11 +19,24 @@ namespace Ginseng.Mvc.Pages.WorkItem
 			using (var cn = Data.GetConnection())
 			{
 				var item = await Data.FindWhereAsync<Models.WorkItem>(cn, new { OrganizationId = Data.CurrentOrg.Id, Number = number });
-				var ms = await Data.FindWhereAsync<Milestone>(cn, new { OrganizationId = Data.CurrentOrg.Id, Id = milestoneId });
 
-				if (item != null && ms != null)
+				Milestone ms = null;
+				if (milestoneId != 0)
 				{
-					item.MilestoneId = ms.Id;
+					ms = await Data.FindWhereAsync<Milestone>(cn, new { OrganizationId = Data.CurrentOrg.Id, Id = milestoneId });
+				}				
+
+				if (item != null)
+				{
+					if (ms != null)
+					{
+						item.MilestoneId = ms.Id;
+					}
+					else
+					{
+						item.MilestoneId = null;
+					}
+					 
 					await Data.TrySaveAsync(cn, item);
 				}
 
