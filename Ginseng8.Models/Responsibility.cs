@@ -23,12 +23,15 @@ namespace Ginseng.Models
 		/// </summary>
 		public string SourceExpression { get; set; }
 
+		[DefaultExpression("0")]
+		public int Flag { get; set; }
+
 		public static DataTable GetSeedData()
 		{
 			return new Responsibility[]
 			{
-				new Responsibility() { Name = "Business", SourceExpression = "OwnerName"},
-				new Responsibility() { Name = "Development", SourceExpression = "DeveloperName" }
+				new Responsibility() { Name = "Business", SourceExpression = "OwnerName", Flag = 1 },
+				new Responsibility() { Name = "Development", SourceExpression = "DeveloperName", Flag = 2 }
 			}.ToDataTable(new SqlServerIntegrator(), excludeIdentity: true);
 		}
 	}

@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,14 +24,16 @@ namespace Ginseng.Mvc.Pages.Setup
 		public OrganizationUser OrgUser { get; set; }
 
 		public WorkDay[] WorkDays { get; set; }
+		public IEnumerable<Responsibility> Responsibilities { get; set; }
 
 		public void OnGet()
 		{
-			WorkDays = WorkDay.WorkDays.ToArray();
+			WorkDays = WorkDay.WorkDays.ToArray();			
 
 			using (var cn = Data.GetConnection())
 			{
 				MyOrgSelect = new MyOrgSelect() { UserId = CurrentUser.UserId }.ExecuteSelectList(cn, CurrentUser.OrganizationId);
+				Responsibilities = new Responsibilities().Execute(cn);
 			}
 
 			OrgUser = CurrentOrgUser ?? new OrganizationUser()
@@ -42,12 +45,13 @@ namespace Ginseng.Mvc.Pages.Setup
 			};
 		}
 
-		public async Task<ActionResult> OnPostAsync(int[] selectedWorkDays)
+		public async Task<ActionResult> OnPostAsync(int[] selectedWorkDays, int[] selectedResponsibilities)
 		{
 			OrgUser.Id = CurrentOrgUser?.Id ?? 0;
 			OrgUser.OrganizationId = CurrentOrg.Id;
 			OrgUser.UserId = CurrentUser.UserId;
-			OrgUser.WorkDays = selectedWorkDays?.Sum() ?? 0;			
+			OrgUser.WorkDays = selectedWorkDays?.Sum() ?? 0;
+			OrgUser.Responsibilities = selectedResponsibilities?.Sum() ?? 0;
 
 			var fields = new string[]
 			{
@@ -56,7 +60,8 @@ namespace Ginseng.Mvc.Pages.Setup
 				nameof(OrganizationUser.DisplayName),
 				nameof(OrganizationUser.MaxWorkInProgress),
 				nameof(OrganizationUser.DailyWorkHours),
-				nameof(OrganizationUser.WorkDays)				
+				nameof(OrganizationUser.WorkDays),
+				nameof(OrganizationUser.Responsibilities)
 			}.ToList();			
 
 			if (OrgUser.Id == 0)

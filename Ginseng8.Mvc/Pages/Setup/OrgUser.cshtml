@@ -56,6 +56,24 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-12">
+            <label>Responsibilities:</label>
+            <input type="hidden" asp-for="OrgUser.Responsibilities"/>
+            <ul class="list-inline">
+                @foreach (var r in Model.Responsibilities)
+                {
+                    <li class="list-inline-item">
+                        <label>
+                            @r.Name
+                            <input type="checkbox" name="SelectedResponsibilities" value="@r.Flag" checked="@((r.Flag & Model.OrgUser.Responsibilities) == r.Flag)"/>
+                        </label>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
     <button class="btn btn-dark">Save</button>
 </form>
 

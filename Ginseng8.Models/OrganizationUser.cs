@@ -19,6 +19,12 @@ namespace Ginseng.Models
 		public string DisplayName { get; set; }
 
 		/// <summary>
+		/// Responsibility.Flag sum
+		/// </summary>
+		[DefaultExpression("0")]
+		public int Responsibilities { get; set; }
+
+		/// <summary>
 		/// WorkDay.Flag sum
 		/// </summary>
 		public int WorkDays { get; set; }
