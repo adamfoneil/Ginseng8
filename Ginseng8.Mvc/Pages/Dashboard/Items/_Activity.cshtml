@@ -1,7 +1,11 @@
 ﻿@model DashboardActivityField
 
 <div id="Activity-@Model.Item.Number">
-@if (!Model.Item.CloseReasonId.HasValue)
+@if (Model.Item.CloseReasonId.HasValue)
+{
+    <span>Closed: @Model.Item.CloseReasonName</span>    
+}
+else
 {
     if (Model.Item.ActivityId.HasValue)
     {
@@ -15,6 +19,10 @@
             {
                 <a class="dropdown-item" href="#">@cr.Name</a>
             }
+            @if (Model.Item.BusinessUserId == 0)
+            {
+                <a href="javascript:void">Unassign Me</a>
+            }                
         </div>
     }
     else            
@@ -24,13 +32,9 @@
         <div class="dropdown-menu">
             @foreach (var act in Model.Activities)
             {
-                <a class="dropdown-item" href="#" title="@act.Description">@act.Name</a>
+                <a class="dropdown-item setActivity" href="#" title="@act.Description" data-number="@Model.Item.Number" data-activity-id="@act.Id">@act.Name</a>
             }
         </div>
     }
-}
-else
-{
-    <span>Closed: @Model.Item.CloseReasonName</span>
 }
 </div>

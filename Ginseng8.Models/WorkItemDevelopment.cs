@@ -18,12 +18,6 @@ namespace Ginseng.Models
 
 		public string IconClass => "tools";
 
-		/// <summary>
-		/// Developer who owns this item
-		/// </summary>
-		[References(typeof(UserProfile))]
-		public int UserId { get; set; }
-
 		[MaxLength(255)]
 		public string BranchUrl { get; set; }
 
