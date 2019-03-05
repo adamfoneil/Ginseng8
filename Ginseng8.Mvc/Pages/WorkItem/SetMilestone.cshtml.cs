@@ -18,12 +18,12 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		{
 			using (var cn = Data.GetConnection())
 			{
-				var item = await Data.FindWhereAsync<Models.WorkItem>(cn, new { OrganizationId = Data.CurrentOrg.Id, Number = number });
+				var item = await Data.FindWhereAsync<Models.WorkItem>(cn, new { OrganizationId = OrgId, Number = number });
 
 				Milestone ms = null;
 				if (milestoneId != 0)
 				{
-					ms = await Data.FindWhereAsync<Milestone>(cn, new { OrganizationId = Data.CurrentOrg.Id, Id = milestoneId });
+					ms = await Data.FindWhereAsync<Milestone>(cn, new { OrganizationId = OrgId, Id = milestoneId });
 				}				
 
 				if (item != null)
@@ -42,8 +42,8 @@ namespace Ginseng.Mvc.Pages.WorkItem
 
 				Field = new DashboardMilestoneField()
 				{
-					Item = await new AllWorkItems() { OrgId = Data.CurrentOrg.Id, Number = number }.ExecuteSingleAsync(cn),
-					Milestones = await new Milestones() { OrgId = Data.CurrentOrg.Id }.ExecuteAsync(cn)
+					Item = await new AllWorkItems() { OrgId = OrgId, Number = number }.ExecuteSingleAsync(cn),
+					Milestones = await new Milestones() { OrgId = OrgId }.ExecuteAsync(cn)
 				};
 			}
 		}

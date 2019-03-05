@@ -8,6 +8,16 @@ namespace Ginseng.Mvc.ViewModels
 {
 	public class DashboardActivityField : IUserInfo
 	{
+		public DashboardActivityField()
+		{
+		}
+
+		public DashboardActivityField(IUserInfo userInfo)
+		{
+			UserId = userInfo.UserId;
+			OrgId = userInfo.OrgId;
+			LocalTime = userInfo.LocalTime;
+		}
 
 		public AllWorkItemsResult Item { get; set; }
 		public IEnumerable<Activity> Activities { get; set; }

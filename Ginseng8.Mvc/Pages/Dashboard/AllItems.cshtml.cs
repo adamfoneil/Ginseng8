@@ -4,7 +4,6 @@ using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Work
@@ -14,7 +13,7 @@ namespace Ginseng.Mvc.Pages.Work
 	{
 		public AllItemsModel(IConfiguration config) : base(config)
 		{
-		}		
+		}
 
 		public IEnumerable<AllWorkItemsResult> WorkItems { get; set; }
 		public IEnumerable<Activity> AllActivities { get; set; }
@@ -22,7 +21,7 @@ namespace Ginseng.Mvc.Pages.Work
 		public IEnumerable<CloseReason> CloseReasons { get; set; }
 		public IEnumerable<Milestone> Milestones { get; set; }
 		public IEnumerable<Activity> MyActivities { get; set; }
-		
+
 		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
