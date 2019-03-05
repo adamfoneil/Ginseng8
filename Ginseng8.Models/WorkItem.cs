@@ -47,6 +47,12 @@ namespace Ginseng.Models
 		public int ApplicationId { get; set; }
 
 		/// <summary>
+		/// Broad estimate of amount of work involved
+		/// </summary>
+		[References(typeof(WorkItemSize))]
+		public int? SizeId { get; set; }
+
+		/// <summary>
 		/// What should be happening with this item?
 		/// </summary>
 		[References(typeof(Activity))]

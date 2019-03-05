@@ -66,7 +66,7 @@ namespace Ginseng.Mvc.Queries
 				END AS [AssignedUserId],
                 [sz].[Name] AS [WorkItemSize],                
                 [wid].[Priority] AS [DevelopmentPriority],
-                [wid].[SizeId],
+                [wi].[SizeId],
                 [wid].[EstimateHours] AS [DevEstimateHours],
                 [sz].[EstimateHours] AS [SizeEstimateHours]             
             FROM
@@ -86,7 +86,7 @@ namespace Ginseng.Mvc.Queries
                     [wi].[OrganizationId]=[dev_ou].[OrganizationId] AND
                     [wi].[DeveloperUserId]=[dev_ou].[UserId]
                 LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
-                LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wid].[SizeId]=[sz].[Id]
+                LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
             WHERE
                 [wi].[OrganizationId]=@orgId {andWhere}
             ORDER BY

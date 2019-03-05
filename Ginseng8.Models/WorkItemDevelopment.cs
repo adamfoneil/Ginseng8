@@ -22,12 +22,6 @@ namespace Ginseng.Models
 		public string BranchUrl { get; set; }
 
 		/// <summary>
-		/// Broad estimate of amount of work involved
-		/// </summary>
-		[References(typeof(WorkItemSize))]
-		public int? SizeId { get; set; }
-
-		/// <summary>
 		/// Item-specific estimate (overrides WorkItemSize.EstimateHours)
 		/// </summary>
 		public int? EstimateHours { get; set; }

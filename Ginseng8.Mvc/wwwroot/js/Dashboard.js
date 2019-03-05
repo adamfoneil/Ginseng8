@@ -59,3 +59,34 @@ var activityLinks = document.querySelectorAll(".setActivity");
 activityLinks.forEach(function (e) {
     e.addEventListener("click", OnSetActivity);
 });
+
+function OnSetEstimate(e) {
+    var link = e.target;
+    var number = link.getAttribute("data-number");
+    var sizeId = link.getAttribute("data-size-id");
+
+    var frm = document.getElementById("frmSetEstimate");
+    frm.number.value = number;
+    frm.sizeId.value = sizeId;
+
+    let formData = new FormData(frm);
+    fetch('/WorkItem/SetEstimate', {
+        method: 'post',
+        body: new URLSearchParams(formData)
+    }).then(function (response) {
+        response.text().then(function (text) {
+            var output = document.getElementById("Estimate-" + number);
+            output.innerHTML = text;
+            var links = output.querySelectorAll(".setEstimate");
+            // re-create the event handler on newly inserted content
+            links.forEach(function (e) {
+                e.addEventListener("click", OnSetEstimate);
+            });
+        });
+    });
+}
+
+var estimateLinks = document.querySelectorAll(".setEstimate");
+estimateLinks.forEach(function (e) {
+    e.addEventListener("click", OnSetEstimate);
+});
