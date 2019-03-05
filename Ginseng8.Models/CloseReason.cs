@@ -16,7 +16,7 @@ namespace Ginseng.Models
 		[MaxLength(255)]
 		public string Description { get; set; }
 
-		public const string Deployed = "Deployed";
+		public const string Done = "Done";
 		public const string Obsolete = "Obsolete";
 		public const string Duplicate = "Duplicate";
 
@@ -24,9 +24,9 @@ namespace Ginseng.Models
 		{
 			return new CloseReason[]
 			{
-				new CloseReason() { Name = Deployed, Description = "Changes deployed to live environment." },
-				new CloseReason() { Name = Obsolete, Description = "Requirements out of date." },
-				new CloseReason() { Name = Duplicate, Description = "Redundant to another work item." }
+				new CloseReason() { Name = Done, Description = "Work done and changes deployed to production" },
+				new CloseReason() { Name = Duplicate, Description = "Redundant to another work item." },
+				new CloseReason() { Name = Obsolete, Description = "Requirements out of date." }
 			}.ToDataTable(new SqlServerIntegrator(), excludeIdentity: true);
 		}
 	}

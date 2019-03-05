@@ -10,8 +10,9 @@
     <tr>
         <th>App / Project</th>
         <th>Title</th>
-        <th>Estimate</th>
-        <th>Activity</th>        
+        <th>Assigned To</th>
+        <th>Activity</th>
+        <th>Estimate</th>        
         <th>Milestone</th>
     </tr>
     @foreach (var item in Model.WorkItems)
@@ -25,8 +26,9 @@
                 }
             </td>
             <td><partial name="Items/_Title" model="item"/></td>
-            <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Sizes }"/></td>
-            <td><partial name="Items/_Activity" model="new DashboardActivityField(Model) { Item = item, Activities = Model.MyActivities, CloseReasons = Model.CloseReasons }"/></td>
+            <td><partial name="Items/_AssignedTo" model="new DashboardAssignedToField(Model) { Item = item }"/></td>
+            <td><partial name="Items/_Activity" model="new DashboardActivityField(Model) { Item = item, MyActivities = Model.MyActivities, AllActivities = Model.AllActivities }"/></td>
+            <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Sizes }"/></td>                        
             <td><partial name="Items/_Milestone" model="new DashboardMilestoneField() { Item = item, Milestones = Model.Milestones }"/></td>
         </tr>
     }

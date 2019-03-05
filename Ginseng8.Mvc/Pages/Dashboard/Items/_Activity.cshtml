@@ -6,35 +6,22 @@
     <span>Closed: @Model.Item.CloseReasonName</span>    
 }
 else
-{
-    if (Model.Item.ActivityId.HasValue)
-    {
-        <span>@Model.Item.ActivityName</span>
-        <span> - </span>
-        <span>@Model.Item.ResponsibleName</span>
-
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Close</button>
-        <div class="dropdown-menu">
-            @foreach (var cr in Model.CloseReasons)
-            {
-                <a class="dropdown-item" href="#">@cr.Name</a>
-            }
-            @if (Model.Item.BusinessUserId == 0)
-            {
-                <a href="javascript:void">Unassign Me</a>
-            }                
-        </div>
-    }
-    else            
-    {
-        <span class="text-muted">Unassigned</span>
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">I'll start</button>
-        <div class="dropdown-menu">
-            @foreach (var act in Model.Activities)
-            {
-                <a class="dropdown-item setActivity" href="#" title="@act.Description" data-number="@Model.Item.Number" data-activity-id="@act.Id">@act.Name</a>
-            }
-        </div>
-    }
+{    
+    <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        @if (Model.Item.ActivityId.HasValue)
+        {
+            <span>@Model.Item.ActivityName</span>
+        }
+        else
+        {
+            <span>I'll start</span>
+        }
+    </button>
+    <div class="dropdown-menu">
+        @foreach (var act in Model.GetActivities())
+        {
+            <a class="dropdown-item setActivity" href="#" title="@act.Description" data-number="@Model.Item.Number" data-activity-id="@act.Id">@act.Name</a>
+        }
+    </div>       
 }
 </div>

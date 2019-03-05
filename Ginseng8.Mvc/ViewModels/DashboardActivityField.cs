@@ -20,8 +20,13 @@ namespace Ginseng.Mvc.ViewModels
 		}
 
 		public AllWorkItemsResult Item { get; set; }
-		public IEnumerable<Activity> Activities { get; set; }
-		public IEnumerable<CloseReason> CloseReasons { get; set; }
+		public IEnumerable<Activity> MyActivities { get; set; }
+		public IEnumerable<Activity> AllActivities { get; set; }
+
+		public IEnumerable<Activity> GetActivities()
+		{
+			return (Item.ActivityId.HasValue) ? AllActivities : MyActivities;
+		}
 
 		public int UserId { get; set; }
 		public int OrgId { get; set; }

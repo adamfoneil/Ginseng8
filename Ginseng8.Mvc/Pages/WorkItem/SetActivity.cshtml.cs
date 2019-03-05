@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.ViewModels;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
@@ -42,6 +43,13 @@ namespace Ginseng.Mvc.Pages.WorkItem
 
 					await Data.TrySaveAsync(cn, item);
 				}
+
+				Field = new DashboardActivityField()
+				{
+					Item = await new AllWorkItems() { OrgId = OrgId, Number = number }.ExecuteSingleAsync(cn),
+					MyActivities = await new Activities() { OrgId = OrgId, IsActive = true, Responsibilities = CurrentOrgUser.Responsibilities }.ExecuteAsync(cn),
+					AllActivities = await new Activities() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn)
+				};
 			}
 		}
 	}

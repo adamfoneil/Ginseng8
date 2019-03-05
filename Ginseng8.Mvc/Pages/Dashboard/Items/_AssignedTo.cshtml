@@ -1,0 +1,15 @@
+﻿@model DashboardAssignedToField
+
+@if (Model.Item.AssignedUserId.HasValue)
+{
+    <span>@Model.Item.AssignedUserName</span>
+    @if (Model.UserId == Model.Item.AssignedUserId)
+    {
+        <a href="#">remove</a>
+    }
+}
+else
+{
+    <span class="text-muted">Not assigned</span>
+}
+

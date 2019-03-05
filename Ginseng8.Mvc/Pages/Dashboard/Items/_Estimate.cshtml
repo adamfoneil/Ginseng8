@@ -3,34 +3,36 @@
 <div id="Estimate-@Model.Item.Number">
     @if (Model.Item.DeveloperUserId.HasValue)
     {
-        <span>@Model.Item.DeveloperName - </span>
-
-        if (Model.Item.SizeId.HasValue)
+        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        @if (Model.Item.SizeId.HasValue)
         {
             <span>@Model.Item.WorkItemSize</span>            
-        }
-
-        if (Model.Item.DevEstimateHours.HasValue)
-        {
-            <span class="font-weight-bold">@(Model.Item.DevEstimateHours)h</span>
+            if (Model.Item.DevEstimateHours.HasValue)
+            {
+                <span class="font-weight-bold">@(Model.Item.DevEstimateHours)h</span>
+            }
+            else
+            {
+                if (Model.Item.SizeEstimateHours.HasValue)
+                {
+                    <span class="text-muted">@(Model.Item.SizeEstimateHours)h+-</span>
+                }
+            }
         }
         else
         {
-            if (Model.Item.SizeEstimateHours.HasValue)
-            {
-                <span class="text-muted">@(Model.Item.SizeEstimateHours)h+-</span>
-            }
+            <span>Estimate</span>
         }
-    }
-    else
-    {
-        <span class="text-muted">No developer</span>
-        <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Estimate</button>
+        </button>
         <div class="dropdown-menu">
             @foreach (var sz in Model.Sizes)
             {
                 <a class="dropdown-item" href="#" title="@sz.Description">@sz.Name - @(sz.EstimateHours)h</a>
             }
-        </div>
+        </div>      
+    }
+    else
+    {
+        <span class="text-muted">No developer</span>
     }
 </div>

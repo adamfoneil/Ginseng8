@@ -29,7 +29,8 @@ namespace Ginseng.Mvc.Queries
 		public string ActivityName { get; set; }
 		public string BusinessName { get; set; }
 		public string DeveloperName { get; set; }
-		public string ResponsibleName { get; set; }
+		public int? AssignedUserId { get; set; }
+		public string AssignedUserName { get; set; }		
 		public string WorkItemSize { get; set; }
 		public int? DevelopmentPriority { get; set; }
 		public int? SizeId { get; set; }
@@ -53,12 +54,16 @@ namespace Ginseng.Mvc.Queries
                 [wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
                 [wi].[ActivityId],
                 [act].[Name] AS [ActivityName],
-                COALESCE([owner_ou].[DisplayName], [ousr].[UserName]) AS [BusinessName],
+                COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessName],
                 COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperName],
                 CASE [act].[ResponsibilityId]
-                    WHEN 1 THEN COALESCE([owner_ou].[DisplayName], [ousr].[UserName])
+                    WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
                     WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
-                END AS [ResponsibleName],
+                END AS [AssignedUserName],
+				CASE [act].[ResponsibilityId]
+					WHEN 1 THEN [wi].[BusinessUserId]
+					WHEN 2 THEN [wi].[DeveloperUserId]
+				END AS [AssignedUserId],
                 [sz].[Name] AS [WorkItemSize],                
                 [wid].[Priority] AS [DevelopmentPriority],
                 [wid].[SizeId],
@@ -73,9 +78,9 @@ namespace Ginseng.Mvc.Queries
                 LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
                 LEFT JOIN [app].[CloseReason] [cr] ON [wi].[CloseReasonId]=[cr].[Id]
                 LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
-                LEFT JOIN [dbo].[OrganizationUser] [owner_ou] ON
-                    [wi].[OrganizationId]=[owner_ou].[OrganizationId] AND
-                    [wi].[BusinessUserId]=[owner_ou].[UserId]
+                LEFT JOIN [dbo].[OrganizationUser] [biz_ou] ON
+                    [wi].[OrganizationId]=[biz_ou].[OrganizationId] AND
+                    [wi].[BusinessUserId]=[biz_ou].[UserId]
                 LEFT JOIN [dbo].[AspNetUsers] [ousr] ON [wi].[BusinessUserId]=[ousr].[UserId]
                 LEFT JOIN [dbo].[OrganizationUser] [dev_ou] ON
                     [wi].[OrganizationId]=[dev_ou].[OrganizationId] AND
