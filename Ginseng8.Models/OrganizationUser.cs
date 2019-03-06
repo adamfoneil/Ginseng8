@@ -22,7 +22,7 @@ namespace Ginseng.Models
 		/// Responsibility.Flag sum
 		/// </summary>
 		[DefaultExpression("0")]
-		public int Responsibilities { get; set; }
+		public int Responsibilities { get; set; } = 3;
 
 		/// <summary>
 		/// WorkDay.Flag sum

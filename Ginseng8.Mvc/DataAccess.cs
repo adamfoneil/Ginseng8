@@ -45,7 +45,9 @@ namespace Ginseng.Mvc
 			if (CurrentUser.OrganizationId != null)
 			{
 				CurrentOrg = connection.Find<Organization>(CurrentUser.OrganizationId.Value);
-				CurrentOrgUser = connection.FindWhere<OrganizationUser>(new { organizationId = CurrentUser.OrganizationId.Value, userId = CurrentUser.UserId });
+				CurrentOrgUser = connection.FindWhere<OrganizationUser>(
+					new { organizationId = CurrentUser.OrganizationId.Value, userId = CurrentUser.UserId }) ??
+					new OrganizationUser() { OrganizationId = CurrentUser.OrganizationId.Value, UserId = CurrentUser.UserId };
 			}
 		}
 
