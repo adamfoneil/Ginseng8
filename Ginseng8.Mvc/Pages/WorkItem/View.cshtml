@@ -1,0 +1,38 @@
+﻿@page "/WorkItem/View/{id}"
+@model Ginseng.Mvc.Pages.WorkItem.EditModel
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="row">
+    <div class="col-2 text-muted text-right">
+        <h2>@Model.WorkItem.Number</h2>
+    </div>
+    <div class="col-10">
+        <h2>@Model.WorkItem.Title</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-10">
+        <ul class="list-inline">
+            <li class="list-inline-item">App / Project</li>
+            <li class="list-inline-item">Assigned To</li>
+            <li class="list-inline-item">Activity</li>
+            <li class="list-inline-item">Milestone</li>
+        </ul>        
+        <hr/>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-10">
+        <!--original request-->
+        <hr/>
+    </div>
+</div>
+
+@*activity feed*@
+
