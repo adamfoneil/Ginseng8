@@ -1,4 +1,22 @@
-﻿function OnSetMilestone(e) {
+﻿function UpdateField(frm, url, divId, linkClass, callbackFunction) {
+    let formData = new FormData(frm);
+    fetch(url, {
+        method: 'post',
+        body: new URLSearchParams(formData)
+    }).then(function (response) {
+        response.text().then(function (text) {
+            var output = document.getElementById(divId);
+            output.innerHTML = text;
+            var links = output.querySelectorAll(linkClass);
+            // re-create the event handler on newly inserted content
+            links.forEach(function (e) {
+                e.addEventListener("click", callbackFunction);
+            });
+        });
+    });
+}
+
+function OnSetMilestone(e) {
     var link = e.target;
     var number = link.getAttribute("data-number");
     var msId = link.getAttribute("data-milestone-id");
@@ -7,21 +25,7 @@
     frm.number.value = number;
     frm.milestoneId.value = msId;
 
-    let formData = new FormData(frm);
-    fetch('/WorkItem/SetMilestone', {
-        method: 'post',
-        body: new URLSearchParams(formData)
-    }).then(function (response) {
-        response.text().then(function (text) {
-            var output = document.getElementById("Milestone-" + number);
-            output.innerHTML = text;            
-            var links = output.querySelectorAll(".setMilestone");
-            // re-create the event handler on newly inserted content
-            links.forEach(function (e) {
-                e.addEventListener("click", OnSetMilestone);
-            });
-        });
-    });
+    UpdateField(frm, "/WorkItem/SetMilestone", "Milestone-" + number, ".setMilestone", OnSetMilestone);
 }
 
 var milestoneLinks = document.querySelectorAll(".setMilestone");
@@ -38,21 +42,7 @@ function OnSetActivity(e) {
     frm.number.value = number;
     frm.activityId.value = activityId;
 
-    let formData = new FormData(frm);
-    fetch('/WorkItem/SetActivity', {
-        method: 'post',
-        body: new URLSearchParams(formData)
-    }).then(function (response) {
-        response.text().then(function (text) {
-            var output = document.getElementById("Activity-" + number);
-            output.innerHTML = text;
-            var links = output.querySelectorAll(".setActivity");
-            // re-create the event handler on newly inserted content
-            links.forEach(function (e) {
-                e.addEventListener("click", OnSetActivity);
-            });
-        });
-    });
+    UpdateField(frm, "/WorkItem/SetActivity", "Activity-" + number, ".setActivity", OnSetActivity);
 }
 
 var activityLinks = document.querySelectorAll(".setActivity");
@@ -69,21 +59,7 @@ function OnSetEstimate(e) {
     frm.number.value = number;
     frm.sizeId.value = sizeId;
 
-    let formData = new FormData(frm);
-    fetch('/WorkItem/SetEstimate', {
-        method: 'post',
-        body: new URLSearchParams(formData)
-    }).then(function (response) {
-        response.text().then(function (text) {
-            var output = document.getElementById("Estimate-" + number);
-            output.innerHTML = text;
-            var links = output.querySelectorAll(".setEstimate");
-            // re-create the event handler on newly inserted content
-            links.forEach(function (e) {
-                e.addEventListener("click", OnSetEstimate);
-            });
-        });
-    });
+    UpdateField(frm, "/WorkItem/SetEstimate", "Estimate-" + number, ".setEstimate", OnSetEstimate);
 }
 
 var estimateLinks = document.querySelectorAll(".setEstimate");
