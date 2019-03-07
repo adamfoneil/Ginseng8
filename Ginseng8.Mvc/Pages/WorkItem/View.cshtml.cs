@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Ginseng.Mvc.Queries;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -10,11 +10,16 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		{
 		}
 
-		public Models.WorkItem WorkItem { get; set; }
-		
+		public AllWorkItemsResult Item { get; set; }
+		public CommonDropdowns Dropdowns { get; set; }
+
 		public async Task OnGetAsync(int id)
 		{
-			WorkItem = await Data.FindWhereAsync<Models.WorkItem>(new { OrganizationId = OrgId, Number = id });
+			using (var cn = Data.GetConnection())
+			{
+				Item = await new AllWorkItems() { OrgId = OrgId, Number = id }.ExecuteSingleAsync(cn);
+				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
+			}
 		}
 	}
 }

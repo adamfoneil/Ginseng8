@@ -29,9 +29,9 @@
             </td>
             <td><partial name="Items/_Title" model="item"/></td>
             <td><partial name="Items/_AssignedTo" model="new DashboardAssignedToField(Model) { Item = item }"/></td>
-            <td><partial name="Items/_Activity" model="new DashboardActivityField(Model) { Item = item, MyActivities = Model.MyActivities, AllActivities = Model.AllActivities }"/></td>
-            <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Sizes }"/></td>                        
-            <td><partial name="Items/_Milestone" model="new DashboardMilestoneField() { Item = item, Milestones = Model.Milestones }"/></td>
+            <td><partial name="Items/_Activity" model="new DashboardActivityField(Model) { Item = item, MyActivities = Model.Dropdowns.MyActivities, AllActivities = Model.Dropdowns.AllActivities }"/></td>
+            <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Dropdowns.Sizes }"/></td>                        
+            <td><partial name="Items/_Milestone" model="new DashboardMilestoneField() { Item = item, Milestones = Model.Dropdowns.Milestones }"/></td>
         </tr>
     }
 </table>

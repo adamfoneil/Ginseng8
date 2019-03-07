@@ -27,24 +27,7 @@
 
 @RenderBody()
 
-<div style="display:inherit">
-
-<form method="post" id="frmSetMilestone">
-    <input type="hidden" name="number"/>
-    <input type="hidden" name="milestoneId"/>
-</form>
-
-<form method="post" id="frmSetActivity">
-    <input type="hidden" name="number"/>
-    <input type="hidden" name="activityId"/>
-</form>
-
-<form method="post" id="frmSetEstimate">
-    <input type="hidden" name="number"/>
-    <input type="hidden" name="sizeId"/>
-</form>
-
-</div>
+<partial name="Items/_SetterForms"/>
 
 @section Scripts {
     @RenderSection("Scripts", false)

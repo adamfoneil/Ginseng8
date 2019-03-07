@@ -6,10 +6,10 @@
 
 <div class="row">
     <div class="col-2 text-muted text-right">
-        <h2>@Model.WorkItem.Number</h2>
+        <h2>@Model.Item.Number</h2>
     </div>
     <div class="col-10">
-        <h2>@Model.WorkItem.Title</h2>
+        <h2>@Model.Item.Title</h2>
     </div>
 </div>
 
@@ -18,20 +18,26 @@
     <div class="col-10">
         <ul class="list-inline">
             <li class="list-inline-item">App / Project</li>
-            <li class="list-inline-item">Assigned To</li>
-            <li class="list-inline-item">Activity</li>
-            <li class="list-inline-item">Milestone</li>
+            <li class="list-inline-item"><partial name="../Dashboard/Items/_AssignedTo" model="new DashboardAssignedToField(Model) { Item = Model.Item }"/></li>
+            <li class="list-inline-item"><partial name="../Dashboard/Items/_Activity" model="new DashboardActivityField(Model) { Item = Model.Item, MyActivities = Model.Dropdowns.MyActivities, AllActivities = Model.Dropdowns.AllActivities }"/></li>
+            <li class="list-inline-item"><partial name="../Dashboard/Items/_Estimate" model="new DashboardEstimateField() { Item = Model.Item, Sizes = Model.Dropdowns.Sizes }"/></li>
+            <li class="list-inline-item"><partial name="../Dashboard/Items/_Milestone" model="new DashboardMilestoneField() { Item = Model.Item, Milestones = Model.Dropdowns.Milestones }"/></li>
         </ul>        
         <hr/>
     </div>
 </div>
 
+<partial name="../Dashboard/Items/_SetterForms"/>
+
 <div class="row">
     <div class="col-2"></div>
     <div class="col-10">                
-        @Html.Raw(Model.WorkItem.HtmlBody)
+        @Html.Raw(Model.Item.HtmlBody)
     </div>
 </div>
 
 @*activity feed*@
 
+@section Scripts {
+    <script src="~/js/Dashboard.js"></script>
+}

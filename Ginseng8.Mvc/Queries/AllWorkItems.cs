@@ -11,7 +11,8 @@ namespace Ginseng.Mvc.Queries
 	{
 		public int Id { get; set; }
 		public int Number { get; set; }
-		public string Title { get; set; }
+		public string Title { get; set; }	
+		public string HtmlBody { get; set; }
 		public int? BusinessUserId { get; set; }
 		public int? DeveloperUserId { get; set; }
 		public int? BusinessPriority { get; set; }
@@ -45,6 +46,7 @@ namespace Ginseng.Mvc.Queries
                 [wi].[Id],
                 [wi].[Number],
                 [wi].[Title],
+				[wi].[HtmlBody],
                 [wi].[BusinessUserId],
                 [wi].[DeveloperUserId],
                 [wi].[Priority] AS [BusinessPriority],
