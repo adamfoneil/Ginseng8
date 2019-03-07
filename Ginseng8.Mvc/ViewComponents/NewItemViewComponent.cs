@@ -1,4 +1,5 @@
-﻿using Ginseng.Mvc.Queries.SelectLists;
+﻿using Ginseng.Models.Interfaces;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,7 @@ namespace Ginseng.Mvc.ViewComponents
 		public int ApplicationId { get; set; }
 		public int? ProjectId { get; set; }
 		public string Title { get; set; }
+		public string HtmlBody { get; set; }
 
 		public async Task<IViewComponentResult> InvokeAsync()
 		{			

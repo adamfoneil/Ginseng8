@@ -12,3 +12,9 @@ frm.onsubmit = () => {
     });
     return false;
 };
+
+var btnItemDetail = document.getElementById("btnAddItemDetail");
+btnItemDetail.addEventListener("click", function (e) {
+    var div = document.getElementById("newItemEditorDiv");
+    $(div).slideToggle();
+});
