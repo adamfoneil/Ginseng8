@@ -24,6 +24,7 @@ namespace Ginseng.Mvc.Controllers
 		[HttpPost]		
 		public async Task<JsonResult> Paste([FromForm]IFormFile file)
 		{
+			// critical help from https://stackoverflow.com/a/44538773/2023653
 			try
 			{
 				_data.Initialize(User, TempData);
