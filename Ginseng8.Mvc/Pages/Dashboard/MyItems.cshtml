@@ -29,8 +29,7 @@
                                 {
                                     <tr>
                                         <td><partial name="Items/_Number" model="item"/></td>
-                                        <td><partial name="Items/_Title" model="item"/></td>
-                                        <td><partial name="Items/_AssignedTo" model="new DashboardAssignedToField(Model) { Item = item }"/></td>
+                                        <td><partial name="Items/_Title" model="item"/></td>                                        
                                         <td><partial name="Items/_Activity" model="new DashboardActivityField(Model) { Item = item, MyActivities = Model.Dropdowns.MyActivities, AllActivities = Model.Dropdowns.AllActivities }"/></td>
                                         <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Dropdowns.Sizes }"/></td>
                                     </tr>
