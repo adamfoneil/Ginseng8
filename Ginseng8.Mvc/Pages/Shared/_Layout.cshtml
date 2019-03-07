@@ -92,7 +92,11 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/js/froala_editor.pkgd.min.js"></script>
     <script> $(function () {
         $('.htmlEditor').froalaEditor({
-             heightMin: 300
+            heightMin: 300,
+            imageUploadURL: "/Image/Paste",
+            imageDefaultWidth: 0,            
+            toolbarButtons: ["bold", "italic", "|", "formatOL", "formatUL", "|", "indent", "outdent", "quote", "|", "insertTable", "insertLink", "|", "clearFormatting" ],
+            charCounterCount: false,
         });
     }); </script>
     @RenderSection("Scripts", required: false)
