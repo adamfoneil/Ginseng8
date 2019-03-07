@@ -21,8 +21,8 @@ namespace Ginseng.Mvc.Controllers
 			_blob = new BlobStorage(config);
 		}
 
-		[HttpPost]
-		public async Task<JsonResult> Paste(IFormFile image)
+		[HttpPost]		
+		public async Task<JsonResult> Paste([FromForm]IFormFile file)
 		{
 			try
 			{
@@ -36,10 +36,10 @@ namespace Ginseng.Mvc.Controllers
 				await container.CreateIfNotExistsAsync();
 				await container.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
 
-				string fileName = Path.GetFileName(image.FileName);
+				string fileName = Path.GetFileName(file.FileName);
 				CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
 
-				using (var stream = image.OpenReadStream())
+				using (var stream = file.OpenReadStream())
 				{
 					await blob.UploadFromStreamAsync(stream);
 				}
