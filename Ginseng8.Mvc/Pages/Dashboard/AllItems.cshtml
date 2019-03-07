@@ -22,7 +22,7 @@
             <td><partial name="Items/_Number" model="item"/></td>
             <td>
                 @item.ApplicationName
-                @if (item.ProjectId.HasValue)
+                @if (item.ProjectId != 0)
                 {
                     <span> / @item.ProjectName</span>
                 }

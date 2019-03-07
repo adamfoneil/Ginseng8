@@ -1,7 +1,7 @@
 ﻿@model DashboardMilestoneField
 
 <div id="Milestone-@Model.Item.Number">
-    @if (Model.Item.MilestoneId.HasValue)
+    @if (Model.Item.MilestoneId != 0)
     {
         <button class="btn btn-light dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" title="@Model.Item.MilestoneDaysAway day(s) away">@Html.FormatValue(Model.Item.MilestoneDate, "{0:ddd M/d}")</button>
     }
@@ -14,7 +14,7 @@
         {
             <a class="dropdown-item setMilestone" href="#" data-number="@Model.Item.Number" data-milestone-id="@ms.Id">@Html.FormatValue(ms.Date, "{0:M/d}") - @ms.Name</a>
         }
-        @if (Model.Item.MilestoneId.HasValue)
+        @if (Model.Item.MilestoneId != 0)
         {
             <a class="dropdown-item setMilestone" href="#" data-number="@Model.Item.Number" data-milestone-id="0">Clear Milestone</a>
         }        

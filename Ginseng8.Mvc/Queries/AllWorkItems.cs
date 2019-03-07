@@ -18,9 +18,9 @@ namespace Ginseng.Mvc.Queries
 		public int? BusinessPriority { get; set; }
 		public int ApplicationId { get; set; }
 		public string ApplicationName { get; set; }
-		public int? ProjectId { get; set; }
+		public int ProjectId { get; set; }
 		public string ProjectName { get; set; }
-		public int? MilestoneId { get; set; }
+		public int MilestoneId { get; set; }
 		public string MilestoneName { get; set; }
 		public DateTime? MilestoneDate { get; set; }
 		public int? MilestoneDaysAway { get; set; }
@@ -51,8 +51,8 @@ namespace Ginseng.Mvc.Queries
                 [wi].[DeveloperUserId],
                 [wi].[Priority] AS [BusinessPriority],
                 [wi].[ApplicationId], [app].[Name] AS [ApplicationName],
-                [wi].[ProjectId], [p].[Name] AS [ProjectName],
-                [wi].[MilestoneId], [ms].[Name] AS [MilestoneName], [ms].[Date] AS [MilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
+                COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
+                COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], COALESCE([ms].[Date], '12/31/9999') AS [MilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
                 [wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
                 [wi].[ActivityId],
                 [act].[Name] AS [ActivityName],
@@ -102,6 +102,9 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[wi].[Number]=@number")]
 		public int? Number { get; set; }
+
+		[Where("(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)=@assignedUserId")]
+		public int? AssignedUserId { get; set; }
 
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
