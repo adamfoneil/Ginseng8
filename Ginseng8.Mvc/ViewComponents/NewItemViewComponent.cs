@@ -21,8 +21,7 @@ namespace Ginseng.Mvc.ViewComponents
 
 		public int ApplicationId { get; set; }
 		public int? ProjectId { get; set; }
-		public string Title { get; set; }
-		public string HtmlBody { get; set; }
+		public string Title { get; set; }		
 
 		public async Task<IViewComponentResult> InvokeAsync()
 		{			

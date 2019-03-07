@@ -28,9 +28,8 @@
 
 <div class="row">
     <div class="col-2"></div>
-    <div class="col-10">
-        <!--original request-->
-        <hr/>
+    <div class="col-10">                
+        @Html.Raw(Model.WorkItem.HtmlBody)
     </div>
 </div>
 

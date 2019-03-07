@@ -10,6 +10,8 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Html2Markdown" Version="3.2.1.341" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.207" />
     <PackageReference Include="JsonSettings.Library" Version="1.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />

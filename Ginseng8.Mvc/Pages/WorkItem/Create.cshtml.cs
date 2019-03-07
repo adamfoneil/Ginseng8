@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Ginseng.Mvc.Helpers;
+using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.WorkItem
@@ -18,6 +19,8 @@ namespace Ginseng.Mvc.Pages.WorkItem
 
 			// make sure item is part of this org
 			workItem.OrganizationId = Data.CurrentOrg.Id;
+
+			workItem.SaveHtml();
 
 			await Data.TrySaveAsync(workItem, async (cn, r) =>
 			{
