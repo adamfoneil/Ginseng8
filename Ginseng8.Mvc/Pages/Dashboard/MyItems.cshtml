@@ -4,58 +4,79 @@
     ViewData["Title"] = "My Items";
 }
 
+<div id="accordion">
 @foreach (var actGrp in Model.WorkItems.GroupBy(row => row.ActivityId))
 {
     <h3>@actGrp.First().ActivityName</h3>
     @foreach (var appGrp in actGrp.GroupBy(row => row.ApplicationId))
     {
-        <h4>@appGrp.First().ApplicationName</h4>
-        <table class="table mx-3">
-            @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
-            {
-                var milestoneItem = milestoneGrp.First();
-                <tr>
-                    <td colspan="3">                            
-                        <i class="fas fa-flag-checkered"></i>
-                        <span class="font-weight-bold">@milestoneItem.MilestoneName</span>
-                        @if (milestoneGrp.Key != 0)
+        <h4>@appGrp.First().ApplicationName</h4>               
+
+        @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
+        {
+            var milestoneItem = milestoneGrp.First();
+
+            <h5 class="milestone-droppable ui-droppable" data-milestone-id="@milestoneGrp.Key">
+                <span href="#act-@actGrp.Key-ms-@milestoneGrp.Key" data-toggle="collapse" class="milestone" data-milestone-id="@milestoneGrp.Key" aria-expanded="true">
+                    <i class="fas fa-flag-checkered"></i>
+                    <span class="font-weight-bold">@milestoneItem.MilestoneName</span>
+                    @if (milestoneGrp.Key != 0)
+                    {
+                        <span class="small">@Html.FormatValue(milestoneItem.MilestoneDate, "{0:ddd M/d}")</span>
+                        <span class="text-muted small">
+                            @if (milestoneItem.MilestoneDaysAway > 0)
+                            {
+                                <text>@milestoneItem.MilestoneDaysAway day(s) away</text>
+                            }
+                            else
+                            {
+                                <text>today</text>
+                            }
+                        </span>
+                    }
+                </span>
+            </h5>
+
+            <div id="activity-@actGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+                <div style="margin-left:20px">
+                    @foreach (var projectGrp in milestoneGrp.GroupBy(row => row.ProjectId))
+                    {
+                        if (projectGrp.Key != 0)
                         {
-                            <span>@Html.FormatValue(milestoneItem.MilestoneDate, "{0:ddd M/d}")</span>
-                            <span class="text-muted">
-                                @if (milestoneItem.MilestoneDaysAway > 0)
-                                {
-                                    <text>@milestoneItem.MilestoneDaysAway day(s) away</text>
-                                }
-                                else
-                                {
-                                    <text>today</text>
-                                }
-                            </span>
+                        <div>
+                            <span class="font-weight-bold">@projectGrp.First().ProjectName</span>
+                        </div>
                         }
-                    </td>
-                </tr>
-                @foreach (var projectGrp in milestoneGrp.GroupBy(row => row.ProjectId))
-                {
-                    if (projectGrp.Key != 0)
-                    {
-                    <tr>
-                        <td colspan="3">
-                            <span>@projectGrp.First().ProjectName</span>
-                        </td>
-                    </tr>
+                        @foreach (var item in projectGrp)
+                        {
+                            <div class="card my-2">
+                                <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@item.Id">
+                                    <div class="row">
+                                        <div class="col-1">
+                                            @item.Number
+                                        </div>
+                                        <div class="col-9">
+                                            <partial name="Items/_Title" model="item"/>
+                                        </div>
+                                        <div class="col-2">
+                                            <partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Dropdowns.Sizes }"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="collapse" id="item-@item.Id" data-parent="#accordion">
+                                    <div class="card card-body">
+                                        <div>
+                                            @Html.Raw(item.HtmlBody)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     }
-                    @foreach (var item in projectGrp)
-                    {
-                        <tr class="milestone-@milestoneGrp.Key-@appGrp.Key">
-                            <td><partial name="Items/_Number" model="item"/></td>
-                            <td><partial name="Items/_Title" model="item"/></td>                                                                
-                            <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Dropdowns.Sizes }"/></td>
-                        </tr>
-                    }
-                }
-            }            
-        </table>
+                </div>
+            </div>
+
+        }                    
     }
 }
-
-
+</div>
