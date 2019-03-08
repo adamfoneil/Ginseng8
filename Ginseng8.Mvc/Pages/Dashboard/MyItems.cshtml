@@ -4,41 +4,45 @@
     ViewData["Title"] = "My Items";
 }
 
-<div class="accordion" id="appAccordion">
-    @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+@foreach (var actGrp in Model.WorkItems.GroupBy(row => row.ActivityId))
+{
+    <h3>@actGrp.First().ActivityName</h3>
+    @foreach (var appGrp in actGrp.GroupBy(row => row.ApplicationId))
     {
-        <div class="card">
-            <div class="card-header">
-                <h3 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#app-@appGrp.Key" aria-expanded="true" aria-controls="app-@appGrp.Key">
-                        @appGrp.First().ApplicationName
-                    </button>
-                </h3>
-            </div>
-            <div id="app-@appGrp.Key" class="collapse show" aria-labelledby="headingOne" data-parent="#appAccordion">
-                <div class="card-body">
-                    @foreach  (var projectGrp in appGrp.GroupBy(row => row.ProjectId))
+        <h4>@appGrp.First().ApplicationName</h4>
+        <table class="table mx-3">
+            @foreach (var projectGrp in appGrp.GroupBy(row => row.ProjectId))
+            {
+                if (projectGrp.Key != 0)
+                {
+                    <tr>
+                        <td colspan="3">
+                            <span>@projectGrp.First().ProjectName</span>
+                        </td>
+                    </tr>
+                }
+                @foreach (var milestoneGrp in projectGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
+                {
+                    if (milestoneGrp.Key != 0)
                     {
-                        <h4>@projectGrp.First().ProjectName</h4>
-
-                        @foreach (var milestoneGrp in projectGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
-                        {
-                            <h5>@milestoneGrp.First().MilestoneName</h5>
-                            <table class="table">
-                                @foreach (var item in milestoneGrp)
-                                {
-                                    <tr>
-                                        <td><partial name="Items/_Number" model="item"/></td>
-                                        <td><partial name="Items/_Title" model="item"/></td>                                        
-                                        <td><partial name="Items/_Activity" model="new DashboardActivityField(Model) { Item = item, MyActivities = Model.Dropdowns.MyActivities, AllActivities = Model.Dropdowns.AllActivities }"/></td>
-                                        <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Dropdowns.Sizes }"/></td>
-                                    </tr>
-                                }
-                            </table>
-                        }
+                        <tr>
+                            <td colspan="3">
+                                <span>@milestoneGrp.First().MilestoneName</span>
+                            </td>
+                        </tr>
                     }
-                </div>
-            </div>
-        </div>
+                    @foreach (var item in milestoneGrp)
+                    {
+                        <tr>
+                            <td><partial name="Items/_Number" model="item"/></td>
+                            <td><partial name="Items/_Title" model="item"/></td>                                                                
+                            <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Dropdowns.Sizes }"/></td>
+                        </tr>
+                    }
+                }
+            }
+        </table>
     }
-</div>
+}
+
+
