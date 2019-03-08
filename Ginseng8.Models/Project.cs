@@ -21,6 +21,12 @@ namespace Ginseng.Models
 		[MaxLength(255)]
 		public string Description { get; set; }
 
+		[MaxLength(50)]
+		public string BackColor { get; set; }
+
+		[MaxLength(50)]
+		public string ForeColor { get; set; }
+
 		/// <summary>
 		/// Overall priority of project (lower number = higher priority)
 		/// </summary>

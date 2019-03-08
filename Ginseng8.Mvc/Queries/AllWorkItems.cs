@@ -11,6 +11,8 @@ namespace Ginseng.Mvc.Queries
 	{
 		public int Id { get; set; }
 		public int Number { get; set; }
+		public string BackColor { get; set; }
+		public string ForeColor { get; set; }
 		public string Title { get; set; }	
 		public string HtmlBody { get; set; }
 		public int? BusinessUserId { get; set; }
@@ -45,6 +47,7 @@ namespace Ginseng.Mvc.Queries
 			@"SELECT
                 [wi].[Id],
                 [wi].[Number],
+				[p].[BackColor], [p].[ForeColor],
                 [wi].[Title],
 				[wi].[HtmlBody],
                 [wi].[BusinessUserId],
