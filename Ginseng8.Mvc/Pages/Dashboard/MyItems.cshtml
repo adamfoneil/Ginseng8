@@ -11,36 +11,49 @@
     {
         <h4>@appGrp.First().ApplicationName</h4>
         <table class="table mx-3">
-            @foreach (var projectGrp in appGrp.GroupBy(row => row.ProjectId))
+            @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
             {
-                if (projectGrp.Key != 0)
+                var milestoneItem = milestoneGrp.First();
+                <tr>
+                    <td colspan="3">                            
+                        <i class="fas fa-flag-checkered"></i>
+                        <span class="font-weight-bold">@milestoneItem.MilestoneName</span>
+                        @if (milestoneGrp.Key != 0)
+                        {
+                            <span>@Html.FormatValue(milestoneItem.MilestoneDate, "{0:ddd M/d}")</span>
+                            <span class="text-muted">
+                                @if (milestoneItem.MilestoneDaysAway > 0)
+                                {
+                                    <text>@milestoneItem.MilestoneDaysAway day(s) away</text>
+                                }
+                                else
+                                {
+                                    <text>today</text>
+                                }
+                            </span>
+                        }
+                    </td>
+                </tr>
+                @foreach (var projectGrp in milestoneGrp.GroupBy(row => row.ProjectId))
                 {
+                    if (projectGrp.Key != 0)
+                    {
                     <tr>
                         <td colspan="3">
                             <span>@projectGrp.First().ProjectName</span>
                         </td>
                     </tr>
-                }
-                @foreach (var milestoneGrp in projectGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
-                {
-                    if (milestoneGrp.Key != 0)
-                    {
-                        <tr>
-                            <td colspan="3">
-                                <span>@milestoneGrp.First().MilestoneName</span>
-                            </td>
-                        </tr>
                     }
-                    @foreach (var item in milestoneGrp)
+                    @foreach (var item in projectGrp)
                     {
-                        <tr>
+                        <tr class="milestone-@milestoneGrp.Key-@appGrp.Key">
                             <td><partial name="Items/_Number" model="item"/></td>
                             <td><partial name="Items/_Title" model="item"/></td>                                                                
                             <td><partial name="Items/_Estimate" model="new DashboardEstimateField() { Item = item, Sizes = Model.Dropdowns.Sizes }"/></td>
                         </tr>
                     }
                 }
-            }
+            }            
         </table>
     }
 }
