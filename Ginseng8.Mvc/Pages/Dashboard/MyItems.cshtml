@@ -38,40 +38,31 @@
             </h5>
 
             <div id="activity-@actGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-                <div style="margin-left:20px">
-                    @foreach (var projectGrp in milestoneGrp.GroupBy(row => row.ProjectId))
-                    {
-                        if (projectGrp.Key != 0)
-                        {
-                        <div>
-                            <span class="font-weight-bold">@projectGrp.First().ProjectName</span>
-                        </div>
-                        }
-                        @foreach (var item in projectGrp)
-                        {
-                            <div class="card my-2">
-                                <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@item.Id">
-                                    <div class="row">
-                                        <div class="col-10">
-                                            <span class="badge badge-pill" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Number</span>
-                                            <partial name="Items/_Title" model="item"/>
-                                        </div>
-                                        <div class="col-1">
-                                            
-                                        </div>
-                                    </div>
+                <div style="margin-left:20px">                                            
+                @foreach (var item in milestoneGrp)
+                {
+                    <div class="card my-2">
+                        <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@item.Id">
+                            <div class="row">
+                                <div class="col-10">
+                                    <span class="badge badge-pill" style="background-color:@item.BackColor;color:@item.ForeColor" title="@item.ProjectName">@item.Number</span>
+                                    <partial name="Items/_Title" model="item"/>
                                 </div>
-                                <div class="collapse" id="item-@item.Id" data-parent="#accordion">
-                                    <div class="card card-body">
-
-                                        <div>
-                                            @Html.Raw(item.HtmlBody)
-                                        </div>
-                                    </div>
+                                <div class="col-1">
+                                            
                                 </div>
                             </div>
-                        }
-                    }
+                        </div>
+                        <div class="collapse" id="item-@item.Id" data-parent="#accordion">
+                            <div class="card card-body">
+
+                                <div>
+                                    @Html.Raw(item.HtmlBody)
+                                </div>
+                            </div>
+                        </div>
+                    </div>                        
+                }
                 </div>
             </div>
         }                    
