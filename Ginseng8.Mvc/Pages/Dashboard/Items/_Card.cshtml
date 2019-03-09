@@ -1,0 +1,25 @@
+﻿@model AllWorkItemsResult
+
+<div class="card my-2">
+    <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.Id">
+        <div class="row">
+            <div class="col-10">
+                <span class="badge badge-pill" style="background-color:@Model.BackColor;color:@Model.ForeColor" title="@Model.ProjectName">@Model.Number</span>
+                <partial name="Items/_Title" model="Model"/>
+            </div>
+            <div class="col-1">
+                <!--comment, hand-off controls-->
+            </div>
+        </div>
+    </div>
+    <div class="collapse" id="item-@Model.Id" data-parent="#accordion">
+        <div class="card card-body">
+            <div>
+                <!--controls-->
+            </div>
+            <div>
+                @Html.Raw(Model.HtmlBody)
+            </div>
+        </div>
+    </div>
+</div>                        

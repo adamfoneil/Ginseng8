@@ -93,7 +93,7 @@ namespace Ginseng.Mvc.Queries
                 LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
                 LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
             WHERE
-                [wi].[OrganizationId]=@orgId {andWhere}
+                [wi].[OrganizationId]=@orgId AND [wi].[CloseReasonId] IS NULL {andWhere}
             ORDER BY
                 [p].[Priority],
                 COALESCE([wid].[Priority], [wi].[Priority]), 
