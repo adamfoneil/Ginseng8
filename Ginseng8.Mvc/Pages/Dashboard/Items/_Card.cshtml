@@ -9,7 +9,15 @@
             </div>
             <div class="col-3 text-right">
                 <!--comment, hand-off controls-->
-                @Model.WorkItem.ActivityName - @Model.WorkItem.AssignedUserName
+                @if (Model.WorkItem.AssignedUserId.HasValue)
+                {
+                    @Model.WorkItem.ActivityName<span> - </span>@Model.WorkItem.AssignedUserName
+                    <!--hand off control-->
+                }
+                else
+                {
+                    <a href="#">I'll take this</a>
+                }
             </div>
         </div>
     </div>

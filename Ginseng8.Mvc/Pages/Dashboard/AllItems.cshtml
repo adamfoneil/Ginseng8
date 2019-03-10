@@ -6,32 +6,13 @@
 
 <h4>All Items</h4>
 
-<table class="table">
-    <tr>
-        <th>#</th>
-        <th>App / Project</th>
-        <th>Title</th>
-        <th>Assigned To</th>
-        <th>Activity</th>
-        <th>Estimate</th>        
-        <th>Milestone</th>
-    </tr>
-    @foreach (var item in Model.WorkItems)
+<div id="accordion">
+@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+{
+    <h4>@appGrp.First().ApplicationName</h4>               
+    foreach (var item in appGrp)
     {
-        <tr>
-            <td><partial name="Items/_Number" model="item"/></td>
-            <td>
-                @item.ApplicationName
-                @if (item.ProjectId != 0)
-                {
-                    <span> / @item.ProjectName</span>
-                }
-            </td>
-            <td><partial name="Items/_Title" model="item"/></td>
-            <td></td>
-            <td></td>
-            <td></td>                        
-            <td></td>
-        </tr>
+        <partial name="Items/_Card" model="new WorkItemView() { WorkItem = item, Dropdowns = Model.Dropdowns }"/>
     }
-</table>
+}
+</div>
