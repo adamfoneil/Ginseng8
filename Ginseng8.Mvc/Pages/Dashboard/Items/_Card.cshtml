@@ -17,17 +17,17 @@
         <div class="card card-body">
             <div class="pb-3">
                 <form class="form-inline">
-                    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control mr-2"></select>
-                    <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control mr-2">
+                    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2"></select>
+                    <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2">
                         <option value="">- project -</option>
                     </select>
-                    <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control mr-2">
+                    <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2">
                         <option value="">- milestone -</option>
                     </select>
-                    <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control mr-2">
+                    <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2">
                         <option value="">- size -</option>
                     </select>
-                    <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control mr-2">
+                    <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2">
                         <option value="">- open -</option>
                     </select>
                 </form>
