@@ -5,47 +5,24 @@
 }
 
 <div id="accordion">
-@foreach (var actGrp in Model.WorkItems.GroupBy(row => row.ActivityId))
+@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
 {
-    <h3>@actGrp.First().ActivityName</h3>
-    @foreach (var appGrp in actGrp.GroupBy(row => row.ApplicationId))
+    <h4>@appGrp.First().ApplicationName</h4>               
+
+    @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
     {
-        <h4>@appGrp.First().ApplicationName</h4>               
+        var milestoneItem = milestoneGrp.First();
 
-        @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
-        {
-            var milestoneItem = milestoneGrp.First();
+        <partial name="Items/_MilestoneHeader" model="milestoneItem"/>
 
-            <h5 class="milestone-droppable ui-droppable" data-milestone-id="@milestoneGrp.Key">
-                <span href="#act-@actGrp.Key-ms-@milestoneGrp.Key" data-toggle="collapse" class="milestone" data-milestone-id="@milestoneGrp.Key" aria-expanded="true">
-                    <i class="fas fa-flag-checkered"></i>
-                    <span class="font-weight-bold">@milestoneItem.MilestoneName</span>
-                    @if (milestoneGrp.Key != 0)
-                    {
-                        <span class="small">@Html.FormatValue(milestoneItem.MilestoneDate, "{0:ddd M/d}")</span>
-                        <span class="text-muted small">
-                            @if (milestoneItem.MilestoneDaysAway > 0)
-                            {
-                                <text>@milestoneItem.MilestoneDaysAway day(s) away</text>
-                            }
-                            else
-                            {
-                                <text>today</text>
-                            }
-                        </span>
-                    }
-                </span>
-            </h5>
-
-            <div id="activity-@actGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-                <div style="margin-left:20px">                                            
-                @foreach (var item in milestoneGrp)
-                {
-                    <partial name="Items/_Card" model="item"/>
-                }
-                </div>
+        <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+            <div style="margin-left:20px">                                            
+            @foreach (var item in milestoneGrp)
+            {
+                <partial name="Items/_Card" model="new WorkItemView() { WorkItem = item, Dropdowns = Model.Dropdowns }"/>
+            }
             </div>
-        }                    
-    }
+        </div>
+    }                    
 }
 </div>
