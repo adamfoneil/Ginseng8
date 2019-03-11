@@ -1,12 +1,16 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Attributes;
 using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
 {
@@ -26,6 +30,14 @@ namespace Ginseng.Mvc
 		public int UserId { get { return CurrentUser?.UserId ?? 0; } }
 		public int OrgId { get { return CurrentUser?.OrganizationId ?? 0; } }
 		public DateTime LocalTime { get { return CurrentUser.LocalTime; } }
+
+		public async Task<SelectList> CurrentOrgAppSelectAsync()
+		{
+			using (var cn = Data.GetConnection())
+			{
+				return await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, CurrentOrgUser?.CurrentAppId);
+			}
+		}
 
 		protected bool IsMyResponsibility(int responsibilityId)
 		{

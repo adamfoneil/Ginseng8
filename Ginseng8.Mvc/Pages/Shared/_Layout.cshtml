@@ -27,6 +27,11 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-page="/Dashboard/Index">@Html.CurrentOrgName()</a>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <partial name="_AppFilter" model="new AppFilterView() { CurrentAppName = Html.CurrentAppNameString(), AppOptions = await Html.AppFilterOptions() }"/>
+                }
+
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>

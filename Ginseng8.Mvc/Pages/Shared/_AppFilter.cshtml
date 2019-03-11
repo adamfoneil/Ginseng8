@@ -1,0 +1,11 @@
+﻿@model AppFilterView
+
+<div class="dropdown">
+    <button class="btn btn-light dropdown-toggle mr-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.CurrentAppName</button>
+    <div class="dropdown-menu">
+        @foreach (var item in Model.AppOptions)
+        {
+            <a asp-action="CurrentApp" asp-controller="Update" asp-route-id="@item.Value" class="dropdown-item">@item.Text</a>
+        }
+    </div>
+</div>

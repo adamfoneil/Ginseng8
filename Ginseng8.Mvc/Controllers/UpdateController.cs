@@ -67,5 +67,10 @@ namespace Ginseng.Mvc.Controllers
 				return Json(new { success = false, message = exc.Message });
 			}
 		}
+
+		public async Task<ActionResult> CurrentApp(int id, string returnUrl)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

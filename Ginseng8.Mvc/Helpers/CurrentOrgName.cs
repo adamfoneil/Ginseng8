@@ -8,13 +8,14 @@ namespace Ginseng.Mvc.Helpers
 		public const string AppName = "Ginseng8";
 
 		public static IHtmlContent CurrentOrgName(this IHtmlHelper<dynamic> html)
+		{		
+			return new HtmlString(CurrentOrgNameString(html));
+		}
+
+		public static string CurrentOrgNameString(this IHtmlHelper<dynamic> html)
 		{
-			string result = AppName;
-
 			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
-			if (model != null) result = model.OrgName;
-
-			return new HtmlString(result);
+			return (model != null) ? model.OrgName : AppName;
 		}
 	}
 }

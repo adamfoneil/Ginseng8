@@ -1,11 +1,14 @@
 ﻿using Ginseng.Models.Conventions;
+using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	public class OrganizationUser : BaseTable
+	public class OrganizationUser : BaseTable, IFindRelated<int>
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -41,6 +44,12 @@ namespace Ginseng.Models
 		public int? MaxWorkInProgress { get; set; }
 
 		/// <summary>
+		/// Application to filter for in Dashboard views
+		/// </summary>
+		[References(typeof(Application))]
+		public int? CurrentAppId { get; set; }
+
+		/// <summary>
 		/// This is a join request (or invite)
 		/// </summary>
 		public bool IsRequest { get; set; }
@@ -49,6 +58,24 @@ namespace Ginseng.Models
 		/// User is allowed into the org (join request accepted)
 		/// </summary>
 		public bool IsEnabled { get; set; }
+
+		public Application CurrentApp { get; set; }
+
+		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+		{
+			if (CurrentAppId.HasValue)
+			{
+				CurrentApp = commandProvider.Find<Application>(connection, CurrentAppId.Value);
+			}
+		}
+
+		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+		{
+			if (CurrentAppId.HasValue)
+			{
+				CurrentApp = await commandProvider.FindAsync<Application>(connection, CurrentAppId.Value);
+			}
+		}
 
 		public override bool Validate(IDbConnection connection, out string message)
 		{
