@@ -21,7 +21,7 @@ namespace Ginseng.Mvc
 			Data = new DataAccess(config);
 		}
 
-		public string OrgName => Data.CurrentOrg?.Name ?? "(no org)";
+		public string OrgName => Data.CurrentOrg?.Name ?? "Ginseng";
 
 		protected DataAccess Data { get; }
 		public Organization CurrentOrg { get { return Data.CurrentOrg; } }
@@ -47,12 +47,16 @@ namespace Ginseng.Mvc
 		public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
 		{
 			base.OnPageHandlerExecuting(context);
-			Data.Initialize(User, TempData);
 
-			if (IsOrgRequired(context) && !CurrentUser.OrganizationId.HasValue)
+			if (User.Identity.IsAuthenticated)
 			{
-				context.Result = new RedirectResult("/Setup/Organization?mustCreate=true");
-				return;
+				Data.Initialize(User, TempData);
+
+				if (IsOrgRequired(context) && !CurrentUser.OrganizationId.HasValue)
+				{
+					context.Result = new RedirectResult("/Setup/Organization?mustCreate=true");
+					return;
+				}
 			}
 		}
 
