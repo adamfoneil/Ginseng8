@@ -114,6 +114,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)=@assignedUserId")]
 		public int? AssignedUserId { get; set; }
 
+		[Where("[wi].[ApplicationId]=@appId")]
+		public int? AppId { get; set; }
+
 		[Case(true, "[wi].[MilestoneId] IS NOT NULL")]
 		public bool? HasMilestone { get; set; }
 

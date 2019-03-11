@@ -16,7 +16,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			return new AllWorkItems()
 			{
 				OrgId = Data.CurrentOrg.Id,
-				HasMilestone = true
+				HasMilestone = true,
+				AppId = CurrentOrgUser.CurrentAppId
 			};
 		}
 	}

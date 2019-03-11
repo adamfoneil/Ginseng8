@@ -71,7 +71,7 @@ namespace Ginseng.Mvc.Controllers
 		[Route("/Update/CurrentApp/{id}")]
 		public async Task<ActionResult> CurrentApp(int id, string returnUrl)
 		{
-			_data.CurrentOrgUser.CurrentAppId = id;
+			_data.CurrentOrgUser.CurrentAppId = (id != 0) ? id : default(int?);
 			await _data.TryUpdateAsync(_data.CurrentOrgUser, r => r.CurrentAppId);
 			return Redirect(returnUrl);
 		}
