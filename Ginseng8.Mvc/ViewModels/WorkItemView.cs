@@ -1,10 +1,16 @@
-﻿using Ginseng.Mvc.Queries;
+﻿using System;
+using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Queries;
 
 namespace Ginseng.Mvc.ViewModels
 {
-	public class WorkItemView
+	public class WorkItemView : IUserInfo
 	{
 		public AllWorkItemsResult WorkItem { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
+
+		public int UserId { get; set; }
+		public int OrgId { get; set; }
+		public DateTime LocalTime { get; set; }
 	}
 }

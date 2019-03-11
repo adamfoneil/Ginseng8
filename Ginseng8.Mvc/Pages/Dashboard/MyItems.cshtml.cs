@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 namespace Ginseng.Mvc.Pages.Work
 {
 	[Authorize]
-	public class MyWorkModel : AppPageModel
+	public class MyItemsModel : AppPageModel
 	{
-		public MyWorkModel(IConfiguration config) : base(config)
+		public MyItemsModel(IConfiguration config) : base(config)
 		{
 		}
 

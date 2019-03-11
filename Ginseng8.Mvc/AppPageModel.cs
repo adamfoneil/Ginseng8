@@ -41,7 +41,7 @@ namespace Ginseng.Mvc
 			{
 				context.Result = new RedirectResult("/Setup/Organization?mustCreate=true");
 				return;
-			}			
+			}
 		}
 
 		private bool IsOrgRequired(PageHandlerExecutingContext context)

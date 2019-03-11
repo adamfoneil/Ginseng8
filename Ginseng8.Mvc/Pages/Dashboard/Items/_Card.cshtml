@@ -42,11 +42,24 @@
                     <img src="~/img/loading.gif" id="loading-@Model.WorkItem.Number" style="display:none" />
                     <i class="fas fa-check-circle" style="color:green;display:none" id="update-success-@Model.WorkItem.Number"></i>
                     <i class="fas fa-exclamation-triangle" style="color:red;display:none" id="update-failed-@Model.WorkItem.Number"></i>
-                </form>
-                
+                </form>                
             </div>
             <div>
-                @Html.Raw(Model.WorkItem.HtmlBody)
+                <div id="body-display-@Model.WorkItem.Number">
+                    @Html.Raw(Model.WorkItem.HtmlBody)
+                </div>
+                <div id="body-edit-@Model.WorkItem.Number" style="display:none">
+                    <form>
+                        <input type="hidden" name="Number" value="@Model.WorkItem.Number"/>
+                        <textarea name="HtmlBody" id="HtmlBody-@Model.WorkItem.Number">@Model.WorkItem.HtmlBody</textarea>
+                        <button type="button" class="btn btn-sm btn-secondary">Update</button>
+                        <a class="cancelEdit" href="#">Cancel</a>
+                    </form>
+                </div>
+                
+                <div>
+                    <a class="itemEdit" href="#" data-number="@Model.WorkItem.Number">Edit</a>
+                </div>
             </div>
         </div>
     </div>

@@ -90,15 +90,21 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/js/froala_editor.pkgd.min.js"></script>
-    <script> $(function () {
-        $('.htmlEditor').froalaEditor({
-            heightMin: 300,
-            imageUploadURL: "/Image/Paste",
-            imageDefaultWidth: 0,            
-            toolbarButtons: ["bold", "italic", "|", "formatOL", "formatUL", "|", "indent", "outdent", "quote", "|", "insertTable", "insertLink", "|", "clearFormatting" ],
-            charCounterCount: false,
-        });
-    }); </script>
+    <script>
+        function GetFroalaSettings() {
+            return {
+                heightMin: 300,
+                imageUploadURL: "/Image/Paste",
+                imageDefaultWidth: 0,
+                toolbarButtons: ["bold", "italic", "|", "formatOL", "formatUL", "|", "indent", "outdent", "quote", "|", "insertTable", "insertLink", "|", "clearFormatting"],
+                charCounterCount: false
+            };
+        }
+
+        $(function () {
+            $('.htmlEditor').froalaEditor(GetFroalaSettings());
+        }); 
+    </script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

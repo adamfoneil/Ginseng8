@@ -4,7 +4,7 @@ updateFields.forEach(function (e) {
         var frm = e.target.form;
         var number = frm['Number'].value;
         var loadingImg = document.getElementById('loading-' + number);
-        loadingImg.classList.add('visible');
+        $(loadingImg).show();
 
         var failImg = document.getElementById('update-failed-' + number);
 
@@ -27,9 +27,19 @@ updateFields.forEach(function (e) {
             });
         } catch (e) {            
             $(failImg).show();
-            failImg.setAttribute('title', result.message);
+            failImg.setAttribute('title', e.message);
         } finally {
             $(loadingImg).hide();
         }
+    });
+});
+
+var bodyEditLinks = document.querySelectorAll('.itemEdit');
+bodyEditLinks.forEach(function (e) {
+    e.addEventListener("click", function (e) {
+        var number = e.target.getAttribute("data-number");
+        $("#body-display-" + number).hide();
+        $("#body-edit-" + number).show();
+        $('#HtmlEditor-' + number).froalaEditor(GetFroalaSettings());
     });
 });
