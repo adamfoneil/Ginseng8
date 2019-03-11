@@ -24,7 +24,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 				if (milestoneId != 0)
 				{
 					ms = await Data.FindWhereAsync<Milestone>(cn, new { OrganizationId = OrgId, Id = milestoneId });
-				}				
+				}
 
 				if (item != null)
 				{
@@ -36,7 +36,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 					{
 						item.MilestoneId = null;
 					}
-					 
+
 					await Data.TrySaveAsync(cn, item);
 				}
 

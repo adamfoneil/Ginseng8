@@ -10,8 +10,8 @@
 
 @Html.ActionAlert(TempData)
 
-@{ 
-    var grid = new GridEditor<Application>(this, Xsrf);    
+@{
+    var grid = new GridEditor<Application>(this, Xsrf);
 }
 
 <table class="table">
@@ -25,8 +25,8 @@
     {
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>            
-            <td>@grid.TextBox(m => m.Url, new { @class = "form-control" })</td>                        
+            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Url, new { @class = "form-control" })</td>
             <td>@grid.Controls()</td>
         </tr>
     }

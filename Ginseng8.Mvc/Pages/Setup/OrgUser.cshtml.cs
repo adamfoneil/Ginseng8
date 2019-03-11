@@ -28,7 +28,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public void OnGet()
 		{
-			WorkDays = WorkDay.WorkDays.ToArray();			
+			WorkDays = WorkDay.WorkDays.ToArray();
 
 			using (var cn = Data.GetConnection())
 			{
@@ -62,7 +62,7 @@ namespace Ginseng.Mvc.Pages.Setup
 				nameof(OrganizationUser.DailyWorkHours),
 				nameof(OrganizationUser.WorkDays),
 				nameof(OrganizationUser.Responsibilities)
-			}.ToList();			
+			}.ToList();
 
 			if (OrgUser.Id == 0)
 			{
@@ -71,7 +71,7 @@ namespace Ginseng.Mvc.Pages.Setup
 			}
 
 			await Data.TrySaveAsync(OrgUser, fields.ToArray(), "Record updated successfully.");
-			
+
 			return RedirectToPage("/Setup/OrgUser");
 		}
 

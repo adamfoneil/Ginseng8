@@ -45,7 +45,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 					Item = await new AllWorkItems() { OrgId = OrgId, Number = number }.ExecuteSingleAsync(cn),
 					Sizes = await new WorkItemSizes() { OrgId = OrgId }.ExecuteAsync(cn)
 				};
-			}			
+			}
 		}
 	}
 }

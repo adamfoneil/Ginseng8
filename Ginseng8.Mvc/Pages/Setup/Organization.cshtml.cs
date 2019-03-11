@@ -12,9 +12,9 @@ namespace Ginseng.Mvc.Pages.Setup
 	[Authorize]
 	[OrgNotRequired]
 	public class OrganizationModel : AppPageModel
-	{				
+	{
 		public OrganizationModel(IConfiguration config) : base(config)
-		{			
+		{
 		}
 
 		[BindProperty]
@@ -32,12 +32,12 @@ namespace Ginseng.Mvc.Pages.Setup
 			using (var cn = Data.GetConnection())
 			{
 				MyOrgs = new MyOrgs() { UserId = CurrentUser.UserId }.Execute(cn);
-			}				
+			}
 		}
 
 		public async Task<ActionResult> OnPostAsync()
 		{
-			await Data.TrySaveAsync(Organization, successMessage: "Organization was updated succesfully.");			
+			await Data.TrySaveAsync(Organization, successMessage: "Organization was updated succesfully.");
 			return RedirectToPage("/Setup/Organization");
 		}
 

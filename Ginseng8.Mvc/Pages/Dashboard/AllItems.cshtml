@@ -7,10 +7,10 @@
 <div id="accordion">
 @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
 {
-    <h4>@appGrp.First().ApplicationName</h4>               
+    <h4>@appGrp.First().ApplicationName</h4>
     foreach (var item in appGrp)
     {
-        <partial name="Items/_Card" model="new WorkItemView() { WorkItem = item, Dropdowns = Model.Dropdowns }"/>
+        <partial name="Items/_Card" model="new WorkItemView() { WorkItem = item, Dropdowns = Model.Dropdowns }" />
     }
 }
 </div>

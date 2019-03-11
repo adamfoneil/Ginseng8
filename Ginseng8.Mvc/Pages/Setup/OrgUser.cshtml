@@ -19,21 +19,21 @@
 <form method="post">
     <div class="form-group">
         <label>Display Name:</label>
-        <input type="text" asp-for="OrgUser.DisplayName" class="form-control" required="required" maxlength="50"/>
+        <input type="text" asp-for="OrgUser.DisplayName" class="form-control" required="required" maxlength="50" />
     </div>
 
     <div class="row">
         <div class="col-6">
             <div class="form-group">
                 <label>Max Work in Progress:</label>
-                <input type="number" asp-for="OrgUser.MaxWorkInProgress" class="form-control"/>
+                <input type="number" asp-for="OrgUser.MaxWorkInProgress" class="form-control" />
             </div>
         </div>
 
         <div class="col-6">
             <div class="form-group">
                 <label>Daily Work Hours:</label>
-                <input type="number" asp-for="OrgUser.DailyWorkHours" class="form-control"/>
+                <input type="number" asp-for="OrgUser.DailyWorkHours" class="form-control" />
             </div>
         </div>
     </div>
@@ -41,15 +41,15 @@
     <div class="row">
         <div class="col-12">
             <label>Work Days:</label>
-            <input type="hidden" asp-for="OrgUser.WorkDays"/>
+            <input type="hidden" asp-for="OrgUser.WorkDays" />
             <ul class="list-inline">
                 @foreach  (var wk in Model.WorkDays)
                 {
                     <li class="list-inline-item">
                     <label>
                         @wk.Abbreviation
-                        <input type="checkbox" name="SelectedWorkDays" value="@wk.Flag" checked="@((wk.Flag & Model.OrgUser.WorkDays) == wk.Flag)"/>
-                    </label>            
+                        <input type="checkbox" name="SelectedWorkDays" value="@wk.Flag" checked="@((wk.Flag & Model.OrgUser.WorkDays) == wk.Flag)" />
+                    </label>
                 </li>
                 }
             </ul>
@@ -59,14 +59,14 @@
     <div class="row">
         <div class="col-12">
             <label>Responsibilities:</label>
-            <input type="hidden" asp-for="OrgUser.Responsibilities"/>
+            <input type="hidden" asp-for="OrgUser.Responsibilities" />
             <ul class="list-inline">
                 @foreach (var r in Model.Responsibilities)
                 {
                     <li class="list-inline-item">
                         <label>
                             @r.Name
-                            <input type="checkbox" name="SelectedResponsibilities" value="@r.Flag" checked="@((r.Flag & Model.OrgUser.Responsibilities) == r.Flag)"/>
+                            <input type="checkbox" name="SelectedResponsibilities" value="@r.Flag" checked="@((r.Flag & Model.OrgUser.Responsibilities) == r.Flag)" />
                         </label>
                     </li>
                 }
@@ -76,4 +76,3 @@
 
     <button class="btn btn-dark">Save</button>
 </form>
-

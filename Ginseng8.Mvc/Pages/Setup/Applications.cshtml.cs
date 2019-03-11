@@ -26,7 +26,7 @@ namespace Ginseng.Mvc.Pages.Setup
 				Applications = await new Applications() { OrgId = CurrentOrg.Id, IsActive = isActive }.ExecuteAsync(cn);
 			}
 		}
-		
+
 		public async Task<ActionResult> OnPostSave(Application app)
 		{
 			app.OrganizationId = CurrentOrg.Id;

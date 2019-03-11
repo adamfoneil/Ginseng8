@@ -3,10 +3,10 @@
 <div id="Activity-@Model.Item.Number">
 @if (Model.Item.CloseReasonId.HasValue)
 {
-    <span>Closed: @Model.Item.CloseReasonName</span>    
+    <span>Closed: @Model.Item.CloseReasonName</span>
 }
 else
-{    
+{
     <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         @if (Model.Item.ActivityId.HasValue)
         {
@@ -22,6 +22,6 @@ else
         {
             <a class="dropdown-item setActivity" href="#" title="@act.Description" data-number="@Model.Item.Number" data-activity-id="@act.Id">@act.Name</a>
         }
-    </div>       
+    </div>
 }
 </div>

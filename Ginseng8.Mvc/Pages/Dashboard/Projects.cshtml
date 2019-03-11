@@ -5,40 +5,40 @@
 }
 
 <div id="accordion">
-@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
-{
-    <h4>@appGrp.First().ApplicationName</h4>               
-    foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
+    @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
     {
-        var projectItem = projectGrp.First();
-        <h5>
-            <span class="badge badge-pill" style="background-color:@projectItem.BackColor;color:@projectItem.ForeColor">@projectItem.ProjectName</span>
+        <h4>@appGrp.First().ApplicationName</h4>
+        foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
+        {
+            var projectItem = projectGrp.First();
+            <h5>
+                <span class="badge badge-pill" style="background-color:@projectItem.BackColor;color:@projectItem.ForeColor">@projectItem.ProjectName</span>
+                @if (projectGrp.Key != 0)
+                {
+                    <span class="small"><a href="#" class="editProjectBody">Edit</a></span>
+                }
+            </h5>
+
             @if (projectGrp.Key != 0)
             {
-                <span class="small"><a href="#" class="editProjectBody">Edit</a></span>
-            }            
-        </h5>
+                <div class="project-edit-@projectGrp.Key" style="display:none">
+                    <form>
+                        <input type="hidden" name="Id" value="@projectGrp.Key" />
+                        <textarea name="HtmlBody" id="project-body-@projectGrp.Key">@Model.Projects[projectGrp.Key].HtmlBody</textarea>
+                        <button type="button" class="btn btn-sm btn-secondary my-2 projectBodyUpdate">Update</button>
+                        <a class="projectCancelEdit" href="#" data-id="@projectGrp.Key">Cancel</a>
+                    </form>
+                </div>
+            }
 
-        @if (projectGrp.Key != 0)
-        {
-            <div class="project-edit-@projectGrp.Key" style="display:none">
-                <form>
-                    <input type="hidden" name="Id" value="@projectGrp.Key"/>
-                    <textarea name="HtmlBody" id="project-body-@projectGrp.Key">@Model.Projects[projectGrp.Key].HtmlBody</textarea>
-                    <button type="button" class="btn btn-sm btn-secondary my-2 projectBodyUpdate">Update</button>
-                    <a class="projectCancelEdit" href="#" data-id="@projectGrp.Key">Cancel</a>
-                </form>
+            <div id="app-@appGrp.Key-@projectGrp.Key" class="milestone-items" data-milestone-id="@projectGrp.Key">
+                <div style="margin-left:20px">
+                    @foreach (var item in projectGrp)
+                    {
+                        <partial name="Items/_Card" model="new WorkItemView() { WorkItem = item, Dropdowns = Model.Dropdowns }" />
+                    }
+                </div>
             </div>
         }
-
-        <div id="app-@appGrp.Key-@projectGrp.Key" class="milestone-items" data-milestone-id="@projectGrp.Key">
-            <div style="margin-left:20px">                                            
-            @foreach (var item in projectGrp)
-            {
-                <partial name="Items/_Card" model="new WorkItemView() { WorkItem = item, Dropdowns = Model.Dropdowns }"/>
-            }
-            </div>
-        </div>
     }
-}
 </div>

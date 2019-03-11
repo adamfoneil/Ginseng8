@@ -5,7 +5,7 @@ namespace Ginseng.Mvc.Helpers
 {
 	public static partial class HtmlHelpers
 	{
-		public const string AppName = "Ginseng8";
+		public const string AppName = "Ginseng";
 
 		public static IHtmlContent CurrentOrgName(this IHtmlHelper<dynamic> html)
 		{		

@@ -13,11 +13,11 @@
               asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
               asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
               crossorigin="anonymous"
-              integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE="/>
+              integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" />
     </environment>
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/lib/jqueryui/jquery-ui.min.css"/>
-    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-6jHF7Z3XI3fF4XZixAuSu0gGKrXwoX/w3uFPxC56OtjChio7wtTGJWRW53Nhx6Ev" crossorigin="anonymous">    
+    <link rel="stylesheet" href="~/lib/jqueryui/jquery-ui.min.css" />
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-6jHF7Z3XI3fF4XZixAuSu0gGKrXwoX/w3uFPxC56OtjChio7wtTGJWRW53Nhx6Ev" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
     <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_style.min.css" rel="stylesheet" type="text/css" />
@@ -29,7 +29,7 @@
                 <a class="navbar-brand" asp-area="" asp-page="/Dashboard/Index">@Html.CurrentOrgName()</a>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <partial name="_AppFilter" model="new AppFilterView() { CurrentAppName = Html.CurrentAppNameString(), AppOptions = await Html.AppFilterOptions() }"/>
+                    <partial name="_AppFilter" model="new AppFilterView() { CurrentAppName = Html.CurrentAppNameString(), AppOptions = await Html.AppFilterOptions() }" />
                 }
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -38,14 +38,14 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
                     <partial name="_LoginPartial" />
-       
+
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity.IsAuthenticated)
-                        {        
+                        {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/Setup/Index">Setup</a>
-                            </li>              
-                        }                        
+                            </li>
+                        }
                     </ul>
 
                     @if (User.Identity.IsAuthenticated)
@@ -91,7 +91,7 @@
         </script>
     </environment>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>    
+    <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/js/froala_editor.pkgd.min.js"></script>
@@ -108,7 +108,7 @@
 
         $(function () {
             $('.htmlEditor').froalaEditor(GetFroalaSettings());
-        }); 
+        });
     </script>
     @RenderSection("Scripts", required: false)
 </body>

@@ -15,7 +15,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		}
 
 		/// <summary>
-		/// Sets the Activity on a WorkItem and assigns the current user according to the Activity's responsibility		
+		/// Sets the Activity on a WorkItem and assigns the current user according to the Activity's responsibility
 		/// </summary>
 		public async Task OnPostAsync(int number, int activityId)
 		{
@@ -38,7 +38,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 					}
 					else
 					{
-						item.ActivityId = null;						
+						item.ActivityId = null;
 					}
 
 					await Data.TrySaveAsync(cn, item);
