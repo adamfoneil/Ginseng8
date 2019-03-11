@@ -25,20 +25,25 @@
         <div class="card card-body">
             <div class="pb-3">
                 <form class="form-inline">
-                    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2"></select>
-                    <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2">
+                    <input type="hidden" name="Number" value="@Model.WorkItem.Number"/>
+                    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate"></select>
+                    <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- project -</option>
                     </select>
-                    <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2">
+                    <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- milestone -</option>
                     </select>
-                    <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2">
+                    <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- size -</option>
                     </select>
-                    <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2">
+                    <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- open -</option>
                     </select>
+                    <img src="~/img/loading.gif" id="loading-@Model.WorkItem.Number" style="display:none" />
+                    <i class="fas fa-check-circle" style="color:green;display:none" id="update-success-@Model.WorkItem.Number"></i>
+                    <i class="fas fa-exclamation-triangle" style="color:red;display:none" id="update-failed-@Model.WorkItem.Number"></i>
                 </form>
+                
             </div>
             <div>
                 @Html.Raw(Model.WorkItem.HtmlBody)
