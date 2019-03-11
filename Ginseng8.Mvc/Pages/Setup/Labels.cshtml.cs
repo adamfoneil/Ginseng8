@@ -19,21 +19,21 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 			using (var cn = Data.GetConnection())
 			{
-				Labels = new Labels() { OrgId = CurrentOrg.Id, IsActive = isActive }.Execute(cn);
+				Labels = new Labels() { OrgId = OrgId, IsActive = isActive }.Execute(cn);
 			}
 		}
 
 		public async Task<ActionResult> OnPostSave(Label label)
 		{
-			label.OrganizationId = CurrentOrg.Id;
+			label.OrganizationId = OrgId;
 			await Data.TrySaveAsync(label);
-			return RedirectToAction("/Setup/Labels");
+			return RedirectToPage("/Setup/Labels");
 		}
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
 			await Data.TryDelete<Label>(id);
-			return RedirectToAction("/Setup/Labels");
+			return RedirectToPage("/Setup/Labels");
 		}
 	}
 }

@@ -105,6 +105,7 @@ namespace Ginseng.Mvc
 			try
 			{
 				beforeSave?.Invoke(connection, record);
+				if (connection.State == ConnectionState.Closed) connection.Open();
 				await connection.SaveAsync(record, CurrentUser);
 				SetSuccessMessage(successMessage);
 				return true;
@@ -122,11 +123,7 @@ namespace Ginseng.Mvc
 			{
 				using (var cn = GetConnection())
 				{
-					beforeSave?.Invoke(cn, record);
-					if (cn.State == ConnectionState.Closed) cn.Open();
-					await cn.SaveAsync(record, CurrentUser);
-					SetSuccessMessage(successMessage);
-					return true;
+					return await TrySaveAsync<T>(cn, record, beforeSave, successMessage);
 				}
 			}
 			catch (Exception exc)
