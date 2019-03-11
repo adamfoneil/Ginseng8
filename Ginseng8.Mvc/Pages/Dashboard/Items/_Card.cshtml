@@ -52,13 +52,13 @@
                     <form>
                         <input type="hidden" name="Number" value="@Model.WorkItem.Number"/>
                         <textarea name="HtmlBody" id="HtmlBody-@Model.WorkItem.Number">@Model.WorkItem.HtmlBody</textarea>
-                        <button type="button" class="btn btn-sm btn-secondary">Update</button>
+                        <button type="button" class="btn btn-sm btn-secondary my-2 itemBodyUpdate">Update</button>
                         <a class="itemCancelEdit" href="#" data-number="@Model.WorkItem.Number">Cancel</a>
                     </form>
                 </div>
                 
                 <div>
-                    <a class="itemEdit" href="#" data-number="@Model.WorkItem.Number">Edit</a>
+                    <a class="itemEdit" href="#" data-number="@Model.WorkItem.Number" id="itemEditLink-@Model.WorkItem.Number">Edit</a>
                 </div>
             </div>
         </div>

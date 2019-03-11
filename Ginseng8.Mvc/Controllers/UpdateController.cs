@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -40,6 +41,25 @@ namespace Ginseng.Mvc.Controllers
 				await _data.TryUpdateAsync(workItem, 
 					r => r.ApplicationId, r => r.ProjectId, r => r.MilestoneId, r => r.SizeId, r => r.CloseReasonId,
 					r => r.ModifiedBy, r => r.DateModified);
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
+
+		[HttpPost]		
+		public async Task<JsonResult> WorkItemBody(int number, string htmlBody)
+		{
+			try
+			{
+				var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, number });
+				workItem.HtmlBody = htmlBody;
+				workItem.SaveHtml();
+				workItem.ModifiedBy = User.Identity.Name;
+				workItem.DateModified = _data.CurrentUser.LocalTime;
+				await _data.TryUpdateAsync(workItem, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
 				return Json(new { success = true });
 			}
 			catch (Exception exc)
