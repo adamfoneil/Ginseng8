@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
@@ -122,6 +123,7 @@ namespace Ginseng.Mvc
 				using (var cn = GetConnection())
 				{
 					beforeSave?.Invoke(cn, record);
+					if (cn.State == ConnectionState.Closed) cn.Open();
 					await cn.SaveAsync(record, CurrentUser);
 					SetSuccessMessage(successMessage);
 					return true;
