@@ -53,7 +53,7 @@
                         <input type="hidden" name="Number" value="@Model.WorkItem.Number"/>
                         <textarea name="HtmlBody" id="HtmlBody-@Model.WorkItem.Number">@Model.WorkItem.HtmlBody</textarea>
                         <button type="button" class="btn btn-sm btn-secondary">Update</button>
-                        <a class="cancelEdit" href="#">Cancel</a>
+                        <a class="itemCancelEdit" href="#" data-number="@Model.WorkItem.Number">Cancel</a>
                     </form>
                 </div>
                 

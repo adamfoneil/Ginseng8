@@ -44,3 +44,10 @@ bodyEditLinks.forEach(function (e) {
         $('#HtmlBody-' + number).froalaEditor(settings);
     });
 });
+
+var editCancelLinks = document.querySelectorAll('.itemEditCancel');
+editCancelLinks.forEach(function (e) {
+    e.addEventListener('click', function (e) {
+
+    });
+});
