@@ -40,6 +40,7 @@ bodyEditLinks.forEach(function (e) {
         var number = e.target.getAttribute("data-number");
         $("#body-display-" + number).hide();
         $("#body-edit-" + number).show();
-        $('#HtmlEditor-' + number).froalaEditor(GetFroalaSettings());
+        var settings = GetFroalaSettings();
+        $('#HtmlBody-' + number).froalaEditor(settings);
     });
 });
