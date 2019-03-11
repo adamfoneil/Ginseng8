@@ -68,9 +68,12 @@ namespace Ginseng.Mvc.Controllers
 			}
 		}
 
+		[Route("/Update/CurrentApp/{id}")]
 		public async Task<ActionResult> CurrentApp(int id, string returnUrl)
 		{
-			throw new NotImplementedException();
+			_data.CurrentOrgUser.CurrentAppId = id;
+			await _data.TryUpdateAsync(_data.CurrentOrgUser, r => r.CurrentAppId);
+			return Redirect(returnUrl);
 		}
 	}
 }

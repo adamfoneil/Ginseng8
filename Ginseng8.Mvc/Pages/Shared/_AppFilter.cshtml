@@ -5,7 +5,7 @@
     <div class="dropdown-menu">
         @foreach (var item in Model.AppOptions)
         {
-            <a asp-action="CurrentApp" asp-controller="Update" asp-route-id="@item.Value" class="dropdown-item">@item.Text</a>
+            <a asp-action="CurrentApp" asp-controller="Update" asp-route-id="@item.Value" asp-route-returnUrl="@UriHelper.GetDisplayUrl(Html.ViewContext.HttpContext.Request)" class="dropdown-item">@item.Text</a>
         }
     </div>
 </div>
