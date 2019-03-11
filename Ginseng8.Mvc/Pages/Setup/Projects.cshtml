@@ -20,6 +20,7 @@
 <table class="table">
     <tr>
         <th>Project Name</th>
+        <th>Priority</th>
         <th>Description</th>
         <th>Back Color</th>
         <th>Text Color</th>
@@ -30,6 +31,7 @@
     {
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
@@ -39,6 +41,7 @@
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>

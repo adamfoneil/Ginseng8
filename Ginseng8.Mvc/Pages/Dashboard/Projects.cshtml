@@ -8,7 +8,7 @@
 @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
 {
     <h4>@appGrp.First().ApplicationName</h4>               
-    foreach (var projectGrp in appGrp.GroupBy(row => row.ProjectId))
+    foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
     {
         var projectItem = projectGrp.First();
         <h5>

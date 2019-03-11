@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Ginseng.Mvc.Queries;
 using Microsoft.Extensions.Configuration;
 
 namespace Ginseng.Mvc.Pages.Work
 {
-    public class TeamModel : AppPageModel
-    {
+	public class TeamModel : DashboardPageModel
+	{
 		public TeamModel(IConfiguration config) : base(config)
 		{
 		}
 
-        public void OnGet()
-        {
-
-        }
-    }
+		protected override AllWorkItems GetQuery()
+		{
+			return new AllWorkItems() { OrgId = OrgId };
+		}
+	}
 }
