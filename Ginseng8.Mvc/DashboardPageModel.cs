@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
@@ -21,12 +22,21 @@ namespace Ginseng.Mvc
 		/// </summary>
 		protected abstract AllWorkItems GetQuery();
 
+		/// <summary>
+		/// Override this to populate additional model properties during the OnGetAsync method
+		/// </summary>
+		protected virtual async Task OnGetInternalAsync(SqlConnection connection)
+		{
+			await Task.CompletedTask;
+		}
+
 		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
 			{
 				WorkItems = await GetQuery().ExecuteAsync(cn);
 				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
+				await OnGetInternalAsync(cn);
 			}
 		}
 	}

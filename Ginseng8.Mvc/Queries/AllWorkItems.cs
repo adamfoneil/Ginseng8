@@ -39,6 +39,11 @@ namespace Ginseng.Mvc.Queries
 		public int? SizeId { get; set; }
 		public int? DevEstimateHours { get; set; }
 		public int? SizeEstimateHours { get; set; }
+
+		public bool HasColor()
+		{
+			return !string.IsNullOrEmpty(BackColor) && !string.IsNullOrEmpty(ForeColor);
+		}
 	}
 
 	public class AllWorkItems : Query<AllWorkItemsResult>, ITestableQuery
