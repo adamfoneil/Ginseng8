@@ -15,13 +15,17 @@
                 <span class="badge badge-pill" style="background-color:@projectItem.BackColor;color:@projectItem.ForeColor">@projectItem.ProjectName</span>
                 @if (projectGrp.Key != 0)
                 {
-                    <span class="small"><a href="#" class="viewProjectBody">View Details</a></span>
+                    <span class="small"><a href="#" class="viewProjectBody small" data-project-id="@projectGrp.Key">View Details</a></span>
                 }
             </h5>
 
             @if (projectGrp.Key != 0)
             {
-                <div class="project-edit-@projectGrp.Key" style="display:none">
+                <div id="project-view-@projectGrp.Key" style="display:none;margin-left:20px">                    
+                    @Html.Raw(Model.Projects[projectGrp.Key].HtmlBody)
+                    <a href="#" class="link-project-edit-@projectGrp.Key">Edit</a>
+                </div>
+                <div id="project-edit-@projectGrp.Key" style="display:none">
                     <form>
                         <input type="hidden" name="Id" value="@projectGrp.Key" />
                         <textarea name="HtmlBody" id="project-body-@projectGrp.Key">@Model.Projects[projectGrp.Key].HtmlBody</textarea>
@@ -42,3 +46,7 @@
         }
     }
 </div>
+
+@section Scripts {
+    <script src="~/js/Projects.js"></script>
+}
