@@ -1,17 +1,23 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 
-namespace Ginseng.Mvc.Pages.Work
+namespace Ginseng.Mvc.Pages.Dashboard
 {
 	[Authorize]
-	public class MilestonesModel : AppPageModel
+	public class MilestonesModel : DashboardPageModel
 	{
 		public MilestonesModel(IConfiguration config) : base(config)
 		{
 		}
 
-		public void OnGet()
+		protected override AllWorkItems GetQuery()
 		{
+			return new AllWorkItems()
+			{
+				OrgId = Data.CurrentOrg.Id,
+				HasMilestone = true
+			};
 		}
 	}
 }

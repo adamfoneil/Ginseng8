@@ -109,6 +109,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)=@assignedUserId")]
 		public int? AssignedUserId { get; set; }
 
+		[Case(true, "[wi].[MilestoneId] IS NOT NULL")]
+		public bool? HasMilestone { get; set; }
+
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new AllWorkItems() { OrgId = 0 };

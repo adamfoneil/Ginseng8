@@ -4,4 +4,25 @@
     ViewData["Title"] = "Projects";
 }
 
-<h4>Projects</h4>
+<div id="accordion">
+@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+{
+    <h4>@appGrp.First().ApplicationName</h4>               
+    foreach (var projectGrp in appGrp.GroupBy(row => row.ProjectId))
+    {
+        var projectItem = projectGrp.First();
+        <h5>
+            <span class="badge badge-pill" style="background-color:@projectItem.BackColor;color:@projectItem.ForeColor">@projectItem.ProjectName</span>
+        </h5>
+
+        <div id="app-@appGrp.Key-@projectGrp.Key" class="milestone-items" data-milestone-id="@projectGrp.Key">
+            <div style="margin-left:20px">                                            
+            @foreach (var item in projectGrp)
+            {
+                <partial name="Items/_Card" model="new WorkItemView() { WorkItem = item, Dropdowns = Model.Dropdowns }"/>
+            }
+            </div>
+        </div>
+    }
+}
+</div>
