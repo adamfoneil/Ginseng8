@@ -45,21 +45,7 @@
                 </form>
             </div>
             <div>
-                <div id="body-display-@Model.WorkItem.Number">
-                    @Html.Raw(Model.WorkItem.HtmlBody)
-                </div>
-                <div id="body-edit-@Model.WorkItem.Number" style="display:none">
-                    <form>
-                        <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
-                        <textarea name="HtmlBody" id="HtmlBody-@Model.WorkItem.Number">@Model.WorkItem.HtmlBody</textarea>
-                        <button type="button" class="btn btn-sm btn-secondary my-2 itemBodyUpdate">Update</button>
-                        <a class="itemCancelEdit" href="#" data-number="@Model.WorkItem.Number">Cancel</a>
-                    </form>
-                </div>
-
-                <div>
-                    <a class="itemEdit" href="#" data-number="@Model.WorkItem.Number" id="itemEditLink-@Model.WorkItem.Number">Edit</a>
-                </div>
+                @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Number, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody })
             </div>
         </div>
     </div>

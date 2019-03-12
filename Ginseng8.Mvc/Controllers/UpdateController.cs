@@ -1,4 +1,6 @@
 ﻿using Ginseng.Models;
+using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Ginseng.Mvc.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -50,16 +52,27 @@ namespace Ginseng.Mvc.Controllers
 		}
 
 		[HttpPost]		
-		public async Task<JsonResult> WorkItemBody(int number, string htmlBody)
+		public async Task<JsonResult> WorkItemBody(int id, string htmlBody)
+		{
+			var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, number = id });
+			return await UpdateInnerAsync<WorkItem>(workItem, htmlBody);
+		}
+
+		public async Task<JsonResult> ProjectBody(int id, string htmlBody)
+		{
+			var project = await _data.FindAsync<Project>(id);
+			return await UpdateInnerAsync(project, htmlBody);
+		}
+
+		private async Task<JsonResult> UpdateInnerAsync<T>(T record, string htmlBody) where T : BaseTable, IBody
 		{
 			try
 			{
-				var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, number });
-				workItem.HtmlBody = htmlBody;
-				workItem.SaveHtml();
-				workItem.ModifiedBy = User.Identity.Name;
-				workItem.DateModified = _data.CurrentUser.LocalTime;
-				await _data.TryUpdateAsync(workItem, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
+				record.HtmlBody = htmlBody;
+				record.SaveHtml();
+				record.ModifiedBy = User.Identity.Name;
+				record.DateModified = _data.CurrentUser.LocalTime;
+				await _data.TryUpdateAsync<T>(record, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
 				return Json(new { success = true });
 			}
 			catch (Exception exc)

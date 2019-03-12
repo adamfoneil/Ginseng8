@@ -15,24 +15,15 @@
                 <span class="badge badge-pill" style="background-color:@projectItem.BackColor;color:@projectItem.ForeColor">@projectItem.ProjectName</span>
                 @if (projectGrp.Key != 0)
                 {
-                    <span class="small"><a href="#" class="viewProjectBody small" data-project-id="@projectGrp.Key">View Details</a></span>
+                    <span class="small"><a href="#" class="viewProjectBody small" data-project-id="@projectGrp.Key" data-project-has-body="@(!string.IsNullOrEmpty(Model.Projects[projectGrp.Key].HtmlBody))">View Details</a></span>
                 }
             </h5>
 
             @if (projectGrp.Key != 0)
             {
-                <div id="project-view-@projectGrp.Key" style="display:none;margin-left:20px">                    
-                    @Html.Raw(Model.Projects[projectGrp.Key].HtmlBody)
-                    <a href="#" class="link-project-edit-@projectGrp.Key">Edit</a>
-                </div>
-                <div id="project-edit-@projectGrp.Key" style="display:none">
-                    <form>
-                        <input type="hidden" name="Id" value="@projectGrp.Key" />
-                        <textarea name="HtmlBody" id="project-body-@projectGrp.Key">@Model.Projects[projectGrp.Key].HtmlBody</textarea>
-                        <button type="button" class="btn btn-sm btn-secondary my-2 projectBodyUpdate">Update</button>
-                        <a class="projectCancelEdit" href="#" data-id="@projectGrp.Key">Cancel</a>
-                    </form>
-                </div>
+                <div style="margin-left:20px">
+                    @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "project", PostUrl = "/Update/ProjectBody", Content = Model.Projects[projectGrp.Key].HtmlBody })
+                </div>                
             }
 
             <div id="app-@appGrp.Key-@projectGrp.Key" class="milestone-items" data-milestone-id="@projectGrp.Key">

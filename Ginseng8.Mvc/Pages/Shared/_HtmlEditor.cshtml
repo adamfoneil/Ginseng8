@@ -1,0 +1,17 @@
+﻿@model HtmlEditorView
+
+<div id="@Model.IdPrefix-view-@Model.Id">
+    @Html.Raw(Model.Content)
+</div>
+<div id="@Model.IdPrefix-edit-@Model.Id" style="display:none">
+    <form>
+        <input type="hidden" name="Id" value="@Model.Id" />
+        <textarea name="HtmlBody" id="@(Model.IdPrefix)-content-@(Model.Id)" class="htmlEditor">@Model.Content</textarea>
+        <button type="button" class="btn btn-sm btn-secondary my-2 saveHtmlEdit" data-id-prefix="@Model.IdPrefix" data-id="@Model.Id" data-post-url="@Model.PostUrl">Update</button>
+        <a class="cancelHtmlEdit" href="#" data-id="@Model.Id" data-id-prefix="@Model.IdPrefix">Cancel</a>
+    </form>
+</div>
+
+<div>
+    <a class="editHtml" href="#" data-id="@Model.Id" id="editHtmlLink-@Model.IdPrefix-@Model.Id" data-id-prefix="@Model.IdPrefix">Edit</a>
+</div>

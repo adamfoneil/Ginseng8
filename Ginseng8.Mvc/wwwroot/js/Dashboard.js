@@ -34,48 +34,51 @@ updateFields.forEach(function (e) {
     });
 });
 
-var bodyEditLinks = document.querySelectorAll('.itemEdit');
-bodyEditLinks.forEach(function (e) {
+var htmlEditLinks = document.querySelectorAll('.editHtml');
+htmlEditLinks.forEach(function (e) {
     e.addEventListener("click", function (e) {
-        var number = e.target.getAttribute("data-number");
-        $("#body-display-" + number).hide();
-        $("#body-edit-" + number).show();
-        var settings = GetFroalaSettings();
-        $('#HtmlBody-' + number).froalaEditor(settings);
+        var id = e.target.getAttribute("data-id");
+        var idPrefix = e.target.getAttribute('data-id-prefix');
+        $("#" + idPrefix + '-view-' + id).hide();
+        $("#" + idPrefix + '-edit-' + id).show();
         $(e.target).hide();
     });
 });
 
-var editCancelLinks = document.querySelectorAll('.itemCancelEdit');
-editCancelLinks.forEach(function (e) {
+var htmlCancelEditLinks = document.querySelectorAll('.cancelHtmlEdit');
+htmlCancelEditLinks.forEach(function (e) {
     e.addEventListener('click', function (e) {
-        var number = e.target.getAttribute("data-number");
-        $("#body-display-" + number).show();
-        $("#body-edit-" + number).hide();
-        $("#itemEditLink-" + number).show();
+        var id = e.target.getAttribute('data-id');
+        var idPrefix = e.target.getAttribute('data-id-prefix');
+        $('#' + idPrefix + '-view-' + id).show();
+        $('#' + idPrefix + '-edit-' + id).hide();
+        $('#editHtmlLink-' + idPrefix + '-' + id).show();
     });
 });
 
-var bodyUpdateButtons = document.querySelectorAll('.itemBodyUpdate');
-bodyUpdateButtons.forEach(function (e) {
+var htmlSaveButtons = document.querySelectorAll('.saveHtmlEdit');
+htmlSaveButtons.forEach(function (e) {
     e.addEventListener('click', function (e) {
         var frm = e.target.form;
-        var number = frm['Number'].value;
-        var failImg = document.getElementById('update-failed-' + number);
+        var id = frm['Id'].value;
+        var failImg = document.getElementById('update-failed-' + id);
+        var idPrefix = e.target.getAttribute('data-id-prefix');
+        var postUrl = e.target.getAttribute('data-post-url');
 
         try {
             let formData = new FormData(frm);
-            fetch('/Update/WorkItemBody', {
+            fetch(postUrl, {
                 method: 'post',
                 body: new URLSearchParams(formData)
             }).then(function (response) {
                 return response.json();
             }).then(function (result) {
                 if (result.success) {
-                    $("#body-display-" + number).html($("#HtmlBody-" + number).val());
-                    $("#body-display-" + number).show();
-                    $("#body-edit-" + number).hide();
-                    $("#itemEditLink-" + number).show();
+                    var updatedContent = $('#' + idPrefix + '-content-' + id).val();
+                    $('#' + idPrefix + '-view-' + id).html(updatedContent);
+                    $('#' + idPrefix + '-view-' + id).show();
+                    $('#' + idPrefix + '-edit-' + id).hide();
+                    $('#editHtmlLink-' + idPrefix + '-' + id).show();
                 } else {
                     $(failImg).show();
                     failImg.setAttribute('title', result.message);
