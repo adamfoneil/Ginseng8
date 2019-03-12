@@ -126,10 +126,11 @@ labelCheckboxes.forEach(function (e) {
     });
 });
 
-var insertItemButtons = document.querySelectorAll('.insert-item');
-insertItemButtons.forEach(function (e) {
-    e.addEventListener('click', function (ev) {
-        var target = ev.target.parentElement.getElementsByTagName('div')[0];
-        $(target).slideToggle();
+var itemDetailButtons = document.querySelectorAll('.btn-item-detail');
+itemDetailButtons.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var divId = ev.target.getAttribute('data-target');
+        var div = document.getElementById(divId);
+        $(div).slideToggle();
     });
 });

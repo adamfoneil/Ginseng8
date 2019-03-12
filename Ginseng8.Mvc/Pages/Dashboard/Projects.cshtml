@@ -26,7 +26,11 @@
                     {
                         <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id] }" />
                     }
-                    <partial name="Items/_InsertItem" model="new InsertItemView()"/>
+                    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                    {
+                        { "applicationId", appGrp.Key },
+                        { "projectId", projectGrp.Key }
+                    }))
                 </div>
             </div>
         }
