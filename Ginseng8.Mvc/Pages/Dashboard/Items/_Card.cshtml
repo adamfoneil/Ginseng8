@@ -51,7 +51,10 @@
                     <div class="dropdown-menu">
                         @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
                         {
-                            <a class="dropdown-item" href="#"><span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></a>
+                            <a class="dropdown-item">                                
+                                <input type="checkbox" value="@item.Id" data-item-number="@Model.WorkItem.Number"/>
+                                <span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span>                                                                    
+                            </a>
                         }
                     </div>
 
