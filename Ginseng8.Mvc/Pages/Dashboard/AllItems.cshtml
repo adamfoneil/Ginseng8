@@ -10,7 +10,7 @@
     <h4>@appGrp.First().ApplicationName</h4>
     foreach (var item in appGrp)
     {
-        <partial name="Items/_Card" model="new WorkItemView() { WorkItem = item, Dropdowns = Model.Dropdowns }" />
+        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns }" />
     }
 }
 </div>

@@ -4,7 +4,7 @@ using Ginseng.Mvc.Queries;
 
 namespace Ginseng.Mvc.ViewModels
 {
-	public class WorkItemView : IUserInfo
+	public class WorkItemCardView : IUserInfo
 	{
 		public AllWorkItemsResult WorkItem { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
