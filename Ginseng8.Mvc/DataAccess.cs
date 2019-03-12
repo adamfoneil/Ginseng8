@@ -87,6 +87,7 @@ namespace Ginseng.Mvc
 			{
 				using (var cn = GetConnection())
 				{
+					cn.Open();
 					var update = AuditProperties(record, propertyNames);
 					await cn.SaveAsync(update.Item1, update.Item2);
 					SetSuccessMessage(successMessage);
