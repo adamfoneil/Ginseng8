@@ -11,13 +11,7 @@
         foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
         {
             var projectItem = projectGrp.First();
-            <h5>
-                @projectItem.ProjectName
-                @if (projectGrp.Key != 0)
-                {
-                    <span class="small"><a href="#" class="viewProjectBody small" data-project-id="@projectGrp.Key" data-project-has-body="@(!string.IsNullOrEmpty(Model.Projects[projectGrp.Key].HtmlBody))">View Details</a></span>
-                }
-            </h5>
+            <h5>@projectItem.ProjectName</h5>
 
             @if (projectGrp.Key != 0)
             {
@@ -32,6 +26,7 @@
                     {
                         <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id] }" />
                     }
+                    <partial name="Items/_InsertItem" model="new InsertItemView()"/>
                 </div>
             </div>
         }

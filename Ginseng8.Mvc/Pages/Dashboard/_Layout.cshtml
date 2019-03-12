@@ -23,11 +23,7 @@
     </li>
 </ul>
 
-@await Component.InvokeAsync("NewItem")
-
 @RenderBody()
-
-<partial name="Items/_SetterForms" />
 
 @section Scripts {
     @RenderSection("Scripts", false)

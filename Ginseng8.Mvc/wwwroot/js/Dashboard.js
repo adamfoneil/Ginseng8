@@ -125,3 +125,11 @@ labelCheckboxes.forEach(function (e) {
         checkbox.dispatchEvent(event);
     });
 });
+
+var insertItemButtons = document.querySelectorAll('.insert-item');
+insertItemButtons.forEach(function (e) {
+    e.addEventListener('click', function (ev) {
+        var target = ev.target.parentElement.getElementsByTagName('div')[0];
+        $(target).slideToggle();
+    });
+});
