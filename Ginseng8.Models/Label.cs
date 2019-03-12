@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
@@ -27,5 +28,28 @@ namespace Ginseng.Models
 		public string ForeColor { get; set; }
 
 		public bool IsActive { get; set; } = true;
+
+		/// <summary>
+		/// For queries only
+		/// </summary>
+		[NotMapped]
+		public int WorkItemId { get; set; }
+
+		/// <summary>
+		/// For queries only
+		/// </summary>
+		[NotMapped]
+		public bool Selected { get; set; }
+
+		public override bool Equals(object obj)
+		{
+			Label test = obj as Label;
+			return (test?.Id == Id);
+		}
+
+		public override int GetHashCode()
+		{
+			return Id.GetHashCode();
+		}
 	}
 }

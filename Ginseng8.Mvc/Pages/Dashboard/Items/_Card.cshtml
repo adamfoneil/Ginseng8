@@ -26,19 +26,35 @@
             <div class="pb-3">
                 <form class="form-inline">
                     <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
+                    
                     <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate"></select>
+                    
                     <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- project -</option>
                     </select>
+                    
                     <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- milestone -</option>
                     </select>
+                    
                     <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- size -</option>
                     </select>
+                    
                     <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- open -</option>
                     </select>
+
+                    <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Labels
+                    </button>
+                    <div class="dropdown-menu">
+                        @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
+                        {
+                            <a class="dropdown-item" href="#"><span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></a>
+                        }
+                    </div>
+
                     <img src="~/img/loading.gif" id="loading-@Model.WorkItem.Number" style="display:none" />
                     <i class="fas fa-check-circle" style="color:green;display:none" id="update-success-@Model.WorkItem.Number"></i>
                     <i class="fas fa-exclamation-triangle" style="color:red;display:none" id="update-failed-@Model.WorkItem.Number"></i>

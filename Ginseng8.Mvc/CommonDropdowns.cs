@@ -1,8 +1,10 @@
-﻿using Ginseng.Mvc.Queries;
+﻿using Ginseng.Models;
+using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
@@ -20,6 +22,7 @@ namespace Ginseng.Mvc
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }
 		public IEnumerable<SelectListItem> Milestones { get; set; }
 		public IEnumerable<SelectListItem> MyActivities { get; set; }
+		public IEnumerable<Label> Labels { get; set; }
 
 		public SelectList AppSelect(AllWorkItemsResult item)
 		{
@@ -54,6 +57,18 @@ namespace Ginseng.Mvc
 			return new SelectList(Milestones, "Value", "Text", item.MilestoneId);
 		}
 
+		public IEnumerable<Label> LabelItems(IEnumerable<Label> selectedLabels)
+		{			
+			return Labels.Select(lbl => new Label()
+			{
+				Id = lbl.Id,
+				Name = lbl.Name,
+				BackColor = lbl.BackColor,
+				ForeColor = lbl.ForeColor,
+				Selected = selectedLabels.Contains(lbl)
+			});
+		}
+
 		public static async Task<CommonDropdowns> FillAsync(SqlConnection connection, int orgId, int responsibilities)
 		{
 			var result = new CommonDropdowns();
@@ -64,6 +79,7 @@ namespace Ginseng.Mvc
 			result.Sizes = await new SizeSelect() { OrgId = orgId }.ExecuteAsync(connection);
 			result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);
 			result.Milestones = await new MilestoneSelect() { OrgId = orgId }.ExecuteAsync(connection);
+			result.Labels = await new Labels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 			return result;
 		}
 	}
