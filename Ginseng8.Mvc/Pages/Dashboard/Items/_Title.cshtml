@@ -1,6 +1,6 @@
 ﻿@model AllWorkItemsResult
 
-@if (!Model.HasColor() && Model.ProjectId != 0)
+@if (Model.ProjectId != 0)
 {
     <span>@Model.ProjectName</span>
 }

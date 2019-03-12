@@ -21,10 +21,7 @@
     <tr>
         <th>Project Name</th>
         <th>Priority</th>
-        <th>Description</th>
-        <th>Back Color</th>
-        <th>Text Color</th>
-        <th>Preview</th>
+        <th>Description</th>        
         <th></th>
     </tr>
     @foreach (var item in Model.Projects)
@@ -32,10 +29,7 @@
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
-            <td><span class="badge badge-pill" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></td>
+            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>            
             <td>@grid.Controls()</td>
         </tr>
     }
@@ -43,8 +37,6 @@
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
         <td></td>
         <td>@grid.Controls()</td>
     </tr>

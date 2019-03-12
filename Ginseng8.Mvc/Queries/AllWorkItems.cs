@@ -11,8 +11,6 @@ namespace Ginseng.Mvc.Queries
 	{
 		public int Id { get; set; }
 		public int Number { get; set; }
-		public string BackColor { get; set; }
-		public string ForeColor { get; set; }
 		public string Title { get; set; }	
 		public string HtmlBody { get; set; }
 		public int? BusinessUserId { get; set; }
@@ -39,11 +37,6 @@ namespace Ginseng.Mvc.Queries
 		public int? SizeId { get; set; }
 		public int? DevEstimateHours { get; set; }
 		public int? SizeEstimateHours { get; set; }
-
-		public bool HasColor()
-		{
-			return !string.IsNullOrEmpty(BackColor) && !string.IsNullOrEmpty(ForeColor);
-		}
 	}
 
 	public class AllWorkItems : Query<AllWorkItemsResult>, ITestableQuery
@@ -51,8 +44,7 @@ namespace Ginseng.Mvc.Queries
 		public AllWorkItems() : base(
 			@"SELECT
                 [wi].[Id],
-                [wi].[Number],
-				[p].[BackColor], [p].[ForeColor],
+                [wi].[Number],				
                 [wi].[Title],
 				[wi].[HtmlBody],
                 [wi].[BusinessUserId],

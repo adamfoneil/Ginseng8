@@ -4,7 +4,7 @@
     <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.WorkItem.Id">
         <div class="row">
             <div class="col-9">
-                <span class="badge badge-pill" style="background-color:@Model.WorkItem.BackColor;color:@Model.WorkItem.ForeColor" title="@Model.WorkItem.ProjectName">@Model.WorkItem.Number</span>
+                <span class="badge badge-pill badge-secondary" title="@Model.WorkItem.ProjectName">@Model.WorkItem.Number</span>
                 <partial name="Items/_Title" model="Model.WorkItem" />
             </div>
             <div class="col-3 text-right">
