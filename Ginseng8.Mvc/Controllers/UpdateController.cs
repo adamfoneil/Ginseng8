@@ -104,7 +104,7 @@ namespace Ginseng.Mvc.Controllers
 
 					var results = await new LabelsInUse() { OrgId = _data.CurrentOrg.Id, WorkItemIds = new int[] { workItem.Id } }.ExecuteAsync(cn);
 
-					return PartialView("Dashboard/Items/_Labels", results);
+					return PartialView("/Pages/Dashboard/Items/_Labels.cshtml", results);
 				}				
 			}
 

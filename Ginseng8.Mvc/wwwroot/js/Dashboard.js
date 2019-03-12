@@ -105,7 +105,7 @@ labelCheckboxes.forEach(function (e) {
         }).then(function (response) {
             return response.text();
         }).then(function (html) {
-            $('#label-' + number).html(html);
+            $('#labels-' + number).html(html);
         });
     });
 });
