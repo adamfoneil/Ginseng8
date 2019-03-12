@@ -12,7 +12,7 @@
         {
             var projectItem = projectGrp.First();
             <h5>
-                <span class="badge badge-pill badge-secondary">@projectItem.ProjectName</span>
+                @projectItem.ProjectName
                 @if (projectGrp.Key != 0)
                 {
                     <span class="small"><a href="#" class="viewProjectBody small" data-project-id="@projectGrp.Key" data-project-has-body="@(!string.IsNullOrEmpty(Model.Projects[projectGrp.Key].HtmlBody))">View Details</a></span>
