@@ -4,8 +4,33 @@
     <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.WorkItem.Id">
         <div class="row">
             <div class="col-9">
-                <span class="badge badge-pill badge-secondary" title="@Model.WorkItem.ProjectName">@Model.WorkItem.Number</span>
+                <span class="badge badge-secondary" title="@Model.WorkItem.ProjectName">@Model.WorkItem.Number</span>                
                 <partial name="Items/_Title" model="Model.WorkItem" />
+
+                <div style="display:inline-block">
+                    <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Labels
+                    </button>
+                    <div class="dropdown-menu">
+                        @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
+                        {
+                            <form method="post">
+                                <input type="hidden" name="Id" value="@Model.WorkItem.Number"/>
+                                <a class="dropdown-item labelCheckboxLink">
+                                    <input type="checkbox" value="@item.Id" class="labelCheckbox"/>
+                                    <span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span>
+                                </a>
+                            </form>                            
+                        }
+                    </div>
+                </div>
+
+                <div id="labels-@Model.WorkItem.Number" style="display:inline-block">
+                    @foreach (var lbl in Model.SelectedLabels)
+                    {
+                        <span class="badge mr-2" style="background-color:@lbl.BackColor;color:@lbl.ForeColor">@lbl.Name</span>
+                    }                    
+                </div>
             </div>
             <div class="col-3 text-right">
                 <!--comment, hand-off controls-->
@@ -44,19 +69,6 @@
                     <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
                         <option value="">- open -</option>
                     </select>
-
-                    <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Labels
-                    </button>
-                    <div class="dropdown-menu">
-                        @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
-                        {
-                            <a class="dropdown-item">                                
-                                <input type="checkbox" value="@item.Id" data-item-number="@Model.WorkItem.Number"/>
-                                <span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span>                                                                    
-                            </a>
-                        }
-                    </div>
 
                     <img src="~/img/loading.gif" id="loading-@Model.WorkItem.Number" style="display:none" />
                     <i class="fas fa-check-circle" style="color:green;display:none" id="update-success-@Model.WorkItem.Number"></i>

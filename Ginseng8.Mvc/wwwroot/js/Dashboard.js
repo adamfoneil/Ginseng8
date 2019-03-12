@@ -90,3 +90,26 @@ htmlSaveButtons.forEach(function (e) {
         }
     });
 });
+
+var labelCheckboxes = document.querySelectorAll('.labelCheckbox');
+labelCheckboxes.forEach(function (e) {    
+    e.addEventListener('click', function (e) {
+        e.stopPropagation();        
+    });
+});
+
+var labelCheckboxes = document.querySelectorAll('.labelCheckboxLink');
+labelCheckboxes.forEach(function (e) {
+    e.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var checkbox = null;
+        if (e.target.tagName == 'A') {
+            checkbox = e.target.getElementsByTagName('input')[0];            
+        } else if (e.target.tagName == 'SPAN') {
+            checkbox = e.target.parentElement.getElementsByTagName('input')[0];
+        }
+        checkbox.checked = !checkbox.checked;
+        var event = new Event('click');
+        checkbox.dispatchEvent(event);
+    });
+});
