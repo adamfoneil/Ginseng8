@@ -94,7 +94,19 @@ htmlSaveButtons.forEach(function (e) {
 var labelCheckboxes = document.querySelectorAll('.labelCheckbox');
 labelCheckboxes.forEach(function (e) {    
     e.addEventListener('click', function (e) {
-        e.stopPropagation();        
+        e.stopPropagation();      
+
+        var frm = e.target.form;
+        var number = frm['WorkItemNumber'].value;
+        let formData = new FormData(frm);
+        fetch('/Update/WorkItemLabel', {
+            method: 'post',
+            body: new URLSearchParams(formData)
+        }).then(function (response) {
+            return response.text();
+        }).then(function (html) {
+            $('#label-' + number).html(html);
+        });
     });
 });
 

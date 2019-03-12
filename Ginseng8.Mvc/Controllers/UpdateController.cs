@@ -2,10 +2,12 @@
 using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Ginseng.Mvc.Helpers;
+using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.Threading.Tasks;
 
@@ -58,6 +60,7 @@ namespace Ginseng.Mvc.Controllers
 			return await UpdateInnerAsync<WorkItem>(workItem, htmlBody);
 		}
 
+		[HttpPost]
 		public async Task<JsonResult> ProjectBody(int id, string htmlBody)
 		{
 			var project = await _data.FindAsync<Project>(id);
@@ -79,6 +82,33 @@ namespace Ginseng.Mvc.Controllers
 			{
 				return Json(new { success = false, message = exc.Message });
 			}
+		}
+
+		public async Task<PartialViewResult> WorkItemLabel(int workItemNumber, int labelId, bool selected)
+		{
+			using (var cn = _data.GetConnection())
+			{
+				var workItem = await cn.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, number = workItemNumber });
+				if (workItem != null)
+				{			
+					if (selected)
+					{
+						var wil = new WorkItemLabel() { WorkItemId = workItem.Id, LabelId = labelId };
+						await cn.MergeAsync(wil, _data.CurrentUser);
+					}
+					else
+					{
+						var wil = await cn.FindWhereAsync<WorkItemLabel>(new { WorkItemId = workItem.Id, LabelId = labelId });
+						if (wil != null) await cn.DeleteAsync<WorkItemLabel>(wil.Id, _data.CurrentUser);
+					}
+
+					var results = await new LabelsInUse() { OrgId = _data.CurrentOrg.Id, WorkItemIds = new int[] { workItem.Id } }.ExecuteAsync(cn);
+
+					return PartialView("Dashboard/Items/_Labels", results);
+				}				
+			}
+
+			throw new Exception($"Work item number {workItemNumber} not found.");
 		}
 
 		[Route("/Update/CurrentApp/{id}")]
