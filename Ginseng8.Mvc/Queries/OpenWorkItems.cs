@@ -37,6 +37,7 @@ namespace Ginseng.Mvc.Queries
 		public int? SizeId { get; set; }
 		public int? DevEstimateHours { get; set; }
 		public int? SizeEstimateHours { get; set; }
+		public int EstimateHours { get; set; }
 		public string WorkItemUserIdColumn { get; set; }
 	}
 
@@ -72,6 +73,7 @@ namespace Ginseng.Mvc.Queries
                 [wi].[SizeId],
                 [wid].[EstimateHours] AS [DevEstimateHours],
                 [sz].[EstimateHours] AS [SizeEstimateHours],
+				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours]
 				[r].[WorkItemUserIdColumn]
             FROM
                 [dbo].[WorkItem] [wi]
