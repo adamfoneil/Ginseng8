@@ -146,6 +146,7 @@ insertItemForms.forEach(function (ele) {
             response.text().then(function (text) {
                 var outputId = ele.getAttribute('data-target');
                 var outputDiv = document.getElementById(outputId);
+                // needs to insert into the outputDiv, not replace the content already there
                 outputDiv.innerHTML = text;
             });
         });

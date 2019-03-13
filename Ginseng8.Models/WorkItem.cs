@@ -67,6 +67,22 @@ namespace Ginseng.Models
 		[References(typeof(CloseReason))]
 		public int? CloseReasonId { get; set; }
 
+		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
+		{
+			await Task.CompletedTask;
+			// todo: label parsing from title
+			/*
+			if (action == SaveAction.Insert)
+			{
+				int[] labelIds = await ParseLabelsAsync(connection, Title);
+			}*/
+		}
+
+		private Task<int[]> ParseLabelsAsync(IDbConnection connection, string title)
+		{
+			throw new NotImplementedException();
+		}
+
 		public async Task SetNumberAsync(IDbConnection connection)
 		{
 			if (Number == 0 && Id == 0)
