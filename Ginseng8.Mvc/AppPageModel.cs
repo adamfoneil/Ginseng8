@@ -62,11 +62,11 @@ namespace Ginseng.Mvc
 
 		private bool IsOrgRequired(PageHandlerExecutingContext context)
 		{
-			var attr = context.HandlerMethod.MethodInfo.GetCustomAttributes(typeof(OrgNotRequired), false);
-			if (attr.Any()) return false;
+			var attrs = context.ActionDescriptor.HandlerMethods.SelectMany(m => m.MethodInfo.GetCustomAttributes(typeof(OrgNotRequired), true));
+			if (attrs.Any()) return false;
 
-			attr = context.HandlerInstance.GetType().GetCustomAttributes(typeof(OrgNotRequired), false);
-			if (attr.Any()) return false;
+			attrs = context.HandlerInstance.GetType().GetCustomAttributes(typeof(OrgNotRequired), false);
+			if (attrs.Any()) return false;
 
 			return true;
 		}

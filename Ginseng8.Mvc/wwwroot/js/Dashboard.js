@@ -135,19 +135,20 @@ itemDetailButtons.forEach(function (ele) {
     });
 });
 
-var addItemsButtons = document.querySelectorAll('.add-work-item');
-addItemsButtons.forEach(function (ele) {
-    ele.addEventListener('click', function (ev) {
-        var frm = ev.target.form;
-        let formData = new FormData(frm);
+var insertItemForms = document.querySelectorAll('.insert-item-form');
+insertItemForms.forEach(function (ele) {
+    ele.onsubmit = () => {
+        let formData = new FormData(ele);
         fetch('/WorkItem/Create', {
             method: 'post',
             body: new URLSearchParams(formData)
         }).then(function (response) {
             response.text().then(function (text) {
-                var output = document.getElementById("workItemResult");
-                output.innerHTML = text;
+                var outputId = ele.getAttribute('data-target');
+                var outputDiv = document.getElementById(outputId);
+                outputDiv.innerHTML = text;
             });
         });
-    });
+        return false;
+    };
 });

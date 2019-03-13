@@ -67,7 +67,7 @@ namespace Ginseng.Models
 		[References(typeof(CloseReason))]
 		public int? CloseReasonId { get; set; }
 
-		public async Task SetNumber(IDbConnection connection)
+		public async Task SetNumberAsync(IDbConnection connection)
 		{
 			if (Number == 0 && Id == 0)
 			{

@@ -6,4 +6,4 @@
 
 @Html.ActionAlert(TempData)
 
-<p>your new item is @Model.WorkItem.Number</p>
+<partial name="/Pages/Dashboard/Items/_Card.cshtml" model="new WorkItemCardView() { WorkItem = Model.WorkItemResult, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels }"/>

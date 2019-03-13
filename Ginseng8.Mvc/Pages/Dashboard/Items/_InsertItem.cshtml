@@ -2,7 +2,7 @@
 
 <div class="mb-3">    
     <div id="insert-item-area-@Model.Context">
-        <form method="post">
+        <form method="post" data-target="insert-item-area-@Model.Context" class="insert-item-form">
             @Model.WriteContextFields(Html)
             <div class="form-row mb-2">
                 <div class="col-10">
