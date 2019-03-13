@@ -26,14 +26,24 @@
 
                 <partial name="Items/_MilestoneHeader" model="milestoneItem" />
 
-                <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+                @foreach (var activityGrp in milestoneGrp.GroupBy(row => row.ActivityId))
+                {
+                    <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
                     <div style="margin-left:20px">
-                    @foreach (var item in milestoneGrp)
-                    {
-                        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id] }" />
-                    }
+                        @foreach (var item in milestoneGrp)
+                        {
+                            <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id] }" />
+                        }
+                        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                        {
+                            { "applicationId", appGrp.Key },
+                            { "milestoneId", milestoneGrp.Key },
+                            { "activityId", activityGrp.Key },
+                            { (activityGrp.First()?.WorkItemUserIdColumn ?? "userId"), userGrp.Key ?? 0 }
+                        }))
+                        </div>
                     </div>
-                </div>
+                }                
             }
             </div>
         }
