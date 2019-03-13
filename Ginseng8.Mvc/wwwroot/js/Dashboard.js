@@ -134,3 +134,20 @@ itemDetailButtons.forEach(function (ele) {
         $(div).slideToggle();
     });
 });
+
+var addItemsButtons = document.querySelectorAll('.add-work-item');
+addItemsButtons.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var frm = ev.target.form;
+        let formData = new FormData(frm);
+        fetch('/WorkItem/Create', {
+            method: 'post',
+            body: new URLSearchParams(formData)
+        }).then(function (response) {
+            response.text().then(function (text) {
+                var output = document.getElementById("workItemResult");
+                output.innerHTML = text;
+            });
+        });
+    });
+});

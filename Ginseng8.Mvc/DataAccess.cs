@@ -124,7 +124,8 @@ namespace Ginseng.Mvc
 			{
 				using (var cn = GetConnection())
 				{
-					return await TrySaveAsync<T>(cn, record, beforeSave, successMessage);
+					cn.Open();
+					return await TrySaveAsync(cn, record, beforeSave, successMessage);
 				}
 			}
 			catch (Exception exc)
