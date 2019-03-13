@@ -114,6 +114,12 @@ namespace Ginseng.Mvc.Queries
 		[Case(true, "[wi].[MilestoneId] IS NOT NULL")]
 		public bool? HasMilestone { get; set; }
 
+		[Where("[wi].[ProjectId]=@projectId")]
+		public int? ProjectId { get; set; }
+
+		[Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId]=@labelId)")]
+		public int? LabelId { get; set; }
+
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new OpenWorkItems() { OrgId = 0 };

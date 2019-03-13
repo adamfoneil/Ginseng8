@@ -17,7 +17,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			{
 				OrgId = Data.CurrentOrg.Id,
 				HasMilestone = true,
-				AppId = CurrentOrgUser.CurrentAppId
+				AppId = CurrentOrgUser.CurrentAppId,
+				LabelId = LabelId
 			};
 		}
 	}

@@ -25,6 +25,20 @@
 
 @Html.ActionAlert(TempData)
 
+@{ 
+    var model = Html.ViewContext.ViewData.Model as DashboardPageModel;
+    if (model != null)
+    {
+        <partial name="Items/_LabelFilter" model="model.LabelFilter"/>
+        @if (model.LabelId.HasValue)
+        {
+            <div class="text-center">
+                <a asp-route-labelId="" class="btn btn-sm btn-light">show all</a>
+            </div>            
+        }
+    }
+}
+
 @RenderBody()
 
 @section Scripts {

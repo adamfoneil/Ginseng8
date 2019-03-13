@@ -13,7 +13,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems() { OrgId = OrgId, AssignedUserId = UserId, AppId = CurrentOrgUser.CurrentAppId };
+			return new OpenWorkItems()
+			{
+				OrgId = OrgId,
+				AssignedUserId = UserId,
+				AppId = CurrentOrgUser.CurrentAppId,
+				LabelId = LabelId
+			};
 		}
 	}
 }

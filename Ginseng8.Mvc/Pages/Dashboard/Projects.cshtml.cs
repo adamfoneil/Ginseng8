@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -18,9 +19,18 @@ namespace Ginseng.Mvc.Pages.Work
 
 		public Dictionary<int, Project> Projects { get; set; }
 
+		[BindProperty(SupportsGet = true)]
+		public int? ProjectId { get; set; }
+
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
+			return new OpenWorkItems()
+			{
+				OrgId = OrgId,
+				AppId = CurrentOrgUser.CurrentAppId,
+				ProjectId = ProjectId,
+				LabelId = LabelId
+			};
 		}
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
