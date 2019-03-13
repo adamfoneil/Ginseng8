@@ -136,23 +136,3 @@ itemDetailButtons.forEach(function (ele) {
         $(div).slideToggle();
     });
 });
-
-var insertItemForms = document.querySelectorAll('.insert-item-form');
-insertItemForms.forEach(function (ele) {
-    ele.onsubmit = () => {
-        let formData = new FormData(ele);
-        fetch('/WorkItem/Create', {
-            method: 'post',
-            body: new URLSearchParams(formData)
-        }).then(function (response) {
-            response.text().then(function (text) {
-                var newContent = document.createElement('template');
-                newContent.innerHTML = text;
-                var outputId = ele.getAttribute('data-target');
-                var outputDiv = document.getElementById(outputId);                
-                outputDiv.appendChild(newContent.content);
-            });
-        });
-        return false;
-    };
-});
