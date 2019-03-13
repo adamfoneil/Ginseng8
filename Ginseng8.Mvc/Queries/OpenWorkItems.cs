@@ -73,7 +73,7 @@ namespace Ginseng.Mvc.Queries
                 [wi].[SizeId],
                 [wid].[EstimateHours] AS [DevEstimateHours],
                 [sz].[EstimateHours] AS [SizeEstimateHours],
-				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours]
+				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
 				[r].[WorkItemUserIdColumn]
             FROM
                 [dbo].[WorkItem] [wi]
