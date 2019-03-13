@@ -110,20 +110,22 @@ labelCheckboxes.forEach(function (e) {
     });
 });
 
+function LabelCheckboxLinkOnClick(ev) {
+    ev.stopPropagation();
+    var checkbox = null;
+    if (ev.target.tagName == 'A') {
+        checkbox = ev.target.getElementsByTagName('input')[0];
+    } else if (ev.target.tagName == 'SPAN') {
+        checkbox = ev.target.parentElement.getElementsByTagName('input')[0];
+    }
+    checkbox.checked = !checkbox.checked;
+    var event = new Event('click');
+    checkbox.dispatchEvent(event);
+}
+
 var labelCheckboxes = document.querySelectorAll('.labelCheckboxLink');
 labelCheckboxes.forEach(function (e) {
-    e.addEventListener('click', function (e) {
-        e.stopPropagation();
-        var checkbox = null;
-        if (e.target.tagName == 'A') {
-            checkbox = e.target.getElementsByTagName('input')[0];            
-        } else if (e.target.tagName == 'SPAN') {
-            checkbox = e.target.parentElement.getElementsByTagName('input')[0];
-        }
-        checkbox.checked = !checkbox.checked;
-        var event = new Event('click');
-        checkbox.dispatchEvent(event);
-    });
+    e.addEventListener('click', LabelCheckboxLinkOnClick);
 });
 
 var itemDetailButtons = document.querySelectorAll('.btn-item-detail');
@@ -144,10 +146,11 @@ insertItemForms.forEach(function (ele) {
             body: new URLSearchParams(formData)
         }).then(function (response) {
             response.text().then(function (text) {
+                var newContent = document.createElement('template');
+                newContent.innerHTML = text;
                 var outputId = ele.getAttribute('data-target');
-                var outputDiv = document.getElementById(outputId);
-                // needs to insert into the outputDiv, not replace the content already there
-                outputDiv.innerHTML = text;
+                var outputDiv = document.getElementById(outputId);                
+                outputDiv.appendChild(newContent.content);
             });
         });
         return false;
