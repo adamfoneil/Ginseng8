@@ -7,7 +7,7 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
-	public class AllWorkItemsResult
+	public class OpenWorkItemsResult
 	{
 		public int Id { get; set; }
 		public int Number { get; set; }
@@ -26,7 +26,7 @@ namespace Ginseng.Mvc.Queries
 		public int? MilestoneDaysAway { get; set; }
 		public int? CloseReasonId { get; set; }
 		public string CloseReasonName { get; set; }
-		public int? ActivityId { get; set; }
+		public int ActivityId { get; set; }
 		public string ActivityName { get; set; }
 		public string BusinessName { get; set; }
 		public string DeveloperName { get; set; }
@@ -37,11 +37,12 @@ namespace Ginseng.Mvc.Queries
 		public int? SizeId { get; set; }
 		public int? DevEstimateHours { get; set; }
 		public int? SizeEstimateHours { get; set; }
+		public string WorkItemUserIdColumn { get; set; }
 	}
 
-	public class AllWorkItems : Query<AllWorkItemsResult>, ITestableQuery
+	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
-		public AllWorkItems() : base(
+		public OpenWorkItems() : base(
 			@"SELECT
                 [wi].[Id],
                 [wi].[Number],				
@@ -54,7 +55,7 @@ namespace Ginseng.Mvc.Queries
                 COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
                 COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], COALESCE([ms].[Date], '12/31/9999') AS [MilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
                 [wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
-                [wi].[ActivityId],
+                COALESCE([wi].[ActivityId], 0) AS [ActivityId],
                 [act].[Name] AS [ActivityName],
                 COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessName],
                 COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperName],
@@ -70,7 +71,8 @@ namespace Ginseng.Mvc.Queries
                 [wid].[Priority] AS [DevelopmentPriority],
                 [wi].[SizeId],
                 [wid].[EstimateHours] AS [DevEstimateHours],
-                [sz].[EstimateHours] AS [SizeEstimateHours]             
+                [sz].[EstimateHours] AS [SizeEstimateHours],
+				[r].[WorkItemUserIdColumn]
             FROM
                 [dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
@@ -114,7 +116,7 @@ namespace Ginseng.Mvc.Queries
 
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
-			yield return new AllWorkItems() { OrgId = 0 };
+			yield return new OpenWorkItems() { OrgId = 0 };
 		}
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)

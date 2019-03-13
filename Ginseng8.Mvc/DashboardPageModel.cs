@@ -16,14 +16,14 @@ namespace Ginseng.Mvc
 		{
 		}
 
-		public IEnumerable<AllWorkItemsResult> WorkItems { get; set; }
+		public IEnumerable<OpenWorkItemsResult> WorkItems { get; set; }
 		public ILookup<int, Label> SelectedLabels { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
 
 		/// <summary>
 		/// Implement this to get the query for the dashboard
 		/// </summary>
-		protected abstract AllWorkItems GetQuery();
+		protected abstract OpenWorkItems GetQuery();
 
 		/// <summary>
 		/// Override this to populate additional model properties during the OnGetAsync method

@@ -26,6 +26,14 @@ namespace Ginseng.Models
 		/// </summary>
 		public string SourceExpression { get; set; }
 
+		/// <summary>
+		/// Which WorkItem column receives the user Id?
+		/// </summary>
+		[Required]
+		[DefaultExpression("''")]
+		[MaxLength(50)]
+		public string WorkItemUserIdColumn { get; set; }
+
 		[DefaultExpression("0")]
 		public int Flag { get; set; }
 

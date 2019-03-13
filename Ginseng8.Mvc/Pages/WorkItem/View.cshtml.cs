@@ -10,14 +10,14 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		{
 		}
 
-		public AllWorkItemsResult Item { get; set; }
+		public OpenWorkItemsResult Item { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
 
 		public async Task OnGetAsync(int id)
 		{
 			using (var cn = Data.GetConnection())
 			{
-				Item = await new AllWorkItems() { OrgId = OrgId, Number = id }.ExecuteSingleAsync(cn);
+				Item = await new OpenWorkItems() { OrgId = OrgId, Number = id }.ExecuteSingleAsync(cn);
 				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
 			}
 		}

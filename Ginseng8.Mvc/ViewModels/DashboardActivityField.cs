@@ -19,13 +19,13 @@ namespace Ginseng.Mvc.ViewModels
 			LocalTime = userInfo.LocalTime;
 		}
 
-		public AllWorkItemsResult Item { get; set; }
+		public OpenWorkItemsResult Item { get; set; }
 		public IEnumerable<Activity> MyActivities { get; set; }
 		public IEnumerable<Activity> AllActivities { get; set; }
 
 		public IEnumerable<Activity> GetActivities()
 		{
-			return (Item.ActivityId.HasValue) ? AllActivities : MyActivities;
+			return (Item.ActivityId == 0) ? AllActivities : MyActivities;
 		}
 
 		public int UserId { get; set; }

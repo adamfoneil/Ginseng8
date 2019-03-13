@@ -6,7 +6,7 @@ namespace Ginseng.Mvc.ViewModels
 {
 	public class DashboardEstimateField
 	{
-		public AllWorkItemsResult Item { get; set; }
+		public OpenWorkItemsResult Item { get; set; }
 		public IEnumerable<WorkItemSize> Sizes { get; set; }
 	}
 }

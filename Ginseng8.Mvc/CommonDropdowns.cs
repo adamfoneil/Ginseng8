@@ -24,12 +24,12 @@ namespace Ginseng.Mvc
 		public IEnumerable<SelectListItem> MyActivities { get; set; }
 		public IEnumerable<Label> Labels { get; set; }
 
-		public SelectList AppSelect(AllWorkItemsResult item)
+		public SelectList AppSelect(OpenWorkItemsResult item)
 		{
 			return new SelectList(Applications, "Value", "Text", item.ApplicationId);
 		}
 
-		public SelectList ProjectSelect(AllWorkItemsResult item)
+		public SelectList ProjectSelect(OpenWorkItemsResult item)
 		{
 			return new SelectList(Projects, "Value", "Text", item.ProjectId);
 		}
@@ -37,22 +37,22 @@ namespace Ginseng.Mvc
 		/// <summary>
 		/// I don't think we'll offer an activity select because activity changes require hand-off
 		/// </summary>
-		public SelectList ActivitySelect(AllWorkItemsResult item)
+		public SelectList ActivitySelect(OpenWorkItemsResult item)
 		{
 			return new SelectList(AllActivities, "Value", "Text", item.ActivityId);
 		}
 
-		public SelectList SizeSelect(AllWorkItemsResult item)
+		public SelectList SizeSelect(OpenWorkItemsResult item)
 		{
 			return new SelectList(Sizes, "Value", "Text", item.SizeId);
 		}
 
-		public SelectList CloseReasonSelect(AllWorkItemsResult item)
+		public SelectList CloseReasonSelect(OpenWorkItemsResult item)
 		{
 			return new SelectList(CloseReasons, "Value", "Text", item.CloseReasonId);
 		}
 
-		public SelectList MilestoneSelect(AllWorkItemsResult item)
+		public SelectList MilestoneSelect(OpenWorkItemsResult item)
 		{
 			return new SelectList(Milestones, "Value", "Text", item.MilestoneId);
 		}

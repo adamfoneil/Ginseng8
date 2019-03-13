@@ -17,7 +17,7 @@ namespace Ginseng.Mvc.ViewModels
 			LocalTime = userInfo.LocalTime;
 		}
 
-		public AllWorkItemsResult Item { get; set; }
+		public OpenWorkItemsResult Item { get; set; }
 
 		public int UserId { get; set; }
 		public int OrgId { get; set; }

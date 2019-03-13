@@ -1,11 +1,12 @@
 ﻿@model WorkItemCardView
 
-<a name="@Model.WorkItem.Number"/>
+<a name="@Model.WorkItem.Number"></a>
+
 <div class="card my-2">
     <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.WorkItem.Id">
         <div class="row">
-            <div class="col-9">
-                <span class="badge badge-secondary" title="@Model.WorkItem.ProjectName">
+            <div class="col-9">                
+                <span class="badge badge-secondary" title="@Model.WorkItem.ProjectName">                    
                     @Model.WorkItem.Number
                 </span>                
                 <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />

@@ -11,9 +11,9 @@ namespace Ginseng.Mvc.Pages.Work
 		{
 		}
 
-		protected override AllWorkItems GetQuery()
+		protected override OpenWorkItems GetQuery()
 		{
-			return new AllWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
+			return new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace Ginseng.Mvc.Helpers
 {
 	public static partial class HtmlHelpers
 	{
-		public static IHtmlContent MilestoneDisplay(this IHtmlHelper<dynamic> html, AllWorkItemsResult item)
+		public static IHtmlContent MilestoneDisplay(this IHtmlHelper<dynamic> html, OpenWorkItemsResult item)
 		{
 			throw new NotImplementedException();
 		}

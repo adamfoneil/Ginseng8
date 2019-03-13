@@ -11,9 +11,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		{
 		}
 
-		protected override AllWorkItems GetQuery()
+		protected override OpenWorkItems GetQuery()
 		{
-			return new AllWorkItems()
+			return new OpenWorkItems()
 			{
 				OrgId = Data.CurrentOrg.Id,
 				HasMilestone = true,

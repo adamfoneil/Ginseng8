@@ -6,7 +6,7 @@ namespace Ginseng.Mvc.ViewModels
 {
 	public class DashboardMilestoneField
 	{
-		public AllWorkItemsResult Item { get; set; }
+		public OpenWorkItemsResult Item { get; set; }
 		public IEnumerable<Milestone> Milestones { get; set; }
 	}
 }

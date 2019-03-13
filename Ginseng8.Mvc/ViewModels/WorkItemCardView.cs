@@ -8,7 +8,7 @@ namespace Ginseng.Mvc.ViewModels
 {
 	public class WorkItemCardView : IUserInfo
 	{
-		public AllWorkItemsResult WorkItem { get; set; }
+		public OpenWorkItemsResult WorkItem { get; set; }
 		public IEnumerable<Label> SelectedLabels { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
 

@@ -18,9 +18,9 @@ namespace Ginseng.Mvc.Pages.Work
 
 		public Dictionary<int, Project> Projects { get; set; }
 
-		protected override AllWorkItems GetQuery()
+		protected override OpenWorkItems GetQuery()
 		{
-			return new AllWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
+			return new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
 		}
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
