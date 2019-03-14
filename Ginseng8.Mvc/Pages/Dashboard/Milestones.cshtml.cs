@@ -1,5 +1,6 @@
 ﻿using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Ginseng.Mvc.Pages.Dashboard
@@ -11,6 +12,14 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		{
 		}
 
+		[BindProperty(SupportsGet = true)]
+		public int? MilestoneId { get; set; }
+
+		public string ActiveStyle(int milestoneId)
+		{
+			return (milestoneId == MilestoneId) ? "active" : string.Empty;
+		}		
+
 		protected override OpenWorkItems GetQuery()
 		{
 			return new OpenWorkItems()
@@ -19,7 +28,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 				HasMilestone = true,
 				AppId = CurrentOrgUser.CurrentAppId,
 				LabelId = LabelId
-			};
+			};			
 		}
 	}
 }
