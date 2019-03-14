@@ -1,0 +1,15 @@
+﻿@model Ginseng.Mvc.Pages.Work.ProjectsModel
+
+<ul>
+    @foreach (var p in Model.ProjectInfo)
+    {
+        <li class="mb-2">
+            <a asp-route-id="@p.Id" class="btn @((p.TotalWorkItems > 0) ? "btn-info" : "btn-light")">@p.Name</a>
+            <span class="text-muted small">@p.TotalWorkItems work items / @Html.FormatValue(p.PercentComplete, "{0:P0}") complete</span>
+            @foreach (var lbl in Model.ProjectLabels[p.Id])
+            {
+                <span class="badge" style="background-color:@lbl.BackColor;color:@lbl.ForeColor">@lbl.LabelName - @lbl.Count</span>
+            }
+        </li>
+    }
+</ul>

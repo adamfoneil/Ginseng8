@@ -27,7 +27,7 @@
 
 @{ 
     var model = Html.ViewContext.ViewData.Model as DashboardPageModel;
-    if (model != null)
+    if (model != null && model.LabelFilter != null)
     {
         <partial name="Items/_LabelFilter" model="model.LabelFilter"/>
         @if (model.LabelId.HasValue)

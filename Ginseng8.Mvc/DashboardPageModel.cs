@@ -38,23 +38,31 @@ namespace Ginseng.Mvc
 			await Task.CompletedTask;
 		}
 
+		/// <summary>
+		/// Override this to populate individual model properties that won't benefit from async execution
+		/// </summary>		
 		protected virtual void OnGetInternal(SqlConnection connection)
 		{
-			// do nothing
+			// do nothing by default
 		}
 
 		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
 			{
-				WorkItems = await GetQuery().ExecuteAsync(cn);
+				var query = GetQuery();
+				if (query != null)
+				{
+					WorkItems = await GetQuery().ExecuteAsync(cn);
 
-				int[] itemIds = WorkItems.Select(wi => wi.Id).ToArray();
-				var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
-				SelectedLabels = labelsInUse.ToLookup(row => row.WorkItemId);
-				LabelFilter = labelsInUse.GroupBy(row => row.Id);
+					int[] itemIds = WorkItems.Select(wi => wi.Id).ToArray();
+					var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
+					SelectedLabels = labelsInUse.ToLookup(row => row.WorkItemId);
+					LabelFilter = labelsInUse.GroupBy(row => row.Id);
+				}
 
 				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
+
 				await OnGetInternalAsync(cn);
 
 				OnGetInternal(cn);

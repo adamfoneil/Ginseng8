@@ -20,27 +20,49 @@ namespace Ginseng.Mvc.Pages.Work
 		public Dictionary<int, Project> Projects { get; set; }
 
 		[BindProperty(SupportsGet = true)]
-		public int? ProjectId { get; set; }
+		public int? Id { get; set; }
+
+		public int? CurrentAppId { get; set; }
+
+		public IEnumerable<ProjectInfoResult> ProjectInfo { get; set; }
+		public ILookup<int, ProjectInfoLabelsResult> ProjectLabels { get; set; }
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems()
+			// we show details on only one project at a time
+			if (Id.HasValue)
 			{
-				OrgId = OrgId,
-				AppId = CurrentOrgUser.CurrentAppId,
-				ProjectId = ProjectId,
-				LabelId = LabelId
-			};
+				return new OpenWorkItems()
+				{
+					OrgId = OrgId,					
+					ProjectId = Id,
+					AppId = CurrentOrgUser.CurrentAppId,
+					LabelId = LabelId
+				};
+			}
+
+			return null;
 		}
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
-			int[] projectIds = WorkItems
-				.GroupBy(row => row.ProjectId)
-				.Select(grp => grp.Key).ToArray();
+			CurrentAppId = CurrentOrgUser.CurrentAppId;
 
-			var projects = await new Projects() { OrgId = OrgId, IsActive = true, IncludeIds = projectIds }.ExecuteAsync(connection);
-			Projects = projects.ToDictionary(row => row.Id);
+			if (Id.HasValue)
+			{
+				int[] projectIds = WorkItems
+					.GroupBy(row => row.ProjectId)
+					.Select(grp => grp.Key).ToArray();
+
+				var projects = await new Projects() { OrgId = OrgId, IsActive = true, IncludeIds = projectIds }.ExecuteAsync(connection);
+				Projects = projects.ToDictionary(row => row.Id);
+			}
+			else
+			{
+				ProjectInfo = await new ProjectInfo() { OrgId = OrgId }.ExecuteAsync(connection);
+				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
+				ProjectLabels = labels.ToLookup(row => row.ProjectId);
+			}
 		}
 	}
 }
