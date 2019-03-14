@@ -1,4 +1,7 @@
-﻿using Ginseng.Mvc.Queries;
+﻿using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
+using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,11 +17,6 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		[BindProperty(SupportsGet = true)]
 		public int? MilestoneId { get; set; }
-
-		public string ActiveStyle(int milestoneId)
-		{
-			return (milestoneId == MilestoneId) ? "active" : string.Empty;
-		}		
 
 		protected override OpenWorkItems GetQuery()
 		{

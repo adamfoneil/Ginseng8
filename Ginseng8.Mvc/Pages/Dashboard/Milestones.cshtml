@@ -13,7 +13,7 @@
         @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
         {
             var milestoneItem = milestoneGrp.First();
-            <li class="nav-item @Model.ActiveStyle(milestoneGrp.Key)">
+            <li class="nav-item">
                 <a href="#app-@appGrp.Key-ms@(milestoneGrp.Key)" data-toggle="tab" class="nav-link">
                     <partial name="Items/_MilestoneHeader" model="milestoneItem"/>
                 </a>

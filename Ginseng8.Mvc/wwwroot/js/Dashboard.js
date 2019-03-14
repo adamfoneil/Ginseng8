@@ -136,3 +136,7 @@ itemDetailButtons.forEach(function (ele) {
         $(div).slideToggle();
     });
 });
+
+$(document).ready(function () {
+    $('.nav-tabs li:first-child a').tab('show');
+});

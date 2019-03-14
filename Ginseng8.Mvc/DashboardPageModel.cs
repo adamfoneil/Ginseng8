@@ -38,6 +38,11 @@ namespace Ginseng.Mvc
 			await Task.CompletedTask;
 		}
 
+		protected virtual void OnGetInternal(SqlConnection connection)
+		{
+			// do nothing
+		}
+
 		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
@@ -51,6 +56,8 @@ namespace Ginseng.Mvc
 
 				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
 				await OnGetInternalAsync(cn);
+
+				OnGetInternal(cn);
 			}
 		}
 	}
