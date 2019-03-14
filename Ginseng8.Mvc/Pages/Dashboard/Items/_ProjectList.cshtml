@@ -1,11 +1,35 @@
 ﻿@model Ginseng.Mvc.Pages.Work.ProjectsModel
 
+<form method="get" class="form-inline mb-3">
+    <div class="form-row">
+    <label class="mr-4">Sort by:</label>
+    @Html.DropDownList("ProjectListSort", new SelectList(Html.GetEnumSelectList(typeof(ProjectInfoSortOptions)), "Value", "Text", Model.ProjectListSort), new { @class = "form-control", onchange = "this.form.submit();" })
+    </div>
+</form>
+
 <ul>
     @foreach (var p in Model.ProjectInfo)
     {
         <li class="mb-2">
             <a asp-route-id="@p.Id" class="btn @((p.TotalWorkItems > 0) ? "btn-info" : "btn-light")">@p.Name</a>
             <span class="text-muted small">@p.TotalWorkItems work items / @Html.FormatValue(p.PercentComplete, "{0:P0}") complete</span>
+
+            <ul class="list-inline small" style="display:inline-block">
+                @foreach (var user in Model.ProjectAssignments[p.Id].OrderByDescending(row => row.WorkItemCount))
+                {
+                    <li class="list-inline-item">
+                        @if (user.AssignedUserName == null)
+                        {
+                            <span class="font-weight-bold">@user.WorkItemCount unassigned</span>
+                        }
+                        else
+                        {
+                            <span>@user.WorkItemCount @user.AssignedUserName</span>
+                        }
+                    </li>
+                }
+            </ul>
+            
             @foreach (var lbl in Model.ProjectLabels[p.Id])
             {
                 <span class="badge" style="background-color:@lbl.BackColor;color:@lbl.ForeColor">@lbl.LabelName - @lbl.Count</span>

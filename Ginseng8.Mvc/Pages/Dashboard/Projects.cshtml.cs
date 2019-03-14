@@ -22,10 +22,14 @@ namespace Ginseng.Mvc.Pages.Work
 		[BindProperty(SupportsGet = true)]
 		public int? Id { get; set; }
 
+		[BindProperty(SupportsGet = true)]
+		public ProjectInfoSortOptions ProjectListSort { get; set; }
+
 		public int? CurrentAppId { get; set; }
 
 		public IEnumerable<ProjectInfoResult> ProjectInfo { get; set; }
 		public ILookup<int, ProjectInfoLabelsResult> ProjectLabels { get; set; }
+		public ILookup<int, ProjectInfoAssignmentsResult> ProjectAssignments { get; set; }
 
 		protected override OpenWorkItems GetQuery()
 		{
@@ -59,9 +63,13 @@ namespace Ginseng.Mvc.Pages.Work
 			}
 			else
 			{
-				ProjectInfo = await new ProjectInfo() { OrgId = OrgId }.ExecuteAsync(connection);
+				ProjectInfo = await new ProjectInfo(ProjectListSort) { OrgId = OrgId }.ExecuteAsync(connection);
+
 				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
 				ProjectLabels = labels.ToLookup(row => row.ProjectId);
+
+				var assignments = await new ProjectInfoAssignments() { OrgId = OrgId }.ExecuteAsync(connection);
+				ProjectAssignments = assignments.ToLookup(row => row.ProjectId);
 			}
 		}
 	}
