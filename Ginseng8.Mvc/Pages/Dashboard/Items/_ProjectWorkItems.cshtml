@@ -24,7 +24,7 @@
                     <div style="margin-left:20px">
                         @foreach (var item in milestoneGrp)
                         {
-                            <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], EstimateWeight = Model.EstimateWeights[item.Id] }" />
+                            <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id] }" />
                         }
                         @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                         {

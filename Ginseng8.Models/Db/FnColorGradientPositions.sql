@@ -1,8 +1,9 @@
-﻿CREATE FUNCTION [dbo].[FnColorGradientPositions](
+﻿ALTER FUNCTION [dbo].[FnColorGradientPositions](
 	@orgId int
 ) RETURNS @results TABLE (
 	[Id] int NOT NULL,
-	[EstimateHours] int NOT NULL,
+	[MinHours] int NOT NULL,
+	[MaxHours] int NULL,
 	[ColorGradientPosition] float NOT NULL
 ) AS
 BEGIN
@@ -17,10 +18,11 @@ BEGIN
 	), [maxRow] AS (
 		SELECT MAX([RowNumber]) AS [RowCount] FROM [source]
 	) INSERT INTO @results (
-		[Id], [EstimateHours], [ColorGradientPosition]
+		[Id], [MinHours], [MaxHours], [ColorGradientPosition]
 	) SELECT
 		[Id],
 		[EstimateHours],
+		COALESCE((SELECT MIN([EstimateHours]) FROM [dbo].[WorkItemSize] WHERE [OrganizationId]=@orgId AND [EstimateHours]>[source].[EstimateHours]), 1000),
 		CONVERT(float, [RowNumber]) / CONVERT(float, [RowCount]) AS [ColorGradientPosition]
 	FROM
 		[source],

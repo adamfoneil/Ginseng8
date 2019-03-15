@@ -39,6 +39,7 @@ namespace Ginseng.Mvc.Queries
 		public int? SizeEstimateHours { get; set; }
 		public int EstimateHours { get; set; }
 		public string WorkItemUserIdColumn { get; set; }
+		public decimal ColorGradientPosition { get; set; }
 	}
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
@@ -74,7 +75,8 @@ namespace Ginseng.Mvc.Queries
                 [wid].[EstimateHours] AS [DevEstimateHours],
                 [sz].[EstimateHours] AS [SizeEstimateHours],
 				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
-				[r].[WorkItemUserIdColumn]
+				[r].[WorkItemUserIdColumn],
+				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition]
             FROM
                 [dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
@@ -93,6 +95,9 @@ namespace Ginseng.Mvc.Queries
                     [wi].[DeveloperUserId]=[dev_ou].[UserId]
                 LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
                 LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
+				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON 
+					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
+					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
             WHERE
                 [wi].[OrganizationId]=@orgId AND [wi].[CloseReasonId] IS NULL {andWhere}
             ORDER BY

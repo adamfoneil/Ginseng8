@@ -7,8 +7,8 @@
         <div class="row">
             <div class="col-9">
                 @{ 
-                    var itemNumClass = (Model.EstimateWeight == 0) ? "badge-secondary" : string.Empty;
-                    var backColorStyle = (Model.EstimateWeight > 0) ? $"background-color:{Html.WeightedColorToHex(Model.EstimateWeight)}" : string.Empty;
+                    var itemNumClass = (Model.WorkItem.EstimateHours == 0) ? "badge-secondary" : string.Empty;
+                    var backColorStyle = (Model.WorkItem.EstimateHours > 0) ? $"background-color:{Html.WeightedColorToHex(Model.WorkItem.ColorGradientPosition)}" : string.Empty;
                 }
                 <span class="badge @itemNumClass" title="@Model.WorkItem.ProjectName" style="@backColorStyle">                    
                     @Model.WorkItem.Number
