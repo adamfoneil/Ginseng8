@@ -19,6 +19,7 @@
         <th>Size Name</th>
         <th>Max Hours</th>
         <th>Description</th>
+        <th>Preview Color</th>
         <th></th>
     </tr>
     @foreach (var item in Model.WorkItemSizes)
@@ -27,6 +28,9 @@
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.EstimateHours, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+            <td>
+                <span class="badge" style="background-color:@Html.ColorToHex(item.GetWeightedColor(Model.StartColor, Model.EndColor))">@item.Name</span>
+            </td>
             <td>@grid.Controls()</td>
         </tr>
     }
@@ -34,6 +38,7 @@
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.EstimateHours, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+        <td></td>
         <td>@grid.Controls()</td>
     </tr>
 </table>
