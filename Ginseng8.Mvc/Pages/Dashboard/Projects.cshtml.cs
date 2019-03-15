@@ -72,5 +72,19 @@ namespace Ginseng.Mvc.Pages.Work
 				ProjectAssignments = assignments.ToLookup(row => row.ProjectId);
 			}
 		}
+
+		public async Task<IActionResult> OnPostCreate(string name)
+		{
+			var project = new Project() { Name = name };
+			project.OrganizationId = OrgId;
+			await Data.TrySaveAsync(project);
+			return Redirect($"Projects/{project.Id}");
+		}
+
+		public async Task<IActionResult> OnPostDelete(int id)
+		{
+			await Data.TryDelete<Project>(id);
+			return Redirect($"Projects");
+		}
 	}
 }

@@ -23,6 +23,7 @@ namespace Ginseng.Mvc.Queries
 		public int? OpenWorkItems { get; set; }
 		public int? ClosedWorkItems { get; set; }
 		public int? PercentComplete { get; set; }
+		public bool AllowDelete { get; set; }
 	}
 
 	public enum ProjectInfoSortOptions
@@ -41,7 +42,11 @@ namespace Ginseng.Mvc.Queries
 					[p].*,
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) AS [TotalWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
-					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems]
+					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems],
+					CASE
+						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) THEN 0
+						ELSE 1
+					END AS [AllowDelete]
 				FROM
 					[dbo].[Project] [p]
 				WHERE

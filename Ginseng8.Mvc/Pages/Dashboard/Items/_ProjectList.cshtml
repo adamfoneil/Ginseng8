@@ -8,6 +8,18 @@
 </form>
 
 <ul>
+    <li class="mb-2">
+        <form method="post" asp-page-handler="Create">
+            <div class="form-row align-items-center">
+                <div class="col-6">
+                    <input type="text" name="Name" placeholder="create new project" class="form-control" required="required"/>                    
+                </div>
+                <div class="col-1">
+                    <button type="submit" class="btn btn-dark">Add</button>
+                </div>
+            </div>
+        </form>
+    </li>
     @foreach (var p in Model.ProjectInfo)
     {
         <li class="mb-2">
@@ -33,6 +45,14 @@
             @foreach (var lbl in Model.ProjectLabels[p.Id])
             {
                 <span class="badge" style="background-color:@lbl.BackColor;color:@lbl.ForeColor">@lbl.LabelName - @lbl.Count</span>
+            }
+
+            @if (p.AllowDelete)
+            {
+                <form method="post" asp-page-handler="Delete" style="display:inline-block">
+                    <input type="hidden" name="Id" value="@p.Id"/>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
             }
         </li>
     }

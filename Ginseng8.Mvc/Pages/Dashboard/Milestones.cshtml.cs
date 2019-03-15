@@ -1,7 +1,4 @@
-﻿using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
-using Ginseng.Mvc.Queries;
+﻿using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -26,7 +23,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 				HasMilestone = true,
 				AppId = CurrentOrgUser.CurrentAppId,
 				LabelId = LabelId
-			};			
+			};
 		}
 	}
 }
