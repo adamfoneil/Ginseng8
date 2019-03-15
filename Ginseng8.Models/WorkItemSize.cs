@@ -34,19 +34,31 @@ namespace Ginseng.Models
 		public int EstimateHours { get; set; }
 
 		/// <summary>
-		/// Position on color gradient based on estimate hours
+		/// Position on color gradient based on estimate hours (between 0 and 1)
 		/// </summary>
 		[NotMapped]
 		public decimal ColorGradientPosition { get; set; }
 		
-		public ColorInfo GetColor(ColorInfo start, ColorInfo end)
-		{						
-			throw new NotImplementedException();			
+		public ColorInfo GetWeightedColor(ColorInfo start, ColorInfo end)
+		{
+			// help from http://jsfiddle.net/vksn3yLL/
+			// via https://stackoverflow.com/questions/30143082/how-to-get-color-value-from-gradient-by-percentage-with-javascript
+
+			var w = (ColorGradientPosition * 2) - 1;
+			var w1 = (w / 1 + 1) / 2;
+			var w2 = 1 - w1;
+
+			return new ColorInfo()
+			{
+				Red = Convert.ToInt32(Math.Round(end.Red * w1 + start.Red * w2)),
+				Green = Convert.ToInt32(Math.Round(end.Green * w1 + start.Green * w2)),
+				Blue = Convert.ToInt32(Math.Round(end.Blue * w1 + start.Blue * w2))
+			};
 		}
 
-		public ColorInfo GetColor(string startColor, string endColor)
+		public ColorInfo GetWeightedColor(string startColor, string endColor)
 		{
-			return GetColor(ColorInfo.FromHexValue(startColor), ColorInfo.FromHexValue(endColor));
+			return GetWeightedColor(ColorInfo.FromHexValue(startColor), ColorInfo.FromHexValue(endColor));
 		}
 	}
 
@@ -57,7 +69,7 @@ namespace Ginseng.Models
 		public int Blue { get; set; }
 
 		public static ColorInfo FromHexValue(string colorValue)
-		{			
+		{
 			int[] values = Chunk(colorValue.Substring(1), 2).Select(hex => Convert.ToInt32(hex, 16)).ToArray();
 			return new ColorInfo() { Red = values[0], Green = values[1], Blue = values[2] };
 		}
@@ -66,6 +78,16 @@ namespace Ginseng.Models
 		{
 			// thanks to https://stackoverflow.com/a/1450797/2023653
 			return Enumerable.Range(0, input.Length / length).Select(i => input.Substring(i * length, length));
+		}
+
+		public string ToHex()
+		{
+			string Hex(int value)
+			{
+				return value.ToString("X");
+			};
+
+			return $"#{Hex(Red)}{Hex(Green)}{Hex(Blue)}";
 		}
 	}
 }
