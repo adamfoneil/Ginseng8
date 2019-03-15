@@ -1,17 +1,14 @@
 ﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Drawing;
-using System.Linq;
 
 namespace Ginseng.Models
 {
 	/// <summary>
 	/// Broad category of task estimate size (for example, Small, Medium, Large)
 	/// </summary>
+	[UniqueKey(nameof(OrganizationId), nameof(EstimateHours))]
 	public class WorkItemSize : BaseTable
 	{
 		[References(typeof(Organization))]
@@ -37,6 +34,6 @@ namespace Ginseng.Models
 		/// Position on color gradient based on estimate hours (between 0 and 1)
 		/// </summary>
 		[NotMapped]
-		public decimal ColorGradientPosition { get; set; }		
+		public decimal ColorGradientPosition { get; set; }
 	}
 }
