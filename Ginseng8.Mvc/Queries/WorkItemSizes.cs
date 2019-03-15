@@ -6,24 +6,9 @@ namespace Ginseng.Mvc.Queries
 	public class WorkItemSizes : Query<WorkItemSize>
 	{
 		public WorkItemSizes() : base(
-			@"WITH [source] AS (
-				SELECT 
-					[wis].*,		
-					ROW_NUMBER() OVER (ORDER BY [EstimateHours]) - 1 AS [RowNumber]
-				FROM 
-					[dbo].[WorkItemSize] [wis]
-				WHERE 
-					[OrganizationId]=@orgId
-			), [maxRow] AS (
-				SELECT MAX([RowNumber]) AS [RowCount] FROM [source]
-			) SELECT
-				*,
-				CONVERT(float, [RowNumber]) / CONVERT(float, [RowCount]) AS [ColorGradientPosition]
-			FROM
-				[source],
-				[maxRow]	
-			ORDER BY
-				[EstimateHours]")
+			@"SELECT [wis].*, [gp].[ColorGradientPosition]
+			FROM [dbo].[WorkItemSize] [wis] INNER JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON [wis].[Id]=[gp].[Id]
+			WHERE [wis].[OrganizationId]=@orgId")
 		{
 		}
 
