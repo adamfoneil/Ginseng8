@@ -23,7 +23,7 @@ namespace Ginseng.Mvc.Pages.Work
 		public int? Id { get; set; }
 
 		[BindProperty(SupportsGet = true)]
-		public ProjectInfoSortOptions ProjectListSort { get; set; }
+		public ProjectInfoSortOptions Sort { get; set; }
 
 		public int? CurrentAppId { get; set; }
 
@@ -63,7 +63,7 @@ namespace Ginseng.Mvc.Pages.Work
 			}
 			else
 			{
-				ProjectInfo = await new ProjectInfo(ProjectListSort) { OrgId = OrgId }.ExecuteAsync(connection);
+				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId }.ExecuteAsync(connection);
 
 				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
 				ProjectLabels = labels.ToLookup(row => row.ProjectId);

@@ -3,7 +3,7 @@
 <form method="get" class="form-inline mb-3">
     <div class="form-row">
     <label class="mr-4">Sort by:</label>
-    @Html.DropDownList("ProjectListSort", new SelectList(Html.GetEnumSelectList(typeof(ProjectInfoSortOptions)), "Value", "Text", Model.ProjectListSort), new { @class = "form-control", onchange = "this.form.submit();" })
+    @Html.DropDownList("ProjectListSort", new SelectList(Html.GetEnumSelectList(typeof(ProjectInfoSortOptions)), "Value", "Text", Model.Sort), new { @class = "form-control", onchange = "this.form.submit();" })
     </div>
 </form>
 
