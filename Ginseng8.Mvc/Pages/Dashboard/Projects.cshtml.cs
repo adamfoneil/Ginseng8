@@ -69,7 +69,7 @@ namespace Ginseng.Mvc.Pages.Work
 				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
 				ProjectLabels = labels.ToLookup(row => row.ProjectId);
 
-				var assignments = await new ProjectInfoAssignments() { OrgId = OrgId }.ExecuteAsync(connection);
+				var assignments = await new ProjectInfoAssignments() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 				ProjectAssignments = assignments.ToLookup(row => row.ProjectId);
 			}
 		}

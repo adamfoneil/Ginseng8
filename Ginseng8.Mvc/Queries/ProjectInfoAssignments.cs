@@ -1,4 +1,5 @@
 ﻿using Postulate.Base;
+using Postulate.Base.Attributes;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -25,8 +26,8 @@ namespace Ginseng.Mvc.Queries
 					LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
 					LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
 				WHERE
-					[wi].[OrganizationId]=@orgId AND
-					[wi].[ProjectId] IS NOT NULL
+					[wi].[OrganizationId]=@orgId AND					
+					[wi].[ProjectId] IS NOT NULL {andWhere}
 			) SELECT
 				[ProjectId],
 				COALESCE([ou].[DisplayName], [u].[UserName]) AS [AssignedUserName],
@@ -44,5 +45,8 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+		[Where("[wi].[ApplicationId]=@appId")]
+		public int? AppId { get; set; }
 	}
 }
