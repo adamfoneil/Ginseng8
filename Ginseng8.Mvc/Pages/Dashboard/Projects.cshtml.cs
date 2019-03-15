@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 namespace Ginseng.Mvc.Pages.Work
 {
 	[Authorize]
-	public class ProjectsModel : DashboardPageModel
+	public class ProjectsModel : DashboardPageModel, IActive
 	{
 		public ProjectsModel(IConfiguration config) : base(config)
 		{
@@ -25,11 +26,16 @@ namespace Ginseng.Mvc.Pages.Work
 		[BindProperty(SupportsGet = true)]
 		public ProjectInfoSortOptions Sort { get; set; }
 
+		[BindProperty(SupportsGet = true)]
+		public bool IsActive { get; set; } = true;
+
 		public int? CurrentAppId { get; set; }
 
 		public IEnumerable<ProjectInfoResult> ProjectInfo { get; set; }
 		public ILookup<int, ProjectInfoLabelsResult> ProjectLabels { get; set; }
 		public ILookup<int, ProjectInfoAssignmentsResult> ProjectAssignments { get; set; }
+
+		public Project SelectedProject { get; set; }
 
 		protected override OpenWorkItems GetQuery()
 		{
@@ -38,7 +44,7 @@ namespace Ginseng.Mvc.Pages.Work
 			{
 				return new OpenWorkItems()
 				{
-					OrgId = OrgId,					
+					OrgId = OrgId,
 					ProjectId = Id,
 					AppId = CurrentOrgUser.CurrentAppId,
 					LabelId = LabelId
@@ -54,16 +60,11 @@ namespace Ginseng.Mvc.Pages.Work
 
 			if (Id.HasValue)
 			{
-				int[] projectIds = WorkItems
-					.GroupBy(row => row.ProjectId)
-					.Select(grp => grp.Key).ToArray();
-
-				var projects = await new Projects() { OrgId = OrgId, IsActive = true, IncludeIds = projectIds }.ExecuteAsync(connection);
-				Projects = projects.ToDictionary(row => row.Id);
+				SelectedProject = await Data.FindAsync<Project>(Id.Value);
 			}
 			else
 			{
-				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId }.ExecuteAsync(connection);
+				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive }.ExecuteAsync(connection);
 
 				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
 				ProjectLabels = labels.ToLookup(row => row.ProjectId);
@@ -84,7 +85,25 @@ namespace Ginseng.Mvc.Pages.Work
 		public async Task<IActionResult> OnPostDelete(int id)
 		{
 			await Data.TryDelete<Project>(id);
-			return Redirect($"Projects");
+			return Redirect("Projects");
+		}
+
+		public async Task<IActionResult> OnGetDeactivate(int id)
+		{
+			return await SetProjectActive(id, false);
+		}
+
+		public async Task<IActionResult> OnGetActivate(int id)
+		{
+			return await SetProjectActive(id, true);
+		}
+
+		private async Task<IActionResult> SetProjectActive(int id, bool isActive)
+		{
+			var project = await Data.FindAsync<Project>(id);
+			project.IsActive = isActive;
+			await Data.TryUpdateAsync(project, r => r.IsActive);
+			return Redirect("Projects");
 		}
 	}
 }

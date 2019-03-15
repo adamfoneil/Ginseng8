@@ -1,0 +1,10 @@
+﻿@model IActive
+
+@if (Model.IsActive)
+{
+    <a asp-route-isactive="@(!Model.IsActive)">Show Inactive</a>
+}
+else
+{
+    <a asp-route-isactive="@(!Model.IsActive)">Show Active</a>
+}

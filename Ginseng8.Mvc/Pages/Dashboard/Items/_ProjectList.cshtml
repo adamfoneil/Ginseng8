@@ -54,6 +54,19 @@
                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                 </form>
             }
+            else
+            {
+                if (p.IsActive)
+                {
+                    <a asp-page-handler="Deactivate" asp-route-id="@p.Id">Deactivate</a>
+                }
+                else
+                {
+                    <a asp-page-handler="Activate" asp-route-id="@p.Id">Make active</a>
+                }
+            }
         </li>
     }
 </ul>
+
+<partial name="Shared/_IActive" model="Model"/>

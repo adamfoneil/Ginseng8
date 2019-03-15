@@ -12,7 +12,7 @@
             @if (projectGrp.Key != 0)
             {
                 <div style="margin-left:20px">
-                    @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "project", PostUrl = "/Update/ProjectBody", Content = Model.Projects[projectGrp.Key].HtmlBody })
+                    @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "project", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody })
                 </div>                
             }
 

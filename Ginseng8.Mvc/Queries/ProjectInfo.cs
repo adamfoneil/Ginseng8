@@ -50,7 +50,8 @@ namespace Ginseng.Mvc.Queries
 				FROM
 					[dbo].[Project] [p]
 				WHERE
-					[p].[OrganizationId]=@orgId					
+					[p].[OrganizationId]=@orgId AND
+					[p].[IsActive]=@isActive
 			) SELECT
 				[source].*,
 				CASE
@@ -64,6 +65,8 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+		public bool IsActive { get; set; }
 
 		private static Dictionary<ProjectInfoSortOptions, string> SortOptions
 		{
