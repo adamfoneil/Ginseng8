@@ -16,15 +16,9 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public IEnumerable<WorkItemSize> WorkItemSizes { get; set; }
 
-		public Color StartColor { get; set; }
-		public Color EndColor { get; set; }
 
 		public void OnGet()
 		{
-			var converter = new ColorConverter();
-			StartColor = (Color)converter.ConvertFromString("#12c2e9");
-			EndColor = (Color)converter.ConvertFromString("#f64f59");
-
 			using (var cn = Data.GetConnection())
 			{
 				WorkItemSizes = new WorkItemSizes() { OrgId = Data.CurrentOrg.Id }.Execute(cn);

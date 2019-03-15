@@ -11,6 +11,7 @@ namespace Ginseng.Mvc.ViewModels
 		public OpenWorkItemsResult WorkItem { get; set; }
 		public IEnumerable<Label> SelectedLabels { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
+		public decimal EstimateWeight { get; set; }
 
 		public int UserId { get; set; }
 		public int OrgId { get; set; }

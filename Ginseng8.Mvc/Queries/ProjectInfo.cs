@@ -1,4 +1,5 @@
 ﻿using Postulate.Base;
+using Postulate.Base.Attributes;
 using System;
 using System.Collections.Generic;
 
@@ -52,6 +53,7 @@ namespace Ginseng.Mvc.Queries
 				WHERE
 					[p].[OrganizationId]=@orgId AND
 					[p].[IsActive]=@isActive
+					{{andWhere}}
 			) SELECT
 				[source].*,
 				CASE
@@ -65,6 +67,9 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+		[Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ApplicationId]=@appId AND [ProjectId]=[p].[Id])")]
+		public int? AppId { get; set; }
 
 		public bool IsActive { get; set; }
 

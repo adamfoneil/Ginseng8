@@ -5,11 +5,15 @@
 <div class="card my-2">
     <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.WorkItem.Id">
         <div class="row">
-            <div class="col-9">                
-                <span class="badge badge-secondary" title="@Model.WorkItem.ProjectName">                    
+            <div class="col-9">
+                @{ 
+                    var itemNumClass = (Model.EstimateWeight == 0) ? "badge-secondary" : string.Empty;
+                    var backColorStyle = (Model.EstimateWeight > 0) ? $"background-color:{Html.WeightedColorToHex(Model.EstimateWeight)}" : string.Empty;
+                }
+                <span class="badge @itemNumClass" title="@Model.WorkItem.ProjectName" style="@backColorStyle">                    
                     @Model.WorkItem.Number
                 </span>                
-                <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />
+                <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />                
 
                 <div style="display:inline-block">
                     <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

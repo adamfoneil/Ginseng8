@@ -64,7 +64,7 @@ namespace Ginseng.Mvc.Pages.Work
 			}
 			else
 			{
-				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive }.ExecuteAsync(connection);
+				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 
 				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
 				ProjectLabels = labels.ToLookup(row => row.ProjectId);
