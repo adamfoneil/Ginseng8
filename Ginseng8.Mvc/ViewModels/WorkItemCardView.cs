@@ -15,9 +15,9 @@ namespace Ginseng.Mvc.ViewModels
 
 		public string HandOffButtonText()
 		{
-			if (WorkItem.AssignedUserId.HasValue)
+			if (WorkItem.ActivityId != 0)
 			{
-				return WorkItem.AssignedUserName + " - " + WorkItem.ActivityName;
+				return WorkItem.AssignedActivityAndUser();
 			}
 			else
 			{
@@ -30,12 +30,12 @@ namespace Ginseng.Mvc.ViewModels
 			if (WorkItem.AssignedUserId.HasValue)
 			{
 				int currentOrder = WorkItem.ActivityOrder ?? 0;
-				return Dropdowns.Activities.Where(a => a.Id != WorkItem.ActivityId).Select(a => new ActivityOption(a, a.Order > currentOrder));
+				return Dropdowns.Activities.Where(a => a.Id != WorkItem.ActivityId).Select(a => new ActivityOption(WorkItem.Number, a, a.Order > currentOrder) { IsHandOff = true });
 			}
 			else
 			{
-				// starting activities are all considered forward
-				return Dropdowns.Activities.Where(a => a.AllowStart).Select(a => new ActivityOption(a, true));
+				// starting activities are all considered forward, and there's no hand-off required
+				return Dropdowns.Activities.Where(a => a.AllowStart).Select(a => new ActivityOption(WorkItem.Number, a, true));
 			}
 		}
 

@@ -1,6 +1,6 @@
 ﻿@model ActivityOption
 
-<a href="#" class="dropdown-item">
+<a href="@Model.Url()" class="dropdown-item @Model.ClassName()" data-number="@Model.Number" data-activity-id="@Model.Activity.Id">
     <i class="@Model.FontawesomeClass()" style="color:@Model.Color()"></i>    
     @Model.Activity.Name
 </a>

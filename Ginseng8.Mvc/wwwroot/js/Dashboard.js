@@ -137,6 +137,13 @@ itemDetailButtons.forEach(function (ele) {
     });
 });
 
+var handOffLinks = document.querySelectorAll('.self-start-activity');
+handOffLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+
+    });
+});
+
 $(document).ready(function () {
     $('.nav-tabs li:first-child a').tab('show');
 });

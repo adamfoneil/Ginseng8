@@ -22,7 +22,7 @@
                 <div style="margin-left:20px">
                     @foreach (var item in activityGrp)
                     {
-                        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id] }" />
+                        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId }" />
                     }
                     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                     {

@@ -39,17 +39,24 @@
                 </div>
             </div>
             <div class="col-3 text-right">
-                <div class="dropdown">
-                     <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        @Model.HandOffButtonText()
-                     </button>
-                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        @foreach (var act in Model.GetActivityOptions())
-                        {
-                            <partial name="Dashboard/Items/_Activities" model="act"/>
-                        }                         
-                      </div>
-                </div>
+                @if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
+                {
+                    <div class="dropdown">
+                         <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            @Model.HandOffButtonText()
+                         </button>
+                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            @foreach (var act in Model.GetActivityOptions())
+                            {
+                                <partial name="Dashboard/Items/_Activities" model="act"/>
+                            }                         
+                          </div>
+                    </div>
+                }
+                else
+                {
+                    <span>@Model.WorkItem.AssignedActivityAndUser()</span>
+                }
             </div>
         </div>
     </div>

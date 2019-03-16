@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Controllers
@@ -45,8 +46,31 @@ namespace Ginseng.Mvc.Controllers
 				{
 					// error message should be at the top
 					return Redirect(returnUrl);
+				}				
+			}
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> SelfStartActivity(int id, int activityId)
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+					var activity = await _data.FindAsync<Activity>(cn, activityId);
+
+					workItem.ActivityId = activityId;
+					Responsibility.SetWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem, _data.CurrentUser.UserId);
+
+					await _data.TrySaveAsync(cn, workItem);
+
+					return Json(new { success = true});
 				}
-				
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
 			}
 		}
 	}

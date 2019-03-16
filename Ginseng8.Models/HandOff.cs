@@ -9,10 +9,15 @@ namespace Ginseng.Models
 	/// </summary>
 	public class HandOff : BaseTable, IFeedItem, IBody
 	{
+		public const string ForwardHandOff = "fas fa-chevron-circle-right";
+		public const string BackwardHandOff = "far fa-chevron-circle-left";
+
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }
 
-		public string IconClass => (IsForward) ? "angle-double-right" : "angle-double-left";
+		public string IconClass => (IsForward) ? ForwardHandOff : BackwardHandOff;
+
+		public int FromUserId { get; set; }
 
 		[References(typeof(Activity))]
 		public int FromActivityId { get; set; }

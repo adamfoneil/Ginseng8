@@ -73,11 +73,16 @@ namespace Ginseng.Mvc
 			}
 		}
 
+		public async Task<T> FindAsync<T>(SqlConnection connection, int id)
+		{
+			return await connection.FindAsync<T>(id, CurrentUser);
+		}
+
 		public async Task<T> FindAsync<T>(int id)
 		{
 			using (var cn = GetConnection())
 			{
-				return await cn.FindAsync<T>(id, CurrentUser);
+				return await FindAsync<T>(cn, id);
 			}
 		}
 

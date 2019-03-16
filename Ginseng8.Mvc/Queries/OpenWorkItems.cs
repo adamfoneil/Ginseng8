@@ -29,8 +29,8 @@ namespace Ginseng.Mvc.Queries
 		public int ActivityId { get; set; }
 		public string ActivityName { get; set; }
 		public int? ActivityOrder { get; set; }
-		public string BusinessName { get; set; }
-		public string DeveloperName { get; set; }
+		public string BusinessUserName { get; set; }
+		public string DeveloperUserName { get; set; }
 		public int? AssignedUserId { get; set; }
 		public string AssignedUserName { get; set; }		
 		public string WorkItemSize { get; set; }
@@ -41,6 +41,12 @@ namespace Ginseng.Mvc.Queries
 		public int EstimateHours { get; set; }
 		public string WorkItemUserIdColumn { get; set; }
 		public decimal ColorGradientPosition { get; set; }
+
+		public string AssignedActivityAndUser()
+		{
+			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "awaiting hand-off";			
+			return $"{ActivityName} - {assignedTo}";
+		}
 	}
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
@@ -61,8 +67,8 @@ namespace Ginseng.Mvc.Queries
                 COALESCE([wi].[ActivityId], 0) AS [ActivityId],
                 [act].[Name] AS [ActivityName],
 				[act].[Order] AS [ActivityOrder],
-                COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessName],
-                COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperName],
+                COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessUserName],
+                COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperUserName],
                 CASE [act].[ResponsibilityId]
                     WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
                     WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
