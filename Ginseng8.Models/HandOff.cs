@@ -12,6 +12,16 @@ namespace Ginseng.Models
 		public const string ForwardHandOff = "fas fa-chevron-circle-right";
 		public const string BackwardHandOff = "far fa-chevron-circle-left";
 
+		public static string GetIconClass(bool isForward)
+		{
+			return (isForward) ? ForwardHandOff : BackwardHandOff;
+		}
+
+		public static string GetColor(bool isForward)
+		{
+			return (isForward) ? "green" : "orange";
+		}
+
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }
 

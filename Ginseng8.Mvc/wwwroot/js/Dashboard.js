@@ -140,7 +140,14 @@ itemDetailButtons.forEach(function (ele) {
 var handOffLinks = document.querySelectorAll('.self-start-activity');
 handOffLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
+        // call WorkItem/SelfStartActivity
+    });
+});
 
+var noPropagateItems = document.querySelectorAll('.no-propagation');
+noPropagateItems.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        ev.stopPropagation();
     });
 });
 

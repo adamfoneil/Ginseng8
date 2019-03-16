@@ -49,10 +49,5 @@ namespace Ginseng.Mvc.ViewModels
 				HandOff.ForwardHandOff :
 				HandOff.BackwardHandOff;
 		}
-
-		public string Color()
-		{
-			return (IsForward) ? "green" : "orange";
-		}
 	}
 }

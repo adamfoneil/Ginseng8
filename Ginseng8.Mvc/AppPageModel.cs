@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Attributes;
 using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -36,6 +37,19 @@ namespace Ginseng.Mvc
 			{
 				return await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, CurrentOrgUser?.CurrentAppId);
 			}
+		}
+
+		public async Task<WorkItem> FindWorkItemAsync(int number)
+		{
+			return await Data.FindWhereAsync<WorkItem>(new { OrganizationId = OrgId, Number = number });
+		}
+
+		public async Task<OpenWorkItemsResult> FindWorkItemResultAsync(int number)
+		{
+			using (var cn = Data.GetConnection())
+			{
+				return await new OpenWorkItems() { OrgId = OrgId, Number = number }.ExecuteSingleAsync(cn);
+			}				
 		}
 
 		protected bool IsMyResponsibility(int responsibilityId)

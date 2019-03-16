@@ -1,8 +1,25 @@
-﻿@page
+﻿@page "/WorkItem/HandOff/{id}"
 @model Ginseng.Mvc.Pages.WorkItem.HandOffModel
 @{
     ViewData["Title"] = "Hand Off";
 }
 
-<h1>Hand Off</h1>
+<h2>
+    <span class="badge" style="background-color:@Html.WeightedColorToHex(Model.WorkItem.ColorGradientPosition)">@Model.WorkItem.Number</span>
+    <span>@Model.WorkItem.Title</span>
+</h2>
+<h1>    
+    @(Model.FromActivity?.Name ?? "starting") 
+    <i class="@HandOff.GetIconClass(Model.HandOff.IsForward)" style="color:@HandOff.GetColor(Model.HandOff.IsForward)"></i>
+    <span>@Model.ToActivity.Name</span>
+</h1>
 
+<form method="post">
+    <input type="hidden" name="WorkItemId" value="@Model.HandOff.WorkItemId"/>
+    <input type="hidden" name="FromUserId" value="@Model.HandOff.FromUserId"/>
+    <input type="hidden" name="FromActivityId" value="@Model.HandOff.FromActivityId"/>
+    <input type="hidden" name="ToUserId" value="@Model.HandOff.ToActivityId"/>
+    <input type="hidden" name="IsForward" value="@Model.HandOff.IsForward"/>
+
+    <textarea name="HtmlBody" id="HtmlBody" class="htmlEditor"></textarea>
+</form>
