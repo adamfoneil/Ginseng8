@@ -39,16 +39,17 @@
                 </div>
             </div>
             <div class="col-3 text-right">
-                <!--comment, hand-off controls-->
-                @if (Model.WorkItem.AssignedUserId.HasValue)
-                {
-                    @Model.WorkItem.ActivityName<span> - </span>@Model.WorkItem.AssignedUserName
-                    <!--hand off control-->
-                }
-                else
-                {
-                    <a href="#">I'll take this</a>
-                }
+                <div class="dropdown">
+                     <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @Model.HandOffButtonText()
+                     </button>
+                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        @foreach (var act in Model.GetActivityOptions())
+                        {
+                            <partial name="Dashboard/Items/_Activities" model="act"/>
+                        }                         
+                      </div>
+                </div>
             </div>
         </div>
     </div>

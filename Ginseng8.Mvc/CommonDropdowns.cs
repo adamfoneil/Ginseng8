@@ -15,13 +15,16 @@ namespace Ginseng.Mvc
 		{
 		}
 
+		/// <summary>
+		/// Activities are handled differently from the SelectList properties
+		/// </summary>
+		public IEnumerable<Activity> Activities { get; set; }
+
 		public IEnumerable<SelectListItem> Applications { get; set; }
-		public IEnumerable<SelectListItem> Projects { get; set; }
-		public IEnumerable<SelectListItem> AllActivities { get; set; }
+		public IEnumerable<SelectListItem> Projects { get; set; }		
 		public IEnumerable<SelectListItem> Sizes { get; set; }
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }
-		public IEnumerable<SelectListItem> Milestones { get; set; }
-		public IEnumerable<SelectListItem> MyActivities { get; set; }
+		public IEnumerable<SelectListItem> Milestones { get; set; }			
 		public IEnumerable<Label> Labels { get; set; }
 
 		public SelectList AppSelect(OpenWorkItemsResult item)
@@ -32,14 +35,6 @@ namespace Ginseng.Mvc
 		public SelectList ProjectSelect(OpenWorkItemsResult item)
 		{
 			return new SelectList(Projects, "Value", "Text", item.ProjectId);
-		}
-
-		/// <summary>
-		/// I don't think we'll offer an activity select because activity changes require hand-off
-		/// </summary>
-		public SelectList ActivitySelect(OpenWorkItemsResult item)
-		{
-			return new SelectList(AllActivities, "Value", "Text", item.ActivityId);
 		}
 
 		public SelectList SizeSelect(OpenWorkItemsResult item)
@@ -72,10 +67,11 @@ namespace Ginseng.Mvc
 		public static async Task<CommonDropdowns> FillAsync(SqlConnection connection, int orgId, int responsibilities)
 		{
 			var result = new CommonDropdowns();
+
+			result.Activities = await new Activities() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+
 			result.Applications = await new AppSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			result.Projects = await new ProjectSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			result.AllActivities = await new ActivitySelect() { OrgId = orgId }.ExecuteAsync(connection);
-			result.MyActivities = await new ActivitySelect() { OrgId = orgId, Responsibilities = responsibilities }.ExecuteAsync(connection);
+			result.Projects = await new ProjectSelect() { OrgId = orgId }.ExecuteAsync(connection);			
 			result.Sizes = await new SizeSelect() { OrgId = orgId }.ExecuteAsync(connection);
 			result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);
 			result.Milestones = await new MilestoneSelect() { OrgId = orgId }.ExecuteAsync(connection);

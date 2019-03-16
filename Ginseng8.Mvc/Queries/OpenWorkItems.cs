@@ -28,6 +28,7 @@ namespace Ginseng.Mvc.Queries
 		public string CloseReasonName { get; set; }
 		public int ActivityId { get; set; }
 		public string ActivityName { get; set; }
+		public int? ActivityOrder { get; set; }
 		public string BusinessName { get; set; }
 		public string DeveloperName { get; set; }
 		public int? AssignedUserId { get; set; }
@@ -59,6 +60,7 @@ namespace Ginseng.Mvc.Queries
                 [wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
                 COALESCE([wi].[ActivityId], 0) AS [ActivityId],
                 [act].[Name] AS [ActivityName],
+				[act].[Order] AS [ActivityOrder],
                 COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessName],
                 COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperName],
                 CASE [act].[ResponsibilityId]

@@ -24,6 +24,7 @@
         <th>Activity Name</th>
         <th>Description</th>
         <th>Responsibility</th>
+        <th>Allow Start</th>
         <th>Order</th>
         <th></th>
     </tr>
@@ -33,6 +34,7 @@
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
             <td>@grid.DropDownList(m => m.ResponsibilityId, Model.ResponsibilitySelect, new { @class = "form-control" })</td>
+            <td>@grid.CheckBox(m => m.AllowStart)</td>
             <td>@grid.TextBox(m => m.Order, new { @class = "form-control", style = "width:90px" })</td>
             <td>@grid.Controls()</td>
         </tr>
@@ -41,6 +43,7 @@
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
         <td>@grid.DropDownList(m => m.ResponsibilityId, Model.ResponsibilitySelect, new { @class = "form-control" })</td>
+        <td>@grid.CheckBox(m => m.AllowStart)</td>
         <td>@grid.TextBox(m => m.Order, new { @class = "form-control", style = "width:90px" })</td>
         <td>@grid.Controls()</td>
     </tr>

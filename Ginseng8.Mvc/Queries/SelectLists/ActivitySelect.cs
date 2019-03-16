@@ -18,5 +18,8 @@ namespace Ginseng.Mvc.Queries.SelectLists
 
 		[Where("((@responsibilities & [r].[Flag]) = [r].[Flag])")]
 		public int? Responsibilities { get; set; }
+
+		[Where("[a].[AllowStart]=@allowStart")]
+		public bool? AllowStart { get; set; }
 	}
 }

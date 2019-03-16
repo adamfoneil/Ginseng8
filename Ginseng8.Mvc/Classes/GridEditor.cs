@@ -210,6 +210,40 @@ namespace Ginseng.Mvc.Classes
 			return null;
 		}
 
+		public object CheckBox(Expression<Func<TRecord, bool>> expression, string yesValue = "Yes", string noValue = "No", object htmlAttributes = null)
+		{
+			string propertyName = PropertyNameFromLambda(expression);
+			if (!_propertyNames.Contains(propertyName)) _propertyNames.Add(propertyName);
+
+			var checkbox = new TagBuilder("input");
+			checkbox.MergeAttribute("name", propertyName);
+			checkbox.MergeAttribute("id", ControlId(propertyName));
+			checkbox.MergeAttribute("type", "checkbox");
+			if (htmlAttributes != null) checkbox.MergeAttributes(new RouteValueDictionary(htmlAttributes));
+
+			if (IsSavedRow())
+			{
+				var function = expression.Compile();
+				var value = function.Invoke(_record);
+				string output = noValue;
+				if (value)
+				{
+					output = yesValue;
+					checkbox.MergeAttribute("checked", "checked");
+				}
+
+				WriteSpans(propertyName, checkbox, output);
+			}
+			else
+			{
+				object isChecked = false;
+				if (DefaultValueExists(propertyName, out isChecked) && Convert.ToBoolean(isChecked)) checkbox.MergeAttribute("checked", "checked");
+				checkbox.WriteTo(_writer, _encoder);
+			}
+
+			return null;
+		}
+
 		public object DropDownList<TValue>(Expression<Func<TRecord, TValue>> expression, SelectList selectList, object htmlAttributes = null)
 		{
 			string propertyName = PropertyNameFromLambda(expression);
