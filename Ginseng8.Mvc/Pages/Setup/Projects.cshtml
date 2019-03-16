@@ -26,14 +26,14 @@
     {
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Priority, new { @class = "form-control", style = "width:70px" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>            
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Priority, new { @class = "form-control", style = "width:70px" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>        
         <td>@grid.Controls()</td>
     </tr>

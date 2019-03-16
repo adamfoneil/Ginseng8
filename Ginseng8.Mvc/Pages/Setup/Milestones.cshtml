@@ -24,13 +24,13 @@
     {
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "false" })</td>
+            <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "false" })</td>
+        <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
         <td>@grid.Controls()</td>
     </tr>
 </table>
