@@ -14,6 +14,12 @@ namespace Ginseng.Mvc.Pages.Work
 			ShowLabelFilter = false;
 		}
 
+		public IEnumerable<OpenWorkItemsResult> AlertItems
+		{
+			// not implemented yet
+			get { return Enumerable.Empty<OpenWorkItemsResult>(); }
+		}
+
 		public IEnumerable<OpenWorkItemsResult> PausedItems
 		{
 			get { return WorkItems.Where(wi => wi.IsPaused()); }			
@@ -26,7 +32,7 @@ namespace Ginseng.Mvc.Pages.Work
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems() { OrgId = OrgId };
+			return new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
 		}
 	}
 }

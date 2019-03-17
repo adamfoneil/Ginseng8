@@ -5,43 +5,89 @@
 }
 
 <div id="accordion">
+@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+{
+    <h4>@appGrp.First().ApplicationName</h4>
+    <ul class="nav nav-tabs" id="assignedUserTab" role="tablist">
+        @if (Model.AlertItems.Any(wi => wi.ApplicationId == appGrp.Key))
+        {
+            <li class="nav-item">
+                <a href="#alerts-@appGrp.Key" data-toggle="tab" class="nav-link">
+                    <i class="fas fa-tag"></i>
+                    <span>Alerts</span>                    
+                </a>
+            </li>
+        }
+        
+        @if (Model.PausedItems.Any(wi => wi.ApplicationId == appGrp.Key))
+        {
+            <li class="nav-item">
+                <a href="#paused-@appGrp.Key" data-toggle="tab" class="nav-link">
+                    <i class="fas fa-pause-circle"></i>
+                    <span>Paused</span>
+                </a>
+            </li>
+        }
 
-    <h4>
-        <i class="fas fa-tag"></i>
-        <span>Alert labels</span>
-    </h4>
-    <p>Items with labels that I follow</p>
+        @if (Model.StoppedItems.Any(wi => wi.ApplicationId == appGrp.Key))
+        {
+            <li class="nav-item">
+                <a href="#stopped-@appGrp.Key" data-toggle="tab" class="nav-link">
+                    <i class="fas fa-stop-circle"></i>
+                    <span>Not Started</span>
+                </a>
+            </li>
+        }
 
-    @if (Model.PausedItems.Any())
-    {
-        <h4>
-            <i class="fas fa-pause-circle"></i>
-            <span>Awaiting Hand-off</span>
-        </h4>
-        <p>Paused items waiting for someone to resume</p>
-        <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.PausedItems }"/>
-    }
+        <li class="nav-item">
+            <a href="#load-@appGrp.Key" data-toggle="tab" class="nav-link">
+                <i class="fas fa-weight-hanging"></i>
+                <span>Current Load</span>
+            </a>
+        </li>
 
-    @if (Model.StoppedItems.Any())
-    {
-        <h4>
-            <i class="fas fa-stop-circle"></i>
-            <span>Items Not Started</span>
-        </h4>
-        <p>Items in a milestone that haven't been started</p>
-        <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.StoppedItems }"/>
-    }
+        <li class="nav-item">
+            <a href="#completed-@appGrp.Key" data-toggle="tab" class="nav-link">
+                <i class="fas fa-clipboard-check"></i>
+                <span>Recently Done</span>
+            </a>
+        </li>
+    </ul>
 
+    <div class="tab-content my-3" id="tabContent">
+        @if (Model.AlertItems.Any())
+        {
+            <div class="tab-pane fade" id="alerts-@appGrp.Key" role="tabpanel">
+                <p>Items with labels that I follow</p>
+                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.AlertItems.Where(wi => wi.ApplicationId == appGrp.Key) }"/>
+            </div>
+        }
+
+        @if (Model.PausedItems.Any())
+        {
+            <div class="tab-pane fade" id="paused-@appGrp.Key" role="tabpanel">
+                <p>Items waiting for someone to resume</p>
+                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.PausedItems.Where(wi => wi.ApplicationId == appGrp.Key) }"/>
+            </div>
+        }
+
+        @if (Model.StoppedItems.Any())
+        {
+            <div class="tab-pane fade" id="stopped-@appGrp.Key" role="tabpanel">
+                <p>Items in a milestone that haven't been started</p>
+                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.StoppedItems.Where(wi => wi.ApplicationId == appGrp.Key) }"/>
+            </div>
+        }
+
+        <div class="tab-pane fade" id="load-@appGrp.Key" role="tabpanel">
+            <p>Top priorities and approximate finish date by assigned person</p>
+        </div>
+
+        <div class="tab-pane fade" id="completed-@appGrp.Key" role="tabpanel">
+            <p>Recently completed items</p>
+        </div>
+        
+    </div>
+}
 </div>
 
-<h4>
-    <i class="fas fa-weight-hanging"></i>
-    <span>Current Load</span>
-</h4>
-<p>Top priorities and approximate finish date by assigned person</p>
-
-<h4>
-    <i class="fas fa-clipboard-check"></i>
-    <span>Recently Done</span>
-</h4>
-<p>Last 10 completed items</p>

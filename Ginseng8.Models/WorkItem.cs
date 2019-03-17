@@ -13,6 +13,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// User story, development task, bug, or feature request
 	/// </summary>
+	[TrackChanges(IgnoreProperties = "ModifiedBy;DateModified")]
 	public class WorkItem : BaseTable, IBody
 	{
 		[References(typeof(Organization))]

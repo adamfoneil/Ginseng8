@@ -59,12 +59,9 @@ namespace Ginseng.Mvc.Controllers
 				{
 					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
 					var activity = await _data.FindAsync<Activity>(cn, activityId);
-
 					workItem.ActivityId = activityId;
 					Responsibility.SetWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem, _data.CurrentUser.UserId);
-
 					await _data.TrySaveAsync(cn, workItem);
-
 					return Json(new { success = true});
 				}
 			}
@@ -82,12 +79,29 @@ namespace Ginseng.Mvc.Controllers
 				using (var cn = _data.GetConnection())
 				{
 					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
-					var activity = await _data.FindAsync<Activity>(cn, workItem.ActivityId.Value);
-					
+					var activity = await _data.FindAsync<Activity>(cn, workItem.ActivityId.Value);					
 					Responsibility.SetWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem, _data.CurrentUser.UserId);
-
 					await _data.TrySaveAsync(cn, workItem);
+					return Json(new { success = true });
+				}
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
 
+		[HttpPost]
+		public async Task<JsonResult> UnassignMe([FromForm]int id)
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+					var activity = await _data.FindAsync<Activity>(cn, workItem.ActivityId.Value);
+					Responsibility.ClearWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem);
+					await _data.TrySaveAsync(cn, workItem);
 					return Json(new { success = true });
 				}
 			}

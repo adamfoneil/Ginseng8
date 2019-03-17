@@ -54,6 +54,11 @@
                             {
                                 <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">I'll take this</a>
                             }
+                            @if (Model.WorkItem.AssignedUserId.HasValue)
+                            {
+                                <div class="dropdown-divider"></div>
+                                <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">Remove Me</a>
+                            }
                           </div>
                     </div>
                 }

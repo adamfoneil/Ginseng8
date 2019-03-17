@@ -179,6 +179,23 @@ resumeWorkLinks.forEach(function (ele) {
     });
 });
 
+var unassignWorkLinks = document.querySelectorAll('.unassign-work-item');
+unassignWorkLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var data = {
+            id: ev.target.getAttribute('data-number')
+        };
+        var formData = getFormData(data);
+        fetch('/WorkItem/UnassignMe', {
+            method: 'post',
+            body: formData
+        }).then(function (response) {
+            // show success/fail or something?
+            return response.json();
+        });
+    });
+});
+
 var noPropagateItems = document.querySelectorAll('.no-propagation');
 noPropagateItems.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
