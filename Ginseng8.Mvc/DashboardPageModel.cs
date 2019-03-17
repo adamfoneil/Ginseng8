@@ -1,10 +1,8 @@
-﻿using Dapper;
-using Ginseng.Models;
+﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -20,11 +18,11 @@ namespace Ginseng.Mvc
 		}
 
 		public bool ShowLabelFilter { get; set; } = true;
-		public IEnumerable<OpenWorkItemsResult> WorkItems { get; set; }		
-		public ILookup<int, Label> SelectedLabels { get; set; }		
+		public IEnumerable<OpenWorkItemsResult> WorkItems { get; set; }
+		public ILookup<int, Label> SelectedLabels { get; set; }
 		public IEnumerable<IGrouping<int, Label>> LabelFilter { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
-	
+
 		[BindProperty(SupportsGet = true)]
 		public int? LabelId { get; set; }
 
@@ -43,7 +41,7 @@ namespace Ginseng.Mvc
 
 		/// <summary>
 		/// Override this to populate individual model properties that won't benefit from async execution
-		/// </summary>		
+		/// </summary>
 		protected virtual void OnGetInternal(SqlConnection connection)
 		{
 			// do nothing by default
@@ -65,7 +63,7 @@ namespace Ginseng.Mvc
 				}
 
 				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
-			
+
 				await OnGetInternalAsync(cn);
 
 				OnGetInternal(cn);

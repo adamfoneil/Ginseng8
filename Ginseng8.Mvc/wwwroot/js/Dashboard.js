@@ -144,13 +144,32 @@ selfStartLinks.forEach(function (ele) {
         if (element.tagName == 'I') element = element.parentElement;
 
         var data = {
-            id: element.getAttribute("data-number"),
-            activityId: element.getAttribute("data-activity-id")            
+            id: element.getAttribute('data-number'),
+            activityId: element.getAttribute('data-activity-id')
         };
 
         var formData = getFormData(data);
         
         fetch('/WorkItem/SelfStartActivity', {
+            method: 'post',
+            body: formData
+        }).then(function (response) {
+            // show success/fail or something?
+            return response.json();
+        });
+    });
+});
+
+var resumeWorkLinks = document.querySelectorAll('.resume-work-item');
+resumeWorkLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var data = {
+            id: ev.target.getAttribute('data-number')
+        };
+
+        var formData = getFormData(data);
+
+        fetch('/WorkItem/ResumeActivity', {
             method: 'post',
             body: formData
         }).then(function (response) {

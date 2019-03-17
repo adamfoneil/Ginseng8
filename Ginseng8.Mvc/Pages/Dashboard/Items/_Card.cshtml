@@ -52,7 +52,7 @@
                             }
                             @if (Model.WorkItem.IsPaused())
                             {
-                                <a href="#" class="dropdown-item no-propagation resume-work-item">I'll take this</a>
+                                <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">I'll take this</a>
                             }
                           </div>
                     </div>
