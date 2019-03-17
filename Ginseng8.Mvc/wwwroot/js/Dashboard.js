@@ -142,18 +142,19 @@ selfStartLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
         var element = ev.target;
         if (element.tagName == 'I') element = element.parentElement;
+
         var data = {
             id: element.getAttribute("data-number"),
             activityId: element.getAttribute("data-activity-id")            
         };
-        var formData = new FormData();
-        for (var key in data) formData.append(key, data[key]);
-        formData.append("__RequestVerificationToken", getAntiForgeryToken());
+
+        var formData = getFormData(data);
         
         fetch('/WorkItem/SelfStartActivity', {
             method: 'post',
             body: formData
         }).then(function (response) {
+            // show success/fail or something?
             return response.json();
         });
     });
@@ -169,6 +170,13 @@ noPropagateItems.forEach(function (ele) {
 $(document).ready(function () {
     $('.nav-tabs li:first-child a').tab('show');
 });
+
+function getFormData(object) {
+    var formData = new FormData();
+    for (var key in object) formData.append(key, object[key]);
+    formData.append("__RequestVerificationToken", getAntiForgeryToken());
+    return formData;
+}
 
 function getAntiForgeryToken() {
     var div = document.getElementById('antiForgeryToken');
