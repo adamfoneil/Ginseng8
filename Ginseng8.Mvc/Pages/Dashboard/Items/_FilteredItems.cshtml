@@ -4,12 +4,17 @@
 {
     var milestoneItem = milestoneGrp.First();
     <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-    <div id="milestone-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-        <div style="margin-left:20px">
-            @foreach (var item in milestoneGrp)
-            {
-                <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Page.Dropdowns, SelectedLabels = Model.Page.SelectedLabels[item.Id], UserId = Model.Page.UserId }" />
-            }
+
+    @foreach (var activityGrp in milestoneGrp.GroupBy(row => row.ActivityId))
+    {
+        <h6 style="margin-left:20px">@activityGrp.First().ActivityName</h6>
+        <div id="milestone-@milestoneGrp.Key-activity-@activityGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+            <div style="margin-left:20px">
+                @foreach (var item in activityGrp)
+                {
+                    <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Page.Dropdowns, SelectedLabels = Model.Page.SelectedLabels[item.Id], UserId = Model.Page.UserId }" />
+                }
+            </div>
         </div>
-    </div>
+    }    
 } 
