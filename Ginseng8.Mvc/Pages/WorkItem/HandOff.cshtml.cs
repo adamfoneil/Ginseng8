@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Helpers;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -44,6 +45,8 @@ namespace Ginseng.Mvc.Pages.WorkItem
 			handOff.Id = 0;
 
 			handOff.IsForward = await GetIsForwardAsync(handOff.FromActivityId, handOff.ToActivityId);
+
+			handOff.SaveHtml();
 
 			await Data.TrySaveAsync(handOff);
 			return Redirect(ReturnUrl);
