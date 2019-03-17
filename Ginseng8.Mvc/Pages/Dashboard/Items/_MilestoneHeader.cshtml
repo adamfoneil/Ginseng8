@@ -12,6 +12,10 @@
                 {
                     <text>@Model.MilestoneDaysAway day(s) away</text>
                 }
+                else if (Model.MilestoneDaysAway < 0)
+                {
+                    <text>@Math.Abs(Model.MilestoneDaysAway.Value) day(s) ago</text>
+                }
                 else
                 {
                     <text>today</text>
