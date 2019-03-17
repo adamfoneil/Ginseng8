@@ -1,7 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Microsoft.Extensions.Configuration;
-using Postulate.SqlServer.IntKey;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.WorkItem

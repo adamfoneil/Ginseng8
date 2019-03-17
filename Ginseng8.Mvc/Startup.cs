@@ -32,7 +32,8 @@ namespace Ginseng.Mvc
 
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
-					Configuration.GetConnectionString("DefaultConnection")));
+					Configuration.GetSection("ConnectionStrings").GetValue<string>("Default")
+					/*Configuration.GetConnectionString("DefaultConnection")*/));
 			services.AddDefaultIdentity<IdentityUser>()
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();

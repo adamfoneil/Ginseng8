@@ -32,7 +32,7 @@ namespace Ginseng.Mvc
 
 		public SqlConnection GetConnection()
 		{
-			string connectionStr = _config.GetConnectionString("DefaultConnection");
+			string connectionStr = _config.GetSection("ConnectionStrings").GetValue<string>("Default");
 			return new SqlConnection(connectionStr);
 		}
 
