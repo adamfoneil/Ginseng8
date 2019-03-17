@@ -4,6 +4,8 @@
     ViewData["Title"] = "My Items";
 }
 
+@Html.ActionAlert(TempData)
+
 <div id="accordion">
 @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
 {

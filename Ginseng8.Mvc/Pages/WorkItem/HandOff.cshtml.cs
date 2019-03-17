@@ -1,6 +1,8 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.WorkItem
@@ -11,6 +13,9 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		{
 		}
 
+		[BindProperty(SupportsGet = true)]
+		public string ReturnUrl { get; set; }
+
 		public OpenWorkItemsResult WorkItem { get; set; }
 		public HandOff HandOff { get; set; }
 		public Activity FromActivity { get; set; }
@@ -20,16 +25,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		{
 			WorkItem = await FindWorkItemResultAsync(id);
 
-			if (WorkItem.ActivityId != 0)
-			{
-				FromActivity = await Data.FindAsync<Activity>(WorkItem.ActivityId);
-			}
-
-			ToActivity = await Data.FindAsync<Activity>(activityId);
-
-			bool isForward = (FromActivity != null) ?
-				ToActivity.Order > FromActivity.Order :
-				true;
+			bool isForward = await GetIsForwardAsync(WorkItem.ActivityId, activityId);
 
 			HandOff = new HandOff()
 			{
@@ -37,8 +33,27 @@ namespace Ginseng.Mvc.Pages.WorkItem
 				FromUserId = UserId,
 				FromActivityId = WorkItem.ActivityId,
 				ToActivityId = activityId,
-				IsForward = isForward
+				IsForward = isForward // this doesn't render correctly in the form (it comes out as "value" instead of true/false for some reason)
 			};
+		}
+
+		public async Task<IActionResult> OnPostAsync(HandOff handOff)
+		{
+			// model binding makes a bad inference about the Id 
+			// from the work item Number, so we must clear it to ensure insert			
+			handOff.Id = 0;
+
+			handOff.IsForward = await GetIsForwardAsync(handOff.FromActivityId, handOff.ToActivityId);
+
+			await Data.TrySaveAsync(handOff);
+			return Redirect(ReturnUrl);
+		}
+
+		private async Task<bool> GetIsForwardAsync(int fromActivityId, int toActivityId)
+		{
+			FromActivity = await Data.FindAsync<Activity>(fromActivityId);
+			ToActivity = await Data.FindAsync<Activity>(toActivityId);
+			return (ToActivity.Order > FromActivity.Order);
 		}
 	}
 }

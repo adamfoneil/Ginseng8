@@ -29,10 +29,10 @@ namespace Ginseng.Mvc.ViewModels
 		/// <summary>
 		/// Activity option anchor tag Url
 		/// </summary>		
-		public string Url()
+		public string Url(string returnUrl)
 		{
 			// this navigates to page where the hand-off info is entered
-			if (IsHandOff) return $"/WorkItem/HandOff/{Number}?activityId={Activity.Id}";
+			if (IsHandOff) return $"/WorkItem/HandOff/{Number}?activityId={Activity.Id}&returnUrl={returnUrl}";
 			return null;
 		}
 

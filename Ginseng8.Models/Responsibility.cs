@@ -39,7 +39,7 @@ namespace Ginseng.Models
 
 		/// <summary>
 		/// Indicates what WorkItem property to set according to the Responsibility.Id in effect (which comes from the activity that was selected).
-		/// The Id values are assumed from the order of the seed data records
+		/// The Id (dictionary key) values are assumed from the order of the seed data records
 		/// </summary>
 		public static Dictionary<int, Action<WorkItem, int>> SetWorkItemUserActions
 		{
@@ -51,7 +51,23 @@ namespace Ginseng.Models
 					{ 2, (wi, userId) => wi.DeveloperUserId = userId }
 				};
 			}
-		}		
+		}
+
+		/// <summary>
+		/// Indicates what WorkItem property to clear according to the Responsibility.Id in effect
+		/// The Id (dictionary key) values are assumed from the order of the seed data records
+		/// </summary>
+		public static Dictionary<int, Action<WorkItem>> ClearWorkItemUserActions
+		{
+			get
+			{
+				return new Dictionary<int, Action<WorkItem>>()
+				{
+					{ 1, (wi) => wi.BusinessUserId = null },
+					{ 2, (wi) => wi.DeveloperUserId = null }
+				};
+			}
+		}
 
 		public static DataTable GetSeedData()
 		{
