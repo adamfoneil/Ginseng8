@@ -17,11 +17,11 @@ namespace Ginseng.Mvc.ViewModels
 		{
 			if (WorkItem.ActivityId != 0)
 			{
-				return WorkItem.AssignedActivityAndUser();
+				return WorkItem.ActivityStatus();
 			}
 			else
 			{
-				return "I'll take this";
+				return "I'll start this";
 			}
 		}
 
@@ -29,13 +29,22 @@ namespace Ginseng.Mvc.ViewModels
 		{
 			if (WorkItem.AssignedUserId.HasValue)
 			{
+				// assigned person may move hand off to another activity
 				int currentOrder = WorkItem.ActivityOrder ?? 0;
 				return Dropdowns.Activities.Where(a => a.Id != WorkItem.ActivityId).Select(a => new ActivityOption(WorkItem.Number, a, a.Order > currentOrder) { IsHandOff = true });
 			}
 			else
-			{
-				// starting activities are all considered forward, and there's no hand-off required
-				return Dropdowns.Activities.Where(a => a.AllowStart).Select(a => new ActivityOption(WorkItem.Number, a, true));
+			{				
+				if (WorkItem.IsPaused())
+				{
+					// no one assigned (item is paused), so anyone can resume this activity, but there's no choice of activity
+					return Enumerable.Empty<ActivityOption>();
+				}
+				else
+				{
+					// starting activities are all considered forward, and there's no hand-off required (will call JS self-start-activity event)
+					return Dropdowns.Activities.Where(a => a.AllowStart).Select(a => new ActivityOption(WorkItem.Number, a, true));
+				}				
 			}
 		}
 

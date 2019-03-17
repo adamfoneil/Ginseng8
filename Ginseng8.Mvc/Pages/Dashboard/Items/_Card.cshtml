@@ -49,13 +49,17 @@
                             @foreach (var act in Model.GetActivityOptions())
                             {
                                 <partial name="Dashboard/Items/_Activities" model="act"/>
-                            }                         
+                            }
+                            @if (Model.WorkItem.IsPaused())
+                            {
+                                <a href="#" class="dropdown-item no-propagation resume-work-item">I'll take this</a>
+                            }
                           </div>
                     </div>
                 }
                 else
                 {
-                    <span>@Model.WorkItem.AssignedActivityAndUser()</span>
+                    <span>@Model.WorkItem.ActivityStatus()</span>
                 }
             </div>
         </div>

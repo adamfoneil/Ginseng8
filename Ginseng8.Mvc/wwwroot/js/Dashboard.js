@@ -137,10 +137,25 @@ itemDetailButtons.forEach(function (ele) {
     });
 });
 
-var handOffLinks = document.querySelectorAll('.self-start-activity');
-handOffLinks.forEach(function (ele) {
+var selfStartLinks = document.querySelectorAll('.self-start-activity');
+selfStartLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
-        // call WorkItem/SelfStartActivity
+        var element = ev.target;
+        if (element.tagName == 'I') element = element.parentElement;
+        var data = {
+            id: element.getAttribute("data-number"),
+            activityId: element.getAttribute("data-activity-id")            
+        };
+        var formData = new FormData();
+        for (var key in data) formData.append(key, data[key]);
+        formData.append("__RequestVerificationToken", getAntiForgeryToken());
+        
+        fetch('/WorkItem/SelfStartActivity', {
+            method: 'post',
+            body: formData
+        }).then(function (response) {
+            return response.json();
+        });
     });
 });
 
@@ -154,3 +169,9 @@ noPropagateItems.forEach(function (ele) {
 $(document).ready(function () {
     $('.nav-tabs li:first-child a').tab('show');
 });
+
+function getAntiForgeryToken() {
+    var div = document.getElementById('antiForgeryToken');
+    var input = div.getElementsByTagName('input')[0];
+    return input.value;
+}

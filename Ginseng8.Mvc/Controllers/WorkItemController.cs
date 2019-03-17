@@ -50,8 +50,8 @@ namespace Ginseng.Mvc.Controllers
 			}
 		}
 
-		[HttpPost]
-		public async Task<JsonResult> SelfStartActivity(int id, int activityId)
+		[HttpPost]		
+		public async Task<JsonResult> SelfStartActivity([FromForm]int id, [FromForm]int activityId)
 		{
 			try
 			{

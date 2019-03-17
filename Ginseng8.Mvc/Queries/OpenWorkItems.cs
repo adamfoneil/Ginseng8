@@ -30,6 +30,12 @@ namespace Ginseng.Mvc.Queries
 		public string ActivityName { get; set; }
 		public int? ActivityOrder { get; set; }
 		public string BusinessUserName { get; set; }
+
+		public bool IsPaused()
+		{
+			return (ActivityId != 0 && !AssignedUserId.HasValue);
+		}
+
 		public string DeveloperUserName { get; set; }
 		public int? AssignedUserId { get; set; }
 		public string AssignedUserName { get; set; }		
@@ -42,7 +48,7 @@ namespace Ginseng.Mvc.Queries
 		public string WorkItemUserIdColumn { get; set; }
 		public decimal ColorGradientPosition { get; set; }
 
-		public string AssignedActivityAndUser()
+		public string ActivityStatus()
 		{
 			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";			
 			return $"{ActivityName} - {assignedTo}";

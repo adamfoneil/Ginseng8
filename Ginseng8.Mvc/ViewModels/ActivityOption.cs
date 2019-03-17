@@ -33,7 +33,9 @@ namespace Ginseng.Mvc.ViewModels
 		{
 			// this navigates to page where the hand-off info is entered
 			if (IsHandOff) return $"/WorkItem/HandOff/{Number}?activityId={Activity.Id}&returnUrl={returnUrl}";
-			return null;
+
+			// if not a hand-off, then it will call a JS event handler (self-start-activity)
+			return "#";
 		}
 
 		public string ClassName()
