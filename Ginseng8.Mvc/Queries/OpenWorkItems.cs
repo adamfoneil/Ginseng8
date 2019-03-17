@@ -44,7 +44,7 @@ namespace Ginseng.Mvc.Queries
 
 		public string AssignedActivityAndUser()
 		{
-			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "awaiting hand-off";			
+			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";			
 			return $"{ActivityName} - {assignedTo}";
 		}
 	}
