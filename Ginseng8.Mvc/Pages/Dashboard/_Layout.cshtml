@@ -4,6 +4,9 @@
 
 <ul class="nav nav-pills nav-fill" style="margin-top:15px;margin-bottom:15px">
     <li class="nav-item">
+        <activelink page="/Dashboard/Index" text="Home"/>
+    </li>
+    <li class="nav-item">
         <activelink page="/Dashboard/MyItems" text="My Items" />
     </li>
     <li class="nav-item">
@@ -27,7 +30,7 @@
 
 @{ 
     var model = Html.ViewContext.ViewData.Model as DashboardPageModel;
-    if (model != null && model.LabelFilter != null)
+    if (model != null && model.LabelFilter != null && model.ShowLabelFilter)
     {
         <partial name="Items/_LabelFilter" model="model.LabelFilter"/>
         @if (model.LabelId.HasValue)

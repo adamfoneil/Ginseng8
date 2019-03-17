@@ -1,0 +1,25 @@
+﻿@model FilteredItemView
+
+@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+{
+    <h4>@appGrp.First().ApplicationName</h4>
+    
+    @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
+    {
+        var milestoneItem = milestoneGrp.First();
+        <partial name="Items/_MilestoneHeader" model="milestoneItem" />
+        <div id="app-@appGrp.Key-milestone-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+            <div style="margin-left:20px">
+                @foreach (var item in milestoneGrp)
+                {
+                    <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Page.Dropdowns, SelectedLabels = Model.Page.SelectedLabels[item.Id], UserId = Model.Page.UserId }" />
+                }
+                @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                {
+                    { "applicationId", appGrp.Key },                    
+                    { "milestoneId", milestoneGrp.Key }
+                }))
+            </div>
+        </div>
+    } 
+}

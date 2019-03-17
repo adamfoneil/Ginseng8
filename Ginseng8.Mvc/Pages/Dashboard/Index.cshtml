@@ -4,23 +4,35 @@
     ViewData["Title"] = "Index";
 }
 
-<h4>
-    <i class="fas fa-tag"></i>
-    <span>Alert labels</span>
-</h4>
-<p>Items with labels that I follow</p>
+<div id="accordion">
 
-<h4>
-    <i class="fas fa-pause-circle"></i>
-    <span>Awaiting Hand-off</span>
-</h4>
-<p>Paused items waiting for someone to resume</p>
+    <h4>
+        <i class="fas fa-tag"></i>
+        <span>Alert labels</span>
+    </h4>
+    <p>Items with labels that I follow</p>
 
-<h4>
-    <i class="fas fa-stop-circle"></i>
-    <span>Items Not Started</span>
-</h4>
-<p>Items in a milestone that haven't been started</p>
+    @if (Model.PausedItems.Any())
+    {
+        <h4>
+            <i class="fas fa-pause-circle"></i>
+            <span>Awaiting Hand-off</span>
+        </h4>
+        <p>Paused items waiting for someone to resume</p>
+        <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.PausedItems }"/>
+    }
+
+    @if (Model.StoppedItems.Any())
+    {
+        <h4>
+            <i class="fas fa-stop-circle"></i>
+            <span>Items Not Started</span>
+        </h4>
+        <p>Items in a milestone that haven't been started</p>
+        <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.StoppedItems }"/>
+    }
+
+</div>
 
 <h4>
     <i class="fas fa-weight-hanging"></i>

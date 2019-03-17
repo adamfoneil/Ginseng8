@@ -30,12 +30,6 @@ namespace Ginseng.Mvc.Queries
 		public string ActivityName { get; set; }
 		public int? ActivityOrder { get; set; }
 		public string BusinessUserName { get; set; }
-
-		public bool IsPaused()
-		{
-			return (ActivityId != 0 && !AssignedUserId.HasValue);
-		}
-
 		public string DeveloperUserName { get; set; }
 		public int? AssignedUserId { get; set; }
 		public string AssignedUserName { get; set; }		
@@ -52,6 +46,16 @@ namespace Ginseng.Mvc.Queries
 		{
 			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";			
 			return $"{ActivityName} - {assignedTo}";
+		}
+
+		public bool IsPaused()
+		{
+			return (ActivityId != 0 && !AssignedUserId.HasValue);
+		}
+
+		public bool IsStopped()
+		{
+			return (MilestoneId != 0 && ActivityId == 0);
 		}
 	}
 
@@ -140,6 +144,12 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId]=@labelId)")]
 		public int? LabelId { get; set; }
+
+		[Where("[wi].[ActivityId] IS NOT NULL AND (CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END) IS NULL")]
+		public bool? IsPaused { get; set; }
+
+		[Where("[wi].[MilestoneId] IS NOT NULL AND [wi].[ActivityId] IS NULL")]
+		public bool? IsStopped { get; set; }
 
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{

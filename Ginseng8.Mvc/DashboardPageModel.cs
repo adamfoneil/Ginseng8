@@ -19,6 +19,7 @@ namespace Ginseng.Mvc
 		{
 		}
 
+		public bool ShowLabelFilter { get; set; } = true;
 		public IEnumerable<OpenWorkItemsResult> WorkItems { get; set; }		
 		public ILookup<int, Label> SelectedLabels { get; set; }		
 		public IEnumerable<IGrouping<int, Label>> LabelFilter { get; set; }
