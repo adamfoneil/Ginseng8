@@ -1,10 +1,16 @@
-﻿using Ginseng.Models;
+﻿using Dapper;
+using Ginseng.Models;
+using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
+using Ginseng.Mvc.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using System;
+using System.Data;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Controllers
@@ -109,6 +115,38 @@ namespace Ginseng.Mvc.Controllers
 			{
 				return Json(new { success = false, message = exc.Message });
 			}
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> SetPriorities()
+		{
+			try
+			{
+				using (var reader = new StreamReader(Request.Body))
+				{
+					string body = await reader.ReadToEndAsync();
+					var data = JsonConvert.DeserializeObject<PriorityUpdate>(body);
+
+					using (var cn = _data.GetConnection())
+					{
+						await cn.ExecuteAsync("dbo.UpdateWorkItemPriorities", new
+						{
+							userName = User.Identity.Name,
+							localTime = _data.CurrentUser.LocalTime,
+							userId = data.UserId,
+							orgId = _data.CurrentOrg.Id,
+							milestoneId = data.MilestoneId,
+							priorities = data.Items.AsTableValuedParameter("dbo.WorkItemPriority", "Number", "Index")
+						}, commandType: CommandType.StoredProcedure);
+					}
+					return Json(new { success = true });
+				}
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+
 		}
 	}
 }

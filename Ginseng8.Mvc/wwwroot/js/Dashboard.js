@@ -239,27 +239,39 @@ function updateSortableList(list, taskObject) {
         return;
     }
 
-    var milestoneId = list.parents('[data-milestone-id]').data('milestone-id');        
-    var taskNumber = task.data('number');
+    var milestoneId = list.parents('[data-milestone-id]').data('milestone-id'); // what about dropping on another milestone?
+    var userId = list.data('user-id'); // assumed to be the user id containing the dropped item, but what about dropping on another user?
     var tasksArray = [];
 
     list.find('.work-item-card').each(function (taskIndex, workItemElement) {
         tasksArray.push({
-            taskNumber: workItemElement.getAttribute('data-number'),
+            number: workItemElement.getAttribute('data-number'),
             index: taskIndex
-        })
-    })
+        });
+    });
 
     TaskReorder({        
-        milestoneId: milestoneId,
-        taskNumber: taskNumber,
-        tasks: tasksArray,
+        milestoneId: milestoneId,        
+        userId: userId,
+        items: tasksArray,
     })
 }
 
 function TaskReorder(data) {
     console.log('TaskReorder data json', JSON.stringify(data));
     console.log('TaskReorder data object', data);
+
+    fetch('/WorkItem/SetPriorities', {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": getAntiForgeryToken()
+        },
+        body: JSON.stringify(data)
+    }).then(function (response) {
+        // success fail info?
+        return response.json();
+    });
 
     /*
     $.ajax({

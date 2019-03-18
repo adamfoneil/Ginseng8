@@ -21,7 +21,7 @@
 
             @foreach (var activityGrp in milestoneGrp.GroupBy(row => row.ActivityId))
             {
-                <div class="ml-3 sortable">
+                <div class="ml-3 sortable" data-user-id="@activityGrp.First().AssignedUserId">
                     @foreach (var item in activityGrp)
                     {
                         <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId }" />
