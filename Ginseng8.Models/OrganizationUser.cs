@@ -3,6 +3,7 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -60,6 +61,9 @@ namespace Ginseng.Models
 		public bool IsEnabled { get; set; }
 
 		public Application CurrentApp { get; set; }
+
+		[NotMapped]
+		public string OrgName { get; set; }
 
 		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
 		{

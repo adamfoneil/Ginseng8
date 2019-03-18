@@ -1,4 +1,5 @@
-﻿using Ginseng.Models;
+﻿using Dapper;
+using Ginseng.Models;
 using Ginseng.Mvc.Attributes;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,8 @@ namespace Ginseng.Mvc.Pages.Setup
 		[BindProperty]
 		public Organization Organization { get; set; }
 
+		public IEnumerable<OrganizationUser> JoinRequests { get; set; }
+
 		/// <summary>
 		/// Indicates user must create or join an organization
 		/// </summary>
@@ -34,8 +37,30 @@ namespace Ginseng.Mvc.Pages.Setup
 			Organization = CurrentOrg ?? new Organization();
 			using (var cn = Data.GetConnection())
 			{
-				MyOrgs = new MyOrgs() { UserId = CurrentUser.UserId }.Execute(cn);
+				MyOrgs = new MyOrgs() { UserId = UserId }.Execute(cn);
+				JoinRequests = new MyOrgUsers() { UserId = UserId, IsRequest = true, IsEnabled = false }.Execute(cn);
 			}
+		}
+
+		public async Task<IActionResult> OnPostJoinAsync(string name)
+		{
+			using (var cn = Data.GetConnection())
+			{
+				await cn.ExecuteAsync(
+					@"INSERT INTO [dbo].[OrganizationUser] (
+						[OrganizationId], [UserId], [IsEnabled], [IsRequest], [Responsibilities], [WorkDays], [DailyWorkHours], [CreatedBy], [DateCreated]
+					) SELECT
+						[org].[Id], @userId, 0, 1, 0, 0, 0, [u].[UserName], GETUTCDATE()
+					FROM
+						[dbo].[Organization] [org],
+						[dbo].[AspNetUsers] [u]
+					WHERE
+						NOT EXISTS(SELECT 1 FROM [dbo].[OrganizationUser] WHERE [OrganizationId]=[org].[Id] AND [UserId]=@userId) AND
+						[org].[Name]=@orgName AND
+						[u].[UserId]=@userId", new { orgName = name, userId = UserId });
+			}
+
+			return RedirectToPage("/Setup/Organization");
 		}
 
 		public async Task<ActionResult> OnPostAsync()

@@ -13,8 +13,8 @@
 @if (Model.MustCreateOrg)
 {
     <div class="alert alert-info">
-        You were redirected here because you need to <strong>create</strong> an Organization record to hold all your data, or <strong>join</strong> and existing one.
-        Please give a name to your organization here and click Save below.
+        You were redirected here because you need to <strong>create</strong> an Organization record to hold all your data, or <strong>join</strong> an existing one.
+        Please create a new organization, or request to join one below.
     </div>
 }
 
@@ -38,12 +38,30 @@
 </div>
 
 <dt>Join Existing Org</dt>
+<div class="ml-3">
+    <form method="post" asp-page-handler="Join">
+        <div class="form-group">
+            <label>Org Name:</label>
+            <input type="text" name="Name" class="form-control" required="required"/>
+        </div>
+
+        <button type="submit" class="btn btn-dark">Request Join</button>
+    </form>
+
+    <p class="mt-3">Pending Join Requests</p>
+    <ul>
+        @foreach (var item in Model.JoinRequests)
+        {
+            <li>@item.OrgName</li>
+        }
+    </ul>
+</div>
 
 @{
     var grid = new GridEditor<Organization>(this, Xsrf);
 }
 
-<h5>My Orgs</h5>
+<h5 class="mt-3">My Orgs</h5>
 <table class="table">
     <tr>
         <th>Org Name</th>
