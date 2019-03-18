@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Helpers
@@ -17,8 +15,8 @@ namespace Ginseng.Mvc.Helpers
 
 		public static string CurrentAppNameString(this IHtmlHelper<dynamic> html)
 		{
-			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;			
-			return (model != null && model.CurrentOrgUser.CurrentApp != null) ? model.CurrentOrgUser.CurrentApp.Name : AllApps;
+			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+			return (model?.CurrentOrgUser?.CurrentApp != null) ? model.CurrentOrgUser.CurrentApp.Name : AllApps;
 		}
 
 		public static async Task<SelectList> AppFilterOptions(this IHtmlHelper<dynamic> html)
