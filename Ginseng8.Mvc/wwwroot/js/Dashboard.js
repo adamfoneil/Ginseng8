@@ -272,25 +272,6 @@ function TaskReorder(data) {
         // success fail info?
         return response.json();
     });
-
-    /*
-    $.ajax({
-        url: "/Milestone/ReorderTasks",
-        data: { json: JSON.stringify(data) },
-        method: "post",
-        dataType: "json",
-        error: function (xhr, status, error) {
-            console.log("Task reorder failed: " + status)
-        },
-        success: function (data, status, xhr) {
-            if (data.IsSuccessful) {
-                console.log("Task reorder succeeded");
-            } else {
-                console.log("Task reorder failed: " + data.Message);
-            }
-        }
-    });
-    */
 }
 
 function getFormData(object) {
