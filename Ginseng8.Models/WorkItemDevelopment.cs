@@ -24,8 +24,6 @@ namespace Ginseng.Models
 		/// </summary>
 		public int? EstimateHours { get; set; }
 
-		public int? Priority { get; set; }
-
 		public string HtmlBody { get; set; }
 
 		public string TextBody { get; set; }

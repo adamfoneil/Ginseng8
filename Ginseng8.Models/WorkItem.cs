@@ -35,11 +35,6 @@ namespace Ginseng.Models
 		[References(typeof(UserProfile))]
 		public int? DeveloperUserId { get; set; }
 
-		/// <summary>
-		/// Overall priority of work item (lower number = higher priority)
-		/// </summary>
-		public int? Priority { get; set; }
-
 		public string TextBody { get; set; }
 
 		public string HtmlBody { get; set; }

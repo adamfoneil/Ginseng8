@@ -12,10 +12,10 @@ namespace Ginseng.Mvc.Queries
 		public int Id { get; set; }
 		public int Number { get; set; }
 		public string Title { get; set; }	
+		public int? Priority { get; set; }
 		public string HtmlBody { get; set; }
 		public int? BusinessUserId { get; set; }
-		public int? DeveloperUserId { get; set; }
-		public int? BusinessPriority { get; set; }
+		public int? DeveloperUserId { get; set; }		
 		public int ApplicationId { get; set; }
 		public string ApplicationName { get; set; }
 		public int ProjectId { get; set; }
@@ -33,8 +33,7 @@ namespace Ginseng.Mvc.Queries
 		public string DeveloperUserName { get; set; }
 		public int? AssignedUserId { get; set; }
 		public string AssignedUserName { get; set; }		
-		public string WorkItemSize { get; set; }
-		public int? DevelopmentPriority { get; set; }
+		public string WorkItemSize { get; set; }		
 		public int? SizeId { get; set; }
 		public int? DevEstimateHours { get; set; }
 		public int? SizeEstimateHours { get; set; }
@@ -64,12 +63,12 @@ namespace Ginseng.Mvc.Queries
 		public OpenWorkItems() : base(
 			@"SELECT
                 [wi].[Id],
-                [wi].[Number],				
+                [wi].[Number],	
+				[pri].[Value] AS [Priority],
                 [wi].[Title],
 				[wi].[HtmlBody],
                 [wi].[BusinessUserId],
-                [wi].[DeveloperUserId],
-                [wi].[Priority] AS [BusinessPriority],
+                [wi].[DeveloperUserId],                
                 [wi].[ApplicationId], [app].[Name] AS [ApplicationName],
                 COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
                 COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], COALESCE([ms].[Date], '12/31/9999') AS [MilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
@@ -87,8 +86,7 @@ namespace Ginseng.Mvc.Queries
 					WHEN 1 THEN [wi].[BusinessUserId]
 					WHEN 2 THEN [wi].[DeveloperUserId]
 				END AS [AssignedUserId],
-                [sz].[Name] AS [WorkItemSize],                
-                [wid].[Priority] AS [DevelopmentPriority],
+                [sz].[Name] AS [WorkItemSize],                                
                 [wi].[SizeId],
                 [wid].[EstimateHours] AS [DevEstimateHours],
                 [sz].[EstimateHours] AS [SizeEstimateHours],
@@ -98,6 +96,7 @@ namespace Ginseng.Mvc.Queries
             FROM
                 [dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
+				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
                 LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
                 LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
                 LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
@@ -118,9 +117,8 @@ namespace Ginseng.Mvc.Queries
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
             WHERE
                 [wi].[OrganizationId]=@orgId AND [wi].[CloseReasonId] IS NULL {andWhere}
-            ORDER BY
-                [p].[Priority],
-                COALESCE([wid].[Priority], [wi].[Priority]), 
+            ORDER BY                
+                [pri].[Value], 
                 [wi].[Number]")
 		{
 		}
