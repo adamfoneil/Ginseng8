@@ -1,38 +1,25 @@
 ﻿using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace Ginseng.Mvc.Pages.Work
+namespace Ginseng.Mvc.Pages.Dashboard
 {
 	[Authorize]
-	public class IndexModel : DashboardPageModel
+	public class MyItemsModel : DashboardPageModel
 	{
-		public IndexModel(IConfiguration config) : base(config)
+		public MyItemsModel(IConfiguration config) : base(config)
 		{
-			ShowLabelFilter = false;
-		}
-
-		public IEnumerable<OpenWorkItemsResult> AlertItems
-		{
-			// not implemented yet
-			get { return Enumerable.Empty<OpenWorkItemsResult>(); }
-		}
-
-		public IEnumerable<OpenWorkItemsResult> PausedItems
-		{
-			get { return WorkItems.Where(wi => wi.IsPaused()); }			
-		}
-
-		public IEnumerable<OpenWorkItemsResult> StoppedItems
-		{
-			get { return WorkItems.Where(wi => wi.IsStopped()); }			
 		}
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
+			return new OpenWorkItems()
+			{
+				OrgId = OrgId,
+				AssignedUserId = UserId,
+				AppId = CurrentOrgUser.CurrentAppId,
+				LabelId = LabelId
+			};
 		}
 	}
 }
