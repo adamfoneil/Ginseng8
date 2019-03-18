@@ -20,6 +20,9 @@ namespace Ginseng.Mvc.Pages.Setup
 		[BindProperty]
 		public Organization Organization { get; set; }
 
+		/// <summary>
+		/// Indicates user must create or join an organization
+		/// </summary>
 		public bool MustCreateOrg { get; set; }
 
 		public IEnumerable<Organization> MyOrgs { get; set; }

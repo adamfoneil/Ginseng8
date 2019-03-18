@@ -13,11 +13,13 @@
 @if (Model.MustCreateOrg)
 {
     <div class="alert alert-info">
-        You were redirected here because you need to create an Organization record to hold all your data.
+        You were redirected here because you need to <strong>create</strong> an Organization record to hold all your data, or <strong>join</strong> and existing one.
         Please give a name to your organization here and click Save below.
     </div>
 }
 
+<dt>Create New Org</dt>
+<div class="ml-3">
 <form method="post" class="mb-3">
     <input asp-for="Organization.Id" type="hidden" />
 
@@ -33,6 +35,9 @@
 
     <button type="submit" class="btn btn-dark">Save</button>
 </form>
+</div>
+
+<dt>Join Existing Org</dt>
 
 @{
     var grid = new GridEditor<Organization>(this, Xsrf);
