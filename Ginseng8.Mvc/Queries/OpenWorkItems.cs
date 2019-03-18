@@ -18,6 +18,7 @@ namespace Ginseng.Mvc.Queries
 		public int? DeveloperUserId { get; set; }		
 		public int ApplicationId { get; set; }
 		public string ApplicationName { get; set; }
+		public bool HasImpediment { get; set; }
 		public int ProjectId { get; set; }
 		public string ProjectName { get; set; }
 		public int MilestoneId { get; set; }
@@ -70,6 +71,7 @@ namespace Ginseng.Mvc.Queries
                 [wi].[BusinessUserId],
                 [wi].[DeveloperUserId],                
                 [wi].[ApplicationId], [app].[Name] AS [ApplicationName],
+				[wi].[HasImpediment],
                 COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
                 COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], COALESCE([ms].[Date], '12/31/9999') AS [MilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
                 [wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],

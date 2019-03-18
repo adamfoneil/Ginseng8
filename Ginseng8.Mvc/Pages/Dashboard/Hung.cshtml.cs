@@ -14,10 +14,9 @@ namespace Ginseng.Mvc.Pages.Work
 			ShowLabelFilter = false;
 		}
 
-		public IEnumerable<OpenWorkItemsResult> AlertItems
-		{
-			// not implemented yet
-			get { return Enumerable.Empty<OpenWorkItemsResult>(); }
+		public IEnumerable<OpenWorkItemsResult> ImpededItems
+		{			
+			get { return WorkItems.Where(wi => wi.HasImpediment); }
 		}
 
 		public IEnumerable<OpenWorkItemsResult> PausedItems

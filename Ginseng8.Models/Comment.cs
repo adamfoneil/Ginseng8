@@ -11,8 +11,10 @@ namespace Ginseng.Models
 	{
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }
+		
+		public string IconClass => (IsImpediment) ? "far fa-comment-times" : "far fa-comment";
 
-		public string IconClass => "comment";
+		public bool IsImpediment { get; set; }
 
 		public string TextBody { get; set; }
 

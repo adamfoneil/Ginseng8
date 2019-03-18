@@ -39,6 +39,12 @@ namespace Ginseng.Models
 
 		public string HtmlBody { get; set; }
 
+		/// <summary>
+		/// Indicates that a comment was added with IsImpediment = true
+		/// </summary>
+		[DefaultExpression("0")]
+		public bool HasImpediment { get; set; }
+
 		[References(typeof(Application))]
 		public int ApplicationId { get; set; }
 
