@@ -61,9 +61,13 @@ namespace Ginseng.Models
 		public bool IsEnabled { get; set; }
 
 		public Application CurrentApp { get; set; }
+		public UserProfile UserProfile { get; set; }
 
 		[NotMapped]
 		public string OrgName { get; set; }
+
+		[NotMapped]
+		public string UserName { get; set; }
 
 		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
 		{
@@ -71,6 +75,8 @@ namespace Ginseng.Models
 			{
 				CurrentApp = commandProvider.Find<Application>(connection, CurrentAppId.Value);
 			}
+
+			UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
 		}
 
 		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
@@ -79,6 +85,8 @@ namespace Ginseng.Models
 			{
 				CurrentApp = await commandProvider.FindAsync<Application>(connection, CurrentAppId.Value);
 			}
+
+			UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
 		}
 
 		public override bool Validate(IDbConnection connection, out string message)
@@ -91,6 +99,13 @@ namespace Ginseng.Models
 			}
 
 			return true;
+		}
+
+		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
+		{			
+			// if this is an accepted join request, then it's no longer a request
+			if (IsEnabled && IsRequest) IsRequest = false;
+			base.BeforeSave(connection, action, user);			
 		}
 	}
 }
