@@ -9,7 +9,7 @@
     {
         <h6 style="margin-left:20px">@activityGrp.First().ActivityName</h6>
         <div id="milestone-@milestoneGrp.Key-activity-@activityGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-            <div style="margin-left:20px">
+            <div class="ml-3">
                 @foreach (var item in activityGrp)
                 {
                     <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Page.Dropdowns, SelectedLabels = Model.Page.SelectedLabels[item.Id], UserId = Model.Page.UserId }" />

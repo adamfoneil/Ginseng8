@@ -11,7 +11,7 @@
 
             @if (projectGrp.Key != 0)
             {
-                <div style="margin-left:20px">
+                <div class="ml-3">
                     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "project", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody })
                 </div>                
             }
@@ -21,7 +21,7 @@
                 var milestoneItem = milestoneGrp.First();
                 <partial name="Items/_MilestoneHeader" model="milestoneItem" />
                 <div id="app-@appGrp.Key-project-@projectGrp.Key-milestone-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-                    <div style="margin-left:20px">
+                    <div class="ml-3">
                         @foreach (var item in milestoneGrp)
                         {
                             <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId }" />
