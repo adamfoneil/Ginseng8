@@ -8,7 +8,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 	public class MyItemsModel : DashboardPageModel
 	{
 		public MyItemsModel(IConfiguration config) : base(config)
-		{
+		{			
 		}
 
 		protected override OpenWorkItems GetQuery()

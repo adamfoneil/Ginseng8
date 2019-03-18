@@ -205,7 +205,81 @@ noPropagateItems.forEach(function (ele) {
 
 $(document).ready(function () {
     $('.nav-tabs li:first-child a').tab('show');
+
+    InitWorkItemSortable();
+    
 });
+
+function InitWorkItemSortable() {
+    $('.sortable').sortable({
+        placeholder: "ui-state-highlight",
+        cancel: ':input, button, [contenteditable="true"]',
+        start: function (event, ui) {
+            // This event is triggered when sorting starts.
+            $('.ui-state-highlight').outerHeight($(ui.item).outerHeight()); // update height of placeholder to current item height
+        },
+
+        update: function (event, ui) {
+            // This event is triggered when the user stopped sorting and the DOM position has changed.
+
+            if (ui.sender == null) {
+                updateSortableList($(ui.item).parents('.sortable'));
+            } else {
+                // when an item from a connected sortable list has been dropped into another list
+                updateSortableList($(ui.sender));
+            }
+        }
+    });
+}
+
+function updateSortableList(list, taskObject) {
+    var task = taskObject || list.prevObject;
+
+    if (list.length === 0 || task == null) {
+        return;
+    }
+
+    var milestoneId = list.parents('[data-milestone-id]').data('milestone-id');        
+    var taskNumber = task.data('number');
+    var tasksArray = [];
+
+    list.find('.work-item-card').each(function (taskIndex, workItemElement) {
+        tasksArray.push({
+            taskNumber: workItemElement.getAttribute('data-number'),
+            index: taskIndex
+        })
+    })
+
+    TaskReorder({        
+        milestoneId: milestoneId,
+        taskNumber: taskNumber,
+        tasks: tasksArray,
+    })
+}
+
+function TaskReorder(data) {
+    console.log('TaskReorder data json', JSON.stringify(data));
+    console.log('TaskReorder data object', data);
+
+    /*
+    $.ajax({
+        url: "/Milestone/ReorderTasks",
+        data: { json: JSON.stringify(data) },
+        method: "post",
+        dataType: "json",
+        error: function (xhr, status, error) {
+            console.log("Task reorder failed: " + status)
+        },
+        success: function (data, status, xhr) {
+            if (data.IsSuccessful) {
+                console.log("Task reorder succeeded");
+            } else {
+                console.log("Task reorder failed: " + data.Message);
+            }
+        }
+    });
+    */
+}
 
 function getFormData(object) {
     var formData = new FormData();
