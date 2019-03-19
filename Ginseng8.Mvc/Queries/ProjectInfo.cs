@@ -68,7 +68,7 @@ namespace Ginseng.Mvc.Queries
 
 		public int OrgId { get; set; }
 
-		[Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ApplicationId]=@appId AND [ProjectId]=[p].[Id])")]
+		[Where("(EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ApplicationId]=@appId AND [ProjectId]=[p].[Id]) OR [p].[ApplicationId]=@appId)")]
 		public int? AppId { get; set; }
 
 		public bool IsActive { get; set; }

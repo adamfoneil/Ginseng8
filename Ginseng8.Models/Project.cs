@@ -22,6 +22,12 @@ namespace Ginseng.Models
 		public string Description { get; set; }
 
 		/// <summary>
+		/// Indicates that the project applies to a specific app
+		/// </summary>
+		[References(typeof(Application))]
+		public int? ApplicationId { get; set; }
+
+		/// <summary>
 		/// Overall priority of project (lower number = higher priority)
 		/// </summary>
 		public int? Priority { get; set; }
