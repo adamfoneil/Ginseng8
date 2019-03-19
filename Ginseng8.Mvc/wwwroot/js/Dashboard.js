@@ -213,6 +213,7 @@ $(document).ready(function () {
 function InitWorkItemSortable() {
     $('.sortable').sortable({
         placeholder: "ui-state-highlight",
+        connectWith: '.milestone-items .sortable, #assignedUserTab .nav-link:not(.active)',
         cancel: ':input, button, [contenteditable="true"]',
         start: function (event, ui) {
             // This event is triggered when sorting starts.
@@ -239,8 +240,17 @@ function updateSortableList(list, taskObject) {
         return;
     }
 
+    if (list.parents('#assignedUserTab').length) {
+        console.group('work item assign to another user');
+        console.log('user id:', list.data('user-group-id'));
+        console.log('task number', task.data('number'));
+        console.groupEnd();
+        return;
+    }
+
     var milestoneId = list.parents('[data-milestone-id]').data('milestone-id'); // what about dropping on another milestone?
     var userId = list.data('user-id'); // assumed to be the user id containing the dropped item, but what about dropping on another user?
+    var number = task.data('number');
     var tasksArray = [];
 
     list.find('.work-item-card').each(function (taskIndex, workItemElement) {
@@ -253,6 +263,7 @@ function updateSortableList(list, taskObject) {
     TaskReorder({        
         milestoneId: milestoneId,        
         userId: userId,
+        number: number,
         items: tasksArray,
     })
 }
