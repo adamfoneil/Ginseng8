@@ -9,7 +9,7 @@
 {
     <h4>@appGrp.First().ApplicationName</h4>
     <ul class="nav nav-tabs" id="assignedUserTab" role="tablist">
-        @foreach (var userGrp in appGrp.GroupBy(row => row.AssignedUserId))
+        @foreach (var userGrp in appGrp.OrderBy(row => row.AssignedUserName).GroupBy(row => row.AssignedUserId))
         {
             <li class="nav-item">
                 <a href="#user@(userGrp.Key ?? 0)" data-user-group-id="@(userGrp.Key ?? 0)" data-toggle="tab" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>

@@ -143,31 +143,57 @@ namespace Ginseng.Mvc.Controllers
 						priorities = data.Items.AsTableValuedParameter("dbo.WorkItemPriority", "Number", "Index")
 					}, commandType: CommandType.StoredProcedure);
 				}
-				return Json(new { success = true });				
+				return Json(new { success = true });		
 			}
 			catch (Exception exc)
 			{
 				return Json(new { success = false, message = exc.Message });
 			}
+		}
 
+		[HttpPost]
+		public async Task<JsonResult> SetUser()
+		{
+			try
+			{
+				string body = await Request.ReadStringAsync();
+				var data = JsonConvert.DeserializeObject<UserUpdate>(body);
+
+				using (var cn = _data.GetConnection())
+				{
+					var workItem = await cn.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, data.Number });
+					await UpdateAssignedUserAsync(cn, workItem, data.UserId);
+				}
+					
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
 		}
 
 		private async Task UpdateAssignedUserAsync(SqlConnection cn, WorkItem workItem, int userId)
 		{
-			if (workItem.ActivityId.HasValue)
-			{
-				var activity = await cn.FindAsync<Activity>(workItem.ActivityId.Value);
-				if (userId != 0)
-				{
-					Responsibility.SetWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem, userId);
-				}
-				else
-				{
-					Responsibility.ClearWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem);
-				}
+			// get the responsibility from the work item activity (if set)
+			// or fall back to the user profile
+			int responsibilityId = (workItem.ActivityId.HasValue) ?
+				(await cn.FindAsync<Activity>(workItem.ActivityId.Value)).ResponsibilityId :
+				(await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = _data.CurrentOrg.Id, UserId = userId }) ?? new OrganizationUser()).Responsibilities;
 
-				await cn.UpdateAsync(workItem, _data.CurrentUser, r => r.DeveloperUserId, r => r.BusinessUserId);
-			}			
+			// if user has both biz and dev responsibility, assume dev
+			if (responsibilityId == 3 || responsibilityId == 0) responsibilityId = 2;
+						
+			if (userId != 0)
+			{
+				Responsibility.SetWorkItemUserActions[responsibilityId].Invoke(workItem, userId);
+			}
+			else
+			{
+				Responsibility.ClearWorkItemUserActions[responsibilityId].Invoke(workItem);
+			}
+
+			await cn.UpdateAsync(workItem, _data.CurrentUser, r => r.DeveloperUserId, r => r.BusinessUserId);			
 		}
 
 		private async Task UpdateMilestoneAsync(SqlConnection cn, WorkItem workItem, int milestoneId)

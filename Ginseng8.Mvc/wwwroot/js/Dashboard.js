@@ -245,11 +245,29 @@ function updateSortableList(list, taskObject) {
         console.log('user id:', list.data('user-group-id'));
         console.log('task number', task.data('number'));
         console.groupEnd();
+
+        var data = {
+            userId: list.data('user-group-id'),
+            number: task.data('number')
+        };
+
+        fetch('/WorkItem/SetUser', {
+            method: 'post',
+            headers: {
+                "Content-Type": "application/json",
+                "RequestVerificationToken": getAntiForgeryToken()
+            },
+            body: JSON.stringify(data)
+        }).then(function (response) {
+            // success fail info?
+            return response.json();
+        });
+
         return;
     }
 
-    var milestoneId = list.parents('[data-milestone-id]').data('milestone-id'); // what about dropping on another milestone?
-    var userId = list.data('user-id'); // assumed to be the user id containing the dropped item, but what about dropping on another user?
+    var milestoneId = list.parents('[data-milestone-id]').data('milestone-id'); 
+    var userId = list.data('user-id');
     var number = task.data('number');
     var tasksArray = [];
 
