@@ -213,6 +213,7 @@ $(document).ready(function () {
 function InitWorkItemSortable() {
     $('.sortable').sortable({
         placeholder: "ui-state-highlight",
+        connectWith: '.milestone-items .sortable, #assignedUserTab .nav-link:not(.active)',
         cancel: ':input, button, [contenteditable="true"]',
         start: function (event, ui) {
             // This event is triggered when sorting starts.
