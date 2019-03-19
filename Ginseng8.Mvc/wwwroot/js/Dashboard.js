@@ -242,6 +242,7 @@ function updateSortableList(list, taskObject) {
 
     var milestoneId = list.parents('[data-milestone-id]').data('milestone-id'); // what about dropping on another milestone?
     var userId = list.data('user-id'); // assumed to be the user id containing the dropped item, but what about dropping on another user?
+    var number = task.data('number');
     var tasksArray = [];
 
     list.find('.work-item-card').each(function (taskIndex, workItemElement) {
@@ -254,6 +255,7 @@ function updateSortableList(list, taskObject) {
     TaskReorder({        
         milestoneId: milestoneId,        
         userId: userId,
+        number: number,
         items: tasksArray,
     })
 }
