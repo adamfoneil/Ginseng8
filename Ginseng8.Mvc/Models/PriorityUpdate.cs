@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Ginseng.Mvc.Models
+﻿namespace Ginseng.Mvc.Models
 {
 	public class PriorityUpdate
 	{
@@ -13,6 +11,11 @@ namespace Ginseng.Mvc.Models
 		/// User that item was dragged onto
 		/// </summary>
 		public int UserId { get; set; }
+
+		/// <summary>
+		/// Work item that was dragged
+		/// </summary>
+		public int Number { get; set; }
 
 		/// <summary>
 		/// List of items in the milestone + user combination drop area after drag-dropping

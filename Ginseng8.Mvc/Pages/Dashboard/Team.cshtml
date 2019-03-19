@@ -12,14 +12,14 @@
         @foreach (var userGrp in appGrp.GroupBy(row => row.AssignedUserId))
         {
             <li class="nav-item">
-                <a href="#user@(userGrp.Key)" data-user-group-id="@(userGrp.Key)" data-toggle="tab" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>
+                <a href="#user@(userGrp.Key ?? 0)" data-user-group-id="@(userGrp.Key ?? 0)" data-toggle="tab" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>
             </li>
         }
     </ul>
     <div class="tab-content my-3" id="tabContent">
         @foreach (var userGrp in appGrp.GroupBy(row => row.AssignedUserId))
         {
-            <div class="tab-pane fade" id="user@(userGrp.Key)" role="tabpanel">
+            <div class="tab-pane fade" id="user@(userGrp.Key ?? 0)" role="tabpanel">
             @foreach (var milestoneGrp in userGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
             {
                 var milestoneItem = milestoneGrp.First();
