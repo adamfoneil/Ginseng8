@@ -50,6 +50,9 @@ namespace Ginseng.Models
 		[References(typeof(Application))]
 		public int? CurrentAppId { get; set; }
 
+		[References(typeof(Activity))]
+		public int? DefaultActivityId { get; set; }
+
 		/// <summary>
 		/// This is a join request (or invite)
 		/// </summary>

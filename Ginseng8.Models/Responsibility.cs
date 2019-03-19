@@ -69,6 +69,18 @@ namespace Ginseng.Models
 			}
 		}
 
+		public static Dictionary<int, string> WorkItemColumnName
+		{
+			get
+			{
+				return new Dictionary<int, string>()
+				{
+					{ 1, nameof(WorkItem.BusinessUserId) },
+					{ 2, nameof(WorkItem.DeveloperUserId) }
+				};
+			}
+		}
+
 		public static DataTable GetSeedData()
 		{
 			return new Responsibility[]

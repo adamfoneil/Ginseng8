@@ -45,7 +45,7 @@ namespace Ginseng.Mvc.Queries
 		public string ActivityStatus()
 		{
 			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";			
-			return $"{ActivityName} - {assignedTo}";
+			return $"{ActivityName ?? "(not started)"} - {assignedTo}";
 		}
 
 		public bool IsPaused()
@@ -120,7 +120,7 @@ namespace Ginseng.Mvc.Queries
             WHERE
                 [wi].[OrganizationId]=@orgId AND [wi].[CloseReasonId] IS NULL {andWhere}
             ORDER BY                
-                [pri].[Value], 
+                COALESCE([pri].[Value], 100000), 
                 [wi].[Number]")
 		{
 		}
