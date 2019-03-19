@@ -262,3 +262,5 @@ __pycache__/
 /Ginseng8.sqlserver.smm
 *.smm
 /Ginseng8.Mvc/config.json
+
+**/.DS_Store
