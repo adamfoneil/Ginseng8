@@ -99,7 +99,7 @@
                 </form>
             </div>
             <div>
-                @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Number, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody })
+                @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Number, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true })
             </div>
         </div>
     </div>
