@@ -41,6 +41,23 @@
 }
 </div>
 
+@if (Model.CurrentOrgUser.CurrentAppId.HasValue)
+{
+    <div id="emptyMilestones">
+        @foreach (var ms in Model.EmptyMilestones)
+        {            
+            <partial name="Items/_MilestoneHeader" model="ms"/>
+            <div class="ml-3">
+                @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                {
+                    { "applicationId", Model.CurrentOrgUser.CurrentAppId.Value },
+                    { "milestoneId", ms.Id }
+                }))
+            </div>
+        }
+    </div>
+}
+
 <div class="col-6 offset-3 mt-4">
     <form method="post" asp-page-handler="Create" class="form-inline">
         <input type="text" name="Name" class="form-control-sm mr-2" placeholder="milestone name" required="required"/>

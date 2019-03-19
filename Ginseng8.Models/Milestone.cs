@@ -22,5 +22,8 @@ namespace Ginseng.Models
 		[Column(TypeName = "date")]
 		[DisplayFormat(DataFormatString = "{0:M/d/yy}")]
 		public DateTime Date { get; set; }
+
+		[NotMapped]
+		public int? DaysAway { get; set; }
 	}
 }
