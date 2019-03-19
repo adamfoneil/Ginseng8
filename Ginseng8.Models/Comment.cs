@@ -1,6 +1,8 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
@@ -23,5 +25,8 @@ namespace Ginseng.Models
 		public string TextBody { get; set; }
 
 		public string HtmlBody { get; set; }
+
+		[NotMapped]
+		public string DisplayName { get; set; }
 	}
 }

@@ -100,6 +100,8 @@
             </div>
             <div>
                 @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Number, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true })
+
+                @await  Html.PartialAsync("Items/_Comments", new CommentView() { Comments = Model.Comments, Id = Model.WorkItem.Number })
             </div>
         </div>
     </div>

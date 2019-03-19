@@ -22,6 +22,7 @@ namespace Ginseng.Mvc
 		public ILookup<int, Label> SelectedLabels { get; set; }
 		public IEnumerable<IGrouping<int, Label>> LabelFilter { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
+		public ILookup<int, Comment> Comments { get; set; }
 
 		[BindProperty(SupportsGet = true)]
 		public int? LabelId { get; set; }
@@ -60,6 +61,9 @@ namespace Ginseng.Mvc
 					var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
 					SelectedLabels = labelsInUse.ToLookup(row => row.WorkItemId);
 					LabelFilter = labelsInUse.GroupBy(row => row.Id);
+
+					var comments = await new Comments() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
+					Comments = comments.ToLookup(row => row.WorkItemId);
 				}
 
 				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);

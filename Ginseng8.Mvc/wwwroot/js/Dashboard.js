@@ -196,6 +196,15 @@ unassignWorkLinks.forEach(function (ele) {
     });
 });
 
+var addCommentButtons = document.querySelectorAll('.addComment');
+addCommentButtons.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var target = ev.target.getAttribute('data-target');
+        var div = document.getElementById('addComment-' + target);
+        $(div).slideToggle();
+    });
+});
+
 var noPropagateItems = document.querySelectorAll('.no-propagation');
 noPropagateItems.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
