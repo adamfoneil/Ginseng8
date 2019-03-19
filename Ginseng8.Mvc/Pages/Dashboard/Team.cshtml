@@ -12,7 +12,7 @@
         @foreach (var userGrp in appGrp.GroupBy(row => row.AssignedUserId))
         {
             <li class="nav-item">
-                <a href="#user@(userGrp.Key)" data-toggle="tab" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>
+                <a href="#user@(userGrp.Key)" data-user-group-id="@(userGrp.Key)" data-toggle="tab" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>
             </li>
         }
     </ul>
