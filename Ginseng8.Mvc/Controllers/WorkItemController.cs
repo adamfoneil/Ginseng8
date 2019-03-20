@@ -3,6 +3,8 @@ using Ginseng.Models;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
 using Ginseng.Mvc.Models;
+using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -147,6 +149,23 @@ namespace Ginseng.Mvc.Controllers
 				return Json(new { success = false, message = exc.Message });
 			}
 
+		}
+
+		[HttpPost]
+		public async Task<PartialViewResult> SaveComment([FromForm]Comment comment)
+		{
+			using (var cn = _data.GetConnection())
+			{
+				var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, comment.Number });
+				comment.WorkItemId = workItem.Id;
+				comment.SaveHtml();
+				await _data.TrySaveAsync(comment);
+
+				var vm = new CommentView();
+				vm.Number = comment.Number;
+				vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, WorkItemIds = new int[] { workItem.Id } }.ExecuteAsync(cn);
+				return PartialView("/Pages/Dashboard/Items/_Comments.cshtml", vm);
+			}
 		}
 	}
 }

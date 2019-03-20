@@ -95,7 +95,6 @@ var labelCheckboxes = document.querySelectorAll('.labelCheckbox');
 labelCheckboxes.forEach(function (e) {    
     e.addEventListener('click', function (e) {
         e.stopPropagation();      
-
         var frm = e.target.form;
         var number = frm['WorkItemNumber'].value;
         let formData = new FormData(frm);
@@ -199,9 +198,33 @@ unassignWorkLinks.forEach(function (ele) {
 var addCommentButtons = document.querySelectorAll('.addComment');
 addCommentButtons.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
-        var target = ev.target.getAttribute('data-target');
-        var div = document.getElementById('addComment-' + target);
-        $(div).slideToggle();
+        var button = $(ev.target).closest('.addComment')[0];
+        var target = button.getAttribute('data-target');
+        var div = document.getElementById(target);
+        $(div).slideToggle('fast', function () {
+            if ($(div).is(':visible')) {
+                var field = document.getElementById(target + '-HtmlBody');
+                field.focus();
+            }
+        });
+    });
+});
+
+var addCommentSubmitButtons = document.querySelectorAll('.add-comment-submit');
+addCommentSubmitButtons.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        ev.preventDefault();
+        var frm = ev.target.form;
+        let formData = new FormData(frm);
+        fetch('/WorkItem/SaveComment', {
+            method: 'post',
+            body: formData
+        }).then(function (response) {
+            return response.text();
+        }).then(function (html) {
+            var number = frm.Number.value;
+            $('#comments-' + number + '-output').html(html);
+        });
     });
 });
 

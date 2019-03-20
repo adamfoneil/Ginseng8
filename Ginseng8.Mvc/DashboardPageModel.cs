@@ -61,7 +61,7 @@ namespace Ginseng.Mvc
 					var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
 					SelectedLabels = labelsInUse.ToLookup(row => row.WorkItemId);
 					LabelFilter = labelsInUse.GroupBy(row => row.Id);
-
+					
 					var comments = await new Comments() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
 					Comments = comments.ToLookup(row => row.WorkItemId);
 				}
