@@ -4,8 +4,8 @@
 
 <div class="card my-2 work-item-card" data-number="@Model.WorkItem.Number">
     <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.WorkItem.Id">
-        <div class="row">
-            <div class="col-9">
+        <div class="row justify-content-md-between">
+            <div class="col-12 col-md-auto">
                 @{ 
                     var itemNumClass = (Model.WorkItem.EstimateHours == 0) ? "badge-secondary" : string.Empty;
                     var backColorStyle = (Model.WorkItem.EstimateHours > 0) ? $"background-color:{Html.WeightedColorToHex(Model.WorkItem.ColorGradientPosition)}" : string.Empty;
@@ -38,7 +38,7 @@
                     <partial name="Dashboard/Items/_Labels" model="Model.SelectedLabels"/>
                 </div>
             </div>
-            <div class="col-3 text-right">                
+            <div class="col-12 col-md-auto d-flex align-items-center">                
                 @if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
                 {
                     <div class="dropdown">
@@ -69,7 +69,7 @@
 
                 @if (Model.WorkItem.HasImpediment)
                 {                    
-                    <i class="fas fa-comment-times" style="color:darkred" title="This item has an impediment, please see the comments"></i>
+                    <i class="fas fa-comment-times ml-2" style="color:darkred" title="This item has an impediment, please see the comments"></i>
                 }                
             </div>
         </div>
