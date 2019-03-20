@@ -4,8 +4,8 @@
 
 <div class="card my-2 work-item-card" data-number="@Model.WorkItem.Number">
     <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.WorkItem.Id">
-        <div class="row justify-content-md-between">
-            <div class="col-12 col-md-auto">
+        <div class="row justify-content-md-between align-items-start">
+            <div class="col">
                 @{ 
                     var itemNumClass = (Model.WorkItem.EstimateHours == 0) ? "badge-secondary" : string.Empty;
                     var backColorStyle = (Model.WorkItem.EstimateHours > 0) ? $"background-color:{Html.WeightedColorToHex(Model.WorkItem.ColorGradientPosition)}" : string.Empty;
