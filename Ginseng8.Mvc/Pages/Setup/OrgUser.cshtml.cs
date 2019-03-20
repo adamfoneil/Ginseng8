@@ -25,6 +25,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public WorkDay[] WorkDays { get; set; }
 		public IEnumerable<Responsibility> Responsibilities { get; set; }
+		public SelectList ActivitySelect { get; set; }
 
 		public void OnGet()
 		{
@@ -33,6 +34,7 @@ namespace Ginseng.Mvc.Pages.Setup
 			using (var cn = Data.GetConnection())
 			{
 				MyOrgSelect = new MyOrgSelect() { UserId = CurrentUser.UserId }.ExecuteSelectList(cn, CurrentUser.OrganizationId);
+				ActivitySelect = new ActivitySelect() { OrgId = OrgId }.ExecuteSelectList(cn, CurrentOrgUser.DefaultActivityId);
 				Responsibilities = new Responsibilities().Execute(cn);
 			}
 
@@ -51,7 +53,7 @@ namespace Ginseng.Mvc.Pages.Setup
 			OrgUser.OrganizationId = CurrentOrg.Id;
 			OrgUser.UserId = CurrentUser.UserId;
 			OrgUser.WorkDays = selectedWorkDays?.Sum() ?? 0;
-			OrgUser.Responsibilities = selectedResponsibilities?.Sum() ?? 0;
+			OrgUser.Responsibilities = selectedResponsibilities?.Sum() ?? 0;			
 
 			var fields = new string[]
 			{
@@ -61,7 +63,8 @@ namespace Ginseng.Mvc.Pages.Setup
 				nameof(OrganizationUser.MaxWorkInProgress),
 				nameof(OrganizationUser.DailyWorkHours),
 				nameof(OrganizationUser.WorkDays),
-				nameof(OrganizationUser.Responsibilities)
+				nameof(OrganizationUser.Responsibilities),
+				nameof(OrganizationUser.DefaultActivityId)
 			}.ToList();
 
 			if (OrgUser.Id == 0)
