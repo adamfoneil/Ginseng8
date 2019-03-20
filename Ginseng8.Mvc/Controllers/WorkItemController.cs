@@ -108,9 +108,19 @@ namespace Ginseng.Mvc.Controllers
 			{
 				using (var cn = _data.GetConnection())
 				{
-					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
-					var activity = await _data.FindAsync<Activity>(cn, workItem.ActivityId.Value);
-					Responsibility.ClearWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem);
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });					
+
+					if (workItem.ActivityId.HasValue)
+					{
+						var activity = await _data.FindAsync<Activity>(cn, workItem.ActivityId.Value);
+						Responsibility.ClearWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem);
+					}
+					else
+					{
+						if (workItem?.DeveloperUserId.Equals(_data.CurrentUser.UserId) ?? false) workItem.DeveloperUserId = null;
+						if (workItem?.BusinessUserId.Equals(_data.CurrentUser.UserId) ?? false) workItem.BusinessUserId = null;
+					}
+					
 					await _data.TrySaveAsync(cn, workItem);
 					return Json(new { success = true });
 				}

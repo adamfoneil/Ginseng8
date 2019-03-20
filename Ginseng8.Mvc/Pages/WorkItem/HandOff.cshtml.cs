@@ -56,7 +56,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		{
 			FromActivity = await Data.FindAsync<Activity>(fromActivityId);
 			ToActivity = await Data.FindAsync<Activity>(toActivityId);
-			return (ToActivity.Order > FromActivity.Order);
+			return (ToActivity.Order > (FromActivity?.Order ?? 0));
 		}
 	}
 }

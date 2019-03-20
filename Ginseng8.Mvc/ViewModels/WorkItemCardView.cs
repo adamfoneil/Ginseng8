@@ -16,7 +16,7 @@ namespace Ginseng.Mvc.ViewModels
 
 		public string HandOffButtonText()
 		{
-			if (WorkItem.ActivityId != 0)
+			if (WorkItem.ActivityId != 0 || WorkItem.DeveloperUserId.HasValue)
 			{
 				return WorkItem.ActivityStatus();
 			}
@@ -28,7 +28,7 @@ namespace Ginseng.Mvc.ViewModels
 
 		public IEnumerable<ActivityOption> GetActivityOptions()
 		{
-			if (WorkItem.AssignedUserId.HasValue)
+			if (WorkItem.AssignedUserId.HasValue && WorkItem.ActivityId != 0)
 			{
 				// assigned person may move hand off to another activity
 				int currentOrder = WorkItem.ActivityOrder ?? 0;

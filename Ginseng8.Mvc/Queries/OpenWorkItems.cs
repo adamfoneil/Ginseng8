@@ -130,7 +130,7 @@ namespace Ginseng.Mvc.Queries
 		[Where("[wi].[Number]=@number")]
 		public int? Number { get; set; }
 
-		[Where("(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)=@assignedUserId")]
+		[Where("COALESCE(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END, [wi].[DeveloperUserId], [wi].[BusinessUserId])=@assignedUserId")]
 		public int? AssignedUserId { get; set; }
 
 		[Where("[wi].[ApplicationId]=@appId")]
