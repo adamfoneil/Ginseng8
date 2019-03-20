@@ -223,7 +223,7 @@ addCommentSubmitButtons.forEach(function (ele) {
             return response.text();
         }).then(function (html) {
             var number = frm.Number.value;
-            $('#comments-' + number + '-output').html(html);
+            $('#comments-' + number + '-output').first().html(html);
         });
     });
 });

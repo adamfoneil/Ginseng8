@@ -7,15 +7,12 @@
             <div class="col-8">
                 <input type="text" name="HtmlBody" class="form-control form-control-sm mr-2" required="required" placeholder="add comment" id="addComment-@Model.Number-HtmlBody"/>
             </div>
-            <div class="col-2">
-                <label>
-                    Impediment
-                    <select name="IsImpediment" class="form-control form-control-sm">
-                        <option value="">n/a</option>
-                        <option value="true">Yes, work stopped</option>
-                        <option value="false">No, resumes work</option>
-                    </select>
-                </label>                
+            <div class="col-2">                
+                <select name="IsImpediment" class="form-control form-control-sm">
+                    <option value="">Info Only</option>
+                    <option value="true">Help needed</option>
+                    <option value="false">Issue resolved</option>
+                </select>                
             </div>
             <div class="col-2">
                 <button type="submit" class="btn btn-dark btn-sm add-comment-submit">Add</button>
