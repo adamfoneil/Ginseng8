@@ -3,6 +3,7 @@ using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -22,6 +23,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		public IEnumerable<OpenWorkItemsResult> EmptyMilestones { get; set; }
 		public IEnumerable<OpenWorkItemsResult> BacklogItems { get; set; }
+
+		protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (row) => row.MilestoneId ?? 0;
 
 		protected override OpenWorkItems GetQuery()
 		{

@@ -1,9 +1,6 @@
 ﻿using Postulate.Base;
 using Postulate.Base.Attributes;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -12,6 +9,7 @@ namespace Ginseng.Mvc.Queries
 		public int? CloseReasonId { get; set; }
 		public string CloseReasonName { get; set; }
 		public int ApplicationId { get; set; }
+		public int? MilestoneId { get; set; }
 		public int Number { get; set; }
 		public string Title { get; set; }
 		public string ProjectName { get; set; }
@@ -23,10 +21,11 @@ namespace Ginseng.Mvc.Queries
 	public class ClosedWorkItems : Query<ClosedWorkItemsResult>
 	{
 		public ClosedWorkItems() : base(
-			@"SELECT 
-				[wi].[CloseReasonId],    
-				[cr].[Name] AS [CloseReasonName],    
+			@"SELECT
+				[wi].[CloseReasonId],
+				[cr].[Name] AS [CloseReasonName],
 				[wi].[ApplicationId],
+				[wi].[MilestoneId],
 				[wi].[Number],
 				[wi].[Title],
 				[p].[Name] AS [ProjectName],

@@ -1,0 +1,16 @@
+﻿@model IEnumerable<ClosedWorkItemsResult>
+
+<h5>Recently Closed</h5>                
+@foreach (var reasonGrp in Model.GroupBy(row => row.CloseReasonId))
+{
+    <h6>@reasonGrp.First().CloseReasonName</h6>
+    <ul>
+        @foreach (var item in reasonGrp)
+        {
+            <li>
+                <span class="badge badge-dark">@item.Number</span>
+                <span>@item.Title</span>
+            </li>
+        }
+    </ul>
+}                

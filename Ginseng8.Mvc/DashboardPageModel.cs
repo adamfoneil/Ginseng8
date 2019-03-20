@@ -3,6 +3,7 @@ using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -23,6 +24,7 @@ namespace Ginseng.Mvc
 		public IEnumerable<IGrouping<int, Label>> LabelFilter { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
 		public ILookup<int, Comment> Comments { get; set; }
+		public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
 
 		[BindProperty(SupportsGet = true)]
 		public int? LabelId { get; set; }
@@ -31,6 +33,11 @@ namespace Ginseng.Mvc
 		/// Implement this to get the query for the dashboard
 		/// </summary>
 		protected abstract OpenWorkItems GetQuery();
+
+		protected virtual Func<ClosedWorkItemsResult, int> ClosedItemGrouping
+		{
+			get { return null; }
+		}
 
 		/// <summary>
 		/// Override this to populate additional model properties during the OnGetAsync method
@@ -64,6 +71,12 @@ namespace Ginseng.Mvc
 					
 					var comments = await new Comments() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
 					Comments = comments.ToLookup(row => row.WorkItemId);
+
+					if (ClosedItemGrouping != null)
+					{
+						var closedItems = await new ClosedWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(cn);
+						ClosedItems = closedItems.ToLookup(row => ClosedItemGrouping(row));
+					}					
 				}
 
 				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
