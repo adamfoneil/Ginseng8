@@ -38,7 +38,7 @@
                     <partial name="Dashboard/Items/_Labels" model="Model.SelectedLabels"/>
                 </div>
             </div>
-            <div class="col-3 text-right">
+            <div class="col-3 text-right">                
                 @if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
                 {
                     <div class="dropdown">
@@ -66,6 +66,11 @@
                 {
                     <span>@Model.WorkItem.ActivityStatus()</span>
                 }
+
+                @if (Model.WorkItem.HasImpediment)
+                {                    
+                    <i class="fas fa-comment-times" style="color:darkred" title="This item has an impediment, please see the comments"></i>
+                }                
             </div>
         </div>
     </div>

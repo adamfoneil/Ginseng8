@@ -1,6 +1,5 @@
 ﻿using Ginseng.Models;
 using Postulate.Base;
-using Postulate.Base.Attributes;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -14,10 +13,10 @@ namespace Ginseng.Mvc.Queries
 				[dbo].[Comment] [c]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [c].[WorkItemId]=[wi].[Id]
 				INNER JOIN [dbo].[AspNetUsers] [u] ON [wi].[CreatedBy]=[u].[UserName]
-				LEFT JOIN [dbo].[OrganizationUser] [ou] ON 
+				LEFT JOIN [dbo].[OrganizationUser] [ou] ON
 					[wi].[OrganizationId]=[ou].[OrganizationId] AND
-					[ou].[UserId]=[u].[UserId] 
-			WHERE				
+					[ou].[UserId]=[u].[UserId]
+			WHERE
 				[wi].[OrganizationId]=@orgId AND
 				[c].[WorkItemId] IN @workItemIds
 			ORDER BY
@@ -25,7 +24,7 @@ namespace Ginseng.Mvc.Queries
 		{
 		}
 
-		public int OrgId { get; set; }		
+		public int OrgId { get; set; }
 		public int[] WorkItemIds { get; set; }
 	}
 }
