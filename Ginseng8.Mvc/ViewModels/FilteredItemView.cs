@@ -1,5 +1,7 @@
-﻿using Ginseng.Mvc.Queries;
+﻿using Ginseng.Models;
+using Ginseng.Mvc.Queries;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginseng.Mvc.ViewModels
 {
@@ -7,5 +9,6 @@ namespace Ginseng.Mvc.ViewModels
 	{
 		public DashboardPageModel Page { get; set; }
 		public IEnumerable<OpenWorkItemsResult> WorkItems { get; set; }
+		public ILookup<int, Comment> Comments { get; set; }
 	}
 }

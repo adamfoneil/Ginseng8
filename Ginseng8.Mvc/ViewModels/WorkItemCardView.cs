@@ -12,6 +12,7 @@ namespace Ginseng.Mvc.ViewModels
 		public OpenWorkItemsResult WorkItem { get; set; }
 		public IEnumerable<Label> SelectedLabels { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
+		public IEnumerable<Comment> Comments { get; set; }
 
 		public string HandOffButtonText()
 		{

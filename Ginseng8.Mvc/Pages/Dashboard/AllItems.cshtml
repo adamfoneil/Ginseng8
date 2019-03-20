@@ -14,7 +14,7 @@
     }))
     foreach (var item in appGrp)
     {
-        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId }" />
+        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
     }
 }
 </div>

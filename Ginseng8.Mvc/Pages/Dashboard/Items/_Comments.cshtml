@@ -1,0 +1,34 @@
+﻿@model CommentView
+
+<div class="mt-2" id="addComment-@Model.Number" style="display:none">
+    <form method="post">
+        <input type="hidden" name="Number" value="@Model.Number"/>
+        <div class="form-row">
+            <div class="col-8">
+                <input type="text" name="HtmlBody" class="form-control form-control-sm mr-2" required="required" placeholder="add comment" id="addComment-@Model.Number-HtmlBody"/>
+            </div>
+            <div class="col-2">                
+                <select name="IsImpediment" class="form-control form-control-sm">
+                    <option value="">Info Only</option>
+                    <option value="true">Help needed</option>
+                    <option value="false">Issue resolved</option>
+                </select>                
+            </div>
+            <div class="col-2">
+                <button type="submit" class="btn btn-dark btn-sm add-comment-submit">Add</button>
+            </div>
+        </div>               
+    </form>
+</div>
+
+<ul class="mt-2">
+@foreach (var item in Model.Comments)
+{
+    <li>
+        <i class="@item.IconClass"></i>
+        <strong>@item.DisplayName</strong>
+        <span>@Html.Raw(item.HtmlBody)</span>
+        <span class="small text-muted">@Html.FormatValue(item.DateCreated, "{0:ddd M/d}")</span>
+    </li>
+}
+</ul>
