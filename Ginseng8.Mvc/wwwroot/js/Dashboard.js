@@ -210,21 +210,20 @@ addCommentButtons.forEach(function (ele) {
     });
 });
 
-var addCommentSubmitButtons = document.querySelectorAll('.add-comment-submit');
-addCommentSubmitButtons.forEach(function (ele) {
-    ele.addEventListener('click', function (ev) {
-        ev.preventDefault();
-        var frm = ev.target.form;
-        let formData = new FormData(frm);
-        fetch('/WorkItem/SaveComment', {
-            method: 'post',
-            body: formData
-        }).then(function (response) {
-            return response.text();
-        }).then(function (html) {
-            var number = frm.Number.value;
-            $('#comments-' + number + '-output').first().html(html);
-        });
+$(document)
+.on('click', '.add-comment-submit', function(ev) {
+    ev.preventDefault();
+    var frm = ev.target.form;
+    let formData = new FormData(frm);
+
+    fetch('/WorkItem/SaveComment', {
+        method: 'post',
+        body: formData
+    }).then(function (response) {
+        return response.text();
+    }).then(function (html) {
+        var number = frm.Number.value;
+        $('#comments-' + number + '-output').first().html(html);
     });
 });
 
