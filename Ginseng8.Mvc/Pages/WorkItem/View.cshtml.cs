@@ -1,25 +1,32 @@
-﻿using Ginseng.Mvc.Queries;
+﻿using System.Data.SqlClient;
+using System.Linq;
+using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.WorkItem
 {
-	public class EditModel : AppPageModel
+	public class ViewModel : DashboardPageModel
 	{
-		public EditModel(IConfiguration config) : base(config)
+		public ViewModel(IConfiguration config) : base(config)
 		{
 		}
 
-		public OpenWorkItemsResult Item { get; set; }
-		public CommonDropdowns Dropdowns { get; set; }
+		[BindProperty(SupportsGet = true)]
+		public int Id { get; set; }
 
-		public async Task OnGetAsync(int id)
+		public OpenWorkItemsResult Item { get; set; }
+
+		protected override void OnGetInternal(SqlConnection connection)
 		{
-			using (var cn = Data.GetConnection())
-			{
-				Item = await new OpenWorkItems() { OrgId = OrgId, Number = id }.ExecuteSingleAsync(cn);
-				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
-			}
+			base.OnGetInternal(connection);
+
+			Item = WorkItems?.First();
+		}
+
+		protected override OpenWorkItems GetQuery()
+		{
+			return new OpenWorkItems() { OrgId = OrgId, Number = Id, IsOpen = null };
 		}
 	}
 }

@@ -1,12 +1,14 @@
 ﻿@page "/WorkItem/View/{id}"
-@model Ginseng.Mvc.Pages.WorkItem.EditModel
+@model Ginseng.Mvc.Pages.WorkItem.ViewModel
 @{
     ViewData["Title"] = "Edit";
 }
 
 <div class="row">
-    <div class="col-2 text-muted text-right">
-        <h2>@Model.Item.Number</h2>
+    <div class="col-2 text-right">
+        <h2>
+            <partial name="/Pages/Dashboard/Items/_ItemNumber.cshtml" model="Model.Item"/>
+        </h2>
     </div>
     <div class="col-10">
         <h2>@Model.Item.Title</h2>
@@ -16,23 +18,15 @@
 <div class="row">
     <div class="col-2"></div>
     <div class="col-10">
-        <ul class="list-inline">
-            <li class="list-inline-item"></li>
-            <li class="list-inline-item"></li>
-            <li class="list-inline-item"></li>
-            <li class="list-inline-item"></li>
-            <li class="list-inline-item"></li>
-        </ul>
-        <hr />
+
     </div>
 </div>
-
-<partial name="../Dashboard/Items/_SetterForms" />
 
 <div class="row">
     <div class="col-2"></div>
     <div class="col-10">
-        @Html.Raw(Model.Item.HtmlBody)
+        <partial name="/Pages/Dashboard/Items/_ItemInner.cshtml" model="new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id] }"/>
+        <hr />
     </div>
 </div>
 

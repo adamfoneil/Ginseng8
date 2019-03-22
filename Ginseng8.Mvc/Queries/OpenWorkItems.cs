@@ -119,7 +119,7 @@ namespace Ginseng.Mvc.Queries
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
             WHERE
-                [wi].[OrganizationId]=@orgId AND [wi].[CloseReasonId] IS NULL {andWhere}
+                [wi].[OrganizationId]=@orgId {andWhere}
             ORDER BY                
                 COALESCE([pri].[Value], 100000), 
                 [wi].[Number]")
@@ -127,6 +127,10 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+		[Case(true, "[wi].[CloseReasonId] IS NULL")]
+		[Case(false, "[wi].[CloseReasonId] IS NOT NULL")]
+		public bool? IsOpen { get; set; } = true;
 
 		[Where("[wi].[Number]=@number")]
 		public int? Number { get; set; }

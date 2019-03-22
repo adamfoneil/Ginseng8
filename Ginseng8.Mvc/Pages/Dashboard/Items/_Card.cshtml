@@ -6,13 +6,7 @@
     <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.WorkItem.Id">
         <div class="row justify-content-md-between align-items-start">
             <div class="col">
-                @{ 
-                    var itemNumClass = (Model.WorkItem.EstimateHours == 0) ? "badge-secondary" : string.Empty;
-                    var backColorStyle = (Model.WorkItem.EstimateHours > 0) ? $"background-color:{Html.WeightedColorToHex(Model.WorkItem.ColorGradientPosition)}" : string.Empty;
-                }
-                <span class="badge @itemNumClass" title="@Model.WorkItem.ProjectName" style="@backColorStyle">                    
-                    @Model.WorkItem.Number
-                </span>                
+                <partial name="Dashboard/Items/_Number" model="Model.WorkItem"/>
                 <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />                
 
                 <div style="display:inline-block">
@@ -76,39 +70,7 @@
     </div>
     <div class="collapse" id="item-@Model.WorkItem.Id" data-parent="#accordion">
         <div class="card card-body">
-            <div class="pb-3">
-                <form class="form-inline">
-                    <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
-                    
-                    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate"></select>
-                    
-                    <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-                        <option value="">- project -</option>
-                    </select>
-                    
-                    <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-                        <option value="">- milestone -</option>
-                    </select>
-                    
-                    <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-                        <option value="">- size -</option>
-                    </select>
-                    
-                    <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-                        <option value="">- open -</option>
-                    </select>
-
-                    <img src="~/img/loading.gif" id="loading-@Model.WorkItem.Number" style="display:none" />
-                    <i class="fas fa-check-circle" style="color:green;display:none" id="update-success-@Model.WorkItem.Number"></i>
-                    <i class="fas fa-exclamation-triangle" style="color:red;display:none" id="update-failed-@Model.WorkItem.Number"></i>
-                </form>
-            </div>
-            <div>
-                @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Number, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true })
-                <div id="comments-@Model.WorkItem.Number-output">
-                @await  Html.PartialAsync("Items/_Comments", new CommentView() { Comments = Model.Comments, Number = Model.WorkItem.Number })
-                </div>
-            </div>
+            <partial name="Items/_ItemInner" model="Model"/>
         </div>
     </div>
 </div>

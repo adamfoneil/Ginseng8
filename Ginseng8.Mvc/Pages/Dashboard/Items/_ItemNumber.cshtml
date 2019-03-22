@@ -1,0 +1,9 @@
+﻿@model OpenWorkItemsResult
+
+@{ 
+    var itemNumClass = (Model.EstimateHours == 0) ? "badge-secondary" : string.Empty;
+    var backColorStyle = (Model.EstimateHours > 0) ? $"background-color:{Html.WeightedColorToHex(Model.ColorGradientPosition)}" : string.Empty;
+}
+<span class="badge @itemNumClass" title="@Model.ProjectName" style="@backColorStyle">                    
+    @Model.Number
+</span>                
