@@ -50,8 +50,8 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <form class="form-inline my-2 my-lg-0">
-                            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                        <form class="form-inline my-2 my-lg-0" asp-page="/Dashboard/AllItems" method="get">
+                            <input name="Query" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" required="required">
                             <button class="btn my-2 my-sm-0" type="submit">Search</button>
                         </form>
                     }

@@ -1,5 +1,6 @@
 ﻿using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Ginseng.Mvc.Pages.Work
@@ -11,9 +12,18 @@ namespace Ginseng.Mvc.Pages.Work
 		{
 		}
 
+		[BindProperty(SupportsGet = true)]
+		public string Query { get; set; }
+
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, LabelId = LabelId };
+			return new OpenWorkItems()
+			{
+				OrgId = OrgId,
+				AppId = CurrentOrgUser.CurrentAppId,
+				LabelId = LabelId,
+				TitleAndBodySearch = Query
+			};
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Postulate.Base;
+﻿using Ginseng.Models;
+using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
@@ -150,6 +151,9 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[wi].[MilestoneId] IS NOT NULL AND [wi].[ActivityId] IS NULL")]
 		public bool? IsStopped { get; set; }
+
+		[Phrase("wi].[Title", "wi].[TextBody")]
+		public string TitleAndBodySearch { get; set; }
 
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{

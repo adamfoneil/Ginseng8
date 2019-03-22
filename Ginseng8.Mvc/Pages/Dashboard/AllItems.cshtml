@@ -4,6 +4,11 @@
     ViewData["Title"] = "All Items";
 }
 
+@if (Model.Query != null)
+{
+    <p class="text-center">Searched for: <strong>@Model.Query</strong></p>
+}
+
 <div id="accordion">
 @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
 {
