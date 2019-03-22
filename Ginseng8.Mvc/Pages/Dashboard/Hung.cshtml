@@ -52,7 +52,7 @@
         @if (Model.PausedItems.Any())
         {
             <div class="tab-pane fade" id="paused-@appGrp.Key" role="tabpanel">
-                <p>Items waiting for someone to resume</p>
+                <p>Items waiting for someone to resume, either because of hand-off or the assigned people removed themselves.</p>
                 <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.PausedItems.Where(wi => wi.ApplicationId == appGrp.Key), Comments = Model.Comments }"/>
             </div>
         }
@@ -60,7 +60,7 @@
         @if (Model.StoppedItems.Any())
         {
             <div class="tab-pane fade" id="stopped-@appGrp.Key" role="tabpanel">
-                <p>Items in a milestone that haven't been started</p>
+                <p>Items in a milestone that no one is working on.</p>
                 <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.StoppedItems.Where(wi => wi.ApplicationId == appGrp.Key), Comments = Model.Comments }"/>
             </div>
         }                
