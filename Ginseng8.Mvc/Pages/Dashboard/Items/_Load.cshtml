@@ -1,0 +1,8 @@
+﻿@model LoadView
+
+<i class="fas fa-weight-hanging"></i>
+<span>@Model.EstimateHours estimate hrs</span>
+@if (Model.WorkHours > 0)
+{
+    <span class="text-@Model.WorkHoursStyle">, @Model.WorkHours working hrs</span>
+}

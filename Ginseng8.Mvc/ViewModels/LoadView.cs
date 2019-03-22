@@ -4,5 +4,15 @@
 	{
 		public int EstimateHours { get; set; }
 		public int WorkHours { get; set; }
+
+		public int Overload
+		{
+			get { return EstimateHours - WorkHours; }
+		}
+
+		public string WorkHoursStyle
+		{
+			get { return (Overload > 0) ? "danger" : "muted"; }
+		}
 	}
 }

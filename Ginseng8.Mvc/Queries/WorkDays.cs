@@ -22,7 +22,7 @@ namespace Ginseng.Mvc.Queries
 				[wd].*,
 				SUM([Hours]) OVER (PARTITION BY [UserId] ORDER BY [Date]) AS [TotalHours]
 			FROM 
-				[dbo].[FnWorkingDays](@orgId, @startDate, @endDate) 
+				[dbo].[FnWorkingDays](@orgId, @startDate, @endDate) [wd]
 			{where}")
 		{
 		}

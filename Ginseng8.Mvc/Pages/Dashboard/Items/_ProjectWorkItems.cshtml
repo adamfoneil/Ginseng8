@@ -20,6 +20,9 @@
             {
                 var milestoneItem = milestoneGrp.First();
                 <partial name="Items/_MilestoneHeader" model="milestoneItem" />
+
+                <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
+
                 <div id="app-@appGrp.Key-project-@projectGrp.Key-milestone-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
                     <div class="ml-3">
                         @foreach (var item in milestoneGrp)

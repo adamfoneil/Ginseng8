@@ -18,8 +18,7 @@
         <partial name="Items/_MilestoneHeader" model="milestoneItem" />
 
         <div class="ml-3">
-            <i class="fas fa-weight-hanging"></i>
-            <span>current load info based on estimates</span>
+            <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp, (wd) => wd.UserId == Model.UserId)"/>
         </div>
 
         <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">

@@ -105,7 +105,7 @@ namespace Ginseng.Mvc
 			return Page();
 		}
 
-		public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, Func<WorkDaysResult, bool> workDayFilter)
+		public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, Func<WorkDaysResult, bool> workDayFilter = null)
 		{
 			int estimateHours = milestoneGrp.Sum(wi => wi.EstimateHours);
 
@@ -115,7 +115,7 @@ namespace Ginseng.Mvc
 				return new LoadView()
 				{
 					EstimateHours = estimateHours,
-					WorkHours = WorkDays.Where(wd => wd.Date <= milestoneDate && workDayFilter.Invoke(wd)).Sum(wi => wi.Hours)
+					WorkHours = WorkDays.Where(wd => wd.Date <= milestoneDate && (workDayFilter?.Invoke(wd) ?? true)).Sum(wi => wi.Hours)
 				};
 			}
 			else
