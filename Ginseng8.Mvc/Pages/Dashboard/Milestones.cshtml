@@ -35,13 +35,14 @@
                     { "milestoneId", milestoneGrp.Key }
                 }))
             </div>
-        </div>
-            
-        var recentlyClosed = Model.ClosedItems[milestoneGrp.Key].Take(10);            
-        @if (recentlyClosed.Any())
-        {
-            <partial name="Items/_RecentlyClosed" model="recentlyClosed"/>
-        }
+            @{ 
+                var recentlyClosed = Model.ClosedItems[milestoneGrp.Key].Take(10);
+            }                    
+            @if (recentlyClosed.Any())
+            {
+                <partial name="Items/_RecentlyClosed" model="recentlyClosed"/>
+            }
+        </div>            
     }
     </div>    
 }
