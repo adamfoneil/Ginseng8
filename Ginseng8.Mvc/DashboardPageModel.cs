@@ -55,10 +55,21 @@ namespace Ginseng.Mvc
 			// do nothing by default
 		}
 
-		public async Task OnGetAsync()
+		/// <summary>
+		/// Override this if you need to redirect from the dashboard page for reason
+		/// </summary>
+		protected virtual async Task<RedirectResult> GetRedirectAsync(SqlConnection connection)
 		{
+			return await Task.FromResult<RedirectResult>(null);
+		}
+
+		public async Task<IActionResult> OnGetAsync()
+		{			
 			using (var cn = Data.GetConnection())
 			{
+				var redirect = await GetRedirectAsync(cn);
+				if (redirect != null) return redirect;
+
 				var query = GetQuery();
 				if (query != null)
 				{
@@ -85,6 +96,8 @@ namespace Ginseng.Mvc
 
 				OnGetInternal(cn);
 			}
+
+			return Page();
 		}
 	}
 }
