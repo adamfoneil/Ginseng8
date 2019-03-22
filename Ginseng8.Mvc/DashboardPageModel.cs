@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -25,6 +26,7 @@ namespace Ginseng.Mvc
 		public CommonDropdowns Dropdowns { get; set; }
 		public ILookup<int, Comment> Comments { get; set; }
 		public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
+		public IEnumerable<WorkDaysResult> WorkDays { get; set; }
 
 		[BindProperty(SupportsGet = true)]
 		public int? LabelId { get; set; }
@@ -83,6 +85,8 @@ namespace Ginseng.Mvc
 					var comments = await new Comments() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
 					Comments = comments.ToLookup(row => row.WorkItemId);
 
+					WorkDays = await new WorkDays() { OrgId = OrgId }.ExecuteAsync(cn);
+
 					if (ClosedItemGrouping != null)
 					{
 						var closedItems = await new ClosedWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(cn);
@@ -92,12 +96,35 @@ namespace Ginseng.Mvc
 
 				Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
 
+
 				await OnGetInternalAsync(cn);
 
 				OnGetInternal(cn);
 			}
 
 			return Page();
+		}
+
+		public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, Func<WorkDaysResult, bool> workDayFilter)
+		{
+			int estimateHours = milestoneGrp.Sum(wi => wi.EstimateHours);
+
+			if (milestoneGrp.First().MilestoneDate.HasValue)
+			{
+				DateTime milestoneDate = milestoneGrp.First().MilestoneDate.Value;
+				return new LoadView()
+				{
+					EstimateHours = estimateHours,
+					WorkHours = WorkDays.Where(wd => wd.Date <= milestoneDate && workDayFilter.Invoke(wd)).Sum(wi => wi.Hours)
+				};
+			}
+			else
+			{
+				return new LoadView()
+				{
+					EstimateHours = estimateHours
+				};
+			}			
 		}
 	}
 }
