@@ -15,13 +15,25 @@ namespace Ginseng.Mvc.Pages.Work
 		[BindProperty(SupportsGet = true)]
 		public string Query { get; set; }
 
+		[BindProperty(SupportsGet = true)]
+		public int? FilterProjectId { get; set; }
+
+		[BindProperty(SupportsGet = true)]
+		public int? FilterMilestoneId { get; set; }
+
+		[BindProperty(SupportsGet = true)]
+		public int? FilterSizeId { get; set; }
+
 		protected override OpenWorkItems GetQuery()
 		{
 			return new OpenWorkItems()
 			{
 				OrgId = OrgId,
 				AppId = CurrentOrgUser.CurrentAppId,
-				LabelId = LabelId,
+				ProjectId = FilterProjectId,
+				LabelId = LabelId,				
+				MilestoneId = FilterMilestoneId,
+				SizeId = FilterSizeId,
 				TitleAndBodySearch = Query
 			};
 		}

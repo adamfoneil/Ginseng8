@@ -27,29 +27,44 @@ namespace Ginseng.Mvc
 		public IEnumerable<SelectListItem> Milestones { get; set; }			
 		public IEnumerable<Label> Labels { get; set; }
 
-		public SelectList AppSelect(OpenWorkItemsResult item)
+		public SelectList AppSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(Applications, "Value", "Text", item.ApplicationId);
+			return new SelectList(Applications, "Value", "Text", item?.ApplicationId);
 		}
 
-		public SelectList ProjectSelect(OpenWorkItemsResult item)
+		public SelectList ProjectSelect(int? projectId)
 		{
-			return new SelectList(Projects, "Value", "Text", item.ProjectId);
+			return new SelectList(Projects, "Value", "Text", projectId);
 		}
 
-		public SelectList SizeSelect(OpenWorkItemsResult item)
+		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(Sizes, "Value", "Text", item.SizeId);
+			return new SelectList(Projects, "Value", "Text", item?.ProjectId);
 		}
 
-		public SelectList CloseReasonSelect(OpenWorkItemsResult item)
+		public SelectList SizeSelect(int? sizeId)
 		{
-			return new SelectList(CloseReasons, "Value", "Text", item.CloseReasonId);
+			return new SelectList(Sizes, "Value", "Text", sizeId);
 		}
 
-		public SelectList MilestoneSelect(OpenWorkItemsResult item)
+		public SelectList SizeSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(Milestones, "Value", "Text", item.MilestoneId);
+			return new SelectList(Sizes, "Value", "Text", item?.SizeId);
+		}
+
+		public SelectList CloseReasonSelect(OpenWorkItemsResult item = null)
+		{
+			return new SelectList(CloseReasons, "Value", "Text", item?.CloseReasonId);
+		}
+
+		public SelectList MilestoneSelect(int? milestoneId)
+		{
+			return new SelectList(Milestones, "Value", "Text", milestoneId);
+		}
+
+		public SelectList MilestoneSelect(OpenWorkItemsResult item = null)
+		{
+			return new SelectList(Milestones, "Value", "Text", item?.MilestoneId);
 		}
 
 		public IEnumerable<Label> LabelItems(IEnumerable<Label> selectedLabels)

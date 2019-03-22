@@ -146,6 +146,12 @@ namespace Ginseng.Mvc.Queries
 		[Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId]=@labelId)")]
 		public int? LabelId { get; set; }
 
+		[Where("[wi].[MilestoneId]=@milestoneId")]
+		public int? MilestoneId { get; set; }
+
+		[Where("[wi].[SizeId]=@sizeId")]
+		public int? SizeId { get; set; }
+
 		[Where("[wi].[ActivityId] IS NOT NULL AND (CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END) IS NULL")]
 		public bool? IsPaused { get; set; }
 
