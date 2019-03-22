@@ -86,11 +86,5 @@ namespace Ginseng.Mvc
 				OnGetInternal(cn);
 			}
 		}
-
-		private int UpTo(int value, int max)
-		{
-			if (value > max) return max;
-			return value;
-		}
 	}
 }
