@@ -12,7 +12,7 @@
 <form method="get">
     <div class="form-row mb-3 justify-content-center">
         <input type="hidden" asp-for="@Model.Query"/>
-        <select name="FilterProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.FilterProjectId)" class="form-control-sm mr-2" onchange="this.form.submit();">
+        <select name="FilterProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.CurrentOrgUser.CurrentAppId ?? 0, Model.FilterProjectId)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all projects)</option>
         </select>
         <select name="FilterMilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.FilterMilestoneId)" class="form-control-sm mr-2" onchange="this.form.submit();">

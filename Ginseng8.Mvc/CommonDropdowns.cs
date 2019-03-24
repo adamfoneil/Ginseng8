@@ -21,7 +21,7 @@ namespace Ginseng.Mvc
 		public IEnumerable<Activity> Activities { get; set; }
 
 		public IEnumerable<SelectListItem> Applications { get; set; }
-		public IEnumerable<SelectListItem> Projects { get; set; }		
+		public ILookup<int, SelectListItem> AllProjects { get; set; }
 		public IEnumerable<SelectListItem> Sizes { get; set; }
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }
 		public IEnumerable<SelectListItem> Milestones { get; set; }			
@@ -32,14 +32,14 @@ namespace Ginseng.Mvc
 			return new SelectList(Applications, "Value", "Text", item?.ApplicationId);
 		}
 
-		public SelectList ProjectSelect(int? projectId)
+		public SelectList ProjectSelect(int appId, int? projectId)
 		{
-			return new SelectList(Projects, "Value", "Text", projectId);
+			return new SelectList(AllProjects[appId], "Value", "Text", projectId);
 		}
 
 		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(Projects, "Value", "Text", item?.ProjectId);
+			return new SelectList(AllProjects[item?.ApplicationId ?? 0], "Value", "Text", item?.ProjectId);
 		}
 
 		public SelectList SizeSelect(int? sizeId)
@@ -86,7 +86,8 @@ namespace Ginseng.Mvc
 			result.Activities = await new Activities() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 
 			result.Applications = await new AppSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			result.Projects = await new ProjectSelect() { OrgId = orgId }.ExecuteAsync(connection);			
+			var allProjects = await new AllProjects() { OrgId = orgId }.ExecuteAsync(connection);
+			result.AllProjects = allProjects.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
 			result.Sizes = await new SizeSelect() { OrgId = orgId }.ExecuteAsync(connection);
 			result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);
 			result.Milestones = await new MilestoneSelect() { OrgId = orgId }.ExecuteAsync(connection);

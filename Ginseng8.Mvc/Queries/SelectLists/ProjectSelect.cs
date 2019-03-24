@@ -5,13 +5,13 @@ namespace Ginseng.Mvc.Queries.SelectLists
 	public class ProjectSelect : SelectListQuery
 	{
 		public ProjectSelect() : base(
-			@"SELECT [Id] AS [Value], [Name] AS [Text]
-			FROM [dbo].[Project]
-			WHERE [OrganizationId]=@orgId AND [IsActive]=1
-			ORDER BY [Priority], [Name]")
+			@"SELECT [p].[Id] AS [Value], [p].[Name] AS [Text]
+			FROM [dbo].[Project] [p]			
+			WHERE [p].[ApplicationId]=@appId AND [p].[IsActive]=1
+			ORDER BY [p].[Name]")
 		{
 		}
 
-		public int OrgId { get; set; }
+		public int AppId { get; set; }
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Postulate.Base;
+using Postulate.Base.Attributes;
 using System;
 using System.Collections.Generic;
 
@@ -69,6 +70,9 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+		[Where("[p].[ApplicationId]=@appId")]
+		public int? AppId { get; set; }
 
 		/*
 		[Where("(EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ApplicationId]=@appId AND [ProjectId]=[p].[Id]) OR [p].[ApplicationId]=@appId)")]

@@ -64,7 +64,8 @@ namespace Ginseng.Mvc.Pages.Work
 			}
 			else
 			{
-				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive }.ExecuteAsync(connection);
+				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+				if (!ProjectInfo.Any()) ProjectInfo = new ProjectInfoResult[] { new ProjectInfoResult() { ApplicationId = CurrentOrgUser.CurrentAppId ?? 0 } };
 
 				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
 				ProjectLabels = labels.ToLookup(row => row.ProjectId);
@@ -74,9 +75,9 @@ namespace Ginseng.Mvc.Pages.Work
 			}
 		}
 
-		public async Task<IActionResult> OnPostCreate(int appId, string name)
+		public async Task<IActionResult> OnPostCreate(int applicationId, string name)
 		{
-			var project = new Project() { Name = name, ApplicationId = appId };			
+			var project = new Project() { Name = name, ApplicationId = applicationId };			
 			await Data.TrySaveAsync(project);
 			return Redirect($"Projects/{project.Id}");
 		}

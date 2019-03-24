@@ -9,9 +9,9 @@
     
 @foreach (var appGrp in Model.ProjectInfo.GroupBy(row => row.ApplicationId))
 {
+    <h4>@appGrp.First().ApplicationName</h4>
     <ul>
-        <li class="mb-2">
-            <h2>@appGrp.First().ApplicationName</h2>
+        <li class="mb-2">            
             <form method="post" asp-page-handler="Create">
                 <input type="hidden" name="ApplicationId" value="@appGrp.Key"/>
                 <div class="form-row align-items-center">
@@ -23,55 +23,55 @@
                     </div>
                 </div>
             </form>
-        </li>
-    </ul>
-    @foreach (var prj in appGrp)
-    {
-        <li class="mb-2">
-            <a asp-route-id="@prj.Id" class="btn @((prj.TotalWorkItems > 0) ? "btn-info" : "btn-light")">@prj.Name</a>
-            <span class="text-muted small">@prj.TotalWorkItems work items / @Html.FormatValue(prj.PercentComplete, "{0:P0}") complete</span>
+        </li>    
+        @foreach (var prj in appGrp.Where(row => row.Id != 0))
+        {
+            <li class="mb-2">
+                <a asp-route-id="@prj.Id" class="btn @((prj.TotalWorkItems > 0) ? "btn-info" : "btn-light")">@prj.Name</a>
+                <span class="text-muted small">@prj.TotalWorkItems work items / @Html.FormatValue(prj.PercentComplete, "{0:P0}") complete</span>
 
-            <ul class="list-inline small" style="display:inline-block">
-                @foreach (var user in Model.ProjectAssignments[prj.Id].OrderByDescending(row => row.WorkItemCount))
-                {
-                    <li class="list-inline-item">
-                        @if (user.AssignedUserName == null)
-                        {
-                            <span class="font-weight-bold">@user.WorkItemCount unassigned</span>
-                        }
-                        else
-                        {
-                            <span>@user.WorkItemCount @user.AssignedUserName</span>
-                        }
-                    </li>
-                }
-            </ul>
+                <ul class="list-inline small" style="display:inline-block">
+                    @foreach (var user in Model.ProjectAssignments[prj.Id].OrderByDescending(row => row.WorkItemCount))
+                    {
+                        <li class="list-inline-item">
+                            @if (user.AssignedUserName == null)
+                            {
+                                <span class="font-weight-bold">@user.WorkItemCount unassigned</span>
+                            }
+                            else
+                            {
+                                <span>@user.WorkItemCount @user.AssignedUserName</span>
+                            }
+                        </li>
+                    }
+                </ul>
             
-            @foreach (var lbl in Model.ProjectLabels[prj.Id])
-            {
-                <span class="badge" style="background-color:@lbl.BackColor;color:@lbl.ForeColor">@lbl.LabelName - @lbl.Count</span>
-            }
-
-            @if (prj.AllowDelete)
-            {
-                <form method="post" asp-page-handler="Delete" style="display:inline-block">
-                    <input type="hidden" name="Id" value="@prj.Id"/>
-                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                </form>
-            }
-            else
-            {
-                if (prj.IsActive)
+                @foreach (var lbl in Model.ProjectLabels[prj.Id])
                 {
-                    <a asp-page-handler="Deactivate" asp-route-id="@prj.Id">Deactivate</a>
+                    <span class="badge" style="background-color:@lbl.BackColor;color:@lbl.ForeColor">@lbl.LabelName - @lbl.Count</span>
+                }
+
+                @if (prj.AllowDelete)
+                {
+                    <form method="post" asp-page-handler="Delete" style="display:inline-block">
+                        <input type="hidden" name="Id" value="@prj.Id"/>
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                 }
                 else
                 {
-                    <a asp-page-handler="Activate" asp-route-id="@prj.Id">Make active</a>
+                    if (prj.IsActive)
+                    {
+                        <a asp-page-handler="Deactivate" asp-route-id="@prj.Id">Deactivate</a>
+                    }
+                    else
+                    {
+                        <a asp-page-handler="Activate" asp-route-id="@prj.Id">Make active</a>
+                    }
                 }
-            }
-        </li>
-    }
+            </li>
+        }
+    </ul>
 }
 
 <partial name="Shared/_IActive" model="Model"/>

@@ -24,9 +24,9 @@ namespace Ginseng.Mvc.Queries
 				[dbo].[Project] [p]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [p].[Id]=[wi].[ProjectId]
 				INNER JOIN [dbo].[WorkItemLabel] [wil] ON [wi].[Id]=[wil].[WorkItemId]
-				INNER JOIN [dbo].[Label] [lbl] ON [wil].[LabelId]=[lbl].[Id]
+				INNER JOIN [dbo].[Label] [lbl] ON [wil].[LabelId]=[lbl].[Id]			
 			WHERE
-				[p].[OrganizationId]=@orgId
+				[lbl].[OrganizationId]=@orgId
 			GROUP BY
 				[p].[Id],
 				[lbl].[Name],
