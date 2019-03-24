@@ -1,4 +1,23 @@
-﻿var updateFields = document.querySelectorAll('.itemUpdate');
+﻿var reloadProjectDropdowns = document.querySelectorAll('.fillProjects');
+reloadProjectDropdowns.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {        
+        var number = ev.target.form.Number.value;
+        fetch('/WorkItem/GetAppProjects?appId=' + $(ev.target).val(), {
+            method: 'get'            
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            var select = $('#ProjectId-' + number);
+            select.children().remove();
+            $("<option>").val("").text("- project -").appendTo(select);
+            $(data).each(function () {
+                $("<option>").val(this.value).text(this.text).appendTo(select);
+            });
+        });
+    });
+});
+
+var updateFields = document.querySelectorAll('.itemUpdate');
 updateFields.forEach(function (e) {
     e.addEventListener("change", function (e) {
         var frm = e.target.form;
@@ -346,3 +365,4 @@ function getAntiForgeryToken() {
     var input = div.getElementsByTagName('input')[0];
     return input.value;
 }
+

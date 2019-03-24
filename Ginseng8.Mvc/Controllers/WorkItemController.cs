@@ -4,14 +4,17 @@ using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
 using Ginseng.Mvc.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
@@ -232,6 +235,15 @@ namespace Ginseng.Mvc.Controllers
 				vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, WorkItemIds = new int[] { workItem.Id } }.ExecuteAsync(cn);
 				return PartialView("/Pages/Dashboard/Items/_Comments.cshtml", vm);
 			}
+		}
+
+		public async Task<JsonResult> GetAppProjects(int appId)
+		{		
+			using (var cn = _data.GetConnection())
+			{
+				var projects = await new ProjectSelect() { AppId = appId }.ExecuteAsync(cn);
+				return Json(projects);
+			}		
 		}
 	}
 }
