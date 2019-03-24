@@ -74,9 +74,9 @@ namespace Ginseng.Mvc.Pages.Work
 			}
 		}
 
-		public async Task<IActionResult> OnPostCreate(string name)
+		public async Task<IActionResult> OnPostCreate(int appId, string name)
 		{
-			var project = new Project() { Name = name };			
+			var project = new Project() { Name = name, ApplicationId = appId };			
 			await Data.TrySaveAsync(project);
 			return Redirect($"Projects/{project.Id}");
 		}

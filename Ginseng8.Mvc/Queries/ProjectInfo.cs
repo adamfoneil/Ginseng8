@@ -1,5 +1,4 @@
 ﻿using Postulate.Base;
-using Postulate.Base.Attributes;
 using System;
 using System.Collections.Generic;
 
@@ -7,8 +6,9 @@ namespace Ginseng.Mvc.Queries
 {
 	public class ProjectInfoResult
 	{
-		public int Id { get; set; }		
+		public int Id { get; set; }
 		public int ApplicationId { get; set; }
+		public string ApplicationName { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public int? Priority { get; set; }
@@ -41,6 +41,7 @@ namespace Ginseng.Mvc.Queries
 			$@"WITH [source] AS (
 				SELECT
 					[p].*,
+					[app].[Name] AS [ApplicationName],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) AS [TotalWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems],

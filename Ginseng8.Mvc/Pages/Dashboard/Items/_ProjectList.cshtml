@@ -6,14 +6,14 @@
     @Html.DropDownList("ProjectListSort", new SelectList(Html.GetEnumSelectList(typeof(ProjectInfoSortOptions)), "Value", "Text", Model.Sort), new { @class = "form-control", onchange = "this.form.submit();" })
     </div>
 </form>
-
-
     
 @foreach (var appGrp in Model.ProjectInfo.GroupBy(row => row.ApplicationId))
 {
     <ul>
         <li class="mb-2">
+            <h2>@appGrp.First().ApplicationName</h2>
             <form method="post" asp-page-handler="Create">
+                <input type="hidden" name="ApplicationId" value="@appGrp.Key"/>
                 <div class="form-row align-items-center">
                     <div class="col-6">
                         <input type="text" name="Name" placeholder="create new project" class="form-control" required="required"/>                    
