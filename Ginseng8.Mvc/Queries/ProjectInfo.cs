@@ -48,6 +48,7 @@ namespace Ginseng.Mvc.Queries
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems],
 					CASE
 						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) THEN 0
+						WHEN [p].[HtmlBody] IS NOT NULL THEN 0
 						ELSE 1
 					END AS [AllowDelete]
 				FROM
