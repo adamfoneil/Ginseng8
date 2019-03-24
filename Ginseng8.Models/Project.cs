@@ -10,9 +10,9 @@ namespace Ginseng.Models
 	/// </summary>
 	public class Project : BaseTable, IBody
 	{
-		[References(typeof(Organization))]
+		[References(typeof(Application))]
 		[PrimaryKey]
-		public int OrganizationId { get; set; }
+		public int ApplicationId { get; set; }
 
 		[PrimaryKey]
 		[MaxLength(50)]
@@ -20,12 +20,6 @@ namespace Ginseng.Models
 
 		[MaxLength(255)]
 		public string Description { get; set; }
-
-		/// <summary>
-		/// Indicates that the project applies to a specific app
-		/// </summary>
-		[References(typeof(Application))]
-		public int? ApplicationId { get; set; }
 
 		/// <summary>
 		/// Overall priority of project (lower number = higher priority)

@@ -25,7 +25,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostSave(Project record)
 		{
-			record.OrganizationId = CurrentOrg.Id;
+			//record.OrganizationId = CurrentOrg.Id;
 			await Data.TrySaveAsync(record);
 			return RedirectToPage("/Setup/Projects");
 		}

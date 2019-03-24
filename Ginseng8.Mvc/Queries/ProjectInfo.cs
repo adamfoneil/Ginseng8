@@ -7,8 +7,8 @@ namespace Ginseng.Mvc.Queries
 {
 	public class ProjectInfoResult
 	{
-		public int Id { get; set; }
-		public int OrganizationId { get; set; }
+		public int Id { get; set; }		
+		public int ApplicationId { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public int? Priority { get; set; }
@@ -50,8 +50,9 @@ namespace Ginseng.Mvc.Queries
 					END AS [AllowDelete]
 				FROM
 					[dbo].[Project] [p]
+					INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
 				WHERE
-					[p].[OrganizationId]=@orgId AND
+					[app].[OrganizationId]=@orgId AND
 					[p].[IsActive]=@isActive
 					{{andWhere}}
 			) SELECT
