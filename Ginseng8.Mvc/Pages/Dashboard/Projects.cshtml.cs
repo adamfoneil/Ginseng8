@@ -45,8 +45,7 @@ namespace Ginseng.Mvc.Pages.Work
 		public ILookup<DateTime, Milestone> MilestoneDates { get; set; }
 
 		// crosstab cells (assignments and labels)
-		public ILookup<ProjectDashboardCell, ProjectInfoAssignmentsResult> ProjectAssignments { get; set; }
-		public ILookup<ProjectDashboardCell, ProjectInfoLabelsResult> ProjectLabels { get; set; }
+		public ILookup<ProjectDashboardCell, OpenWorkItemsResult> ProjectWorkItems { get; set; }
 
 		public Project SelectedProject { get; set; }
 
@@ -111,18 +110,15 @@ namespace Ginseng.Mvc.Pages.Work
 
 				// crosstab columns
 				var milestones = await new Milestones() { OrgId = OrgId, WithProjectsForAppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
-				
-				// crosstab cells
-				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
-				ProjectLabels = labels.ToLookup(row => new ProjectDashboardCell(row.ProjectId, row.DateValue()));
 
-				var assignments = await new ProjectInfoAssignments() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
-				ProjectAssignments = assignments.ToLookup(row => new ProjectDashboardCell(row.ProjectId, row.DateValue()));
+				// crosstab cells
+				var workItems = await new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+				ProjectWorkItems = workItems.ToLookup(row => new ProjectDashboardCell(row.ProjectId, row.MilestoneDate ?? DateTime.MaxValue));
 
 				// there's only enough horizontal room for 3 milestones + optional placeholder for work items without a milestone
 				var milestoneList = milestones.Take(3).ToList();
 				// if there's any work item info without a milestone, then we need to append an empty milestone column to the crosstab
-				if (labels.Any(lbl => !lbl.MilestoneDate.HasValue) || assignments.Any(a => !a.MilestoneDate.HasValue))
+				if (workItems.Any(lbl => !lbl.MilestoneDate.HasValue))
 				{
 					milestoneList.Add(new Milestone() { Name = "Drag to a milestone", Date = DateTime.MaxValue, ShowDate = false });
 				}

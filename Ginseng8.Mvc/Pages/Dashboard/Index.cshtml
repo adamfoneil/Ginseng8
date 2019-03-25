@@ -11,7 +11,7 @@
 {
     <h4>@appGrp.First().ApplicationName</h4>
 
-    @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
+    @foreach (var milestoneGrp in appGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
     {
         var milestoneItem = milestoneGrp.First();
 

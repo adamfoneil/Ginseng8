@@ -5,7 +5,7 @@
     var milestoneItem = milestoneGrp.First();
     <partial name="Items/_MilestoneHeader" model="milestoneItem" />
 
-    @foreach (var activityGrp in milestoneGrp.GroupBy(row => row.ActivityId))
+    @foreach (var activityGrp in milestoneGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.ActivityId))
     {
         <h6 style="margin-left:20px">@activityGrp.First().ActivityName</h6>
         <div id="milestone-@milestoneGrp.Key-activity-@activityGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">

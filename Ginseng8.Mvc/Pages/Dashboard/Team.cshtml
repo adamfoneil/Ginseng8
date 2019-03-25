@@ -20,7 +20,7 @@
         @foreach (var userGrp in appGrp.GroupBy(row => row.AssignedUserId))
         {
             <div class="tab-pane fade" id="user@(userGrp.Key ?? 0)" role="tabpanel">
-            @foreach (var milestoneGrp in userGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
+            @foreach (var milestoneGrp in userGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
             {
                 var milestoneItem = milestoneGrp.First();
 

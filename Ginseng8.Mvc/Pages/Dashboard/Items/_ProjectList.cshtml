@@ -50,22 +50,15 @@
             </div>        
             @foreach (var ms in Model.MilestoneDates)
             {
-                <div class="col-@Model.CrosstabColumnHeadingGridCols()">
-                    <ul class="small">
-                        @foreach (var user in Model.ProjectAssignments[new ProjectDashboardCell(prj.Id, ms.Key)].OrderByDescending(row => row.WorkItemCount))
-                        {
-                            <li>
-                                @if (user.AssignedUserName == null)
-                                {
-                                    <span class="font-weight-bold">@user.WorkItemCount unassigned</span>
-                                }
-                                else
-                                {
-                                    <span>@user.WorkItemCount @user.AssignedUserName</span>
-                                }
-                            </li>
-                        }
-                    </ul>
+                <div class="col-@Model.CrosstabColumnHeadingGridCols()">         
+                    @{ 
+                        var items = Model.ProjectWorkItems[new ProjectDashboardCell(prj.Id, ms.Key)];
+                    }
+                    @foreach (var wi in items)
+                    {
+                        <partial name="Dashboard/Items/_ItemNumber" model="wi"/>                        
+                    }
+                    <br/><span class="small text-muted">@items.Sum(row => row.EstimateHours) est hrs</span>
                 </div>
             }            
         </div>

@@ -25,6 +25,7 @@ namespace Ginseng.Mvc.Queries
 		public int MilestoneId { get; set; }
 		public string MilestoneName { get; set; }
 		public DateTime? MilestoneDate { get; set; }
+		public DateTime SortMilestoneDate { get; set; }
 		public int? MilestoneDaysAway { get; set; }
 		public int? CloseReasonId { get; set; }
 		public string CloseReasonName { get; set; }
@@ -74,7 +75,7 @@ namespace Ginseng.Mvc.Queries
                 [wi].[ApplicationId], [app].[Name] AS [ApplicationName],
 				[wi].[HasImpediment],
                 COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
-                COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], COALESCE([ms].[Date], '12/31/9999') AS [MilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
+                COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
                 [wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
                 COALESCE([wi].[ActivityId], 0) AS [ActivityId],
                 [act].[Name] AS [ActivityName],
