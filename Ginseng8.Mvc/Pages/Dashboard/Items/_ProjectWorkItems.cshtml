@@ -16,7 +16,7 @@
                 </div>                
             }
 
-            @foreach (var milestoneGrp in projectGrp.GroupBy(row => row.MilestoneId))
+            @foreach (var milestoneGrp in projectGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
             {
                 var milestoneItem = milestoneGrp.First();
                 <partial name="Items/_MilestoneHeader" model="milestoneItem" />

@@ -35,7 +35,8 @@ namespace Ginseng.Mvc.Queries
 					LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
 					LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
 				WHERE
-					[wi].[OrganizationId]=@orgId AND					
+					[wi].[OrganizationId]=@orgId AND
+					[wi].[CloseReasonId] IS NULL AND
 					[wi].[ProjectId] IS NOT NULL {andWhere}
 			) SELECT
 				[ProjectId],

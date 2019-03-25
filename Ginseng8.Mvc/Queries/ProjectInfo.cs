@@ -24,7 +24,7 @@ namespace Ginseng.Mvc.Queries
 		public int? TotalWorkItems { get; set; }
 		public int? OpenWorkItems { get; set; }
 		public int? ClosedWorkItems { get; set; }
-		public int? PercentComplete { get; set; }
+		public float PercentComplete { get; set; }
 		public bool AllowDelete { get; set; }
 	}
 
@@ -61,7 +61,7 @@ namespace Ginseng.Mvc.Queries
 			) SELECT
 				[source].*,
 				CASE
-					WHEN [TotalWorkItems] > 0 THEN [ClosedWorkItems] / [TotalWorkItems]
+					WHEN [TotalWorkItems] > 0 THEN CONVERT(float, [ClosedWorkItems]) / CONVERT(float, [TotalWorkItems])
 					ELSE 0
 				END AS [PercentComplete]
 			FROM
