@@ -9,11 +9,25 @@
         <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number">
             <option value="">- project -</option>
         </select>
-                    
+
+        @if (Model.WorkItem.ProjectId != 0)
+        {
+            <a asp-page="/Dashboard/Projects" asp-route-id="@Model.WorkItem.ProjectId" title="Goto project" class="mr-2">
+                <i class="fas fa-chevron-double-right small"></i>
+            </a>
+        }
+
         <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
             <option value="">- milestone -</option>
         </select>
-                    
+                 
+        @if (Model.WorkItem.MilestoneId != 0)
+        {
+            <a asp-page="/Dashboard/Milestones" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
+                <i class="fas fa-chevron-double-right small"></i>
+            </a>
+        }
+
         <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
             <option value="">- size -</option>
         </select>
