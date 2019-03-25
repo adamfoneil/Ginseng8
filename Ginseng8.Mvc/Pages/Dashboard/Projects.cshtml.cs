@@ -17,8 +17,10 @@ namespace Ginseng.Mvc.Pages.Work
 	public class ProjectsModel : DashboardPageModel, IActive
 	{
 		public ProjectsModel(IConfiguration config) : base(config)
-		{
+		{			
 		}
+
+		protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (ci) => ci.ProjectId ?? 0;
 
 		public Dictionary<int, Project> Projects { get; set; }
 

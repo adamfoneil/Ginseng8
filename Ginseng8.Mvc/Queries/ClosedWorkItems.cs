@@ -9,6 +9,7 @@ namespace Ginseng.Mvc.Queries
 		public int? CloseReasonId { get; set; }
 		public string CloseReasonName { get; set; }
 		public int ApplicationId { get; set; }
+		public int? ProjectId { get; set; }
 		public int? MilestoneId { get; set; }
 		public int Number { get; set; }
 		public string Title { get; set; }
@@ -28,7 +29,8 @@ namespace Ginseng.Mvc.Queries
 				[wi].[MilestoneId],
 				[wi].[Number],
 				[wi].[Title],
-				[p].[Name] AS [ProjectName],
+				[wi].[ProjectId],
+				[p].[Name] AS [ProjectName],				
 				[wi].[DeveloperUserId],
 				[wi].[BusinessUserId],
 				[wi].[DateModified]
