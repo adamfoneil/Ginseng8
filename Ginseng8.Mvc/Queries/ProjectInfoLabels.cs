@@ -40,7 +40,8 @@ namespace Ginseng.Mvc.Queries
 				[p].[Id],
 				[lbl].[Name],
 				[lbl].[BackColor],
-				[lbl].[ForeColor]
+				[lbl].[ForeColor],
+				[ms].[Date]
 			ORDER BY
 				COUNT(1) DESC")
 		{

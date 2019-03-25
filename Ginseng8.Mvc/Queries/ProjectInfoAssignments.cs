@@ -40,14 +40,16 @@ namespace Ginseng.Mvc.Queries
 			) SELECT
 				[ProjectId],
 				COALESCE([ou].[DisplayName], [u].[UserName]) AS [AssignedUserName],
-				COUNT(1) AS [WorkItemCount]
+				COUNT(1) AS [WorkItemCount],
+				[MilestoneDate]
 			FROM
 				[source]
 				LEFT JOIN [dbo].[AspNetUsers] [u] ON [source].[AssignedUserId]=[u].[UserId]
 				LEFT JOIN [dbo].[OrganizationUser] [ou] ON [source].[AssignedUserId]=[ou].[UserId] AND [ou].[OrganizationId]=@orgId
 			GROUP BY
 				[ProjectId],
-				COALESCE([ou].[DisplayName], [u].[UserName])
+				COALESCE([ou].[DisplayName], [u].[UserName]),
+				[MilestoneDate]
 			ORDER BY
 				COUNT(1) DESC")
 		{

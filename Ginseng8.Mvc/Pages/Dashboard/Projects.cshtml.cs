@@ -45,7 +45,7 @@ namespace Ginseng.Mvc.Pages.Work
 
 		public Project SelectedProject { get; set; }
 
-		private int CrosstabRowHeadingGridCols()
+		public int CrosstabRowHeadingGridCols()
 		{
 			// assuming up to 4 milestone columns, leaving a minimum of 4 for the row headings,
 			// each milestone will take 2 grid columns (for a total of 8 grid cols)
@@ -63,18 +63,10 @@ namespace Ginseng.Mvc.Pages.Work
 			return result;
 		}
 
-		public string CrosstabRowHeadingClass()
-		{
-			return $"col-{CrosstabRowHeadingGridCols()}";
-		}
-
-		public string CrosstabColumnHeadingClass()
+		public int CrosstabColumnHeadingGridCols()
 		{
 			// assuming max of 4 milestone columns
-			int result = MilestoneDates.Count * 2;
-
-
-			return $"col-{result}";
+			return (MilestoneDates.Count / 4) * 2;
 		}
 
 		protected override OpenWorkItems GetQuery()
@@ -127,7 +119,7 @@ namespace Ginseng.Mvc.Pages.Work
 					milestoneList.Add(new Milestone() { Name = "No Milestone", Date = DateTime.MaxValue, ShowDate = false });
 				}
 				
-				var milestoneDates = milestoneList.ToLookup(row => row.Date);
+				MilestoneDates = milestoneList.ToLookup(row => row.Date);
 			}
 		}
 
