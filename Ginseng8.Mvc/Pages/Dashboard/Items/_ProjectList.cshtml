@@ -1,16 +1,21 @@
 ﻿@model Ginseng.Mvc.Pages.Work.ProjectsModel
 
-<form method="get" class="form-inline mb-3">
-    <div class="form-row">
-    <label class="mr-4">Sort by:</label>
-    @Html.DropDownList("ProjectListSort", new SelectList(Html.GetEnumSelectList(typeof(ProjectInfoSortOptions)), "Value", "Text", Model.Sort), new { @class = "form-control", onchange = "this.form.submit();" })
+<form method="get" class="form-inline mb-3 justify-content-center">
+    <div class="form-row">                
+        <label class="mr-4">Sort by:</label>
+        @Html.DropDownList("ProjectListSort", new SelectList(Html.GetEnumSelectList(typeof(ProjectInfoSortOptions)), "Value", "Text", Model.Sort), new { @class = "form-control mr-4", onchange = "this.form.submit();" })        
+
+        <label class="mr-4">Show:</label>
+        <select class="form-control">
+            <option>All</option>
+        </select>
     </div>
 </form>
     
 @*crosstab columns*@
-<div class="row">
+<div class="row sticky-top">
     <div class="col-@Model.CrosstabRowHeadingGridCols()">
-        <span>Project</span>
+        <span>App / Project</span>
     </div>
     @foreach (var ms in Model.MilestoneDates)
     {
