@@ -7,9 +7,22 @@
     </div>
 </form>
     
+@*cross tab columns*@
+<div class="row">
+    <div class="@Model.CrosstabRowHeadingClass()">
+        <span>Project</span>
+    </div>
+    @foreach (var ms in Model.MilestoneDates)
+    {
+        <div class="@Model.CrosstabColumnHeadingClass()">
+
+        </div>
+    }
+</div>
+
 @foreach (var appGrp in Model.ProjectInfo.GroupBy(row => row.ApplicationId))
 {
-    <h4>@appGrp.First().ApplicationName</h4>
+    <h4>@appGrp.First().ApplicationName</h4>    
     <ul>
         <li class="mb-2">            
             <form method="post" asp-page-handler="Create">

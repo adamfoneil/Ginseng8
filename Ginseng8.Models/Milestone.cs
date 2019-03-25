@@ -25,5 +25,11 @@ namespace Ginseng.Models
 
 		[NotMapped]
 		public int? DaysAway { get; set; }
+
+		/// <summary>
+		/// This is false in case where we're using a placeholder milestone for crosstab display purposes
+		/// </summary>
+		[NotMapped]
+		public bool ShowDate { get; set; } = true; 
 	}
 }

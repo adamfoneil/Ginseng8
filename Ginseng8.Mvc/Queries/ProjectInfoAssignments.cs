@@ -1,5 +1,6 @@
 ﻿using Postulate.Base;
 using Postulate.Base.Attributes;
+using System;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -8,6 +9,12 @@ namespace Ginseng.Mvc.Queries
 		public int ProjectId { get; set; }
 		public string AssignedUserName { get; set; }
 		public int WorkItemCount { get; set; }
+		public DateTime? MilestoneDate { get; set; }
+
+		public DateTime DateValue()
+		{
+			return MilestoneDate ?? DateTime.MaxValue;
+		}
 	}
 
 	public class ProjectInfoAssignments : Query<ProjectInfoAssignmentsResult>
@@ -20,11 +27,13 @@ namespace Ginseng.Mvc.Queries
 					CASE [act].[ResponsibilityId]
 						WHEN 1 THEN [wi].[BusinessUserId]
 						WHEN 2 THEN [wi].[DeveloperUserId]
-					END AS [AssignedUserId]
+					END AS [AssignedUserId],
+					[ms].[Date] AS [MilestoneDate]
 				FROM
 					[dbo].[WorkItem] [wi]
 					LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
 					LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
+					LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
 				WHERE
 					[wi].[OrganizationId]=@orgId AND					
 					[wi].[ProjectId] IS NOT NULL {andWhere}

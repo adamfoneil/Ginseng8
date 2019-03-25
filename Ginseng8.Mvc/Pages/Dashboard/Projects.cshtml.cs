@@ -1,9 +1,11 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -31,11 +33,49 @@ namespace Ginseng.Mvc.Pages.Work
 
 		public int? CurrentAppId { get; set; }
 
-		public IEnumerable<ProjectInfoResult> ProjectInfo { get; set; }
-		public ILookup<int, ProjectInfoLabelsResult> ProjectLabels { get; set; }
-		public ILookup<int, ProjectInfoAssignmentsResult> ProjectAssignments { get; set; }
+		// crosstab rows (projects and completion status)
+		public IEnumerable<ProjectInfoResult> ProjectInfo { get; set; }		
+
+		// crosstab columns (milestone dates and related names)
+		public ILookup<DateTime, Milestone> MilestoneDates { get; set; }
+
+		// crosstab cells (assignments and labels)
+		public ILookup<ProjectDashboardCell, ProjectInfoAssignmentsResult> ProjectAssignments { get; set; }
+		public ILookup<ProjectDashboardCell, ProjectInfoLabelsResult> ProjectLabels { get; set; }
 
 		public Project SelectedProject { get; set; }
+
+		private int CrosstabRowHeadingGridCols()
+		{
+			// assuming up to 4 milestone columns, leaving a minimum of 4 for the row headings,
+			// each milestone will take 2 grid columns (for a total of 8 grid cols)
+			int result = 8 - MilestoneDates.Count;
+
+			// if there's an odd number of milestone columns, then add 1 from the row headings
+			if ((MilestoneDates.Count % 2) == 1) result++;
+
+			// assume 3 milestones, gives us 5 row heading, leaving 7 for the milestones to divide up.
+			// that doesn't divide evenly by 2, so we add one to the row headings
+
+			// assume 2 milestones, gives us 6, this divides evenly by 2, so nothing to change
+			// with 4 milestones, gives us 4, which divides evenly by 2, leaving no change
+
+			return result;
+		}
+
+		public string CrosstabRowHeadingClass()
+		{
+			return $"col-{CrosstabRowHeadingGridCols()}";
+		}
+
+		public string CrosstabColumnHeadingClass()
+		{
+			// assuming max of 4 milestone columns
+			int result = MilestoneDates.Count * 2;
+
+
+			return $"col-{result}";
+		}
 
 		protected override OpenWorkItems GetQuery()
 		{
@@ -51,6 +91,7 @@ namespace Ginseng.Mvc.Pages.Work
 				};
 			}
 
+			// no project is selected, so we don't display any work items
 			return null;
 		}
 
@@ -64,14 +105,29 @@ namespace Ginseng.Mvc.Pages.Work
 			}
 			else
 			{
+				// crosstab rows
 				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 				if (!ProjectInfo.Any()) ProjectInfo = new ProjectInfoResult[] { new ProjectInfoResult() { ApplicationId = CurrentOrgUser.CurrentAppId ?? 0 } };
 
+				// crosstab columns
+				var milestones = await new Milestones() { OrgId = OrgId, HasOpenWorkItems = true }.ExecuteAsync(connection);
+				
+				// crosstab cells
 				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
-				ProjectLabels = labels.ToLookup(row => row.ProjectId);
+				ProjectLabels = labels.ToLookup(row => new ProjectDashboardCell(row.ProjectId, row.DateValue()));
 
 				var assignments = await new ProjectInfoAssignments() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
-				ProjectAssignments = assignments.ToLookup(row => row.ProjectId);
+				ProjectAssignments = assignments.ToLookup(row => new ProjectDashboardCell(row.ProjectId, row.DateValue()));
+
+				// there's only enough horizontal room for 3 milestones + optional placeholder for work items without a milestone
+				var milestoneList = milestones.Take(3).ToList();
+				// if there's any work item info without a milestone, then we need to append an empty milestone column to the crosstab
+				if (labels.Any(lbl => !lbl.MilestoneDate.HasValue) || assignments.Any(a => !a.MilestoneDate.HasValue))
+				{
+					milestoneList.Add(new Milestone() { Name = "No Milestone", Date = DateTime.MaxValue, ShowDate = false });
+				}
+				
+				var milestoneDates = milestoneList.ToLookup(row => row.Date);
 			}
 		}
 
