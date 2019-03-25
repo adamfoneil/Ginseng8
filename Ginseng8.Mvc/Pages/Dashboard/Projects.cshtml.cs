@@ -31,6 +31,9 @@ namespace Ginseng.Mvc.Pages.Work
 		public ProjectInfoSortOptions Sort { get; set; }
 
 		[BindProperty(SupportsGet = true)]
+		public ProjectInfoShowOptions Show { get; set; }
+
+		[BindProperty(SupportsGet = true)]
 		public bool IsActive { get; set; } = true;
 
 		public int? CurrentAppId { get; set; }
@@ -67,8 +70,11 @@ namespace Ginseng.Mvc.Pages.Work
 
 		public int CrosstabColumnHeadingGridCols()
 		{
-			// assuming max of 4 milestone columns
-			return (MilestoneDates.Count / 4) * 2;
+			int maxCols = 12 - CrosstabRowHeadingGridCols();			
+			int milestoneCount = MilestoneDates.Count;
+			int result = maxCols / milestoneCount;
+			if ((maxCols % milestoneCount) == 1) result++;
+			return result;
 		}
 
 		protected override OpenWorkItems GetQuery()
@@ -100,11 +106,11 @@ namespace Ginseng.Mvc.Pages.Work
 			else
 			{
 				// crosstab rows
-				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive, AppId = CurrentOrgUser.CurrentAppId, Show = Show }.ExecuteAsync(connection);
 				if (!ProjectInfo.Any()) ProjectInfo = new ProjectInfoResult[] { new ProjectInfoResult() { ApplicationId = CurrentOrgUser.CurrentAppId ?? 0 } };
 
 				// crosstab columns
-				var milestones = await new Milestones() { OrgId = OrgId, HasOpenWorkItems = true }.ExecuteAsync(connection);
+				var milestones = await new Milestones() { OrgId = OrgId, WithProjectsForAppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 				
 				// crosstab cells
 				var labels = await new ProjectInfoLabels() { OrgId = OrgId }.ExecuteAsync(connection);
@@ -118,7 +124,7 @@ namespace Ginseng.Mvc.Pages.Work
 				// if there's any work item info without a milestone, then we need to append an empty milestone column to the crosstab
 				if (labels.Any(lbl => !lbl.MilestoneDate.HasValue) || assignments.Any(a => !a.MilestoneDate.HasValue))
 				{
-					milestoneList.Add(new Milestone() { Name = "No Milestone", Date = DateTime.MaxValue, ShowDate = false });
+					milestoneList.Add(new Milestone() { Name = "Drag to a milestone", Date = DateTime.MaxValue, ShowDate = false });
 				}
 				
 				MilestoneDates = milestoneList.ToLookup(row => row.Date);

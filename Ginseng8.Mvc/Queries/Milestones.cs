@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using System;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -13,8 +14,7 @@ namespace Ginseng.Mvc.Queries
 			FROM 
 				[dbo].[Milestone] [ms]
 			WHERE 
-				[OrganizationId]=@orgId AND 
-				[Date]>=DATEADD(d, -7, getdate())
+				[OrganizationId]=@orgId				
 				{andWhere}
 			ORDER BY 
 				[Date]")
@@ -23,6 +23,9 @@ namespace Ginseng.Mvc.Queries
 
 		public int OrgId { get; set; }
 
+		[Where("[ms].[Date]>=@minDate")]
+		public DateTime? MinDate { get; set; } = DateTime.Today.AddDays(-5);
+
 		[Case(false, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id])")]
 		[Case(true, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id])")]
 		public bool? HasWorkItems { get; set; }
@@ -30,5 +33,8 @@ namespace Ginseng.Mvc.Queries
 		[Case(false, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL)")]
 		[Case(true, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL)")]
 		public bool? HasOpenWorkItems { get; set; }
+
+		[Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [ApplicationId]=@withProjectsForAppId AND [ProjectId] IS NOT NULL AND [CloseReasonId] IS NULL)")]
+		public int? WithProjectsForAppId { get; set; }
 	}
 }

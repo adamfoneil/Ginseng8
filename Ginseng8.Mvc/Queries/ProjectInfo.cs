@@ -36,6 +36,13 @@ namespace Ginseng.Mvc.Queries
 		PercentComplete
 	}
 
+	public enum ProjectInfoShowOptions
+	{
+		All,
+		HasOpenItems,
+		NoOpenItems
+	}
+
 	public class ProjectInfo : Query<ProjectInfoResult>
 	{
 		public ProjectInfo(ProjectInfoSortOptions sort = ProjectInfoSortOptions.Name) : base(
@@ -75,10 +82,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("[p].[ApplicationId]=@appId")]
 		public int? AppId { get; set; }
 
-		/*
-		[Where("(EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ApplicationId]=@appId AND [ProjectId]=[p].[Id]) OR [p].[ApplicationId]=@appId)")]
-		public int? AppId { get; set; }
-		*/
+		[Case(ProjectInfoShowOptions.HasOpenItems, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
+		[Case(ProjectInfoShowOptions.NoOpenItems, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
+		public ProjectInfoShowOptions Show { get; set; } = ProjectInfoShowOptions.All;
 
 		public bool IsActive { get; set; }
 
@@ -91,7 +97,7 @@ namespace Ginseng.Mvc.Queries
 					{ ProjectInfoSortOptions.Name, "[Name] ASC" },
 					{ ProjectInfoSortOptions.OpenWorkItems, "[OpenWorkItems] DESC" },
 					{ ProjectInfoSortOptions.TotalWorkItems, "[TotalWorkItems] DESC" },
-					{ ProjectInfoSortOptions.PercentComplete, "[PercentComplete] ASC" }
+					{ ProjectInfoSortOptions.PercentComplete, "[PercentComplete] DESC" }
 				};
 			}
 		}
