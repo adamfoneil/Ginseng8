@@ -1,18 +1,16 @@
 ﻿@page
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
-@model Ginseng.Mvc.Pages.Setup.ProjectsModel
-@{
-    ViewData["Title"] = "Projects";
-}
+@model Ginseng.Mvc.Pages.Setup.DataModelsModel
 
-<h4>Projects</h4>
-<p>Use Projects to group related ongoing work related to a feature area, goal, or some other unifying idea or objective.
-    Projects do not have due dates or time frames. If you need to use due dates, use <a asp-route-page="/Setup/Milestones">Milestones</a>.</p>
+<h4>Data Models</h4>
+
+<p>Almost any app requires a database. Use Data Models to share vision and build consensus and knowledge about the database structures your applications rely on.
+    This determines the overall direction, constraints, and long-term maintainability of your work.</p>
 
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Project>(this, Xsrf, defaults: new { ApplicationId = Model.AppId });
+    var grid = new GridEditor<DataModel>(this, Xsrf, defaults: new { ApplicationId = Model.AppId });
 }
 
 <form method="get" class="form-inline mb-2">
@@ -24,10 +22,10 @@
 
 <table class="table">
     <tr>
-        <th>Project Name</th>        
+        <th>Data Model Name</th>        
         <th></th>
     </tr>
-    @foreach (var item in Model.Projects)
+    @foreach (var item in Model.DataModels)
     {
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>             

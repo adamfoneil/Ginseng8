@@ -19,6 +19,12 @@ namespace Ginseng.Mvc.Helpers
 			return (model?.CurrentOrgUser?.CurrentApp != null) ? model.CurrentOrgUser.CurrentApp.Name : AllApps;
 		}
 
+		public static bool HasCurrentApp(this IHtmlHelper<dynamic> html)
+		{
+			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+			return model?.CurrentOrgUser?.CurrentAppId.HasValue ?? false;
+		}
+
 		public static async Task<SelectList> AppFilterOptions(this IHtmlHelper<dynamic> html)
 		{
 			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
