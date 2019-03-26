@@ -1,14 +1,15 @@
 ﻿@page
 @model Ginseng.Mvc.Pages.Data.IndexModel
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 
 <div class="row">
     <div class="col-3">
 
     </div>
     <div class="col-9">
-        <div class="lead">
-            <span>@Html.CurrentAppName()</span>
+        <div class="lead justify-content-between">
             <i class="far fa-database"></i>
+            <span>@Html.CurrentAppName()</span>            
             <button class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@(Model?.CurrentModel?.Name ?? "no model selected")</button>
             <div class="dropdown-menu">
                 @foreach (var dm in Model.ModelSelect)
@@ -36,12 +37,12 @@
             </div>
         </form>
 
-        <div class="list-group mt-3">            
-            
+        <div class="list-group mt-3">                        
             @foreach (var c in Model.ModelClasses)
             {
                 var activeClass = (c.Id == Model.Id) ? "active" : string.Empty;
                 <a class="list-group-item list-group-item-secondary list-group-item-action @activeClass" asp-route-id="@c.Id">
+                    <i class="fal fa-table mr-2"></i>
                     @c.Name
                 </a>
             }
@@ -58,12 +59,61 @@
             <h5>
                 <i class="fal fa-table mr-2"></i>
                 <span>@Model.CurrentClass.Name</span>
+
+                <span class="small text-muted">
+                @{ 
+                    var keyProps = Model.Properties.Where(p => p.InPrimaryKey);
+                    if (keyProps.Any())
+                    {
+                        <i class="fal fa-key"></i>
+                        <span>@(string.Join(", ", keyProps.Select(p => p.Name)))</span>
+                    }
+                }
+                </span>
             </h5>
             @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.Id, IdPrefix = "model-class", PostUrl = "/Update/ModelClassBody", Content = Model.CurrentClass.HtmlBody })
+         
+            var grid = new GridEditor<ModelProperty>(this, Xsrf, defaults: new { ModelClassId = Model.CurrentClass.Id });            
+            <table class="table mt-2">
+                <tr>
+                    <th title="Part of Primary Key">PK</th>
+                    <th>Property Name</th>
+                    <th>Type</th>
+                    <th title="Nullable">N</th>
+                    <th>Description</th>
+                    <th></th>
+                </tr>
+                @foreach (var p in Model.Properties)
+                {
+                    <tr id="@grid.RowId(p)">
+                        <td>@grid.CheckBox(m => m.InPrimaryKey)</td>
+                        <td>@grid.TextBox(m => m.Name, new { @class = "form-control-sm" })</td>
+                        <td>
+                            @grid.DropDownList(m => m.TypeId, Model.DataTypeSelect, new { @class = "form-control-sm" })
+                            <a asp-route-id="@p.TypeId">
+                                <i class="fas fa-chevron-double-right"></i>
+                            </a>
+                        </td>
+                        <td>@grid.CheckBox(m => m.IsNullable)</td>
+                        <td>@grid.TextBox(m => m.Description, new { @class = "form-control-sm" })</td>
+                        <td>@grid.Controls()</td>
+                    </tr>
+                }
+                <tr id="@grid.NewRowId()">
+                    <td>@grid.CheckBox(m => m.InPrimaryKey)</td>
+                    <td>@grid.TextBox(m => m.Name, new { @class = "form-control-sm" })</td>
+                    <td>@grid.DropDownList(m => m.TypeId, Model.DataTypeSelect, new { @class = "form-control-sm" })</td>
+                    <td>@grid.CheckBox(m => m.IsNullable)</td>
+                    <td>@grid.TextBox(m => m.Description, new { @class = "form-control-sm" })</td>
+                    <td>@grid.Controls()</td>
+                </tr>
+            </table>
+            @grid.HandlerForms("SaveProperty", "DeleteProperty")
         }
     </div>
 </div>
 
 @section Scripts {
     <script src="~/js/Dashboard.js"></script>
+    <script src="~/js/GridEditor.js"></script>
 }

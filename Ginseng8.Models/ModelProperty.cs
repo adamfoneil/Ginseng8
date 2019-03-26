@@ -9,7 +9,7 @@ namespace Ginseng.Models
 	/// Describes a model property (database column)
 	/// </summary>
 	[TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
-	public class ModelProperty : BaseTable, IBody
+	public class ModelProperty : BaseTable
 	{
 		[References(typeof(ModelClass))]
 		[PrimaryKey]
@@ -22,14 +22,12 @@ namespace Ginseng.Models
 		[References(typeof(ModelClass))]
 		public int TypeId { get; set; }
 
-		public bool IsPrimaryKey { get; set; }
+		public bool InPrimaryKey { get; set; }
 
 		public bool IsNullable { get; set; }
 
-		public string TextBody { get; set; }
+		public string Description { get; set; }
 
-		public string HtmlBody { get; set; }
-
-		public int Position { get; set; }
+		public int? Position { get; set; }
 	}
 }
