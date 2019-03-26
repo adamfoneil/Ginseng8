@@ -55,8 +55,11 @@
                         var items = Model.ProjectWorkItems[new ProjectDashboardCell(prj.Id, ms.Key)];
                     }
                     @foreach (var wi in items)
-                    {
+                    {                                                
                         <partial name="Dashboard/Items/_ItemNumber" model="wi"/>                        
+                        <div id="work-item-details-@wi.Number" style="display:none">
+                            <p>@wi.Title</p>
+                        </div>
                     }
                     <br/><span class="small text-muted">@items.Sum(row => row.EstimateHours) est hrs</span>
                 </div>
