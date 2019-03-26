@@ -19,9 +19,10 @@ reloadProjectDropdowns.forEach(function (ele) {
 
 // jQuery UI tooltips
 $('.tooltips').tooltip({
+    items: 'span',
     content: function () {
         var number = $(this).data('number');
-        return $('#work-item-title-' + number);
+        return $('#work-item-title-' + number).html();
     }
 });
 
