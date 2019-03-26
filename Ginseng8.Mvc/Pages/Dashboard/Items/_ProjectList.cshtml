@@ -57,6 +57,7 @@
                     @foreach (var wi in items)
                     {                                                
                         <partial name="Dashboard/Items/_ItemNumber" model="wi"/>                        
+                        <span id="work-item-title-@wi.Number" style="display:none">@wi.Title</span>
                     }
                     <br/><span class="small text-muted">@items.Sum(row => row.EstimateHours) est hrs</span>
                 </div>
