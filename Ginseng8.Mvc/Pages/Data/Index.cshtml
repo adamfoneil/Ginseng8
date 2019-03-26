@@ -87,24 +87,27 @@
                 {
                     <tr id="@grid.RowId(p)">
                         <td>@grid.CheckBox(m => m.InPrimaryKey)</td>
-                        <td>@grid.TextBox(m => m.Name, new { @class = "form-control-sm" })</td>
+                        <td>@grid.TextBox(m => m.Name, new { @class = "form-control-sm", autocomplete = "off" })</td>
                         <td>
                             @grid.DropDownList(m => m.TypeId, Model.DataTypeSelect, new { @class = "form-control-sm" })
-                            <a asp-route-id="@p.TypeId">
-                                <i class="fas fa-chevron-double-right"></i>
-                            </a>
+                            @if (!p.IsScalarType)
+                            {
+                                <a asp-route-id="@p.TypeId">
+                                    <i class="fas fa-chevron-double-right"></i>
+                                </a>
+                            }                            
                         </td>
                         <td>@grid.CheckBox(m => m.IsNullable)</td>
-                        <td>@grid.TextBox(m => m.Description, new { @class = "form-control-sm" })</td>
+                        <td>@grid.TextBox(m => m.Description, new { @class = "form-control-sm", autocomplete = "off" })</td>
                         <td>@grid.Controls()</td>
                     </tr>
                 }
                 <tr id="@grid.NewRowId()">
                     <td>@grid.CheckBox(m => m.InPrimaryKey)</td>
-                    <td>@grid.TextBox(m => m.Name, new { @class = "form-control-sm" })</td>
+                    <td>@grid.TextBox(m => m.Name, new { @class = "form-control-sm", autocomplete = "off" })</td>
                     <td>@grid.DropDownList(m => m.TypeId, Model.DataTypeSelect, new { @class = "form-control-sm" })</td>
                     <td>@grid.CheckBox(m => m.IsNullable)</td>
-                    <td>@grid.TextBox(m => m.Description, new { @class = "form-control-sm" })</td>
+                    <td>@grid.TextBox(m => m.Description, new { @class = "form-control-sm", autocomplete = "off" })</td>
                     <td>@grid.Controls()</td>
                 </tr>
             </table>

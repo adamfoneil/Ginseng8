@@ -2,6 +2,7 @@
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
@@ -29,5 +30,8 @@ namespace Ginseng.Models
 		public string Description { get; set; }
 
 		public int? Position { get; set; }
+
+		[NotMapped]
+		public bool IsScalarType { get; set; }
 	}
 }
