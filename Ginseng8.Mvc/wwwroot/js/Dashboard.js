@@ -17,18 +17,11 @@ reloadProjectDropdowns.forEach(function (ele) {
     });
 });
 
-var itemNumberBadges = document.querySelectorAll('.work-item-number');
-itemNumberBadges.forEach(function (ele) {
-    ele.addEventListener('mouseenter', function (ev) {
-        var number = ev.target.getAttribute('data-number');
-        var details = document.getElementById('work-item-details-' + number);
-        $(details).fadeIn();
-    });
-    ele.addEventListener('mouseleave', function (ev) {
-        var number = ev.target.getAttribute('data-number');
-        var details = document.getElementById('work-item-details-' + number);
-        $(details).fadeOut();
-    });
+// jQuery UI tooltips
+$('.tooltips').tooltip({
+    content: function() {
+        return $(this).data('tooltip-content')
+    }
 });
 
 var updateFields = document.querySelectorAll('.itemUpdate');

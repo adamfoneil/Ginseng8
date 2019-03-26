@@ -1,9 +1,19 @@
 ﻿@model OpenWorkItemsResult
 
-@{ 
+@{
     var itemNumClass = (Model.EstimateHours == 0) ? "badge-secondary" : string.Empty;
     var backColorStyle = (Model.EstimateHours > 0) ? $"background-color:{Html.WeightedColorToHex(Model.ColorGradientPosition)}" : string.Empty;
 }
-<span class="badge @itemNumClass work-item-number" title="@Model.ProjectName" style="@backColorStyle" id="work-item-number-@Model.Number" data-number="@Model.Number">
+<span
+    class="badge @itemNumClass work-item-number tooltips"
+    title="@Model.ProjectName"
+    style="@backColorStyle"
+    id="work-item-number-@Model.Number"
+    data-number="@Model.Number"
+    data-tooltip-content="
+        <!-- Tooltip html content -->
+        <p class='mb-0'>@Model.Title</p>
+    "
+>
     @Model.Number
-</span>                
+</span>
