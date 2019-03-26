@@ -57,7 +57,13 @@ namespace Ginseng.Mvc.Controllers
 		public async Task<JsonResult> WorkItemBody(int id, string htmlBody)
 		{
 			var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, number = id });
-			return await UpdateInnerAsync<WorkItem>(workItem, htmlBody);
+			return await UpdateInnerAsync(workItem, htmlBody);
+		}
+
+		public async Task<JsonResult> ModelClassBody(int id, string htmlBody)
+		{
+			var mc = await _data.FindAsync<ModelClass>(id);
+			return await UpdateInnerAsync(mc, htmlBody);
 		}
 
 		[HttpPost]
@@ -75,7 +81,7 @@ namespace Ginseng.Mvc.Controllers
 				record.SaveHtml();
 				record.ModifiedBy = User.Identity.Name;
 				record.DateModified = _data.CurrentUser.LocalTime;
-				await _data.TryUpdateAsync<T>(record, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
+				await _data.TryUpdateAsync(record, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
 				return Json(new { success = true });
 			}
 			catch (Exception exc)

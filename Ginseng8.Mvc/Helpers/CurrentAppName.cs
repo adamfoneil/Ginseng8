@@ -25,6 +25,24 @@ namespace Ginseng.Mvc.Helpers
 			return model?.CurrentOrgUser?.CurrentAppId.HasValue ?? false;
 		}
 
+		public static string CurrentAppName<T>(this IHtmlHelper<T> html)
+		{
+			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+			return model?.CurrentOrgUser?.CurrentApp?.Name ?? "no app selected";
+		}
+
+		public static int CurrentAppId<T>(this IHtmlHelper<T> html)
+		{
+			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+			return model?.CurrentOrgUser?.CurrentAppId ?? 0;
+		}
+
+		public static int CurrentAppId(this IHtmlHelper<dynamic> html)
+		{
+			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+			return model?.CurrentOrgUser?.CurrentAppId ?? 0;
+		}
+
 		public static async Task<SelectList> AppFilterOptions(this IHtmlHelper<dynamic> html)
 		{
 			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;

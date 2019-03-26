@@ -22,18 +22,21 @@
 
 <table class="table">
     <tr>
-        <th>Data Model Name</th>        
+        <th>Data Model Name</th>
+        <th></th>
         <th></th>
     </tr>
     @foreach (var item in Model.DataModels)
     {
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>             
+            <td><a asp-page="/Data/Index" asp-route-modelId="@item.Id">Manage</a></td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>                
+        <td></td>
         <td>@grid.Controls()</td>
     </tr>
 </table>

@@ -1,4 +1,69 @@
 ﻿@page
 @model Ginseng.Mvc.Pages.Data.IndexModel
 
-<h4>Data Models</h4>
+<div class="row">
+    <div class="col-3">
+
+    </div>
+    <div class="col-9">
+        <div class="lead">
+            <span>@Html.CurrentAppName()</span>
+            <i class="far fa-database"></i>
+            <button class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@(Model?.CurrentModel?.Name ?? "no model selected")</button>
+            <div class="dropdown-menu">
+                @foreach (var dm in Model.ModelSelect)
+                {
+                    <a asp-route-modelId="@dm.Value" class="dropdown-item">@dm.Text</a>
+                }
+            </div>
+            <a asp-page="/Setup/DataModels" asp-route-appId="@Html.CurrentAppId()">
+                <i class="fas fa-cog"></i>
+            </a>
+        </div>
+        @Html.ActionAlert(TempData)
+    </div>
+</div>
+
+<hr/>
+
+<div class="row">
+    <div class="col-3">
+        <form method="post" asp-page-handler="AddClass" class="form-inline mt-2">
+            <div class="row">
+                <input type="hidden" name="DataModelId" value="@Model.ModelId"/>
+                <input type="text" name="Name" required="required" class="form-control-sm form-control mr-2" placeholder="add model class"/>
+                <button class="btn btn-dark btn-sm">Add</button>
+            </div>
+        </form>
+
+        <div class="list-group mt-3">            
+            
+            @foreach (var c in Model.ModelClasses)
+            {
+                var activeClass = (c.Id == Model.Id) ? "active" : string.Empty;
+                <a class="list-group-item list-group-item-secondary list-group-item-action @activeClass" asp-route-id="@c.Id">
+                    @c.Name
+                </a>
+            }
+        </div>
+    </div>
+
+    <div class="col-9">
+        @if (Model.CurrentClass ==  null)
+        {
+            <h5>(no class selected)</h5>
+        }
+        else
+        {
+            <h5>
+                <i class="fal fa-table mr-2"></i>
+                <span>@Model.CurrentClass.Name</span>
+            </h5>
+            @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.Id, IdPrefix = "model-class", PostUrl = "/Update/ModelClassBody", Content = Model.CurrentClass.HtmlBody })
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/Dashboard.js"></script>
+}
