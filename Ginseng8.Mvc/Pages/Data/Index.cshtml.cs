@@ -56,20 +56,20 @@ namespace Ginseng.Mvc.Pages.Data
 		public async Task<IActionResult> OnPostAddClassAsync(ModelClass record)
 		{
 			await Data.TrySaveAsync(record);
-			return Redirect($"/Data?modelId={record.DataModelId}");
+			return Redirect($"/Data/{record.Id}");
 		}
 
 		public async Task<IActionResult> OnPostSavePropertyAsync(ModelProperty record)
 		{
 			await Data.TrySaveAsync(record);
-			return Redirect($"/Data?Id={record.ModelClassId}");
+			return Redirect($"/Data/{record.ModelClassId}");
 		}
 
 		public async Task<IActionResult> OnPostDeletePropertyAsync(int id)
 		{
 			var mp = await Data.FindAsync<ModelProperty>(id);
 			await Data.TryDelete<ModelProperty>(id);
-			return Redirect($"/Data?Id={mp.ModelClassId}");
+			return Redirect($"/Data/{mp.ModelClassId}");
 		}
 	}
 }
