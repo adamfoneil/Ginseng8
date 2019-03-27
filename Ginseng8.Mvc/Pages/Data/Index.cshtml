@@ -112,6 +112,14 @@
             </table>
             @grid.HandlerForms("SaveProperty", "DeleteProperty")
 
+            @if (!Model.Properties.Any() && Model.CurrentClass != null)
+            {
+                <form method="post" asp-page-handler="DeleteClass">
+                    <input type="hidden" name="Id" value="@Model.CurrentClass.Id"/>
+                    <button class="btn btn-danger">Delete Model Class</button>
+                </form>
+            }
+
             @if (Model.Children.Any())
             {
                 <h6>Child Classes</h6>

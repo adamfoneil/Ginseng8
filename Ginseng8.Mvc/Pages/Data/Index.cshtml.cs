@@ -68,8 +68,15 @@ namespace Ginseng.Mvc.Pages.Data
 		public async Task<IActionResult> OnPostDeletePropertyAsync(int id)
 		{
 			var mp = await Data.FindAsync<ModelProperty>(id);
-			await Data.TryDelete<ModelProperty>(id);
+			await Data.TryDelete<ModelProperty>(mp.Id);
 			return Redirect($"/Data/{mp.ModelClassId}");
+		}
+
+		public async Task<IActionResult> OnPostDeleteClassAsync(int id)
+		{
+			var mc = await Data.FindAsync<ModelClass>(id);
+			await Data.TryDelete<ModelClass>(mc.Id);
+			return Redirect($"/Data?modelId={mc.DataModelId}");
 		}
 	}
 }
