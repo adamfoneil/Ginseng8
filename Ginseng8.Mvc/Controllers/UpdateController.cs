@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Controllers
@@ -125,6 +126,21 @@ namespace Ginseng.Mvc.Controllers
 			_data.CurrentOrgUser.CurrentAppId = (id != 0) ? id : default(int?);
 			await _data.TryUpdateAsync(_data.CurrentOrgUser, r => r.CurrentAppId);
 			return Redirect(returnUrl);
+		}
+
+		public async Task<ContentResult> ModelClassName(string elementId, string newName)
+		{
+			int id = IntFromText(elementId);
+			var mc = await _data.FindAsync<ModelClass>(id);
+			mc.Name = newName;
+			await _data.TryUpdateAsync(mc, r => r.Name);
+			return Content(newName);
+		}
+
+		private int IntFromText(string input)
+		{
+			var result = Regex.Match(input, @"\d+");
+			return Convert.ToInt32(result.Value);
 		}
 	}
 }

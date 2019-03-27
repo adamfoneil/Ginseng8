@@ -58,7 +58,7 @@
         {
             <h5>
                 <i class="fal fa-table mr-2"></i>
-                <span>@Model.CurrentClass.Name</span>
+                <span class="editable" id="class-id-@Model.CurrentClass.Id">@Model.CurrentClass.Name</span>
                 <span class="small text-muted">
                 @{ 
                     var keyProps = Model.Properties.Where(p => p.InPrimaryKey);
@@ -150,4 +150,12 @@
 @section Scripts {
     <script src="~/js/Dashboard.js"></script>
     <script src="~/js/GridEditor.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.editable').editable('/Update/ModelClassName', {
+                id: 'elementId',
+                name: 'newName'
+            });
+        })
+    </script>
 }
