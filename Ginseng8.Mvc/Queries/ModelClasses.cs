@@ -9,12 +9,13 @@ namespace Ginseng.Mvc.Queries
 		public ModelClasses() : base(
 			@"SELECT [mc].*
 			FROM [dbo].[ModelClass] [mc]
-			WHERE [mc].[DataModelId]=@modelId {andWhere}
+			{where}
 			ORDER BY [mc].[Name]")
 		{
 		}
 
-		public int ModelId { get; set; }		
+		[Where("[mc].[DataModelId]=@modelId")]
+		public int? ModelId { get; set; }		
 
 		[Where("[mc].[IsScalarType]=@isScalar")]
 		public bool? IsScalar { get; set; }

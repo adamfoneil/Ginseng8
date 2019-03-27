@@ -1,9 +1,8 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
@@ -20,7 +19,7 @@ namespace Ginseng.Models
 		[MaxLength(50)]
 		[PrimaryKey]
 		public string Name { get; set; }
-		
+
 		[MaxLength(50)]
 		public string ObjectName { get; set; }
 
@@ -31,6 +30,6 @@ namespace Ginseng.Models
 		/// <summary>
 		/// If true, then class has no properties (used for "built-in" types like int, money, date, etc)
 		/// </summary>
-		public bool IsScalarType { get; set; }
+		public bool IsScalarType { get; set; }	
 	}
 }

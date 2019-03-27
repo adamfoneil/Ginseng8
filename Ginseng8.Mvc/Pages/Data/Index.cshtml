@@ -59,7 +59,6 @@
             <h5>
                 <i class="fal fa-table mr-2"></i>
                 <span>@Model.CurrentClass.Name</span>
-
                 <span class="small text-muted">
                 @{ 
                     var keyProps = Model.Properties.Where(p => p.InPrimaryKey);
@@ -73,7 +72,7 @@
             </h5>
             @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.Id, IdPrefix = "model-class", PostUrl = "/Update/ModelClassBody", Content = Model.CurrentClass.HtmlBody })
          
-            var grid = new GridEditor<ModelProperty>(this, Xsrf, defaults: new { ModelClassId = Model.CurrentClass.Id });            
+            var grid = new GridEditor<ModelProperty>(this, Xsrf, defaults: new { ModelClassId = Model.CurrentClass.Id, Position = Model.Properties.Count() + 1 });            
             <table class="table mt-2">
                 <tr>
                     <th title="Part of Primary Key">PK</th>
@@ -112,6 +111,30 @@
                 </tr>
             </table>
             @grid.HandlerForms("SaveProperty", "DeleteProperty")
+
+            @if (Model.Children.Any())
+            {
+                <h6>Child Classes</h6>
+                <ul>
+                    @foreach (var child in Model.Children)
+                    {
+                        <li>
+                            <a asp-route-id="@child.ClassId">@child.ClassName</a> 
+                                <span>@child.PropertyName</span>
+                                <span class="small text-muted">
+                                @if (child.RelationshipType == RelationshipType.OneToOne)
+                                {
+                                    <text>one-to-one</text>
+                                }
+                                else
+                                {
+                                    <text>one-to-many</text>
+                                }
+                            </span>
+                        </li>
+                    }
+                </ul>
+            }
         }
     </div>
 </div>

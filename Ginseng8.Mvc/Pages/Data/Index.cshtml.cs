@@ -25,6 +25,7 @@ namespace Ginseng.Mvc.Pages.Data
 		public DataModel CurrentModel { get; set; }
 		public ModelClass CurrentClass { get; set; }
 		public IEnumerable<ModelProperty> Properties { get; set; }
+		public IEnumerable<ChildClassesResult> Children { get; set; }
 
 		public IEnumerable<SelectListItem> ModelSelect { get; set; }
 		public SelectList DataTypeSelect { get; set; }
@@ -44,6 +45,7 @@ namespace Ginseng.Mvc.Pages.Data
 				CurrentModel = await Data.FindAsync<DataModel>(ModelId);				
 				ModelClasses = await new ModelClasses() { ModelId = ModelId, IsScalar = false }.ExecuteAsync(cn);
 				Properties = await new ModelProperties() { ClassId = Id }.ExecuteAsync(cn);
+				Children = await new ChildClasses() { ParentClassId = Id }.ExecuteAsync(cn);
 
 				ModelSelect = await new DataModelSelect() { AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteSelectListAsync(cn, ModelId);
 				var allTypes = await new ModelClasses() { ModelId = ModelId }.ExecuteAsync(cn);
