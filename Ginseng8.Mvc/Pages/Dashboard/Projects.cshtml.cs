@@ -46,6 +46,7 @@ namespace Ginseng.Mvc.Pages.Work
 
 		// crosstab cells (assignments and labels)
 		public ILookup<ProjectDashboardCell, OpenWorkItemsResult> ProjectWorkItems { get; set; }
+		public ILookup<int, Label> Labels { get; set; }
 
 		public Project SelectedProject { get; set; }
 
@@ -114,6 +115,10 @@ namespace Ginseng.Mvc.Pages.Work
 				// crosstab cells
 				var workItems = await new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 				ProjectWorkItems = workItems.ToLookup(row => new ProjectDashboardCell(row.ProjectId, row.MilestoneDate ?? DateTime.MaxValue));
+
+				var workItemIds = workItems.Select(wi => wi.Id).ToArray();
+				var labels = await new LabelsInUse() { OrgId = OrgId, WorkItemIds = workItemIds }.ExecuteAsync(connection);
+				Labels = labels.ToLookup(row => row.WorkItemId);				
 
 				// there's only enough horizontal room for 3 milestones + optional placeholder for work items without a milestone
 				var milestoneList = milestones.Take(3).ToList();
