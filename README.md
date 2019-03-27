@@ -1,5 +1,7 @@
 # Ginseng 8
 
+[video demo](https://1drv.ms/v/s!AvguHRnyJtWMlsJj6zJp-KPsCRcfFw)
+
 At it again with another Ginseng version. Watching and listening to conversation at my job about tracking work, it seems to me there is still a need for a task-tracking app that finds a sweet spot of simplicity and structure. Basecamp is chaos. TFS (Azure DevOps) is way too complicated and admin-heavy. GitHub might've been nice, but switching to Git was going to bring intolerable learning curve and risks. There are of course other options like [Monday](https://monday.com), [Clickup](https://clickup.com), [Clubhouse](https://clubhouse.io), and no doubt many more like it. [Smartsheet](https://www.smartsheet.com) is being considered. At the end of the day though, apart from its having a great web implementation, it's still just a spreadsheet with no inherent structure. I think any of these apps might have potential, but I'm most happy when I'm creating and thinking up stuff. Moreover, I don't think any of the tools on the market today (except maybe for Clubhouse) really hit the *sweet spot of simplicity and structure* that I keep envisioning.
 
 ## What's new in Ginseng 8?
