@@ -29,13 +29,14 @@
 
 <div class="row">
     <div class="col-3">
+        <div class="row">
         <form method="post" asp-page-handler="AddClass" class="form-inline mt-2">
-            <div class="row">
-                <input type="hidden" name="DataModelId" value="@Model.ModelId"/>
-                <input type="text" name="Name" required="required" class="form-control-sm form-control mr-2" placeholder="add model class"/>
-                <button class="btn btn-dark btn-sm">Add</button>
-            </div>
+            <input type="hidden" name="Id" value="0"/>
+            <input type="hidden" name="DataModelId" value="@Model.ModelId"/>
+            <input type="text" name="Name" required="required" class="form-control-sm form-control mr-2" placeholder="add model class"/>
+            <button class="btn btn-dark btn-sm">Add</button>            
         </form>
+            </div>
 
         <div class="list-group mt-3">                        
             @foreach (var c in Model.ModelClasses)
@@ -65,14 +66,15 @@
                     if (keyProps.Any())
                     {
                         <i class="fal fa-key"></i>
-                        <span>@(string.Join(", ", keyProps.Select(p => p.Name)))</span>
+                        <span>@(string.Join(" + ", keyProps.Select(p => p.Name)))</span>
                     }
                 }
                 </span>
             </h5>
             @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.Id, IdPrefix = "model-class", PostUrl = "/Update/ModelClassBody", Content = Model.CurrentClass.HtmlBody })
-         
-            var grid = new GridEditor<ModelProperty>(this, Xsrf, defaults: new { ModelClassId = Model.CurrentClass.Id, Position = Model.Properties.Count() + 1 });            
+
+            var grid = new GridEditor<ModelProperty>(this, Xsrf, defaults: new { ModelClassId = Model.CurrentClass.Id, Position = Model.Properties.Count() + 1 });
+
             <table class="table mt-2">
                 <tr>
                     <th title="Part of Primary Key">PK</th>
@@ -107,13 +109,15 @@
                     <td>@grid.DropDownList(m => m.TypeId, Model.DataTypeSelect, new { @class = "form-control-sm" })</td>
                     <td>@grid.CheckBox(m => m.IsNullable)</td>
                     <td>@grid.TextBox(m => m.Description, new { @class = "form-control-sm", autocomplete = "off" })</td>
-                    <td>@grid.Controls()</td>
+                    <td>
+                        @grid.Controls()
+                    </td>
                 </tr>
             </table>
             @grid.HandlerForms("SaveProperty", "DeleteProperty")
 
             @if (!Model.Properties.Any() && Model.CurrentClass != null)
-            {
+                    {
                 <form method="post" asp-page-handler="DeleteClass">
                     <input type="hidden" name="Id" value="@Model.CurrentClass.Id"/>
                     <button class="btn btn-danger">Delete Model Class</button>
@@ -121,17 +125,17 @@
             }
 
             @if (Model.Children.Any())
-            {
+                    {
                 <h6>Child Classes</h6>
                 <ul>
                     @foreach (var child in Model.Children)
                     {
                         <li>
-                            <a asp-route-id="@child.ClassId">@child.ClassName</a> 
+                            <a asp-route-id="@child.ClassId">@child.ClassName</a>
                                 <span>@child.PropertyName</span>
                                 <span class="small text-muted">
                                 @if (child.RelationshipType == RelationshipType.OneToOne)
-                                {
+                    {
                                     <text>one-to-one</text>
                                 }
                                 else
