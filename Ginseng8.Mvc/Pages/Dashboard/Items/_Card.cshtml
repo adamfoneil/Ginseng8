@@ -38,10 +38,7 @@
                     <div class="dropdown">
                         <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             @Model.HandOffButtonText()
-                            @if (Model.WorkItem.Priority.HasValue && Model.WorkItem.AssignedUserId.HasValue && Model.WorkItem.MilestoneId != 0)
-                            {
-                                <sup title="Priority @Model.WorkItem.Priority by @Html.FormatValue(Model.WorkItem.MilestoneDate, "{0:ddd M/d}")">@Model.WorkItem.Priority</sup>
-                            }
+                            <partial name="Items/_Priority" model="Model.WorkItem"/>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         @foreach (var act in Model.GetActivityOptions())
@@ -62,7 +59,10 @@
                 }
                 else
                 {
-                    <span>@Model.WorkItem.ActivityStatus()</span>
+                    <span>
+                        @Model.WorkItem.ActivityStatus()
+                        <partial name="Items/_Priority" model="Model.WorkItem"/>
+                    </span>
                 }
 
                 @if (Model.WorkItem.HasImpediment)
