@@ -36,24 +36,28 @@
                 @if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
                 {
                     <div class="dropdown">
-                         <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             @Model.HandOffButtonText()
-                         </button>
-                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            @foreach (var act in Model.GetActivityOptions())
+                            @if (Model.WorkItem.Priority.HasValue && Model.WorkItem.AssignedUserId.HasValue && Model.WorkItem.MilestoneId != 0)
                             {
-                                <partial name="Dashboard/Items/_Activities" model="act"/>
+                                <sup title="Priority @Model.WorkItem.Priority by @Html.FormatValue(Model.WorkItem.MilestoneDate, "{0:ddd M/d}")">@Model.WorkItem.Priority</sup>
                             }
-                            @if (Model.WorkItem.IsPaused())
-                            {
-                                <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">I'll take this</a>
-                            }
-                            @if (Model.WorkItem.AssignedUserId.HasValue)
-                            {
-                                <div class="dropdown-divider"></div>
-                                <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">Remove Me</a>
-                            }
-                          </div>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        @foreach (var act in Model.GetActivityOptions())
+                        {
+                            <partial name="Dashboard/Items/_Activities" model="act"/>
+                        }
+                        @if (Model.WorkItem.IsPaused())
+                        {
+                            <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">I'll take this</a>
+                        }
+                        @if (Model.WorkItem.AssignedUserId.HasValue)
+                        {
+                            <div class="dropdown-divider"></div>
+                            <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">Remove Me</a>
+                        }
+                        </div>
                     </div>
                 }
                 else
