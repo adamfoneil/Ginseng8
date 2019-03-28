@@ -9,6 +9,14 @@
     <p class="text-center">Searched for: <strong>@Model.Query</strong></p>
 }
 
+@if (!Model.WorkItems.Any() && Html.CurrentAppId() != 0)
+{
+    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+    {
+        { "applicationId", Html.CurrentAppId() }        
+    }))
+}
+
 <form method="get">
     <div class="form-row mb-3 justify-content-center">
         <input type="hidden" asp-for="@Model.Query"/>

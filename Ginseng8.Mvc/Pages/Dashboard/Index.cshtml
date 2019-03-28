@@ -40,3 +40,13 @@
     }
 }
 </div>
+
+@if (!Model.WorkItems.Any() && Html.CurrentAppId() != 0)
+{
+    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+    {
+        { "applicationId", Html.CurrentAppId() },        
+        { Model.UserIdColumnName, Model.UserId },
+        { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
+    }))
+}
