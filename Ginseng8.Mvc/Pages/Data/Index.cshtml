@@ -29,14 +29,16 @@
 
 <div class="row">
     <div class="col-3">
-        <div class="row">
-        <form method="post" asp-page-handler="AddClass" class="form-inline mt-2">
-            <input type="hidden" name="Id" value="0"/>
-            <input type="hidden" name="DataModelId" value="@Model.ModelId"/>
-            <input type="text" name="Name" required="required" class="form-control-sm form-control mr-2" placeholder="add model class"/>
-            <button class="btn btn-dark btn-sm">Add</button>            
-        </form>
+        <form method="post" asp-page-handler="AddClass" class="form-inline mt-2 row no-gutters">
+            <div class="col pr-2">
+                <input type="hidden" name="Id" value="0"/>
+                <input type="hidden" name="DataModelId" value="@Model.ModelId"/>
+                <input type="text" name="Name" required="required" class="form-control-sm form-control w-100" placeholder="add model class"/>
             </div>
+            <div class="col col-auto">
+                <button class="btn btn-dark btn-sm">Add</button>
+            </div>
+        </form>
 
         <div class="list-group mt-3">                        
             @foreach (var c in Model.ModelClasses)
