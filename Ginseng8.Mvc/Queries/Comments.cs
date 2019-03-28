@@ -12,7 +12,7 @@ namespace Ginseng.Mvc.Queries
 			FROM
 				[dbo].[Comment] [c]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [c].[WorkItemId]=[wi].[Id]
-				INNER JOIN [dbo].[AspNetUsers] [u] ON [wi].[CreatedBy]=[u].[UserName]
+				INNER JOIN [dbo].[AspNetUsers] [u] ON [c].[CreatedBy]=[u].[UserName]
 				LEFT JOIN [dbo].[OrganizationUser] [ou] ON
 					[wi].[OrganizationId]=[ou].[OrganizationId] AND
 					[ou].[UserId]=[u].[UserId]
