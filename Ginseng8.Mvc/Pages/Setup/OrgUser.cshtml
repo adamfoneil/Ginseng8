@@ -8,7 +8,10 @@
 <p>Use this to customize aspects of your relationship with this organization.</p>
 
 <form method="post" asp-page-handler="SelectOrg">
-    <label>Current Organization:</label>
+    <label>
+        Current Organization
+        <span class="small text-muted">changes take effect immediately</span>
+    </label>
     <select name="orgId" asp-items="Model.MyOrgSelect" class="form-control" onchange="this.form.submit();">
         <option value="" disabled="disabled">(select)</option>
     </select>
