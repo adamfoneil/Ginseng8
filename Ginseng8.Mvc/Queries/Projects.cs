@@ -17,5 +17,8 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[Id] IN @includeIds")]
 		public int[] IncludeIds { get; set; }
+
+		[Where("[DataModelId]=@dataModelId")]
+		public int? DataModelId { get; set; }
 	}
 }

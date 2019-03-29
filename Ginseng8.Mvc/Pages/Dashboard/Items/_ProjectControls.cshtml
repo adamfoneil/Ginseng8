@@ -4,6 +4,11 @@
     <input type="hidden" name="Id" value="@Model.SelectedProject.Id"/>
     <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject.ApplicationId)" class="form-control-sm mr-2 projectUpdate"></select>
     
+    @if  (Model.SelectedProject.DataModelId.HasValue)
+    {
+        <i class="far fa-database mr-2"></i>
+    }
+    
     <select name="DataModelId" asp-items="@Model.Dropdowns.DataModelSelect(Model.SelectedProject.ApplicationId, Model.SelectedProject.DataModelId)" class="form-control-sm mr-2 projectUpdate">
         <option value="">- data model -</option>
     </select>
