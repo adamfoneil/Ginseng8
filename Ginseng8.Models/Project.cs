@@ -33,6 +33,9 @@ namespace Ginseng.Models
 		[MaxLength(255)]
 		public string BranchUrl { get; set; }
 
+		[References(typeof(DataModel))]
+		public int? DataModelId { get; set; }
+
 		public string TextBody { get; set; }
 
 		public string HtmlBody { get; set; }
