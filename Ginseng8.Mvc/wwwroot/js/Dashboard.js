@@ -300,7 +300,17 @@ function InitTableBodySortable() {
 function tableBodySortableRowsReorder(rows) {
     console.log('rows data json', JSON.stringify(rows));
 
-    // fetch
+    fetch('/Update/PropertyOrder', {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": getAntiForgeryToken()
+        },
+        body: JSON.stringify(rows)
+    }).then(function (response) {
+        // success fail info?
+        return response.json();
+    });
 }
 
 function InitWorkItemSortable() {
