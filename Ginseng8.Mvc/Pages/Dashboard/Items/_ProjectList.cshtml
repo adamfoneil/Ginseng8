@@ -55,8 +55,10 @@
                         var items = Model.ProjectWorkItems[new ProjectDashboardCell(prj.Id, ms.Key)];
                     }
                     @foreach (var wi in items)
-                    {                                                
-                        <partial name="Dashboard/Items/_ItemNumber" model="wi"/>                        
+                    {
+                        <span class="ui-draggable">
+                            <partial name="Dashboard/Items/_ItemNumber" model="wi"/>
+                        </span>                        
                         <span id="work-item-title-@wi.Number" style="display:none">
                             <span>@wi.Title</span>
                             @foreach (var lbl in Model.Labels[wi.Id])
