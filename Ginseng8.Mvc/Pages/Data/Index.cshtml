@@ -77,7 +77,7 @@
 
             var grid = new GridEditor<ModelProperty>(this, Xsrf, defaults: new { ModelClassId = Model.CurrentClass.Id, Position = Model.Properties.Count() + 1 });
 
-            <table class="table mt-2">
+            <table class="table mt-2"><tbody class="js-table-body-sortable">
                 <tr>
                     <th title="Part of Primary Key">PK</th>
                     <th>Property Name</th>
@@ -88,7 +88,7 @@
                 </tr>
                 @foreach (var p in Model.Properties)
                 {
-                    <tr id="@grid.RowId(p)">
+                    <tr id="@grid.RowId(p)" class="js-table-row-sortable bg-light">
                         <td>@grid.CheckBox(m => m.InPrimaryKey)</td>
                         <td>@grid.TextBox(m => m.Name, new { @class = "form-control-sm", autocomplete = "off" })</td>
                         <td>
@@ -115,7 +115,7 @@
                         @grid.Controls()
                     </td>
                 </tr>
-            </table>
+            </tbody></table>
             @grid.HandlerForms("SaveProperty", "DeleteProperty")
 
             @if (!Model.Properties.Any() && Model.CurrentClass != null)
