@@ -103,6 +103,7 @@ htmlEditLinks.forEach(function (e) {
         var idPrefix = e.target.getAttribute('data-id-prefix');
         $("#" + idPrefix + '-view-' + id).hide();
         $("#" + idPrefix + '-edit-' + id).show();
+        $("#" + idPrefix + '-content-' + id).focus(); // doesn't work because this textarea is hidden by the editor
         $(e.target).hide();
     });
 });
