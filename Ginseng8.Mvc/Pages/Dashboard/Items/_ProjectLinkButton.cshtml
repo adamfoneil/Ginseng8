@@ -2,3 +2,4 @@
 
 <a asp-route-id="@Model.Id" class="btn @((Model.TotalWorkItems > 0) ? "btn-info" : "btn-light")" asp-page="Projects">@Model.Name</a>
 <br/><span class="text-muted small">@Model.TotalWorkItems work items | @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete</span>
+<meter value="@Model.PercentComplete" max="1"/>
