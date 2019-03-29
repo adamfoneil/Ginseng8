@@ -62,6 +62,40 @@ updateFields.forEach(function (e) {
     });
 });
 
+var projectUpdateFields = document.querySelectorAll('.projectUpdate');
+projectUpdateFields.forEach(function (ele) {
+    ele.addEventListener("change", function (ev) {
+        var frm = ev.target.form;
+        var projectId = frm.Id.value;
+        var loadingImg = document.getElementById('loading-project-' + projectId);
+        $(loadingImg).show();
+        var failImg = document.getElementById('update-failed-project-' + projectId);
+        try {
+            let formData = new FormData(frm);
+            fetch('/Update/Project', {
+                method: 'post',
+                body: new URLSearchParams(formData)
+            }).then(function (response) {
+                return response.json();
+            }).then(function (result) {
+                if (result.success) {
+                    var successImg = document.getElementById('update-success-project-' + projectId);
+                    $(successImg).show();
+                    $(successImg).fadeOut();
+                } else {
+                    $(failImg).show();
+                    failImg.setAttribute('title', result.message);
+                }
+            });
+        } catch (e) {
+            $(failImg).show();
+            failImg.setAttribute('title', e.message);
+        } finally {
+            $(loadingImg).hide();
+        }
+    });
+});
+
 var htmlEditLinks = document.querySelectorAll('.editHtml');
 htmlEditLinks.forEach(function (e) {
     e.addEventListener("click", function (e) {

@@ -12,6 +12,7 @@
             @if (projectGrp.Key != 0)
             {
                 <div class="ml-3">
+                    <partial name="Items/_ProjectControls" model="Model"/>
                     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "project", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody })
                 </div>                
             }

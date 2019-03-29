@@ -1,0 +1,14 @@
+﻿@model Ginseng.Mvc.Pages.Work.ProjectsModel
+
+<form class="form-inline mb-2">
+    <input type="hidden" name="Id" value="@Model.SelectedProject.Id"/>
+    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject.ApplicationId)" class="form-control-sm mr-2 projectUpdate"></select>
+    <label>
+        @Html.CheckBox("IsActive", Model.SelectedProject.IsActive, new { @class = "projectUpdate mr-1" })
+        Active
+    </label>
+
+    <img src="~/img/loading.gif" id="loading-project-@Model.SelectedProject.Id" style="display:none" />
+    <i class="fas fa-check-circle" style="color:green;display:none" id="update-project-success-@Model.SelectedProject.Id"></i>
+    <i class="fas fa-exclamation-triangle" style="color:red;display:none" id="update-project-failed-@Model.SelectedProject.Id"></i>
+</form>

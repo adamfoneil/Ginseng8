@@ -27,6 +27,11 @@ namespace Ginseng.Mvc
 		public IEnumerable<SelectListItem> Milestones { get; set; }			
 		public IEnumerable<Label> Labels { get; set; }
 
+		public SelectList AppSelect(int? appId)
+		{
+			return new SelectList(Applications, "Value", "Text", appId);
+		}
+
 		public SelectList AppSelect(OpenWorkItemsResult item = null)
 		{
 			return new SelectList(Applications, "Value", "Text", item?.ApplicationId);
