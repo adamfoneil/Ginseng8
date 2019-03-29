@@ -69,7 +69,8 @@ namespace Ginseng.Mvc.Controllers
 					var project = await _data.FindAsync<Project>(cn, fields.Id);
 					project.ApplicationId = fields.ApplicationId;
 					project.IsActive = fields.IsActive;
-					await cn.UpdateAsync(project, _data.CurrentUser, r => r.ApplicationId, r => r.IsActive);
+					project.DataModelId = fields.DataModelId;
+					await cn.UpdateAsync(project, _data.CurrentUser, r => r.ApplicationId, r => r.IsActive, r => r.DataModelId);
 					await project.SyncWorkItemsToProjectAsync(cn);
 					return Json(new { success = true });
 				}

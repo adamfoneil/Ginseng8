@@ -3,6 +3,17 @@
 <form class="form-inline mb-2">
     <input type="hidden" name="Id" value="@Model.SelectedProject.Id"/>
     <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject.ApplicationId)" class="form-control-sm mr-2 projectUpdate"></select>
+    
+    <select name="DataModelId" asp-items="@Model.Dropdowns.DataModelSelect(Model.SelectedProject.ApplicationId, Model.SelectedProject.DataModelId)" class="form-control-sm mr-2 projectUpdate">
+        <option value="">- data model -</option>
+    </select>
+    @if  (Model.SelectedProject.DataModelId.HasValue)
+    {
+        <a asp-page="/Data/Index" asp-route-modelId="@Model.SelectedProject.DataModelId" title="Goto data model" class="mr-2">
+            <i class="fas fa-chevron-double-right small"></i>
+        </a>
+    }
+
     <label>
         @Html.CheckBox("IsActive", Model.SelectedProject.IsActive, new { @class = "projectUpdate mr-1" })
         Active
