@@ -46,3 +46,16 @@
     }
 }
 </div>
+
+@if (Model.Projects?.Any() ?? false)
+{
+    <h5>Projects Found</h5>
+    <ul>
+        @foreach  (var prj in Model.Projects)
+        {
+            <li>
+                <partial name="Dashboard/Items/_ProjectLinkButton" model="prj"/>
+            </li>
+        }
+    </ul>
+}

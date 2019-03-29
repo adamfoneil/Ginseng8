@@ -1,0 +1,4 @@
+﻿@model ProjectInfoResult
+
+<a asp-route-id="@Model.Id" class="btn @((Model.TotalWorkItems > 0) ? "btn-info" : "btn-light")">@Model.Name</a>
+<br/><span class="text-muted small">@Model.TotalWorkItems work items | @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete</span>

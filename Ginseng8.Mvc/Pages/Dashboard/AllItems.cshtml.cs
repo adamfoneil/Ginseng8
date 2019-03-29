@@ -1,4 +1,5 @@
-﻿using System.Data.SqlClient;
+﻿using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
@@ -27,6 +28,11 @@ namespace Ginseng.Mvc.Pages.Work
 		[BindProperty(SupportsGet = true)]
 		public int? FilterSizeId { get; set; }
 
+		/// <summary>
+		/// Projects found by a search
+		/// </summary>
+		public IEnumerable<ProjectInfoResult> Projects { get; set; }
+
 		protected override async Task<RedirectResult> GetRedirectAsync(SqlConnection connection)
 		{
 			if (int.TryParse(Query, out int number))
@@ -38,6 +44,15 @@ namespace Ginseng.Mvc.Pages.Work
 			}
 
 			return await Task.FromResult<RedirectResult>(null);
+		}
+
+		protected override async Task OnGetInternalAsync(SqlConnection connection)
+		{
+			if (!string.IsNullOrEmpty(Query))
+			{
+				// if a search was passed in, execute that on the project list
+				Projects = await new ProjectInfo() { OrgId = OrgId, TitleAndBodySearch = Query, AppId = CurrentOrgUser.CurrentAppId, IsActive = true }.ExecuteAsync(connection);
+			}
 		}
 
 		protected override OpenWorkItems GetQuery()

@@ -45,8 +45,7 @@
     {
         <div class="row">
             <div class="col-@Model.CrosstabRowHeadingGridCols()">
-                <a asp-route-id="@prj.Id" class="btn @((prj.TotalWorkItems > 0) ? "btn-info" : "btn-light")">@prj.Name</a>
-                <br/><span class="text-muted small">@prj.TotalWorkItems work items | @Html.FormatValue(prj.PercentComplete, "{0:P0}") complete</span>
+                <partial name="Dashboard/Items/_ProjectLinkButton" model="prj"/>
             </div>        
             @foreach (var ms in Model.MilestoneDates)
             {
