@@ -287,7 +287,8 @@ function InitTableBodySortable() {
 
             sortableRows.each(function(index, row) {
                 rowsArray.push({
-                    id: $(row).attr('id'),
+                    id: Number($(row).attr('id').replace('row-', '')),
+                    index: index
                 });
             });
 
