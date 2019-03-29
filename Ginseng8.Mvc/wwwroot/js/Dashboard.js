@@ -266,18 +266,48 @@ $(document).ready(function () {
     $('.nav-tabs li:first-child a').tab('show');
 
     InitWorkItemSortable();
-    
+    InitTableBodySortable();
 });
+
+function sortableStart(event, ui) {
+    // This event is triggered when sorting starts.
+    $('.ui-sortable-placeholder').outerHeight($(ui.item).outerHeight()); // update height of placeholder to current item height
+}
+
+function InitTableBodySortable() {
+    $('.js-table-body-sortable').sortable({
+        items: '.js-table-row-sortable',
+        placeholder: 'ui-state-highlight',
+        cancel: ':input, button, a',
+        start: sortableStart,
+        update: function(event, ui) {
+            var sortableTable = $(ui.item).parents('.js-table-body-sortable')
+            var sortableRows = sortableTable.find('.js-table-row-sortable');
+            var rowsArray = [];
+
+            sortableRows.each(function(index, row) {
+                rowsArray.push({
+                    id: $(row).attr('id'),
+                });
+            });
+
+            tableBodySortableRowsReorder(rowsArray);
+        },
+    });
+}
+
+function tableBodySortableRowsReorder(rows) {
+    console.log('rows data json', JSON.stringify(rows));
+
+    // fetch
+}
 
 function InitWorkItemSortable() {
     $('.sortable').sortable({
         placeholder: "ui-state-highlight",
         connectWith: '.milestone-items .sortable, #assignedUserTab .nav-link:not(.active)',
         cancel: ':input, button, [contenteditable="true"]',
-        start: function (event, ui) {
-            // This event is triggered when sorting starts.
-            $('.ui-state-highlight').outerHeight($(ui.item).outerHeight()); // update height of placeholder to current item height
-        },
+        start: sortableStart,
 
         update: function (event, ui) {
             // This event is triggered when the user stopped sorting and the DOM position has changed.
