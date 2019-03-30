@@ -84,3 +84,15 @@ body {
 .nav-link.sortable .ui-sortable-handle {
   display: none;
 }
+
+.milestone-work-items-sortable {
+  min-height: 24px;
+}
+.milestone-work-items-sortable .ui-sortable-placeholder {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.dragging .ui-tooltip {
+  display: none !important;
+}
