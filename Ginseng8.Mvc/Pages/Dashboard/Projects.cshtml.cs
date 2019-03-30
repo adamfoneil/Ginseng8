@@ -116,7 +116,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			{
 				// crosstab rows (or card view)
 				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive, AppId = CurrentOrgUser.CurrentAppId, Show = Show }.ExecuteAsync(connection);
-				if (!ProjectInfo.Any()) ProjectInfo = new ProjectInfoResult[] { new ProjectInfoResult() { ApplicationId = CurrentOrgUser.CurrentAppId ?? 0 } };
+				if (!ProjectInfo.Any()) ProjectInfo = new ProjectInfoResult[] { new ProjectInfoResult() { Name = "Items Without a Project", ApplicationId = CurrentOrgUser.CurrentAppId ?? 0 } };
 
 				if (View == ProjectViewOptions.Crosstab)
 				{

@@ -27,6 +27,7 @@ namespace Ginseng.Mvc.Queries
 		public int? ClosedWorkItems { get; set; }
 		public float PercentComplete { get; set; }
 		public bool AllowDelete { get; set; }
+		public int? EstimateHours { get; set; }
 	}
 
 	public enum ProjectInfoSortOptions
@@ -40,7 +41,10 @@ namespace Ginseng.Mvc.Queries
 		TotalWorkItems,
 
 		[Description("Percent complete")]
-		PercentComplete
+		PercentComplete,
+
+		[Description("Estimate hours")]
+		EstimateHours
 	}
 
 	public enum ProjectInfoShowOptions
@@ -61,6 +65,11 @@ namespace Ginseng.Mvc.Queries
 				SELECT
 					[p].*,
 					[app].[Name] AS [ApplicationName],
+					(SELECT 
+						SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours])) 
+						FROM [dbo].[WorkItem] [wi] LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id] 
+						LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+						WHERE [wi].[ProjectId]=[p].[Id]) AS [EstimateHours],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) AS [TotalWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems],
@@ -111,7 +120,8 @@ namespace Ginseng.Mvc.Queries
 					{ ProjectInfoSortOptions.Name, "[Name] ASC" },
 					{ ProjectInfoSortOptions.OpenWorkItems, "[OpenWorkItems] DESC" },
 					{ ProjectInfoSortOptions.TotalWorkItems, "[TotalWorkItems] DESC" },
-					{ ProjectInfoSortOptions.PercentComplete, "[PercentComplete] DESC" }
+					{ ProjectInfoSortOptions.PercentComplete, "[PercentComplete] DESC" },
+					{ ProjectInfoSortOptions.EstimateHours, "[EstimateHours] DESC" }
 				};
 			}
 		}
