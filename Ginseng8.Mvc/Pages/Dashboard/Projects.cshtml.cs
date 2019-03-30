@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ginseng.Mvc.Pages.Work
+namespace Ginseng.Mvc.Pages.Dashboard
 {
 	[Authorize]
 	public class ProjectsModel : DashboardPageModel, IActive
@@ -25,7 +25,7 @@ namespace Ginseng.Mvc.Pages.Work
 		public Dictionary<int, Project> Projects { get; set; }
 
 		[BindProperty(SupportsGet = true)]
-		public int? Id { get; set; }
+		public int? Id { get; set; }		
 
 		[BindProperty(SupportsGet = true)]
 		public ProjectInfoSortOptions Sort { get; set; }
