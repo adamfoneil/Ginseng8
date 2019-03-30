@@ -1,16 +1,6 @@
-﻿@model Ginseng.Mvc.Pages.Work.ProjectsModel
+﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
 
-<form method="get" class="form-inline mb-3 justify-content-center">
-    <div class="form-row">        
-        <label class="mr-4">View:</label>
-
-        <label class="mr-4">Sort by:</label>
-        @Html.DropDownList("Sort", new SelectList(Html.GetEnumSelectList(typeof(ProjectInfoSortOptions)), "Value", "Text", Model.Sort), new { @class = "form-control mr-4", onchange = "this.form.submit();" })        
-
-        <label class="mr-4">Filter:</label>
-        @Html.DropDownList("Show", new SelectList(Html.GetEnumSelectList(typeof(ProjectInfoShowOptions)), "Value", "Text", Model.Show), new { @class = "form-control mr-4", onchange = "this.form.submit();" })
-    </div>
-</form>
+<partial name="Items/_ProjectViewControls" model="Model"/>
     
 @*crosstab columns*@
 <div class="row sticky-top">

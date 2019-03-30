@@ -1,0 +1,12 @@
+﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
+
+<partial name="Items/_ProjectViewControls" model="Model"/>
+
+<div class="row">
+    @foreach (var prj in Model.ProjectInfo)
+    {
+        <div class="col-3 p-2">
+            <partial name="Items/_ProjectLinkButton" model="prj"/>
+        </div>
+    }
+</div>

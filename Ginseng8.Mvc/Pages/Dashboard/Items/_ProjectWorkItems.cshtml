@@ -1,4 +1,4 @@
-﻿@model Ginseng.Mvc.Pages.Work.ProjectsModel
+﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
 
 <div id="accordion">
     @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
@@ -42,7 +42,6 @@
         }
     }
 </div>
- 
 
 @{ 
     var recentlyClosed = Model.ClosedItems[Model.SelectedProject.Id].Take(10);                                    

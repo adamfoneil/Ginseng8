@@ -6,7 +6,16 @@
 
 @if (!Model.Id.HasValue)
 {
-    <partial name="Items/_ProjectList" model="Model"/>
+    if (Model.View == ProjectViewOptions.Crosstab)
+    {
+        <partial name="Items/_ProjectCrosstab" model="Model"/>
+    }
+
+    if (Model.View == ProjectViewOptions.Cards)
+    {
+        <partial name="Items/_ProjectCards" model="Model"/>
+    }
+
     return;
 }
 
@@ -41,7 +50,9 @@ else
 @if (Model.Id.HasValue)
 {
     <p class="text-center">
-        <a asp-route-id="" class="btn btn-light btn-sm">Show All Projects</a>
+        <span class="small">All Projects:</span>
+        <a asp-route-id="" asp-route-view="0" class="btn btn-light btn-sm">Cards</a>
+        <a asp-route-id="" asp-route-view="1" class="btn btn-light btn-sm">Crosstab</a>
     </p>
 }
 

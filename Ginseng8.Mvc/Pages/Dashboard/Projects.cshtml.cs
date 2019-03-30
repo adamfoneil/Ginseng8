@@ -13,6 +13,12 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Dashboard
 {
+	public enum ProjectViewOptions
+	{
+		Cards,
+		Crosstab
+	}
+
 	[Authorize]
 	public class ProjectsModel : DashboardPageModel, IActive
 	{
@@ -25,7 +31,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		public Dictionary<int, Project> Projects { get; set; }
 
 		[BindProperty(SupportsGet = true)]
-		public int? Id { get; set; }		
+		public int? Id { get; set; }
+
+		[BindProperty(SupportsGet = true)]
+		public ProjectViewOptions View { get; set; } = ProjectViewOptions.Cards;
 
 		[BindProperty(SupportsGet = true)]
 		public ProjectInfoSortOptions Sort { get; set; }
@@ -105,30 +114,33 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			}
 			else
 			{
-				// crosstab rows
+				// crosstab rows (or card view)
 				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive, AppId = CurrentOrgUser.CurrentAppId, Show = Show }.ExecuteAsync(connection);
 				if (!ProjectInfo.Any()) ProjectInfo = new ProjectInfoResult[] { new ProjectInfoResult() { ApplicationId = CurrentOrgUser.CurrentAppId ?? 0 } };
 
-				// crosstab columns
-				var milestones = await new Milestones() { OrgId = OrgId, WithProjectsForAppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
-
-				// crosstab cells
-				var workItems = await new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
-				ProjectWorkItems = workItems.ToLookup(row => new ProjectDashboardCell(row.ProjectId, row.MilestoneDate ?? DateTime.MaxValue));
-
-				var workItemIds = workItems.Select(wi => wi.Id).ToArray();
-				var labels = await new LabelsInUse() { OrgId = OrgId, WorkItemIds = workItemIds }.ExecuteAsync(connection);
-				Labels = labels.ToLookup(row => row.WorkItemId);				
-
-				// there's only enough horizontal room for 3 milestones + optional placeholder for work items without a milestone
-				var milestoneList = milestones.Take(3).ToList();
-				// if there's any work item info without a milestone, then we need to append an empty milestone column to the crosstab
-				if (workItems.Any(lbl => !lbl.MilestoneDate.HasValue))
+				if (View == ProjectViewOptions.Crosstab)
 				{
-					milestoneList.Add(new Milestone() { Name = "Drag to a milestone", Date = DateTime.MaxValue, ShowDate = false });
+					// crosstab columns
+					var milestones = await new Milestones() { OrgId = OrgId, WithProjectsForAppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+
+					// crosstab cells
+					var workItems = await new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+					ProjectWorkItems = workItems.ToLookup(row => new ProjectDashboardCell(row.ProjectId, row.MilestoneDate ?? DateTime.MaxValue));
+
+					var workItemIds = workItems.Select(wi => wi.Id).ToArray();
+					var labels = await new LabelsInUse() { OrgId = OrgId, WorkItemIds = workItemIds }.ExecuteAsync(connection);
+					Labels = labels.ToLookup(row => row.WorkItemId);
+
+					// there's only enough horizontal room for 3 milestones + optional placeholder for work items without a milestone
+					var milestoneList = milestones.Take(3).ToList();
+					// if there's any work item info without a milestone, then we need to append an empty milestone column to the crosstab
+					if (workItems.Any(lbl => !lbl.MilestoneDate.HasValue))
+					{
+						milestoneList.Add(new Milestone() { Name = "Drag to a milestone", Date = DateTime.MaxValue, ShowDate = false });
+					}
+
+					MilestoneDates = milestoneList.ToLookup(row => row.Date);
 				}
-				
-				MilestoneDates = milestoneList.ToLookup(row => row.Date);
 			}
 		}
 
