@@ -15,6 +15,13 @@
             <a asp-page="/Dashboard/Projects" asp-route-id="@Model.WorkItem.ProjectId" title="Goto project" class="mr-2">
                 <i class="fas fa-chevron-double-right small"></i>
             </a>
+
+            @if (Model.WorkItem.DataModelId.HasValue)
+            {
+                <a asp-page="/Data/Index" asp-route-modelId="@Model.WorkItem.DataModelId">
+                    <i class="far fa-database small"></i>
+                </a>
+            }
         }
 
         <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">

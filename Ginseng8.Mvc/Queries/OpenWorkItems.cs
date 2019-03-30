@@ -20,8 +20,9 @@ namespace Ginseng.Mvc.Queries
 		public int ApplicationId { get; set; }
 		public string ApplicationName { get; set; }
 		public bool HasImpediment { get; set; }
-		public int ProjectId { get; set; }
+		public int ProjectId { get; set; }		
 		public string ProjectName { get; set; }
+		public int? DataModelId { get; set; }
 		public int MilestoneId { get; set; }
 		public string MilestoneName { get; set; }
 		public DateTime? MilestoneDate { get; set; }
@@ -90,6 +91,7 @@ namespace Ginseng.Mvc.Queries
 					WHEN 1 THEN [wi].[BusinessUserId]
 					WHEN 2 THEN [wi].[DeveloperUserId]
 				END, [wi].[DeveloperUserId], [wi].[BusinessUserId]) AS [AssignedUserId],
+				[p].[DataModelId],
                 [sz].[Name] AS [WorkItemSize],                                
                 [wi].[SizeId],
                 [wid].[EstimateHours] AS [DevEstimateHours],
@@ -101,7 +103,7 @@ namespace Ginseng.Mvc.Queries
                 [dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
-                LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
+                LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]				
                 LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
                 LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
                 LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
