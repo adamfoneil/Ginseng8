@@ -62,6 +62,40 @@ updateFields.forEach(function (e) {
     });
 });
 
+var projectUpdateFields = document.querySelectorAll('.projectUpdate');
+projectUpdateFields.forEach(function (ele) {
+    ele.addEventListener("change", function (ev) {
+        var frm = ev.target.form;
+        var projectId = frm.Id.value;
+        var loadingImg = document.getElementById('loading-project-' + projectId);
+        $(loadingImg).show();
+        var failImg = document.getElementById('update-failed-project-' + projectId);
+        try {
+            let formData = new FormData(frm);
+            fetch('/Update/Project', {
+                method: 'post',
+                body: new URLSearchParams(formData)
+            }).then(function (response) {
+                return response.json();
+            }).then(function (result) {
+                if (result.success) {
+                    var successImg = document.getElementById('update-success-project-' + projectId);
+                    $(successImg).show();
+                    $(successImg).fadeOut();
+                } else {
+                    $(failImg).show();
+                    failImg.setAttribute('title', result.message);
+                }
+            });
+        } catch (e) {
+            $(failImg).show();
+            failImg.setAttribute('title', e.message);
+        } finally {
+            $(loadingImg).hide();
+        }
+    });
+});
+
 var htmlEditLinks = document.querySelectorAll('.editHtml');
 htmlEditLinks.forEach(function (e) {
     e.addEventListener("click", function (e) {
@@ -69,6 +103,7 @@ htmlEditLinks.forEach(function (e) {
         var idPrefix = e.target.getAttribute('data-id-prefix');
         $("#" + idPrefix + '-view-' + id).hide();
         $("#" + idPrefix + '-edit-' + id).show();
+        $("#" + idPrefix + '-content-' + id).focus(); // doesn't work because this textarea is hidden by the editor
         $(e.target).hide();
     });
 });
@@ -287,7 +322,8 @@ function InitTableBodySortable() {
 
             sortableRows.each(function(index, row) {
                 rowsArray.push({
-                    id: $(row).attr('id'),
+                    id: Number($(row).attr('id').replace('row-', '')),
+                    index: index
                 });
             });
 
@@ -299,7 +335,17 @@ function InitTableBodySortable() {
 function tableBodySortableRowsReorder(rows) {
     console.log('rows data json', JSON.stringify(rows));
 
-    // fetch
+    fetch('/Update/PropertyOrder', {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": getAntiForgeryToken()
+        },
+        body: JSON.stringify(rows)
+    }).then(function (response) {
+        // success fail info?
+        return response.json();
+    });
 }
 
 function InitWorkItemSortable() {

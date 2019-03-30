@@ -14,8 +14,10 @@
 {
     @if (Model.SelectedProject != null)
     {
-        <h5>@Model.SelectedProject.Name</h5>
+        <h5>@Model.SelectedProject.Name</h5>        
+
         <div class="ml-3">
+            <partial name="Items/_ProjectControls" model="Model"/>
             @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.Id.Value, IdPrefix = "project", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody })
         </div>
     }

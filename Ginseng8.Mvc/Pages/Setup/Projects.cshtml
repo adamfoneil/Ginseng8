@@ -25,17 +25,20 @@
 <table class="table">
     <tr>
         <th>Project Name</th>        
+        <th>Active</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Projects)
     {
         <tr id="@grid.RowId(item)">
-            <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>             
+            <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.CheckBox(m => m.IsActive)</td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>                
+        <td>@grid.CheckBox(m => m.IsActive)</td>
         <td>@grid.Controls()</td>
     </tr>
 </table>

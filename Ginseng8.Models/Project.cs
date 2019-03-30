@@ -1,7 +1,11 @@
-﻿using Ginseng.Models.Conventions;
+﻿using Dapper;
+using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
+using Postulate.Base;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
@@ -29,10 +33,25 @@ namespace Ginseng.Models
 		[MaxLength(255)]
 		public string BranchUrl { get; set; }
 
+		[References(typeof(DataModel))]
+		public int? DataModelId { get; set; }
+
 		public string TextBody { get; set; }
 
 		public string HtmlBody { get; set; }
 
 		public bool IsActive { get; set; } = true;
+
+		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
+		{
+			if (action == SaveAction.Update) await SyncWorkItemsToProjectAsync(connection);
+		}
+
+		public async Task SyncWorkItemsToProjectAsync(IDbConnection connection)
+		{
+			await connection.ExecuteAsync(
+				@"UPDATE [dbo].[WorkItem] SET [ApplicationId]=@appId WHERE [ProjectId]=@projectId",
+				new { appId = ApplicationId, projectId = Id });
+		}
 	}
 }

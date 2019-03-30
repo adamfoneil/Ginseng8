@@ -1,14 +1,20 @@
-﻿using Ginseng.Models;
+﻿using Dapper;
+using Ginseng.Models;
 using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
+using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
+using Ginseng.Mvc.Models;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -47,6 +53,27 @@ namespace Ginseng.Mvc.Controllers
 					r => r.ApplicationId, r => r.ProjectId, r => r.MilestoneId, r => r.SizeId, r => r.CloseReasonId,
 					r => r.ModifiedBy, r => r.DateModified);
 				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
+
+		public async Task<JsonResult> Project(Project fields)
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var project = await _data.FindAsync<Project>(cn, fields.Id);
+					project.ApplicationId = fields.ApplicationId;
+					project.IsActive = fields.IsActive;
+					project.DataModelId = fields.DataModelId;
+					await cn.UpdateAsync(project, _data.CurrentUser, r => r.ApplicationId, r => r.IsActive, r => r.DataModelId);
+					await project.SyncWorkItemsToProjectAsync(cn);
+					return Json(new { success = true });
+				}
 			}
 			catch (Exception exc)
 			{
@@ -141,6 +168,41 @@ namespace Ginseng.Mvc.Controllers
 		{
 			var result = Regex.Match(input, @"\d+");
 			return Convert.ToInt32(result.Value);
+		}
+
+		/// <summary>
+		/// Sets model class property order after drag-drop operation in Pages/Data/Index
+		/// </summary>		
+		[HttpPost]
+		public async Task<JsonResult> PropertyOrder()
+		{
+			try
+			{
+				string body = await Request.ReadStringAsync();
+				var rawRata = JsonConvert.DeserializeObject<OrderedItem[]>(body);
+
+				// for compatibility with table type dbo.WorkItemPriority, I use the Item type, which
+				// was originally intended for setting WorkItem priority. I didn't want to create a new table type
+				// nor rework dbo.WorkItemPriority, so I simple project the incoming raw data to the Item type
+				var data = rawRata.Select(item => new Item() { Index = item.Index, Number = item.Id }); 
+
+				using (var cn = _data.GetConnection())
+				{
+					await cn.ExecuteAsync("dbo.UpdateModelPropertyOrder", new
+					{
+						userName = User.Identity.Name,
+						localTime = _data.CurrentUser.LocalTime,
+						orgId = _data.CurrentOrg.Id,
+						propertyOrder = data.AsTableValuedParameter("dbo.WorkItemPriority", "Number", "Index")
+					}, commandType: CommandType.StoredProcedure);
+				}
+
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
 		}
 	}
 }

@@ -13,6 +13,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("[ApplicationId]=@appId")]
 		public int? AppId { get; set; }
 
+		[Where("EXISTS(SELECT 1 FROM [dbo].[Application] [app] INNER JOIN [dbo].[DataModel] [dm] ON [app].[Id]=[dm].[ApplicationId] WHERE [app].[OrganizationId]=@orgId)")]
+		public int? OrgId { get; set; }
+
 		public bool IsActive { get; set; }
 	}
 }

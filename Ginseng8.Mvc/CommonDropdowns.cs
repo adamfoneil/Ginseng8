@@ -25,7 +25,13 @@ namespace Ginseng.Mvc
 		public IEnumerable<SelectListItem> Sizes { get; set; }
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }
 		public IEnumerable<SelectListItem> Milestones { get; set; }			
+		public ILookup<int, SelectListItem> AllDataModels { get; set; }
 		public IEnumerable<Label> Labels { get; set; }
+
+		public SelectList AppSelect(int? appId)
+		{
+			return new SelectList(Applications, "Value", "Text", appId);
+		}
 
 		public SelectList AppSelect(OpenWorkItemsResult item = null)
 		{
@@ -40,6 +46,11 @@ namespace Ginseng.Mvc
 		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
 		{
 			return new SelectList(AllProjects[item?.ApplicationId ?? 0], "Value", "Text", item?.ProjectId);
+		}
+
+		public SelectList DataModelSelect(int appId, int? dataModelId)
+		{
+			return new SelectList(AllDataModels[appId], "Value", "Text", dataModelId);
 		}
 
 		public SelectList SizeSelect(int? sizeId)
@@ -92,6 +103,8 @@ namespace Ginseng.Mvc
 			result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);
 			result.Milestones = await new MilestoneSelect() { OrgId = orgId }.ExecuteAsync(connection);
 			result.Labels = await new Labels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+			var allModels = await new DataModels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+			result.AllDataModels = allModels.ToLookup(row => row.ApplicationId, row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
 			return result;
 		}
 	}

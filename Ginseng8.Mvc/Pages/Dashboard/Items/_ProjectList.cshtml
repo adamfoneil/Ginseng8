@@ -47,8 +47,7 @@
     {
         <div class="row">
             <div class="col-@Model.CrosstabRowHeadingGridCols()">
-                <a asp-route-id="@prj.Id" class="btn @((prj.TotalWorkItems > 0) ? "btn-info" : "btn-light")">@prj.Name</a>
-                <br/><span class="text-muted small">@prj.TotalWorkItems work items | @Html.FormatValue(prj.PercentComplete, "{0:P0}") complete</span>
+                <partial name="Dashboard/Items/_ProjectLinkButton" model="prj"/>
             </div>        
             @foreach (var ms in Model.MilestoneDates)
             {
@@ -57,8 +56,10 @@
                         var items = Model.ProjectWorkItems[new ProjectDashboardCell(prj.Id, ms.Key)];
                     }
                     @foreach (var wi in items)
-                    {                                                
-                        <partial name="Dashboard/Items/_ItemNumber" model="wi"/>                        
+                    {
+                        <span class="ui-draggable">
+                            <partial name="Dashboard/Items/_ItemNumber" model="wi"/>
+                        </span>                        
                         <span id="work-item-title-@wi.Number" style="display:none">
                             <span>@wi.Title</span>
                             @foreach (var lbl in Model.Labels[wi.Id])

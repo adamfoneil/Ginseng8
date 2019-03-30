@@ -97,6 +97,9 @@ namespace Ginseng.Mvc.Queries
 		[Case(ProjectInfoShowOptions.NoOpenItems, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
 		public ProjectInfoShowOptions Show { get; set; } = ProjectInfoShowOptions.All;
 
+		[Phrase("p].[Name", "p].[TextBody")]
+		public string TitleAndBodySearch { get; set; }
+
 		public bool IsActive { get; set; }
 
 		private static Dictionary<ProjectInfoSortOptions, string> SortOptions
