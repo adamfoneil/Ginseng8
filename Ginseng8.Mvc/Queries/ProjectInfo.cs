@@ -2,6 +2,7 @@
 using Postulate.Base.Attributes;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -31,15 +32,25 @@ namespace Ginseng.Mvc.Queries
 	public enum ProjectInfoSortOptions
 	{
 		Name,
+
+		[Description("Open work items")]
 		OpenWorkItems,
+
+		[Description("Total work items")]
 		TotalWorkItems,
+
+		[Description("Percent complete")]
 		PercentComplete
 	}
 
 	public enum ProjectInfoShowOptions
 	{
 		All,
+
+		[Description("Has open items")]
 		HasOpenItems,
+
+		[Description("Has no items")]
 		NoOpenItems
 	}
 
