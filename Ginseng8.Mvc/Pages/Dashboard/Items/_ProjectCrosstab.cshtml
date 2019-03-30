@@ -41,7 +41,7 @@
             </div>        
             @foreach (var ms in Model.MilestoneDates)
             {
-                <div class="col-@Model.CrosstabColumnHeadingGridCols()">
+                <div class="col-@Model.CrosstabColumnHeadingGridCols()" data-milestone-id="@ms.Key">
                     @{ 
                         var items = Model.ProjectWorkItems[new ProjectDashboardCell(prj.Id, ms.Key)];
                     }
