@@ -1,7 +1,11 @@
-﻿using Ginseng.Models.Conventions;
+﻿using Dapper;
+using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
@@ -27,5 +31,13 @@ namespace Ginseng.Models
 		public string HtmlBody { get; set; }
 
 		public string TextBody { get; set; }
+
+		[NotMapped]
+		public int OrganizationId { get; set; }
+
+		public async Task SetOrganizationIdAsync(IDbConnection connection)
+		{
+			OrganizationId = await WorkItem.GetOrgIdAsync(connection, WorkItemId);
+		}
 	}
 }

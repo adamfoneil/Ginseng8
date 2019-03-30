@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
 using System.Threading.Tasks;
 using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
@@ -56,6 +57,9 @@ namespace Ginseng.Models
 
 		public string TextBody { get; set; }
 
+		[NotMapped]
+		public int OrganizationId { get; set; }
+
 		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
 		{
 			base.BeforeSave(connection, action, user);
@@ -76,6 +80,11 @@ namespace Ginseng.Models
 
 				await connection.SaveAsync(workItem, _user);
 			}			
+		}
+
+		public async Task SetOrganizationIdAsync(IDbConnection connection)
+		{
+			OrganizationId = await WorkItem.GetOrgIdAsync(connection, WorkItemId);
 		}
 	}
 }

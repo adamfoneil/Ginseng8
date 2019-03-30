@@ -3,7 +3,10 @@ using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
+using Postulate.Base.Models;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
@@ -14,7 +17,7 @@ namespace Ginseng.Models
 	/// User story, development task, bug, or feature request
 	/// </summary>
 	[TrackChanges(IgnoreProperties = "ModifiedBy;DateModified")]
-	public class WorkItem : BaseTable, IBody
+	public class WorkItem : BaseTable, IBody, ITrackedRecord
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -69,6 +72,8 @@ namespace Ginseng.Models
 		[References(typeof(CloseReason))]
 		public int? CloseReasonId { get; set; }
 
+		public bool UseDefaultHistoryTable => true;
+
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
 		{
 			await Task.CompletedTask;
@@ -98,6 +103,20 @@ namespace Ginseng.Models
 			{
 				throw new InvalidOperationException("Can't set the WorkItem.Number more than once.");
 			}
+		}
+
+		public void TrackChanges(IDbConnection connection, int version, IEnumerable<PropertyChange> changes, IUser user)
+		{
+			throw new NotImplementedException();
+		}
+
+		/// <summary>
+		/// For event logging purposes, we need to get the orgId associated with an IFeedItem (unless it's already part of the item itself, e.g. WorkItem).
+		/// This static method provides a standard way to get this in IFeedItem implementations when a workItemId is already known
+		/// </summary>
+		public static async Task<int> GetOrgIdAsync(IDbConnection connection, int workItemId)
+		{
+			return await connection.QuerySingleAsync<int>("SELECT [OrganizationId] FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
 		}
 	}
 }
