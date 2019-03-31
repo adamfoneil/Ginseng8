@@ -21,6 +21,8 @@ namespace Ginseng.Models
 	[TrackChanges(IgnoreProperties = "ModifiedBy;DateModified")]
 	public class WorkItem : BaseTable, IBody, ITrackedRecord
 	{
+		public const string IconClass = "far fa-plus-hexagon";
+
 		[References(typeof(Organization))]
 		[PrimaryKey]
 		[ColumnAccess(SaveAction.Insert)]
@@ -89,12 +91,13 @@ namespace Ginseng.Models
 			{
 				await EventLog.WriteAsync(connection, new EventLog()
 				{
+					WorkItemId = Id,
 					OrganizationId = OrganizationId,
 					ApplicationId = ApplicationId,
 					EventId = SystemEvent.WorkItemCreated,
 					HtmlBody = Title,
 					TextBody = Title,
-					IconClass = "far fa-plus-hexagon"
+					IconClass = IconClass
 				}, user);
 			}
 		}
@@ -131,6 +134,7 @@ namespace Ginseng.Models
 				string text = (CloseReasonId.HasValue) ? $"Work item {Number} was closed" : $"Work item {Number} was re-opened";
 				await EventLog.WriteAsync(connection, new EventLog()
 				{
+					WorkItemId = Id,
 					OrganizationId = OrganizationId,
 					ApplicationId = ApplicationId,
 					EventId = (CloseReasonId.HasValue) ? SystemEvent.WorkItemClosed : SystemEvent.WorkItemOpened,
@@ -138,7 +142,7 @@ namespace Ginseng.Models
 					IconColor = (CloseReasonId.HasValue) ? "green" : "orange",
 					HtmlBody = text,
 					TextBody = text
-				});
+				}, user);
 			}
 
 			if (changes.Include(nameof(MilestoneId)))
