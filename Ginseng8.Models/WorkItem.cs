@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Ginseng.Models.Conventions;
+using Ginseng.Models.Extensions;
 using Ginseng.Models.Interfaces;
 using Ginseng.Models.Internal;
 using Postulate.Base;
@@ -124,18 +125,18 @@ namespace Ginseng.Models
 
 		public void TrackChanges(IDbConnection connection, int version, IEnumerable<PropertyChange> changes, IUser user)
 		{
-			// do nothing
+			// do nothing, we're using only async crud methods
 		}
 
 		public async Task TrackChangesAsync(IDbConnection connection, int version, IEnumerable<PropertyChange> changes, IUser user)
 		{
-			if (changes.Any(c => c.PropertyName.Equals(nameof(CloseReasonId))))
+			if (changes.Include(nameof(CloseReasonId)))
 			{
 				EventId = (CloseReasonId.HasValue) ? SystemEvent.WorkItemClosed : SystemEvent.WorkItemOpened;
+				IconClass = (EventId == SystemEvent.WorkItemClosed) ? "fas fa-clipboard-check" : "fas fa-play";
 				await EventLog.LogAsync(connection, this);
 			}
 		}
-
 
 		/// <summary>
 		/// For event logging purposes, we need to get the orgId associated with an IFeedItem (unless it's already part of the item itself, e.g. WorkItem).
