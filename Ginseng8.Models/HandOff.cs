@@ -37,7 +37,7 @@ namespace Ginseng.Models
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }
 
-		public string IconClass => (IsForward) ? ForwardHandOff : BackwardHandOff;
+		public string IconClass => GetIconClass(IsForward);
 
 		[References(typeof(UserProfile))]
 		public int FromUserId { get; set; }
@@ -63,7 +63,7 @@ namespace Ginseng.Models
 			_user = user;
 		}
 
-		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
+		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
 			if (action == SaveAction.Insert)
 			{
@@ -77,10 +77,11 @@ namespace Ginseng.Models
 
 				await connection.SaveAsync(workItem, _user);
 
-				await EventLog.WriteAsync(connection, new EventLog(WorkItemId)
+				await EventLog.WriteAsync(connection, new EventLog(WorkItemId, user)
 				{
 					EventId = SystemEvent.HandOff,
-					IconClass = IconClass
+					IconClass = GetIconClass(IsForward),
+					IconColor = GetColor(IsForward)
 				});
 			}			
 		}

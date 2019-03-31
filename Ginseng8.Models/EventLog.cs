@@ -1,4 +1,5 @@
 ﻿using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -20,9 +21,11 @@ namespace Ginseng.Models
 		/// <summary>
 		/// Use this constructor to ensure that App and Org Id are set during <see cref="WriteAsync(IDbConnection, EventLog)"/>
 		/// </summary>		
-		public EventLog(int workItemId)
+		public EventLog(int workItemId, IUser user)
 		{
 			WorkItemId = workItemId;
+			DateCreated = user.LocalTime;
+			CreatedBy = user.UserName;
 		}
 
 		public int Id { get; set; }
@@ -41,6 +44,9 @@ namespace Ginseng.Models
 
 		[MaxLength(50)]
 		public string IconClass { get; set; }
+
+		[MaxLength(50)]
+		public string IconColor { get; set; }
 
 		/// <summary>
 		/// Used with email and Dashboard/Feed display
@@ -61,7 +67,16 @@ namespace Ginseng.Models
 
 		public static async Task WriteAsync(IDbConnection connection, EventLog eventLog)
 		{
-			await connection.PlainInsertAsync(eventLog, tableName: "dbo.EventLog");
+			// the app and org might not be readily available in the various model classes that trigger events,
+			// so I provide a little helper for getting those during log write
+			if (eventLog.OrganizationId == 0 || eventLog.ApplicationId == 0)
+			{
+				var orgAndApp = await WorkItem.GetOrgAndAppIdAsync(connection, eventLog.WorkItemId);
+				eventLog.OrganizationId = orgAndApp.OrganizationId;
+				eventLog.ApplicationId = orgAndApp.ApplicationId;
+			}
+
+			await connection.PlainInsertAsync(eventLog);
 
 			// todo: add message to Azure queue to process email and text notifications
 		}		

@@ -2,6 +2,7 @@
 using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -31,7 +32,7 @@ namespace Ginseng.Models
 
 		public bool IsActive { get; set; } = true;
 
-		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
+		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
 			if (action == SaveAction.Insert)
 			{				

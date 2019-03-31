@@ -10,9 +10,7 @@ using Postulate.Base.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -78,8 +76,8 @@ namespace Ginseng.Models
 
 		public bool UseDefaultHistoryTable => true;
 
-		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
-		{			
+		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
+		{
 			// todo: label parsing from title
 			/*
 			if (action == SaveAction.Insert)
@@ -88,7 +86,7 @@ namespace Ginseng.Models
 			}*/
 
 			if (action == SaveAction.Insert)
-			{				
+			{
 				await EventLog.WriteAsync(connection, new EventLog()
 				{
 					EventId = SystemEvent.WorkItemCreated
@@ -137,17 +135,11 @@ namespace Ginseng.Models
 
 		/// <summary>
 		/// For event logging purposes, we need to get the orgId associated with an IFeedItem (unless it's already part of the item itself, e.g. WorkItem).
-		/// This static method provides a standard way to get this in IFeedItem implementations when a workItemId is already known
+		/// This static method provides a standard way to get this when the workItemId is already known
 		/// </summary>
 		internal static async Task<OrgAndApp> GetOrgAndAppIdAsync(IDbConnection connection, int workItemId)
 		{
 			return await connection.QuerySingleAsync<OrgAndApp>("SELECT [OrganizationId], [ApplicationId] FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
-		}
-
-		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
-		{
-			// org and app Id are already set, so nothing to do
-			await Task.CompletedTask;			
 		}
 	}
 }

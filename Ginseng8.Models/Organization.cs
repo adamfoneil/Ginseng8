@@ -55,9 +55,9 @@ namespace Ginseng.Models
 			}
 		}
 
-		public override void AfterSave(IDbConnection connection, SaveAction action)
+		public override void AfterSave(IDbConnection connection, SaveAction action, IUser user)
 		{
-			base.AfterSave(connection, action);
+			base.AfterSave(connection, action, user);
 
 			if (action == SaveAction.Insert)
 			{

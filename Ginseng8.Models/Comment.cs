@@ -15,12 +15,16 @@ namespace Ginseng.Models
 	/// </summary>
 	public class Comment : BaseTable, IBody
 	{
-		private IUser _user;
-
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }		
 
 		public bool? IsImpediment { get; set; }
+
+		public string IconClass => (!IsImpediment.HasValue) ?
+			"far fa-comment" :
+				(IsImpediment.Value) ?
+					"far fa-comment-times" :
+					"far fa-comment-check";
 
 		public string TextBody { get; set; }
 
@@ -44,15 +48,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public SystemEvent EventId { get; set; }
 
-		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
+		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
-			base.BeforeSave(connection, action, user);
-			_user = user;
-		}
-
-		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
-		{
-			await base.AfterSaveAsync(connection, action);
+			await base.AfterSaveAsync(connection, action, user);
 
 			if (action == SaveAction.Insert)
 			{
@@ -60,17 +58,16 @@ namespace Ginseng.Models
 				{
 					var workItem = await connection.FindAsync<WorkItem>(WorkItemId);
 					workItem.HasImpediment = IsImpediment.Value;
-					await connection.UpdateAsync(workItem, _user, r => r.HasImpediment);
+					await connection.UpdateAsync(workItem, user, r => r.HasImpediment);
 				}
-								
-				await EventLog.WriteAsync(connection, new EventLog(WorkItemId)
+
+				await EventLog.WriteAsync(connection, new EventLog(WorkItemId, user)
 				{
 					EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded,
-					IconClass = (!IsImpediment.HasValue) ?
-						"far fa-comment" :
-							(IsImpediment.Value) ?
-								"far fa-comment-times" :
-								"far fa-comment-check"
+					IconClass = IconClass,
+					IconColor = (IsImpediment ?? false) ? "red" : "auto",
+					HtmlBody = HtmlBody,
+					TextBody = TextBody
 				});
 			}
 		}

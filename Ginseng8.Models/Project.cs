@@ -3,6 +3,7 @@ using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ namespace Ginseng.Models
 
 		public bool IsActive { get; set; } = true;
 
-		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
+		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
 			if (action == SaveAction.Update) await SyncWorkItemsToProjectAsync(connection);
 		}
