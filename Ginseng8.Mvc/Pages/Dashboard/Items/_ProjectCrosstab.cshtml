@@ -35,22 +35,22 @@
     <h4>@appGrp.First().ApplicationName</h4>
     @foreach (var prj in appGrp)
     {
-        <div class="row js-project-crosstab" data-project-id="@prj.Id">
+        <div class="row">
             <div class="col-@Model.CrosstabRowHeadingGridCols()">
                 <partial name="Dashboard/Items/_ProjectLinkButton" model="prj"/>
             </div>        
             @foreach (var ms in Model.MilestoneDates)
             {
-                <div class="col-@Model.CrosstabColumnHeadingGridCols()" data-milestone-id="@ms.Key">
+                <div class="col-@Model.CrosstabColumnHeadingGridCols()">
                     @{ 
                         var items = Model.ProjectWorkItems[new ProjectDashboardCell(prj.Id, ms.Key)];
                     }
                     @foreach (var msName in ms)
                     {
-                        <div class="milestone-work-items-sortable" data-milestone-name="@msName.Name">
+                        <div class="milestone-work-items-droppable" data-milestone-date="@ms.Key" data-project-id="@prj.Id">
                             @foreach (var wi in items)
                             {
-                                <span class="js-item-sortable">
+                                <span class="js-item-draggable">
                                     <partial name="Dashboard/Items/_ItemNumber" model="wi"/>
                                 </span>
                                 <span id="work-item-title-@wi.Number" style="display:none">

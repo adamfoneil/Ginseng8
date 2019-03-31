@@ -85,14 +85,14 @@ body {
   display: none;
 }
 
-.milestone-work-items-sortable {
+.milestone-work-items-droppable {
   min-height: 24px;
-}
-.milestone-work-items-sortable .ui-sortable-placeholder {
-  display: inline-block;
-  vertical-align: middle;
 }
 
 .dragging .ui-tooltip {
   display: none !important;
+}
+
+.ui-draggable-handle {
+  z-index: 1000;
 }

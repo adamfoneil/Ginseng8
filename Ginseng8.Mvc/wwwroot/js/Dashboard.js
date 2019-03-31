@@ -301,7 +301,8 @@ $(document).ready(function () {
     $('.nav-tabs li:first-child a').tab('show');
 
     InitWorkItemSortable();
-    InitProjectCrosstabWorkItemsSortable();
+    initDraggableItems();
+    InitProjectCrosstabWorkItemDroppable();
     InitTableBodySortable();
 });
 
@@ -448,50 +449,47 @@ function TaskReorder(data) {
     });
 }
 
-function InitProjectCrosstabWorkItemsSortable() {
-    $('.js-project-crosstab').each(function(index, project) {
-        var projectId = $(project).data('project-id');
-        $(project).find('.milestone-work-items-sortable').sortable({
-            items: '.js-item-sortable',
-            connectWith: '.js-project-crosstab[data-project-id=' + projectId + ']' + ' .milestone-work-items-sortable',
-            placeholder: 'ui-state-highlight',
-            start: function(event, ui) {
-                sortableStart(event, ui);
-                $('.ui-sortable-placeholder').outerWidth($(ui.item).outerWidth()); // update height of placeholder to current item height
-            },
-            stop: sortableStop,
-            update: function(event, ui) {
-                if (ui.sender == null) {
-                    console.log('\n\n');
-                    updateProjectCrosstabMilestoneWorkItemsSortable(
-                        $(ui.item).parents('.milestone-work-items-sortable')
-                    );
-                } else {
-                    // when an item from a connected sortable list has been dropped into another list
-                    updateProjectCrosstabMilestoneWorkItemsSortable(
-                        $(ui.sender)
-                    );
-                }
-            }
-        });
+function initDraggableItems() {
+    $('.js-item-draggable').draggable({
+        revert: 'invalid',
+        start: sortableStart,
+        stop: sortableStop
     });
 }
 
-function updateProjectCrosstabMilestoneWorkItemsSortable(sortableList) {
-    console.group('milestoneName:', sortableList.data('milestone-name'));
+function InitProjectCrosstabWorkItemDroppable() {
+    $('.milestone-work-items-droppable').droppable({
+        accept: function(draggable) {
+            var draggableMilestone = $(draggable).parents('.milestone-work-items-droppable')[0];
+            if ($(draggableMilestone).data('project-id') == $(this).data('project-id')) {
+                return draggableMilestone != this
+            }
+        },
+        classes: {
+            'ui-droppable-active': 'ui-state-active',
+            "ui-droppable-hover": "ui-state-highlight"
+        },
+        drop: function( event, ui ) {
+            var element = $(ui.draggable).clone();
+            element.css({
+                position: 'static',
+                top: 'auto',
+                left: 'auto'
+            });
+            $(ui.draggable).remove();
+            $(this).append(element);
+            initDraggableItems();
 
-    // js-project-crosstab
-
-    var workItemsOrderArray = [];
-    sortableList.find('.js-item-sortable').each(function(index, item) {
-        workItemsOrderArray.push({
-            number: $(item).find('.work-item-number').data('number'),
-            index: index
-        });
+            projectCrosstabWorkItemUpdate({
+                number: element.find('.work-item-number').data('number'),
+                milestoneDate: $(this).data('milestone-date')
+            });
+        }
     });
+}
 
-    console.log(JSON.stringify(workItemsOrderArray));
-    console.groupEnd();
+function projectCrosstabWorkItemUpdate(data) {
+    console.log('work item update:', JSON.stringify(data));
 }
 
 function getFormData(object) {
