@@ -6,8 +6,9 @@ namespace Ginseng.Models.Interfaces
 {
 	public interface IFeedItem
 	{
-		Task SetOrganizationIdAsync(IDbConnection connection);
+		Task SetOrgAndAppIdAsync(IDbConnection connection);
 		int OrganizationId { get; set; }
+		int ApplicationId { get; set; }
 		int WorkItemId { get; set; }
 		string IconClass { get; }
 		string HtmlBody { get; }

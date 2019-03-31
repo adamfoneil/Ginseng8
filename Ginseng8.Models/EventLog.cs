@@ -20,6 +20,9 @@ namespace Ginseng.Models
 		[References(typeof(Organization))]
 		public int OrganizationId { get; set; }
 
+		[References(typeof(Application))]
+		public int ApplicationId { get; set; }
+
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }
 
@@ -37,13 +40,13 @@ namespace Ginseng.Models
 		{
 			if (item.OrganizationId == 0)
 			{
-				await item.SetOrganizationIdAsync(connection);
+				await item.SetOrgAndAppIdAsync(connection);
 			}
 
 			await connection.SaveAsync(item);
 		}
 
-		public Task SetOrganizationIdAsync(IDbConnection connection)
+		public Task SetOrgAndAppIdAsync(IDbConnection connection)
 		{
 			// not needed functionally, although we must have a method for interface compliance
 			throw new NotImplementedException();

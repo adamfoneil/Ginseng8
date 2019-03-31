@@ -35,9 +35,14 @@ namespace Ginseng.Models
 		[NotMapped]
 		public int OrganizationId { get; set; }
 
-		public async Task SetOrganizationIdAsync(IDbConnection connection)
+		[NotMapped]
+		public int ApplicationId { get; set; }
+
+		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
 		{
-			OrganizationId = await WorkItem.GetOrgIdAsync(connection, WorkItemId);
+			(int, int) result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
+			ApplicationId = result.Item1;
+			OrganizationId = result.Item2;
 		}
 	}
 }

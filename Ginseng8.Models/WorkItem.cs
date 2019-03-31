@@ -114,9 +114,9 @@ namespace Ginseng.Models
 		/// For event logging purposes, we need to get the orgId associated with an IFeedItem (unless it's already part of the item itself, e.g. WorkItem).
 		/// This static method provides a standard way to get this in IFeedItem implementations when a workItemId is already known
 		/// </summary>
-		public static async Task<int> GetOrgIdAsync(IDbConnection connection, int workItemId)
+		public static async Task<(int, int)> GetOrgAndAppIdAsync(IDbConnection connection, int workItemId)
 		{
-			return await connection.QuerySingleAsync<int>("SELECT [OrganizationId] FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
+			return await connection.QuerySingleAsync<(int, int)>("SELECT [OrganizationId], [ApplicationId], FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
 		}
 	}
 }

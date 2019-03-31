@@ -60,6 +60,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public int OrganizationId { get; set; }
 
+		[NotMapped]
+		public int ApplicationId { get; set; }
+
 		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
 		{
 			base.BeforeSave(connection, action, user);
@@ -82,9 +85,11 @@ namespace Ginseng.Models
 			}			
 		}
 
-		public async Task SetOrganizationIdAsync(IDbConnection connection)
+		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
 		{
-			OrganizationId = await WorkItem.GetOrgIdAsync(connection, WorkItemId);
+			(int, int) result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
+			OrganizationId = result.Item1;
+			ApplicationId = result.Item2;
 		}
 	}
 }

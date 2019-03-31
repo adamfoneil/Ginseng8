@@ -13,6 +13,12 @@ namespace Ginseng.Models
 		[PrimaryKey]
 		public int OrganizationId { get; set; }
 
+		/// <summary>
+		/// 0 = all applications
+		/// </summary>
+		[PrimaryKey]
+		public int ApplicationId { get; set; }
+
 		[References(typeof(UserProfile))]
 		[PrimaryKey]
 		public int UserId { get; set; }
