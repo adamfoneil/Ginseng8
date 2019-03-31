@@ -38,6 +38,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public int ApplicationId { get; set; }
 
+		[NotMapped]
+		public SystemEvent EventId { get; set; }
+
 		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
 		{
 			(int, int) result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);

@@ -81,6 +81,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public string IconClass { get; set; }
 
+		[NotMapped]
+		public SystemEvent EventId { get; set; }
+
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
 		{			
 			// todo: label parsing from title

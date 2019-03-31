@@ -7,6 +7,26 @@ using System.Data;
 
 namespace Ginseng.Models
 {
+	/// <summary>
+	/// I looked at using T4 to generate this, and have done so in the past,
+	/// but it's way too complicated
+	/// </summary>
+	public enum SystemEvent
+	{
+		WorkItemCreated = 1,
+		WorkItemClosed = 2,
+		MilestoneChanged = 3,
+		ProjectChanged = 4,
+		CommentAdded = 5,
+		ImpedimentAdded = 6,
+		PriorityChanged = 7,
+		HandOff = 8,
+		WorkItemFieldChanged = 9,
+		MilestoneDateChanged = 10,
+		EstimateChanged = 11,
+		ProjectAdded = 12
+	}
+
 	public class Event : AppTable
 	{
 		[MaxLength(50)]
@@ -31,5 +51,5 @@ namespace Ginseng.Models
 				new Event() { Name = "Project Added" }
 			}.ToDataTable(new SqlServerIntegrator(), excludeIdentity: true);
 		}
-	}	
+	}
 }

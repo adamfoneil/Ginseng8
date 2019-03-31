@@ -63,6 +63,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public int ApplicationId { get; set; }
 
+		[NotMapped]
+		public SystemEvent EventId { get; set; } = SystemEvent.HandOff;
+
 		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
 		{
 			base.BeforeSave(connection, action, user);
@@ -82,6 +85,8 @@ namespace Ginseng.Models
 				Responsibility.ClearWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem);
 
 				await connection.SaveAsync(workItem, _user);
+
+				await EventLog.LogAsync(connection, this);
 			}			
 		}
 

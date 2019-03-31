@@ -47,6 +47,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public int ApplicationId { get; set; }
 
+		[NotMapped]
+		public SystemEvent EventId { get; set; }
+
 		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
 		{
 			base.BeforeSave(connection, action, user);
@@ -65,6 +68,9 @@ namespace Ginseng.Models
 					workItem.HasImpediment = IsImpediment.Value;
 					await connection.UpdateAsync(workItem, _user, r => r.HasImpediment);
 				}
+
+				EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded;
+				await EventLog.LogAsync(connection, this);
 			}
 		}
 

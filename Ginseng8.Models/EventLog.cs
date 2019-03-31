@@ -18,7 +18,7 @@ namespace Ginseng.Models
 		public int Id { get; set; }
 
 		[References(typeof(Event))]
-		public int EventId { get; set; }
+		public SystemEvent EventId { get; set; }
 
 		[References(typeof(Organization))]
 		public int OrganizationId { get; set; }
@@ -39,7 +39,7 @@ namespace Ginseng.Models
 
 		public DateTime DateCreated { get; set; }
 
-		public static async Task LogAsync(IDbConnection connection, int eventId, IFeedItem item)
+		public static async Task LogAsync(IDbConnection connection, IFeedItem item)
 		{			
 			if (item.OrganizationId == 0 || item.ApplicationId == 0)
 			{
