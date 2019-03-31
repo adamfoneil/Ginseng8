@@ -17,6 +17,9 @@ namespace Ginseng.Models
 	{
 		public int Id { get; set; }
 
+		[References(typeof(Event))]
+		public int EventId { get; set; }
+
 		[References(typeof(Organization))]
 		public int OrganizationId { get; set; }
 
@@ -36,9 +39,9 @@ namespace Ginseng.Models
 
 		public DateTime DateCreated { get; set; }
 
-		public static async Task Log(IDbConnection connection, IFeedItem item)
-		{
-			if (item.OrganizationId == 0)
+		public static async Task LogAsync(IDbConnection connection, int eventId, IFeedItem item)
+		{			
+			if (item.OrganizationId == 0 || item.ApplicationId == 0)
 			{
 				await item.SetOrgAndAppIdAsync(connection);
 			}
@@ -48,7 +51,7 @@ namespace Ginseng.Models
 
 		public Task SetOrgAndAppIdAsync(IDbConnection connection)
 		{
-			// not needed functionally, although we must have a method for interface compliance
+			// not needed functionally, although we must have a method here to fit the interface
 			throw new NotImplementedException();
 		}
 	}

@@ -8,6 +8,7 @@ using Postulate.Base.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -17,7 +18,7 @@ namespace Ginseng.Models
 	/// User story, development task, bug, or feature request
 	/// </summary>
 	[TrackChanges(IgnoreProperties = "ModifiedBy;DateModified")]
-	public class WorkItem : BaseTable, IBody, ITrackedRecord
+	public class WorkItem : BaseTable, IBody, ITrackedRecord, IFeedItem
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -74,15 +75,25 @@ namespace Ginseng.Models
 
 		public bool UseDefaultHistoryTable => true;
 
+		[NotMapped]
+		public int WorkItemId { get { return Id; } set { Id = value; } }
+
+		[NotMapped]
+		public string IconClass { get; set; }
+
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
-		{
-			await Task.CompletedTask;
+		{			
 			// todo: label parsing from title
 			/*
 			if (action == SaveAction.Insert)
 			{
 				int[] labelIds = await ParseLabelsAsync(connection, Title);
 			}*/
+
+			if (action == SaveAction.Insert)
+			{
+				//await EventLog.LogAsync(connection, this);
+			}
 		}
 
 		private Task<int[]> ParseLabelsAsync(IDbConnection connection, string title)
@@ -117,6 +128,12 @@ namespace Ginseng.Models
 		public static async Task<(int, int)> GetOrgAndAppIdAsync(IDbConnection connection, int workItemId)
 		{
 			return await connection.QuerySingleAsync<(int, int)>("SELECT [OrganizationId], [ApplicationId], FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
+		}
+
+		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
+		{
+			// org and app Id are already set, so nothing to do
+			await Task.CompletedTask;			
 		}
 	}
 }
