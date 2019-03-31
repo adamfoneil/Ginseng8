@@ -45,8 +45,7 @@ namespace Ginseng.Models
 			{
 				await item.SetOrgAndAppIdAsync(connection);
 			}
-
-			// seems to be generating a really weird statement INSERT INTO [dbo].[EventLog] ([WorkItemId]) VALUES (@WorkItemId);
+			
 			await connection.PlainInsertAsync(item, tableName: "dbo.EventLog");
 		}
 
