@@ -89,8 +89,13 @@ namespace Ginseng.Models
 			{
 				await EventLog.WriteAsync(connection, new EventLog()
 				{
-					EventId = SystemEvent.WorkItemCreated
-				});
+					OrganizationId = OrganizationId,
+					ApplicationId = ApplicationId,
+					EventId = SystemEvent.WorkItemCreated,
+					HtmlBody = Title,
+					TextBody = Title,
+					IconClass = "far fa-plus-hexagon"
+				}, user);
 			}
 		}
 
@@ -123,13 +128,27 @@ namespace Ginseng.Models
 		{
 			if (changes.Include(nameof(CloseReasonId)))
 			{
+				string text = (CloseReasonId.HasValue) ? $"Work item {Number} was closed" : $"Work item {Number} was re-opened";
 				await EventLog.WriteAsync(connection, new EventLog()
 				{
 					OrganizationId = OrganizationId,
 					ApplicationId = ApplicationId,
 					EventId = (CloseReasonId.HasValue) ? SystemEvent.WorkItemClosed : SystemEvent.WorkItemOpened,
-					IconClass = (CloseReasonId.HasValue) ? "fas fa-clipboard-check" : "fas fa-play"
+					IconClass = (CloseReasonId.HasValue) ? "fas fa-clipboard-check" : "fas fa-play",
+					IconColor = (CloseReasonId.HasValue) ? "green" : "orange",
+					HtmlBody = text,
+					TextBody = text
 				});
+			}
+
+			if (changes.Include(nameof(MilestoneId)))
+			{
+				// todo: log milestone change event
+			}
+
+			if (changes.Include(nameof(ProjectId)))
+			{
+				// todo: log project change event
 			}
 		}
 

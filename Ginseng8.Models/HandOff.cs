@@ -18,12 +18,6 @@ namespace Ginseng.Models
 		public const string ForwardHandOff = "fas fa-chevron-circle-right";
 		public const string BackwardHandOff = "far fa-chevron-circle-left";
 
-		/// <summary>
-		/// workaround for Postulate limitation 
-		/// https://github.com/adamosoftware/Postulate/issues/15
-		/// </summary>
-		private IUser _user;
-
 		public static string GetIconClass(bool isForward)
 		{
 			return (isForward) ? ForwardHandOff : BackwardHandOff;
@@ -57,12 +51,6 @@ namespace Ginseng.Models
 
 		public string TextBody { get; set; }
 
-		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
-		{
-			base.BeforeSave(connection, action, user);
-			_user = user;
-		}
-
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
 			if (action == SaveAction.Insert)
@@ -75,13 +63,19 @@ namespace Ginseng.Models
 				var activity = await connection.FindAsync<Activity>(ToActivityId);
 				Responsibility.ClearWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem);
 
-				await connection.SaveAsync(workItem, _user);
+				await connection.SaveAsync(workItem, user);
+
+				var fromActivity = await connection.FindAsync<Activity>(FromActivityId);
+				string displayUser = await OrganizationUser.GetUserDisplayNameAsync(connection, workItem.OrganizationId, FromUserId, user);				
+				string text = $"{displayUser} handed off work item {workItem.Number} from {fromActivity.Name} to {activity.Name}";
 
 				await EventLog.WriteAsync(connection, new EventLog(WorkItemId, user)
 				{
 					EventId = SystemEvent.HandOff,
 					IconClass = GetIconClass(IsForward),
-					IconColor = GetColor(IsForward)
+					IconColor = GetColor(IsForward),
+					HtmlBody = text,
+					TextBody = text
 				});
 			}			
 		}

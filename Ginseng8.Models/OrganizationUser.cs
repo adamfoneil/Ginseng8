@@ -2,6 +2,8 @@
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
+using Postulate.SqlServer.IntKey;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -90,6 +92,12 @@ namespace Ginseng.Models
 			}
 
 			UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
+		}
+
+		internal static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)
+		{
+			var orgUser = await connection.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });
+			return (orgUser?.DisplayName != null) ? orgUser.DisplayName : user.UserName;
 		}
 
 		public override bool Validate(IDbConnection connection, out string message)

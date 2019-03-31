@@ -65,6 +65,13 @@ namespace Ginseng.Models
 
 		public DateTime DateCreated { get; set; }
 
+		public static async Task WriteAsync(IDbConnection connection, EventLog eventLog, IUser user)
+		{
+			eventLog.CreatedBy = user.UserName;
+			eventLog.DateCreated = user.LocalTime;
+			await WriteAsync(connection, eventLog);
+		}
+
 		public static async Task WriteAsync(IDbConnection connection, EventLog eventLog)
 		{
 			// the app and org might not be readily available in the various model classes that trigger events,
