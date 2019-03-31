@@ -1,5 +1,4 @@
-﻿using Ginseng.Models.Interfaces;
-using Postulate.Base.Attributes;
+﻿using Postulate.Base.Attributes;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -8,13 +7,24 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	/// <summary>
-	/// Note that IFeedItem is used so that incoming logged events work with Postulate Save.
-	/// It's not that this is itself a feed item
-	/// </summary>
 	[Identity(nameof(Id), IdentityPosition.FirstColumn)]
-	public class EventLog : IFeedItem
+	public class EventLog
 	{
+		/// <summary>
+		/// A default constructor needed so that Dapper queries still work
+		/// </summary>
+		public EventLog()
+		{
+		}
+
+		/// <summary>
+		/// Use this constructor to ensure that App and Org Id are set during <see cref="WriteAsync(IDbConnection, EventLog)"/>
+		/// </summary>		
+		public EventLog(int workItemId)
+		{
+			WorkItemId = workItemId;
+		}
+
 		public int Id { get; set; }
 
 		[References(typeof(Event))]
@@ -32,21 +42,32 @@ namespace Ginseng.Models
 		[MaxLength(50)]
 		public string IconClass { get; set; }
 
+		/// <summary>
+		/// Used with email and Dashboard/Feed display
+		/// </summary>
+		[Required]
 		public string HtmlBody { get; set; }
+
+		/// <summary>
+		/// Used with text messages (plain text, no markdown)
+		/// </summary>
+		[Required]
+		public string TextBody { get; set; }
 
 		[MaxLength(50)]
 		public string CreatedBy { get; set; }
 
 		public DateTime DateCreated { get; set; }
 
-		public static async Task LogAsync(IDbConnection connection, IFeedItem item)
-		{			
-			if (item.OrganizationId == 0 || item.ApplicationId == 0)
+		public static async Task WriteAsync(IDbConnection connection, EventLog eventLog)
+		{
+			if (eventLog.OrganizationId == 0 || eventLog.ApplicationId == 0)
 			{
+
 				await item.SetOrgAndAppIdAsync(connection);
 			}
-			
-			await connection.PlainInsertAsync(item, tableName: "dbo.EventLog");
+
+			await connection.PlainInsertAsync(eventLog, tableName: "dbo.EventLog");
 		}
 
 		public Task SetOrgAndAppIdAsync(IDbConnection connection)

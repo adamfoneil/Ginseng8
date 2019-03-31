@@ -21,7 +21,7 @@ namespace Ginseng.Models
 	/// User story, development task, bug, or feature request
 	/// </summary>
 	[TrackChanges(IgnoreProperties = "ModifiedBy;DateModified")]
-	public class WorkItem : BaseTable, IBody, ITrackedRecord, IFeedItem
+	public class WorkItem : BaseTable, IBody, ITrackedRecord
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -78,15 +78,6 @@ namespace Ginseng.Models
 
 		public bool UseDefaultHistoryTable => true;
 
-		[NotMapped]
-		public int WorkItemId { get { return Id; } set { Id = value; } }
-
-		[NotMapped]
-		public string IconClass { get; set; }
-
-		[NotMapped]
-		public SystemEvent EventId { get; set; }
-
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action)
 		{			
 			// todo: label parsing from title
@@ -97,9 +88,11 @@ namespace Ginseng.Models
 			}*/
 
 			if (action == SaveAction.Insert)
-			{
-				EventId = SystemEvent.WorkItemCreated;
-				await EventLog.LogAsync(connection, this);
+			{				
+				await EventLog.WriteAsync(connection, new EventLog()
+				{
+					EventId = SystemEvent.WorkItemCreated
+				});
 			}
 		}
 
@@ -132,9 +125,13 @@ namespace Ginseng.Models
 		{
 			if (changes.Include(nameof(CloseReasonId)))
 			{
-				EventId = (CloseReasonId.HasValue) ? SystemEvent.WorkItemClosed : SystemEvent.WorkItemOpened;
-				IconClass = (EventId == SystemEvent.WorkItemClosed) ? "fas fa-clipboard-check" : "fas fa-play";
-				await EventLog.LogAsync(connection, this);
+				await EventLog.WriteAsync(connection, new EventLog()
+				{
+					OrganizationId = OrganizationId,
+					ApplicationId = ApplicationId,
+					EventId = (CloseReasonId.HasValue) ? SystemEvent.WorkItemClosed : SystemEvent.WorkItemOpened,
+					IconClass = (CloseReasonId.HasValue) ? "fas fa-clipboard-check" : "fas fa-play"
+				});
 			}
 		}
 

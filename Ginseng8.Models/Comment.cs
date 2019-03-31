@@ -13,18 +13,12 @@ namespace Ginseng.Models
 	/// <summary>
 	/// Info added to a work item
 	/// </summary>
-	public class Comment : BaseTable, IFeedItem, IBody
+	public class Comment : BaseTable, IBody
 	{
 		private IUser _user;
 
 		[References(typeof(WorkItem))]
-		public int WorkItemId { get; set; }
-
-		public string IconClass => (!IsImpediment.HasValue) ?
-			"far fa-comment" :
-				(IsImpediment.Value) ?
-					"far fa-comment-times" :
-					"far fa-comment-check";
+		public int WorkItemId { get; set; }		
 
 		public bool? IsImpediment { get; set; }
 
@@ -68,9 +62,16 @@ namespace Ginseng.Models
 					workItem.HasImpediment = IsImpediment.Value;
 					await connection.UpdateAsync(workItem, _user, r => r.HasImpediment);
 				}
-				
-				EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded;
-				await EventLog.LogAsync(connection, this);
+								
+				await EventLog.WriteAsync(connection, new EventLog(WorkItemId)
+				{
+					EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded,
+					IconClass = (!IsImpediment.HasValue) ?
+						"far fa-comment" :
+							(IsImpediment.Value) ?
+								"far fa-comment-times" :
+								"far fa-comment-check"
+				});
 			}
 		}
 

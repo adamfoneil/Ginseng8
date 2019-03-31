@@ -86,7 +86,11 @@ namespace Ginseng.Models
 
 				await connection.SaveAsync(workItem, _user);
 
-				await EventLog.LogAsync(connection, this);
+				await EventLog.WriteAsync(connection, new EventLog(WorkItemId)
+				{
+					EventId = SystemEvent.HandOff,
+					IconClass = IconClass
+				});
 			}			
 		}
 
