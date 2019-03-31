@@ -43,9 +43,9 @@ namespace Ginseng.Models
 
 		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
 		{
-			(int, int) result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
-			ApplicationId = result.Item1;
-			OrganizationId = result.Item2;
+			var result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
+			ApplicationId = result.ApplicationId;
+			OrganizationId = result.OrganizationId;
 		}
 	}
 }

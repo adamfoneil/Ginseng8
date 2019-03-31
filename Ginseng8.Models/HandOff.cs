@@ -92,9 +92,9 @@ namespace Ginseng.Models
 
 		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
 		{
-			(int, int) result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
-			OrganizationId = result.Item1;
-			ApplicationId = result.Item2;
+			var result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
+			OrganizationId = result.OrganizationId;
+			ApplicationId = result.ApplicationId;
 		}
 	}
 }

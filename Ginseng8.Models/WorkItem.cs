@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
+using Ginseng.Models.Internal;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -95,7 +97,8 @@ namespace Ginseng.Models
 
 			if (action == SaveAction.Insert)
 			{
-				//await EventLog.LogAsync(connection, this);
+				EventId = SystemEvent.WorkItemCreated;
+				await EventLog.LogAsync(connection, this);
 			}
 		}
 
@@ -121,16 +124,26 @@ namespace Ginseng.Models
 
 		public void TrackChanges(IDbConnection connection, int version, IEnumerable<PropertyChange> changes, IUser user)
 		{
-			throw new NotImplementedException();
+			// do nothing
 		}
+
+		public async Task TrackChangesAsync(IDbConnection connection, int version, IEnumerable<PropertyChange> changes, IUser user)
+		{
+			if (changes.Any(c => c.PropertyName.Equals(nameof(CloseReasonId))))
+			{
+				EventId = (CloseReasonId.HasValue) ? SystemEvent.WorkItemClosed : SystemEvent.WorkItemOpened;
+				await EventLog.LogAsync(connection, this);
+			}
+		}
+
 
 		/// <summary>
 		/// For event logging purposes, we need to get the orgId associated with an IFeedItem (unless it's already part of the item itself, e.g. WorkItem).
 		/// This static method provides a standard way to get this in IFeedItem implementations when a workItemId is already known
 		/// </summary>
-		public static async Task<(int, int)> GetOrgAndAppIdAsync(IDbConnection connection, int workItemId)
+		internal static async Task<OrgAndApp> GetOrgAndAppIdAsync(IDbConnection connection, int workItemId)
 		{
-			return await connection.QuerySingleAsync<(int, int)>("SELECT [OrganizationId], [ApplicationId], FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
+			return await connection.QuerySingleAsync<OrgAndApp>("SELECT [OrganizationId], [ApplicationId] FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
 		}
 
 		public async Task SetOrgAndAppIdAsync(IDbConnection connection)

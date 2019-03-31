@@ -68,7 +68,7 @@ namespace Ginseng.Models
 					workItem.HasImpediment = IsImpediment.Value;
 					await connection.UpdateAsync(workItem, _user, r => r.HasImpediment);
 				}
-
+				
 				EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded;
 				await EventLog.LogAsync(connection, this);
 			}
@@ -76,9 +76,9 @@ namespace Ginseng.Models
 
 		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
 		{
-			(int, int) result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
-			OrganizationId = result.Item1;
-			ApplicationId = result.Item2;			
+			var result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
+			OrganizationId = result.OrganizationId;
+			ApplicationId = result.ApplicationId;
 		}
 	}
 }
