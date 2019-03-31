@@ -13,7 +13,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// Test instructons or feedback, request for code review, or another other change in activity on a work item
 	/// </summary>
-	public class HandOff : BaseTable, IFeedItem, IBody
+	public class HandOff : BaseTable, IBody
 	{
 		public const string ForwardHandOff = "fas fa-chevron-circle-right";
 		public const string BackwardHandOff = "far fa-chevron-circle-left";
@@ -57,15 +57,6 @@ namespace Ginseng.Models
 
 		public string TextBody { get; set; }
 
-		[NotMapped]
-		public int OrganizationId { get; set; }
-
-		[NotMapped]
-		public int ApplicationId { get; set; }
-
-		[NotMapped]
-		public SystemEvent EventId { get; set; } = SystemEvent.HandOff;
-
 		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
 		{
 			base.BeforeSave(connection, action, user);
@@ -92,13 +83,6 @@ namespace Ginseng.Models
 					IconClass = IconClass
 				});
 			}			
-		}
-
-		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
-		{
-			var result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
-			OrganizationId = result.OrganizationId;
-			ApplicationId = result.ApplicationId;
 		}
 	}
 }

@@ -61,19 +61,9 @@ namespace Ginseng.Models
 
 		public static async Task WriteAsync(IDbConnection connection, EventLog eventLog)
 		{
-			if (eventLog.OrganizationId == 0 || eventLog.ApplicationId == 0)
-			{
-
-				await item.SetOrgAndAppIdAsync(connection);
-			}
-
 			await connection.PlainInsertAsync(eventLog, tableName: "dbo.EventLog");
-		}
 
-		public Task SetOrgAndAppIdAsync(IDbConnection connection)
-		{
-			// not needed functionally, although we must have a method here to fit the interface
-			throw new NotImplementedException();
-		}
+			// todo: add message to Azure queue to process email and text notifications
+		}		
 	}
 }
