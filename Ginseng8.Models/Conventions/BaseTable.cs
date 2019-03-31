@@ -29,6 +29,10 @@ namespace Ginseng.Models.Conventions
 
 		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
 		{
+			// this is okay during event logging because the user has already been captured.
+			// BeforeSave handlers run during EventLog.LogAsync, but we need to return if no user is set or we get null ref down below
+			if (user == null) return;
+
 			switch (action)
 			{
 				case SaveAction.Insert:

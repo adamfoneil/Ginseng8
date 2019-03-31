@@ -45,8 +45,8 @@ namespace Ginseng.Models
 			{
 				await item.SetOrgAndAppIdAsync(connection);
 			}
-
-			await connection.SaveAsync(item);
+			
+			await connection.PlainInsertAsync(item, tableName: "dbo.EventLog");
 		}
 
 		public Task SetOrgAndAppIdAsync(IDbConnection connection)

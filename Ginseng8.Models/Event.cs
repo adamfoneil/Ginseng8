@@ -24,7 +24,8 @@ namespace Ginseng.Models
 		WorkItemFieldChanged = 9,
 		MilestoneDateChanged = 10,
 		EstimateChanged = 11,
-		ProjectAdded = 12
+		ProjectAdded = 12,
+		WorkItemOpened = 13
 	}
 
 	public class Event : AppTable
