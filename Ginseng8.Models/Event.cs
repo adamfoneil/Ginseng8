@@ -3,6 +3,7 @@ using Postulate.Base.Attributes;
 using Postulate.Base.Extensions;
 using Postulate.SqlServer;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 
 namespace Ginseng.Models
@@ -25,7 +26,8 @@ namespace Ginseng.Models
 		MilestoneDateChanged = 10,
 		EstimateChanged = 11,
 		ProjectAdded = 12,
-		WorkItemOpened = 13
+		WorkItemOpened = 13,
+		CodeCommitted = 14
 	}
 
 	public class Event : AppTable

@@ -5,3 +5,38 @@
 }
 
 <h4>Feed</h4>
+
+<div class="row">
+    <div class="col-3">
+        <ul>
+            @foreach (var ev in Model.Events)
+            {
+                <li>
+                    <label>
+                        @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible)
+                        @ev.Name
+                    </label>                    
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="col-9">
+        @foreach (var dateGrp in Model.EventLogs.GroupBy(row => row.EventDate))
+        {
+            <h5>@Html.FormatValue(dateGrp.Key, "{0:ddd M/d}")</h5>
+            <ul>
+            @foreach (var ev in dateGrp)
+            {
+                <li>
+                    <i class="@ev.IconClass" style="color:@ev.IconColor"></i>
+                    <span class="font-weight-bold">@ev.WorkItemNumber</span>
+                    <span>@ev.EventName</span>
+                    <span>@ev.CreatedBy</span>
+                    @ev.HtmlBody
+                </li>
+            }
+            </ul>
+        }
+    </div>
+</div>
