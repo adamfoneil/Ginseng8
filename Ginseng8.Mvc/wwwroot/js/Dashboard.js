@@ -478,6 +478,7 @@ function InitProjectCrosstabWorkItemDroppable() {
             });
             $(ui.draggable).remove();
             $(this).append(element);
+            $('.ui-state-active').removeClass('ui-state-active');
             initDraggableItems();
 
             projectCrosstabWorkItemUpdate({
