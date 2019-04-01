@@ -14,5 +14,11 @@ namespace Ginseng.Models.Extensions
 		{
 			return (changes.Any(c => c.PropertyName.Equals(columnName)));
 		}
+
+		internal static bool Include(this IEnumerable<PropertyChange> changes, string columnName, out PropertyChange change)
+		{
+			change = changes.FirstOrDefault(pc => pc.PropertyName.Equals(columnName));
+			return (change != null);
+		}
 	}
 }

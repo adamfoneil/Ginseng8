@@ -145,9 +145,18 @@ namespace Ginseng.Models
 				}, user);
 			}
 
-			if (changes.Include(nameof(MilestoneId)))
+			if (changes.Include(nameof(MilestoneId), out PropertyChange milestoneChange))
 			{
-				// todo: log milestone change event
+				await EventLog.WriteAsync(connection, new EventLog()
+				{
+					WorkItemId = Id,
+					OrganizationId = OrganizationId,
+					ApplicationId = ApplicationId,
+					EventId = SystemEvent.MilestoneChanged,
+					IconClass = "fas fa-flag-checkered",
+					HtmlBody = $"Milestone changed from {milestoneChange.OldValue} to {milestoneChange.NewValue}",
+					TextBody = $"Milestone changed from {milestoneChange.OldValue} to {milestoneChange.NewValue}"
+				}, user);
 			}
 
 			if (changes.Include(nameof(ProjectId)))

@@ -491,6 +491,18 @@ function InitProjectCrosstabWorkItemDroppable() {
 
 function projectCrosstabWorkItemUpdate(data) {
     console.log('work item update:', JSON.stringify(data));
+
+    fetch('/WorkItem/SetMilestone', {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": getAntiForgeryToken()
+        },
+        body: JSON.stringify(data)
+    }).then(function (response) {
+        // success fail info?
+        return response.json();
+    });
 }
 
 function getFormData(object) {
