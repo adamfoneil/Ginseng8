@@ -37,7 +37,7 @@ namespace Ginseng.Mvc
 			using (var cn = Data.GetConnection())
 			{
 				var articles = await new Articles() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
-				TableOfContents = Node<Article>.ResolveStructure(articles, (a) => a.Location, '/');
+				TableOfContents = Node<Article>.ResolveStructure(articles, (a) => a.Location ?? "Root", '/');
 
 				await OnGetInternalAsync(cn);
 
