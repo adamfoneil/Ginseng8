@@ -301,12 +301,21 @@ $(document).ready(function () {
     $('.nav-tabs li:first-child a').tab('show');
 
     InitWorkItemSortable();
+    initDraggableItems();
+    InitProjectCrosstabWorkItemDroppable();
     InitTableBodySortable();
 });
 
 function sortableStart(event, ui) {
     // This event is triggered when sorting starts.
     $('.ui-sortable-placeholder').outerHeight($(ui.item).outerHeight()); // update height of placeholder to current item height
+    $('body').addClass('dragging');
+}
+
+function sortableStop() {
+    setTimeout(function() {
+        $('body').removeClass('dragging');
+    });
 }
 
 function InitTableBodySortable() {
@@ -315,6 +324,7 @@ function InitTableBodySortable() {
         placeholder: 'ui-state-highlight',
         cancel: ':input, button, a',
         start: sortableStart,
+        stop: sortableStop,
         update: function(event, ui) {
             var sortableTable = $(ui.item).parents('.js-table-body-sortable')
             var sortableRows = sortableTable.find('.js-table-row-sortable');
@@ -354,6 +364,7 @@ function InitWorkItemSortable() {
         connectWith: '.milestone-items .sortable, #assignedUserTab .nav-link:not(.active)',
         cancel: ':input, button, [contenteditable="true"]',
         start: sortableStart,
+        stop: sortableStop,
 
         update: function (event, ui) {
             // This event is triggered when the user stopped sorting and the DOM position has changed.
@@ -436,6 +447,50 @@ function TaskReorder(data) {
         // success fail info?
         return response.json();
     });
+}
+
+function initDraggableItems() {
+    $('.js-item-draggable').draggable({
+        revert: 'invalid',
+        start: sortableStart,
+        stop: sortableStop
+    });
+}
+
+function InitProjectCrosstabWorkItemDroppable() {
+    $('.milestone-work-items-droppable').droppable({
+        accept: function(draggable) {
+            var draggableMilestone = $(draggable).parents('.milestone-work-items-droppable')[0];
+            if ($(draggableMilestone).data('project-id') == $(this).data('project-id')) {
+                return draggableMilestone != this
+            }
+        },
+        classes: {
+            'ui-droppable-active': 'ui-state-active',
+            "ui-droppable-hover": "ui-state-highlight"
+        },
+        drop: function( event, ui ) {
+            var element = $(ui.draggable).clone();
+            element.css({
+                position: 'static',
+                top: 'auto',
+                left: 'auto'
+            });
+            $(ui.draggable).remove();
+            $(this).append(element);
+            $('.ui-state-active').removeClass('ui-state-active');
+            initDraggableItems();
+
+            projectCrosstabWorkItemUpdate({
+                number: element.find('.work-item-number').data('number'),
+                milestoneDate: $(this).data('milestone-date')
+            });
+        }
+    });
+}
+
+function projectCrosstabWorkItemUpdate(data) {
+    console.log('work item update:', JSON.stringify(data));
 }
 
 function getFormData(object) {

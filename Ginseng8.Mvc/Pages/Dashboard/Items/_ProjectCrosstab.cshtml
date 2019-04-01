@@ -41,24 +41,29 @@
             </div>        
             @foreach (var ms in Model.MilestoneDates)
             {
-                <div class="col-@Model.CrosstabColumnHeadingGridCols()">         
+                <div class="col-@Model.CrosstabColumnHeadingGridCols()">
                     @{ 
                         var items = Model.ProjectWorkItems[new ProjectDashboardCell(prj.Id, ms.Key)];
                     }
-                    @foreach (var wi in items)
+                    @foreach (var msName in ms)
                     {
-                        <span class="ui-draggable">
-                            <partial name="Dashboard/Items/_ItemNumber" model="wi"/>
-                        </span>                        
-                        <span id="work-item-title-@wi.Number" style="display:none">
-                            <span>@wi.Title</span>
-                            @foreach (var lbl in Model.Labels[wi.Id])
+                        <div class="milestone-work-items-droppable" data-milestone-date="@ms.Key" data-project-id="@prj.Id">
+                            @foreach (var wi in items)
                             {
-                                <span class="badge" style="background-color:@lbl.BackColor;color:@lbl.ForeColor">@lbl.Name</span>
+                                <span class="js-item-draggable">
+                                    <partial name="Dashboard/Items/_ItemNumber" model="wi"/>
+                                </span>
+                                <span id="work-item-title-@wi.Number" style="display:none">
+                                    <span>@wi.Title</span>
+                                    @foreach (var lbl in Model.Labels[wi.Id])
+                                    {
+                                        <span class="badge" style="background-color:@lbl.BackColor;color:@lbl.ForeColor">@lbl.Name</span>
+                                    }
+                                </span>
                             }
-                        </span>
+                        </div>
                     }
-                    <br/><span class="small text-muted">@items.Sum(row => row.EstimateHours) est hrs</span>
+                    <div class="small text-muted">@items.Sum(row => row.EstimateHours) est hrs</div>
                 </div>
             }            
         </div>
