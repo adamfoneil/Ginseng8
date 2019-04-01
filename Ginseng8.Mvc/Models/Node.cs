@@ -28,47 +28,37 @@ namespace Ginseng.Mvc.Models
 
 			var rootFolders = navs.GroupBy(nav => nav.Folders[0]);
 
-			ResolveChildren(root, rootFolders, separator, 0);
+			Stack<string> breadcrumb = new Stack<string>();
+			ResolveChildren(root, rootFolders, separator, 0, breadcrumb);
 			
-			/*
-			int maxLevel = navs.Max(i => i.Folders.Length);
-
-			for (int level = 0; level < maxLevel - 1; level++)
-			{
-				List<Node<T>> children = new List<Node<T>>();
-				
-				var uniqueFolders = navs.GroupBy(nav => string.Join(separator, nav.Folders.Take(level + 1)));
-				foreach (var folderGrp in uniqueFolders)
-				{					
-					Node<T> child = new Node<T>() { Name = folderGrp.Key.Split(separator).Last() };					
-
-					child.Items = folderGrp
-						.Where(nav => nav.Path.Equals(folderGrp.Key))
-						.Select(nav => nav.Item);
-
-					children.Add(child);
-					root.Children = children;
-				}
-			}
-			*/
-
 			return root;
 		}
 
-		private static void ResolveChildren(Node<T> parent, IEnumerable<IGrouping<string, NodeResolver<T>>> folders, char separator, int depth)
+		private static void ResolveChildren(Node<T> parent, IEnumerable<IGrouping<string, NodeResolver<T>>> folders, char separator, int depth, Stack<string> breadcrumb)
 		{
+			if (!folders.Any()) return;
+
 			List<Node<T>> children = new List<Node<T>>();
 			foreach (var folderGrp in folders)
 			{
-				Node<T> child = new Node<T>() { Name = folderGrp.Key.Split(separator).Last() };
+				Node<T> child = new Node<T>() { Name = folderGrp.Key };
+
+				breadcrumb.Push(folderGrp.Key);
 
 				child.Items = folderGrp
-						.Where(nav => nav.Path.Equals(folderGrp.Key))
-						.Select(nav => nav.Item);
+						.Where(nav => nav.Path.Equals(string.Join(separator, breadcrumb.Reverse())))
+						.Select(nav => nav.Item).ToArray();
 
-				depth++;
-				ResolveChildren(child, folderGrp.Where(nav => nav.Folders.Length > depth).GroupBy(nav => nav.Folders[depth]), separator, depth);
-				depth--;
+				// are there any folders below this?
+				if (folderGrp.Any(nav => nav.Folders.Length > depth + 1))
+				{
+					depth++;
+					var subFolders = folderGrp.GroupBy(nav => nav.Folders[depth]).ToArray();
+					ResolveChildren(child, subFolders, separator, depth, breadcrumb);
+					depth--;
+				}
+
+				breadcrumb.Pop();
 
 				children.Add(child);
 			}

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -82,6 +83,16 @@ namespace Ginseng.Mvc
 			if (attrs.Any()) return false;
 
 			return true;
+		}
+
+		public async Task<string> GetUserDisplayName(int orgId, string userName)
+		{
+			using (var cn = Data.GetConnection())
+			{
+				var user = await cn.FindWhereAsync<UserProfile>(new { userName });
+				var orgUser = await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, user.UserId });
+				return (orgUser?.DisplayName != null) ? orgUser.DisplayName : userName;
+			}
 		}
 	}
 }

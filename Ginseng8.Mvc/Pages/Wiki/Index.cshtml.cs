@@ -1,21 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Ginseng.Models;
+using Ginseng.Mvc.Models;
+using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Wiki
 {
-	public class IndexModel : AppPageModel
+	[Authorize]
+	public class IndexModel : WikiPageModel
 	{
 		public IndexModel(IConfiguration config) : base(config)
 		{
-		}		
+		}
 
-		public async Task OnGetAsync()
+		[BindProperty(SupportsGet = true)]
+		public int Id { get; set; }		
+
+		public Article Article { get; set; }
+
+		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
+			if (Id != 0)
+			{
+				Article = await connection.FindAsync<Article>(Id);
+			}
 		}
 	}
 }

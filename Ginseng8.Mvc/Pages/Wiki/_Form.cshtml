@@ -1,0 +1,26 @@
+﻿@model Article
+
+<form method="post">    
+    <input type="hidden" name="Id" value="@Model.Id"/>
+    <input type="hidden" name="OrganizationId" value="@Model.OrganizationId"/>
+    
+    <input type="hidden" name="CreatedBy" value="@Model.CreatedBy"/>
+    <input type="hidden" name="DateCreated" value="@Model.DateCreated"/>
+    <input type="hidden" name="ModifiedBy" value="@Model.ModifiedBy"/>
+    <input type="hidden" name="DateModified" value="@Model.DateModified"/>
+
+    <div class="form-group">
+        <label>Title:</label>
+        <input type="text" name="Title" required="required" class="form-control" value="@Model.Title"/>
+    </div>
+    
+    <div class="form-group">
+        <label>Location:</label>
+        <input type="text" name="Location" class="form-control" value="@Model.Location"/>        
+        <span class="text-muted small">Enter a path using slashes (/) as folder separators where you'd like this article to appear in the table of contents on the left.</span>
+    </div>
+
+    <textarea name="HtmlBody" class="htmlEditor">@Model.HtmlBody</textarea>
+
+    <button class="btn btn-dark mt-2">Save</button>
+</form>

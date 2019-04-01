@@ -31,6 +31,19 @@ namespace Testing
 
 			var node = Node<SampleItem>.ResolveStructure(items, (i) => i.Path, '/');
 		}
+
+		[TestMethod]
+		public void TestSampleWikiTOC()
+		{
+			var items = new SampleItem[]
+			{
+				new SampleItem() { Path = "Home", Name = "Another Wiki" },
+				new SampleItem() { Path = "Home", Name = "First Wiki" },
+				new SampleItem() { Path = "Standards/Welcome", Name = "Hell to the yes" }
+			};
+
+			var node = Node<SampleItem>.ResolveStructure(items, (i) => i.Path, '/');
+		}
 	}
 
 	public class SampleItem

@@ -1,0 +1,9 @@
+﻿@model Ginseng.Models.Conventions.BaseTable
+
+<p>
+    Created by: @Model.CreatedBy on @Model.DateCreated
+    @if  (Model.ModifiedBy != null)
+    {
+        <br/><span>Modified by @Model.ModifiedBy on @Model.DateModified</span>
+    }
+</p>

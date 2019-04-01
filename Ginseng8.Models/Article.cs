@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ginseng.Models
 {
-	[TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
+	//[TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
 	public class Article : BaseTable, IBody
 	{
 		[References(typeof(Organization))]
