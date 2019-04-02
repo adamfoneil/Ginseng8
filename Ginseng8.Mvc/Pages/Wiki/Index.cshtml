@@ -1,0 +1,19 @@
+﻿@page "{Id:int?}"
+@model Ginseng.Mvc.Pages.Wiki.IndexModel
+
+@if (Model.Article != null)
+{
+    <h3>@Model.Article.Title</h3>
+
+    <partial name="/Pages/Shared/_UserDateStamp.cshtml" model="Model.Article"/>
+
+    <hr/>
+
+    @Html.Raw(Model.Article.HtmlBody)
+
+    <a class="btn btn-sm btn-light" asp-page="Edit" asp-route-id="@Model.Article.Id">Edit</a>
+}
+else
+{
+    <p>Please click an article title on the left or <a class="btn btn-primary" asp-page="Create">Create New Wiki</a></p>
+}

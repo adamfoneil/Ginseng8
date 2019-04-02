@@ -84,3 +84,16 @@ body {
 .nav-link.sortable .ui-sortable-handle {
   display: none;
 }
+
+.milestone-work-items-droppable {
+  min-height: 26px;
+  border: 1px solid transparent;
+}
+
+.dragging .ui-tooltip {
+  display: none !important;
+}
+
+.ui-draggable-handle {
+  z-index: 1000;
+}

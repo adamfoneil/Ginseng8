@@ -1,0 +1,25 @@
+﻿@model WikiPageModel
+@{
+    ViewData["Title"] = "Wiki";
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Wiki</h2>
+
+@Html.ActionAlert(TempData)
+
+<div class="row">
+    <div class="col-3">
+        <partial name="_TocNode" model="Model.TableOfContents"/>
+
+        <a class="btn btn-primary" asp-page="Create">Create</a>
+    </div>
+
+    <div class="col-9">
+        @RenderBody()
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", false)
+}

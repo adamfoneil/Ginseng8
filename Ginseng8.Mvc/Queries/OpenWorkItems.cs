@@ -1,5 +1,4 @@
-﻿using Ginseng.Models;
-using Postulate.Base;
+﻿using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
@@ -12,15 +11,15 @@ namespace Ginseng.Mvc.Queries
 	{
 		public int Id { get; set; }
 		public int Number { get; set; }
-		public string Title { get; set; }	
+		public string Title { get; set; }
 		public int? Priority { get; set; }
 		public string HtmlBody { get; set; }
 		public int? BusinessUserId { get; set; }
-		public int? DeveloperUserId { get; set; }		
+		public int? DeveloperUserId { get; set; }
 		public int ApplicationId { get; set; }
 		public string ApplicationName { get; set; }
 		public bool HasImpediment { get; set; }
-		public int ProjectId { get; set; }		
+		public int ProjectId { get; set; }
 		public string ProjectName { get; set; }
 		public int? DataModelId { get; set; }
 		public int MilestoneId { get; set; }
@@ -36,8 +35,8 @@ namespace Ginseng.Mvc.Queries
 		public string BusinessUserName { get; set; }
 		public string DeveloperUserName { get; set; }
 		public int? AssignedUserId { get; set; }
-		public string AssignedUserName { get; set; }		
-		public string WorkItemSize { get; set; }		
+		public string AssignedUserName { get; set; }
+		public string WorkItemSize { get; set; }
 		public int? SizeId { get; set; }
 		public int? DevEstimateHours { get; set; }
 		public int? SizeEstimateHours { get; set; }
@@ -47,7 +46,7 @@ namespace Ginseng.Mvc.Queries
 
 		public string ActivityStatus()
 		{
-			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";			
+			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";
 			return $"{ActivityName ?? "(not started)"} - {assignedTo}";
 		}
 
@@ -67,12 +66,12 @@ namespace Ginseng.Mvc.Queries
 		public OpenWorkItems() : base(
 			@"SELECT
                 [wi].[Id],
-                [wi].[Number],	
+                [wi].[Number],
 				[pri].[Value] AS [Priority],
                 [wi].[Title],
 				[wi].[HtmlBody],
                 [wi].[BusinessUserId],
-                [wi].[DeveloperUserId],                
+                [wi].[DeveloperUserId],
                 [wi].[ApplicationId], [app].[Name] AS [ApplicationName],
 				[wi].[HasImpediment],
                 COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
@@ -92,7 +91,7 @@ namespace Ginseng.Mvc.Queries
 					WHEN 2 THEN [wi].[DeveloperUserId]
 				END, [wi].[DeveloperUserId], [wi].[BusinessUserId]) AS [AssignedUserId],
 				[p].[DataModelId],
-                [sz].[Name] AS [WorkItemSize],                                
+                [sz].[Name] AS [WorkItemSize],
                 [wi].[SizeId],
                 [wid].[EstimateHours] AS [DevEstimateHours],
                 [sz].[EstimateHours] AS [SizeEstimateHours],
@@ -103,7 +102,7 @@ namespace Ginseng.Mvc.Queries
                 [dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
-                LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]				
+                LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
                 LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
                 LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
                 LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
@@ -118,13 +117,13 @@ namespace Ginseng.Mvc.Queries
                     [wi].[DeveloperUserId]=[dev_ou].[UserId]
                 LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
                 LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
-				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON 
+				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
             WHERE
                 [wi].[OrganizationId]=@orgId {andWhere}
-            ORDER BY                
-                COALESCE([pri].[Value], 100000), 
+            ORDER BY
+                COALESCE([pri].[Value], 100000),
                 [wi].[Number]")
 		{
 		}

@@ -245,5 +245,35 @@ namespace Ginseng.Mvc.Controllers
 				return Json(projects);
 			}		
 		}
+
+		[HttpPost]
+		public async Task<JsonResult> SetMilestone()
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var json = await Request.ReadStringAsync();
+					var data = JsonConvert.DeserializeAnonymousType(json, new
+					{
+						number = 0,
+						milestoneDate = DateTime.MinValue
+					});
+
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = data.number });
+					var ms = (data.milestoneDate != DateTime.MaxValue) ?
+						await _data.FindWhereAsync<Milestone>(cn, new { OrganizationId = _data.CurrentOrg.Id, Date = data.milestoneDate }) :
+						default(Milestone);
+
+					workItem.MilestoneId = ms?.Id;					
+					await cn.UpdateAsync(workItem, _data.CurrentUser, r => r.MilestoneId);
+				}
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
 	}
 }

@@ -12,4 +12,8 @@
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ginseng8.Mvc\Ginseng.Mvc.csproj" />
+  </ItemGroup>
+
 </Project>
