@@ -65,18 +65,7 @@
         <hr/>
     }
     
-    <form method="post" asp-page-handler="Create">
-        <input type="hidden" name="ApplicationId" value="@appGrp.Key"/>            
-        <div class="row mb-3">
-            <div class="col-6">
-                <input type="text" name="Name" placeholder="create new project" class="form-control" required="required"/>                    
-            </div>
-            <div class="col-1">
-                <button type="submit" class="btn btn-dark">Add</button>
-            </div>            
-        </div>
-    </form>
-    
+    <partial name="Items/_ProjectCreate" model="appGrp.Key"/>    
 }
 
 <partial name="Shared/_IActive" model="Model"/>

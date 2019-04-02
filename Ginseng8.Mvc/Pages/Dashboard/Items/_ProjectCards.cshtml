@@ -2,11 +2,17 @@
 
 <partial name="Items/_ProjectViewControls" model="Model"/>
 
-<div class="row">
-    @foreach (var prj in Model.ProjectInfo)
-    {
-        <div class="col-3 p-2">
-            <partial name="Items/_ProjectLinkButton" model="prj"/>
-        </div>
-    }
-</div>
+@foreach (var appGrp in Model.ProjectInfo.GroupBy(row => row.ApplicationId))
+{
+    <h4>@appGrp.First().ApplicationName</h4>
+    <div class="row">
+        @foreach (var prj in appGrp)
+        {
+            <div class="col-3 p-2">
+                <partial name="Items/_ProjectLinkButton" model="prj"/>
+            </div>
+        }        
+    </div>
+
+    <partial name="Items/_ProjectCreate" model="appGrp.Key"/>
+}
