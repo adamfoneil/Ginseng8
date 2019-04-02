@@ -96,17 +96,22 @@ projectUpdateFields.forEach(function (ele) {
     });
 });
 
-var htmlEditLinks = document.querySelectorAll('.editHtml');
-htmlEditLinks.forEach(function (e) {
-    e.addEventListener("click", function (e) {
-        var id = e.target.getAttribute("data-id");
-        var idPrefix = e.target.getAttribute('data-id-prefix');
-        $("#" + idPrefix + '-view-' + id).hide();
-        $("#" + idPrefix + '-edit-' + id).show();
-        $("#" + idPrefix + '-content-' + id).focus(); // doesn't work because this textarea is hidden by the editor
-        $(e.target).hide();
-    });
-});
+$(document)
+.on('click', '.editHtml', function(event) {
+    event.preventDefault();
+
+    var $target = $(event.target);
+    var idPrefix = $target.attr('data-id-prefix');
+    var id = $target.attr('data-id');
+
+    $target.hide();
+    $('#' + idPrefix + '-edit-' + id).show();
+    $('#' + idPrefix + '-view-' + id).hide();
+    $('#' + idPrefix + '-content-' + id).froalaEditor('events.focus');
+})
+.on('click', '.cancelHtmlEdit', function(event) {
+    event.preventDefault();
+})
 
 var htmlCancelEditLinks = document.querySelectorAll('.cancelHtmlEdit');
 htmlCancelEditLinks.forEach(function (e) {
