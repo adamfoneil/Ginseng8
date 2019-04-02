@@ -7,10 +7,13 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.Base.Models;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -80,15 +83,11 @@ namespace Ginseng.Models
 
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
-			// todo: label parsing from title
-			/*
 			if (action == SaveAction.Insert)
 			{
-				int[] labelIds = await ParseLabelsAsync(connection, Title);
-			}*/
+				await ParseLabelsAsync(connection);
+				await ParseProjectAsync(connection);
 
-			if (action == SaveAction.Insert)
-			{
 				await EventLog.WriteAsync(connection, new EventLog()
 				{
 					WorkItemId = Id,
@@ -102,9 +101,46 @@ namespace Ginseng.Models
 			}
 		}
 
-		private Task<int[]> ParseLabelsAsync(IDbConnection connection, string title)
+		private async Task ParseProjectAsync(IDbConnection connection)
 		{
-			throw new NotImplementedException();
+			var projectMatch = Regex.Match(Title, @"\[.*\]");
+			if (projectMatch.Success)
+			{
+				string projectToken = projectMatch.Value.Substring(1);
+				projectToken = projectToken.Substring(0, projectToken.Length - 1);
+
+				var projectId = await connection.QuerySingleOrDefaultAsync<int>(
+					@"SELECT TOP (1) [Id] FROM [dbo].[Project] 
+					WHERE [ApplicationId]=@appId AND 
+					[Name] LIKE '%' + @projectName + '%'", new { appId = ApplicationId, projectName = projectToken });
+
+				if (projectId != 0)
+				{
+					ProjectId = projectId;
+					await connection.UpdateAsync(this, null, r => r.ProjectId);
+				}
+			}					
+		}
+
+		private async Task ParseLabelsAsync(IDbConnection connection)
+		{
+			var labelMatches = Regex.Matches(Title, @"#\w*");
+			var labelNames = labelMatches.Cast<Match>().Select(m => m.Value.Substring(1)).ToArray();
+			
+			if (labelNames.Any())
+			{
+				await connection.ExecuteAsync(
+					@"INSERT INTO [dbo].[WorkItemLabel] (
+						[WorkItemId], [LabelId], [CreatedBy], [DateCreated]
+					) SELECT
+						@workItemId, [Id], @userName, @dateCreated
+					FROM
+						[dbo].[Label]
+					WHERE
+						[Name] IN @labelNames AND
+						[OrganizationId]=@orgId", 
+					new { workItemId = Id, orgId = OrganizationId, labelNames, userName = CreatedBy, dateCreated = DateCreated });
+			}
 		}
 
 		public async Task SetNumberAsync(IDbConnection connection)
