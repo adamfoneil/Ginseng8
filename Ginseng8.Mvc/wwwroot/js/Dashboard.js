@@ -96,8 +96,11 @@ projectUpdateFields.forEach(function (ele) {
     });
 });
 
-$(document).on('click', '.editHtml', function(e) {
-    var $target = $(e.target);
+$(document)
+.on('click', '.editHtml', function(event) {
+    event.preventDefault();
+
+    var $target = $(event.target);
     var idPrefix = $target.attr('data-id-prefix');
     var id = $target.attr('data-id');
 
@@ -105,7 +108,10 @@ $(document).on('click', '.editHtml', function(e) {
     $('#' + idPrefix + '-edit-' + id).show();
     $('#' + idPrefix + '-view-' + id).hide();
     $('#' + idPrefix + '-content-' + id).froalaEditor('events.focus');
-});
+})
+.on('click', '.cancelHtmlEdit', function(event) {
+    event.preventDefault();
+})
 
 var htmlCancelEditLinks = document.querySelectorAll('.cancelHtmlEdit');
 htmlCancelEditLinks.forEach(function (e) {
