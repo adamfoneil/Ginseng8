@@ -59,6 +59,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		public Project SelectedProject { get; set; }
 
+		// used when single project is displayed
+		public ProjectInfoResult SelectedProjectInfo { get; set; }
+
 		public int CrosstabRowHeadingGridCols()
 		{
 			// assuming up to 4 milestone columns, leaving a minimum of 4 for the row headings,
@@ -111,6 +114,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			if (Id.HasValue)
 			{
 				SelectedProject = await Data.FindAsync<Project>(Id.Value);
+				SelectedProjectInfo = await new ProjectInfo() { Id = Id, OrgId = OrgId }.ExecuteSingleAsync(connection);
 			}
 			else
 			{

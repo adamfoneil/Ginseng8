@@ -1,0 +1,10 @@
+﻿@model ProjectInfoResult
+
+<span class="text-muted small mr-2">
+    @Model.TotalWorkItems work items | 
+    @if (Model.EstimateHours.HasValue)
+    {
+        @(Model.EstimateHours)<text> hrs | </text>
+    }    
+    @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete</span>
+<br/><meter value="@Model.PercentComplete" max="1"></meter>

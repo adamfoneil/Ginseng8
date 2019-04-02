@@ -7,12 +7,17 @@
         foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
         {
             var projectItem = projectGrp.First();
-            <h5>@projectItem.ProjectName</h5>
+            <h5>@projectItem.ProjectName</h5>            
 
             @if (projectGrp.Key != 0)
             {
                 <div class="ml-3">
-                    <partial name="Items/_ProjectControls" model="Model"/>
+                    <div class="row">
+                        <partial name="Items/_ProjectControls" model="Model"/>
+                        <div class="mr-3 mt-1"></div>
+                        <partial name="Items/_ProjectInfo" model="Model.SelectedProjectInfo"/>                                                
+                    </div>                    
+                    
                     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "project", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody })
                 </div>                
             }

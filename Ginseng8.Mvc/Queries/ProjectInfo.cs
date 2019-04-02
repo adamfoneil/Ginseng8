@@ -82,8 +82,7 @@ namespace Ginseng.Mvc.Queries
 					[dbo].[Project] [p]
 					INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
 				WHERE
-					[app].[OrganizationId]=@orgId AND
-					[p].[IsActive]=@isActive
+					[app].[OrganizationId]=@orgId 					
 					{{andWhere}}
 			) SELECT
 				[source].*,
@@ -102,6 +101,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("[p].[ApplicationId]=@appId")]
 		public int? AppId { get; set; }
 
+		[Where("[p].[IsActive]=@isActive")]
+		public bool? IsActive { get; set; }
+
 		[Case(ProjectInfoShowOptions.HasOpenItems, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
 		[Case(ProjectInfoShowOptions.NoOpenItems, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
 		public ProjectInfoShowOptions Show { get; set; } = ProjectInfoShowOptions.All;
@@ -109,7 +111,8 @@ namespace Ginseng.Mvc.Queries
 		[Phrase("p].[Name", "p].[TextBody")]
 		public string TitleAndBodySearch { get; set; }
 
-		public bool IsActive { get; set; }
+		[Where("[p].[Id]=@id")]
+		public int? Id { get; set; }
 
 		private static Dictionary<ProjectInfoSortOptions, string> SortOptions
 		{
