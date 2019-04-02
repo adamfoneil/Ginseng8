@@ -15,16 +15,20 @@ namespace Ginseng.Models
 	/// </summary>
 	public class Comment : BaseTable, IBody
 	{
+		public const string CommentIcon = "far fa-comment";
+		public const string ImpedimentIcon = "fas fa-comment-times";
+		public const string ResolvedIcon = "fas fa-comment-check";
+
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }		
 
 		public bool? IsImpediment { get; set; }
 
 		public string IconClass => (!IsImpediment.HasValue) ?
-			"far fa-comment" :
+			CommentIcon :
 				(IsImpediment.Value) ?
-					"far fa-comment-times" :
-					"far fa-comment-check";
+					ImpedimentIcon :
+					ResolvedIcon;
 
 		public string TextBody { get; set; }
 
@@ -38,15 +42,6 @@ namespace Ginseng.Models
 		/// </summary>
 		[NotMapped]
 		public int Number { get; set; }
-
-		[NotMapped]
-		public int OrganizationId { get; set; }
-
-		[NotMapped]
-		public int ApplicationId { get; set; }
-
-		[NotMapped]
-		public SystemEvent EventId { get; set; }
 
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
@@ -65,18 +60,11 @@ namespace Ginseng.Models
 				{
 					EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded,
 					IconClass = IconClass,
-					IconColor = (IsImpediment ?? false) ? "red" : "auto",
+					IconColor = (IsImpediment ?? false) ? "darkred" : "auto",
 					HtmlBody = HtmlBody,
 					TextBody = TextBody
 				});
 			}
-		}
-
-		public async Task SetOrgAndAppIdAsync(IDbConnection connection)
-		{
-			var result = await WorkItem.GetOrgAndAppIdAsync(connection, WorkItemId);
-			OrganizationId = result.OrganizationId;
-			ApplicationId = result.ApplicationId;
 		}
 	}
 }
