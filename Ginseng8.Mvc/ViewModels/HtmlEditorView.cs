@@ -6,6 +6,6 @@
 		public string IdPrefix { get; set; }
 		public string Content { get; set; }
 		public string PostUrl { get; set; }
-		public bool AllowComments { get; set; }
+		public bool AllowComments { get; set; }		
 	}
 }

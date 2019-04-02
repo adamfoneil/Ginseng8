@@ -84,7 +84,7 @@ namespace Ginseng.Mvc.Controllers
 		[HttpPost]		
 		public async Task<JsonResult> WorkItemBody(int id, string htmlBody)
 		{
-			var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, number = id });
+			var workItem = await _data.FindAsync<WorkItem>(id);
 			return await UpdateInnerAsync(workItem, htmlBody);
 		}
 

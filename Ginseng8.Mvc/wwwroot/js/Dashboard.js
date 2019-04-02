@@ -285,8 +285,8 @@ $(document)
     }).then(function (response) {
         return response.text();
     }).then(function (html) {
-        var number = frm.Number.value;
-        $('#comments-' + number + '-output').first().html(html);
+        var objectId = frm.ObjectId.value;
+        $('#comments-' + objectId + '-output').first().html(html);
     });
 });
 
