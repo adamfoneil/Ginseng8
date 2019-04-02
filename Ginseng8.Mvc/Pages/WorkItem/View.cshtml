@@ -14,18 +14,20 @@
         <h2>@Model.Item.Title</h2>
     </div>
 </div>
-
-<div class="row">
+@{ 
+    var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id] };
+}
+<div class="row mb-2">
     <div class="col-2"></div>
     <div class="col-10">
-
+        <partial name="Dashboard/Items/_LabelControls" model="cardView"/>
     </div>
 </div>
 
 <div class="row">
     <div class="col-2"></div>
     <div class="col-10">
-        <partial name="/Pages/Dashboard/Items/_ItemInner.cshtml" model="new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id] }"/>
+        <partial name="/Pages/Dashboard/Items/_ItemInner.cshtml" model="cardView"/>
         <hr />
     </div>
 </div>

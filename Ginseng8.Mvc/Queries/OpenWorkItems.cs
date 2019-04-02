@@ -1,4 +1,5 @@
-﻿using Postulate.Base;
+﻿using Ginseng.Mvc.Interfaces;
+using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
@@ -7,7 +8,7 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
-	public class OpenWorkItemsResult
+	public class OpenWorkItemsResult : IWorkItemNumber
 	{
 		public int Id { get; set; }
 		public int Number { get; set; }

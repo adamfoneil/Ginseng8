@@ -8,8 +8,8 @@
         @foreach (var item in reasonGrp)
         {
             <li>
-                <span class="badge badge-dark">@item.Number</span>
-                <span>@item.Title</span>
+                <partial name="Items/_ItemNumber" model="item"/>
+                <a asp-page="/WorkItem/View" asp-route-id="@item.Number">@item.Title</a>
             </li>
         }
     </ul>

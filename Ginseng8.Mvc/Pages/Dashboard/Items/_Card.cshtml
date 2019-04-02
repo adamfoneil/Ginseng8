@@ -8,29 +8,7 @@
             <div class="col">
                 <partial name="Dashboard/Items/_ItemNumber" model="Model.WorkItem"/>
                 <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />                
-
-                <div style="display:inline-block">
-                    <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fal fa-tags" title="Labels"></i>
-                    </button>
-                    <div class="dropdown-menu">
-                        @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
-                        {
-                            <form method="post">
-                                <input type="hidden" name="WorkItemNumber" value="@Model.WorkItem.Number"/>
-                                <input type="hidden" name="LabelId" value="@item.Id"/>
-                                <a class="dropdown-item labelCheckboxLink">
-                                    @Html.CheckBox("selected", item.Selected, new { @class = "labelCheckbox" })
-                                    <span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span>
-                                </a>
-                            </form>                            
-                        }
-                    </div>
-                </div>
-
-                <div id="labels-@Model.WorkItem.Number" style="display:inline-block">
-                    <partial name="Dashboard/Items/_Labels" model="Model.SelectedLabels"/>
-                </div>
+                <partial name="Dashboard/Items/_LabelControls" model="Model"/>
             </div>
             <div class="col-12 col-md-auto d-flex align-items-center">                
                 @if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
