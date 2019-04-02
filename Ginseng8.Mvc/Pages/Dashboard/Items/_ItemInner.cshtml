@@ -51,6 +51,6 @@
 <div>
     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Number, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true })
     <div id="comments-@Model.WorkItem.Number-output">
-    @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, Number = Model.WorkItem.Number })
+    @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, ObjectId = Model.WorkItem.Id, ObjectType = ObjectType.WorkItem })
     </div>
 </div>

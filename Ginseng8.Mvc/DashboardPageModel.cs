@@ -82,8 +82,8 @@ namespace Ginseng.Mvc
 					SelectedLabels = labelsInUse.ToLookup(row => row.WorkItemId);
 					LabelFilter = labelsInUse.GroupBy(row => row.Id);
 					
-					var comments = await new Comments() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);
-					Comments = comments.ToLookup(row => row.WorkItemId);
+					var comments = await new Comments() { OrgId = OrgId, ObjectIds = itemIds }.ExecuteAsync(cn);
+					Comments = comments.ToLookup(row => row.ObjectId);
 
 					WorkDays = await new WorkDays() { OrgId = OrgId }.ExecuteAsync(cn);
 

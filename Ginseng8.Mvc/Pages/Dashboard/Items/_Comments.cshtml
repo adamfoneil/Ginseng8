@@ -1,11 +1,12 @@
 ﻿@model CommentView
 
-<div class="mt-2" id="addComment-@Model.Number" style="display:none">
+<div class="mt-2" id="addComment-@Model.ObjectId" style="display:none">
     <form method="post">
-        <input type="hidden" name="Number" value="@Model.Number"/>
+        <input type="hidden" name="Number" value="@Model.ObjectId"/>
+        <input type="hidden" name="ObjectType" value="@Model.ObjectType"/>
         <div class="form-row">
             <div class="col-8">
-                <input type="text" name="HtmlBody" class="form-control form-control-sm mr-2" required="required" placeholder="add comment" id="addComment-@Model.Number-HtmlBody"/>
+                <input type="text" name="HtmlBody" class="form-control form-control-sm mr-2" required="required" placeholder="add comment" id="addComment-@Model.ObjectId-HtmlBody"/>
             </div>
             <div class="col-2">                
                 <select name="IsImpediment" class="form-control form-control-sm">

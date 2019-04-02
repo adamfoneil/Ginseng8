@@ -5,7 +5,8 @@ namespace Ginseng.Mvc.ViewModels
 {
 	public class CommentView
 	{
-		public int Number { get; set; }
+		public int ObjectId { get; set; }
+		public ObjectType ObjectType { get; set; }
 		public IEnumerable<Comment> Comments { get; set; }
 	}
 }

@@ -10,6 +10,15 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
+	public enum ObjectType
+	{
+		WorkItem = 1,
+		Project = 2,
+		DataModel = 3,
+		ModelClass = 4,
+		Article = 5
+	}
+
 	/// <summary>
 	/// Info added to a work item
 	/// </summary>
@@ -18,9 +27,13 @@ namespace Ginseng.Models
 		public const string CommentIcon = "far fa-comment";
 		public const string ImpedimentIcon = "fas fa-comment-times";
 		public const string ResolvedIcon = "fas fa-comment-check";
+		
+		[References(typeof(Organization))]		
+		public int OrganizationId { get; set; }
 
-		[References(typeof(WorkItem))]
-		public int WorkItemId { get; set; }		
+		public ObjectType ObjectType { get; set; } = ObjectType.WorkItem;
+
+		public int ObjectId { get; set; }
 
 		public bool? IsImpediment { get; set; }
 
@@ -37,33 +50,30 @@ namespace Ginseng.Models
 		[NotMapped]
 		public string DisplayName { get; set; }
 
-		/// <summary>
-		/// For forms where work item number is used instead of Id
-		/// </summary>
-		[NotMapped]
-		public int Number { get; set; }
-
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
 			await base.AfterSaveAsync(connection, action, user);
 
 			if (action == SaveAction.Insert)
 			{
-				if (IsImpediment.HasValue)
+				if (IsImpediment.HasValue && ObjectType == ObjectType.WorkItem)
 				{
-					var workItem = await connection.FindAsync<WorkItem>(WorkItemId);
+					var workItem = await connection.FindAsync<WorkItem>(ObjectId);
 					workItem.HasImpediment = IsImpediment.Value;
 					await connection.UpdateAsync(workItem, user, r => r.HasImpediment);
 				}
 
-				await EventLog.WriteAsync(connection, new EventLog(WorkItemId, user)
+				if (ObjectType == ObjectType.WorkItem)
 				{
-					EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded,
-					IconClass = IconClass,
-					IconColor = (IsImpediment ?? false) ? "darkred" : "auto",
-					HtmlBody = HtmlBody,
-					TextBody = TextBody
-				});
+					await EventLog.WriteAsync(connection, new EventLog(ObjectId, user)
+					{
+						EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded,
+						IconClass = IconClass,
+						IconColor = (IsImpediment ?? false) ? "darkred" : "auto",
+						HtmlBody = HtmlBody,
+						TextBody = TextBody
+					});
+				}
 			}
 		}
 	}

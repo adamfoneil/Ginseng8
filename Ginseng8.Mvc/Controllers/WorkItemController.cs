@@ -225,14 +225,12 @@ namespace Ginseng.Mvc.Controllers
 		{
 			using (var cn = _data.GetConnection())
 			{
-				var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, comment.Number });
-				comment.WorkItemId = workItem.Id;
+				comment.OrganizationId = _data.CurrentOrg.Id;
 				comment.SaveHtml();
 				await _data.TrySaveAsync(comment);
 
-				var vm = new CommentView();
-				vm.Number = comment.Number;
-				vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, WorkItemIds = new int[] { workItem.Id } }.ExecuteAsync(cn);
+				var vm = new CommentView();				
+				vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, ObjectType = comment.ObjectType, ObjectIds = new int[] { comment.ObjectId } }.ExecuteAsync(cn);
 				return PartialView("/Pages/Dashboard/Items/_Comments.cshtml", vm);
 			}
 		}
