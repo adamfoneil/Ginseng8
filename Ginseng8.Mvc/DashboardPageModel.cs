@@ -28,6 +28,12 @@ namespace Ginseng.Mvc
 		public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
 		public IEnumerable<WorkDaysResult> WorkDays { get; set; }
 
+		/// <summary>
+		/// triggers display of partial to offer to move items to soonest upcoming or new milestone
+		/// </summary>
+		public IEnumerable<OpenWorkItemsResult> ItemsInPastMilestone { get; private set; }
+		public Milestone NextSoonestMilestone { get; private set; }
+
 		[BindProperty(SupportsGet = true)]
 		public int? LabelId { get; set; }
 
@@ -76,6 +82,12 @@ namespace Ginseng.Mvc
 				if (query != null)
 				{
 					WorkItems = await GetQuery().ExecuteAsync(cn);
+
+					ItemsInPastMilestone = WorkItems.Where(wi => wi.MilestoneDate < DateTime.Today).ToArray();					
+					if (ItemsInPastMilestone.Any())
+					{
+						NextSoonestMilestone = await Milestone.GetSoonestNextAsync(cn, OrgId) ?? await Milestone.CreateNextAsync(cn, OrgId);
+					}
 
 					int[] itemIds = WorkItems.Select(wi => wi.Id).ToArray();
 					var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(cn);

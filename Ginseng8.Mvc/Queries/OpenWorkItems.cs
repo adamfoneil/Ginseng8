@@ -168,6 +168,9 @@ namespace Ginseng.Mvc.Queries
 		[Phrase("wi].[Title", "wi].[TextBody")]
 		public string TitleAndBodySearch { get; set; }
 
+		[Where("[ms].[Date]<getdate()")]
+		public bool? IsPastDue { get; set; }
+
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new OpenWorkItems() { OrgId = 0 };

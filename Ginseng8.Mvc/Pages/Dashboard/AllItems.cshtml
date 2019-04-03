@@ -13,7 +13,7 @@
 {
     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
     {
-        { "applicationId", Html.CurrentAppId() }        
+        { "applicationId", Html.CurrentAppId() }
     }))
 }
 

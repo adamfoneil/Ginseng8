@@ -28,6 +28,9 @@ namespace Ginseng.Mvc.Pages.Work
 		[BindProperty(SupportsGet = true)]
 		public int? FilterSizeId { get; set; }
 
+		[BindProperty(SupportsGet = true)]
+		public bool? PastDue { get; set; }
+
 		/// <summary>
 		/// Projects found by a search
 		/// </summary>
@@ -65,7 +68,8 @@ namespace Ginseng.Mvc.Pages.Work
 				LabelId = LabelId,				
 				MilestoneId = FilterMilestoneId,
 				SizeId = FilterSizeId,
-				TitleAndBodySearch = Query
+				TitleAndBodySearch = Query,
+				IsPastDue = PastDue
 			};
 		}
 	}

@@ -27,6 +27,33 @@
             <div class="ml-3">
                 <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
 
+                @if (milestoneGrp.First().MilestoneDate < DateTime.Today)
+                {
+                    if (Model.NextSoonest != null)
+                    {
+                        <form method="post" asp-page-handler="MoveToNextMilestone">
+                            <input type="hidden" name="appId" value="@appGrp.Key"/>
+                            <input type="hidden" name="fromMilestoneId" value="@milestoneGrp.Key"/>
+                            <input type="hidden" name="toMilestoneId" value="@Model.NextSoonest.Id"/>
+                            <label>Move to next soonest milestone</label>
+                            <button class="btn btn-sm btn-dark" type="submit">@Html.FormatValue(Model.NextSoonest.Date, "{0:ddd M/d}")</button>
+                        </form>
+                    }                    
+
+                    if (Model.NextGenerated != null)
+                    {
+                        <form method="post" asp-page-handler="MoveToNewMilestone">
+                            <input type="hidden" name="appId" value="@appGrp.Key"/>
+                            <input type="hidden" name="fromMilestoneId" value="@milestoneGrp.Key"/>
+                            <input type="hidden" name="toName" value="@Model.NextGenerated.Name"/>
+                            <input type="hidden" name="toDate" value="@Model.NextGenerated.Date"/>
+                            <label>Move to new milestone</label>
+                            <button class="btn btn-sm btn-dark" type="submit">@Html.FormatValue(Model.NextGenerated.Date, "{0:ddd M/d}")</button>
+                            <label>based on your <a asp-page="/Setup/Organization">Org Setup</a></label>
+                        </form>
+                    }
+                }
+
                 @foreach (var item in milestoneGrp)
                 {
                     <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />

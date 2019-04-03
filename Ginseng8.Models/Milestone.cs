@@ -7,6 +7,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -51,7 +52,7 @@ namespace Ginseng.Models
 					[OrganizationId]=@orgId", new { orgId });
 		}
 
-		public static async Task<Milestone> GetSoonestUpcoming(IDbConnection connection, int orgId)
+		public static async Task<Milestone> GetSoonestNextAsync(IDbConnection connection, int orgId)
 		{
 			return await connection.QuerySingleOrDefaultAsync<Milestone>(
 				@"WITH [source] AS (
@@ -60,7 +61,7 @@ namespace Ginseng.Models
 					WHERE [OrganizationId]=@orgId AND [Date]>getdate()
 				) SELECT [ms].*
 				FROM 
-					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MaxDate]
+					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MinDate]
 				WHERE
 					[OrganizationId]=@orgId", new { orgId });
 		}
@@ -75,10 +76,15 @@ namespace Ginseng.Models
 				latest?.Date.NextDayOfWeek(nextDayOfWeek, org.IterationWeeks) ?? 
 				DateTime.Today.NextDayOfWeek(nextDayOfWeek, org.IterationWeeks);
 
+			DateTimeFormatInfo dtfi = DateTimeFormatInfo.CurrentInfo;
+			var cal = dtfi.Calendar;
+			int weekNumber = cal.GetWeekOfYear(nextDate, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
+
 			return new Milestone()
 			{
 				OrganizationId = orgId,
-				Date = nextDate
+				Date = nextDate,
+				Name = $"week {weekNumber}"
 			};
 		}
 	}
