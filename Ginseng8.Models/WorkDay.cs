@@ -2,6 +2,7 @@
 using Postulate.Base.Attributes;
 using Postulate.Base.Extensions;
 using Postulate.SqlServer;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -45,6 +46,16 @@ namespace Ginseng.Models
 		public static DataTable GetSeedData()
 		{
 			return WorkDays.ToDataTable(new SqlServerIntegrator(), excludeIdentity: true);
+		}
+
+		public DayOfWeek ToDayOfWeek()
+		{
+			return ToDayOfWeek(Value);
+		}
+
+		public static DayOfWeek ToDayOfWeek(int value)
+		{
+			return (DayOfWeek)value - 1;
 		}
 	}
 }

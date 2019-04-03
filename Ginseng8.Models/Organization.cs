@@ -6,10 +6,11 @@ using Postulate.SqlServer.IntKey;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	public class Organization : BaseTable
+	public class Organization : BaseTable, IFindRelated<int>
 	{
 		[PrimaryKey]
 		[MaxLength(50)]
@@ -26,8 +27,9 @@ namespace Ginseng.Models
 		public int IterationWeeks { get; set; } = 3;
 
 		[DefaultExpression("6")]
-		[References(typeof(WorkDay))]
-		public int MilestoneDayOfWeek { get; set; } = 6;
+		public int MilestoneWorkDayValue { get; set; } = 6; // Friday	
+
+		public WorkDay MilestoneWorkDay { get; set; }
 
 		public override bool Validate(IDbConnection connection, out string message)
 		{
@@ -81,6 +83,16 @@ namespace Ginseng.Models
 					connection.Update(profile, null, r => r.OrganizationId);
 				}
 			}
+		}
+
+		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+		{
+			MilestoneWorkDay = commandProvider.FindWhere<WorkDay>(connection, new { Value = MilestoneWorkDayValue });
+		}
+
+		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+		{
+			MilestoneWorkDay = await commandProvider.FindAsync<WorkDay>(connection, MilestoneWorkDayValue);
 		}
 	}
 }
