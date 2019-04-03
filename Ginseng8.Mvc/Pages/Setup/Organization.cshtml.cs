@@ -2,8 +2,10 @@
 using Ginseng.Models;
 using Ginseng.Mvc.Attributes;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -30,6 +32,8 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public IEnumerable<Organization> MyOrgs { get; set; }
 
+		public SelectList DayOfWeekSelect { get; set; }
+
 		public void OnGet(bool mustCreate = false)
 		{
 			if (mustCreate) MustCreateOrg = true;
@@ -39,6 +43,7 @@ namespace Ginseng.Mvc.Pages.Setup
 			{
 				MyOrgs = new MyOrgs() { UserId = UserId }.Execute(cn);
 				JoinRequests = new MyOrgUsers() { UserId = UserId, IsRequest = true, IsEnabled = false }.Execute(cn);
+				DayOfWeekSelect = new WorkDaySelect().ExecuteSelectList(cn);
 			}
 		}
 
@@ -71,7 +76,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostSave(Organization org)
 		{
-			org.OwnerUserId = CurrentUser.UserId;
+			if (org.Id == 0) org.OwnerUserId = CurrentUser.UserId;						
 			await Data.TrySaveAsync(org);
 			return RedirectToPage("/Setup/Organization");
 		}

@@ -18,19 +18,34 @@
     </div>
 }
 
-<dt>Create New Org</dt>
 <div class="ml-3">
 <form method="post" class="mb-3">
     <input asp-for="Organization.Id" type="hidden" />
 
-    <div class="form-group">
-        <label>Org Name:</label>
-        <input asp-for="Organization.Name" class="form-control" type="text" required="required" />
+    <div class="form-row">
+        <div class="form-group col-6">
+            <label>Org Name:</label>
+            <input asp-for="Organization.Name" class="form-control" type="text" required="required" />
+        </div>
+
+        <div class="form-group col-6">
+            <label>Next Work Item #:</label>
+            <input asp-for="Organization.NextWorkItemNumber" class="form-control" type="text" required="required" />
+        </div>
     </div>
 
-    <div class="form-group">
-        <label>Next Work Item #:</label>
-        <input asp-for="Organization.NextWorkItemNumber" class="form-control" type="text" required="required" />
+    <div class="form-row">
+        <div class="form-group col-6">
+            <label>Iteration Weeks:</label>
+            <input type="number" asp-for="Organization.IterationWeeks" class="form-control"/>
+            <span class="small text-muted">Default number of weeks between milestones</span>
+        </div>
+
+        <div class="form-group col-6">
+            <label>Milestone Day of Week:</label>
+            <select asp-for="Organization.MilestoneDayOfWeek" asp-items="Model.DayOfWeekSelect" class="form-control"></select>
+            <span class="small text-muted">Day of week for generated milestones.</span>
+        </div>
     </div>
 
     <button type="submit" class="btn btn-dark">Save</button>

@@ -22,6 +22,13 @@ namespace Ginseng.Models
 		[DefaultExpression("1000")]
 		public int NextWorkItemNumber { get; set; } = 1000;
 
+		[DefaultExpression("3")]
+		public int IterationWeeks { get; set; } = 3;
+
+		[DefaultExpression("6")]
+		[References(typeof(WorkDay))]
+		public int MilestoneDayOfWeek { get; set; } = 6;
+
 		public override bool Validate(IDbConnection connection, out string message)
 		{
 			if (Name.Contains("--"))
@@ -37,6 +44,12 @@ namespace Ginseng.Models
 			if (invalid.Any())
 			{
 				message = "Organization name may contain letters, numbers, and dashes only.";
+				return false;
+			}
+
+			if (IterationWeeks < 0)
+			{
+				message = "Iteration Weeks cannot be less than one.";
 				return false;
 			}
 

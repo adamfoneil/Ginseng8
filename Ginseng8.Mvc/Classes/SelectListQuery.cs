@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Classes
 {
+	/// <summary>
+	/// Defines a query that fills a SelectList. Queries must return two columns named Value and Text
+	/// </summary>
 	public class SelectListQuery : Query<SelectListItem>
 	{
 		public SelectListQuery(string sql) : base(sql)
