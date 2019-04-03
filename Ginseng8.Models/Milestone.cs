@@ -51,6 +51,20 @@ namespace Ginseng.Models
 					[OrganizationId]=@orgId", new { orgId });
 		}
 
+		public static async Task<Milestone> GetSoonestUpcoming(IDbConnection connection, int orgId)
+		{
+			return await connection.QuerySingleOrDefaultAsync<Milestone>(
+				@"WITH [source] AS (
+					SELECT MIN([Date]) AS [MinDate]
+					FROM [dbo].[Milestone]
+					WHERE [OrganizationId]=@orgId AND [Date]>getdate()
+				) SELECT [ms].*
+				FROM 
+					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MaxDate]
+				WHERE
+					[OrganizationId]=@orgId", new { orgId });
+		}
+
 		public static async Task<Milestone> CreateNextAsync(IDbConnection connection, int orgId)
 		{
 			var org = await connection.FindAsync<Organization>(orgId);
