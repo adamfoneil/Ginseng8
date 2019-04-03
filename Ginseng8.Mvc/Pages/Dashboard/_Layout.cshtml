@@ -42,7 +42,10 @@
     }
 }
 
-<partial name="Items/_PastDue" model="Model"/>
+@if (Model is DashboardPageModel)
+{
+    <partial name="Items/_PastDue" model="Model"/>
+}
 
 @RenderBody()
 
