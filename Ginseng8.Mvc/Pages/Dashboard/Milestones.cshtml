@@ -80,6 +80,7 @@
 @if (Model.CurrentOrgUser.CurrentAppId.HasValue)
 {
     <div id="emptyMilestones">
+        <span>Tip: Milestones with no work items show here. After they get at least one work item, they appear in tabs above.</span>
         @foreach (var ms in Model.EmptyMilestones)
         {            
             <partial name="Items/_MilestoneHeader" model="ms"/>
