@@ -38,6 +38,13 @@ namespace Ginseng.Mvc
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
+			services.AddAuthentication()
+				.AddGoogle(options =>
+				{
+					options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
+					options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
+				});
+
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
 
