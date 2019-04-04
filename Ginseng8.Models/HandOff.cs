@@ -1,12 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
-using System.Threading.Tasks;
-using Ginseng.Models.Conventions;
+﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
@@ -66,18 +65,18 @@ namespace Ginseng.Models
 				await connection.SaveAsync(workItem, user);
 
 				var fromActivity = await connection.FindAsync<Activity>(FromActivityId);
-				string displayUser = await OrganizationUser.GetUserDisplayNameAsync(connection, workItem.OrganizationId, FromUserId, user);				
+				string displayUser = await OrganizationUser.GetUserDisplayNameAsync(connection, workItem.OrganizationId, FromUserId, user);
 				string text = $"{displayUser} handed off work item {workItem.Number} from {fromActivity.Name} to {activity.Name}";
 
 				await EventLog.WriteAsync(connection, new EventLog(WorkItemId, user)
 				{
-					EventId = SystemEvent.HandOff,
+					EventId = (IsForward) ? SystemEvent.HandOffForward : SystemEvent.HandOffBackward,
 					IconClass = GetIconClass(IsForward),
 					IconColor = GetColor(IsForward),
 					HtmlBody = text,
 					TextBody = text
 				});
-			}			
+			}
 		}
 	}
 }
