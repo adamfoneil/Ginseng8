@@ -12,7 +12,7 @@ using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
-namespace Ginseng.Mvc
+namespace Ginseng.Mvc.Services
 {
 	/// <summary>
 	/// Low-level CRUD handler that supports Pages and ViewComponents
