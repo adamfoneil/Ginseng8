@@ -31,6 +31,9 @@ namespace Ginseng.Models
 		/// </summary>
 		public int? Priority { get; set; }
 
+		/// <summary>
+		/// Source code location
+		/// </summary>
 		[MaxLength(255)]
 		public string BranchUrl { get; set; }
 
