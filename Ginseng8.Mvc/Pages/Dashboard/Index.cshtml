@@ -4,7 +4,7 @@
     ViewData["Title"] = "My Items";
 }
 
-<a asp-page="Setup/MyAppActivities" class="btn btn-light btn-sm mb-3">My Activities: @Model.MyHandOffActivityList()</a>
+<a asp-page="/Setup/AppActivities" class="btn btn-light btn-sm mb-3">My Activities: @Model.MyHandOffActivityList()</a>
 
 <div id="accordion">
 @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))

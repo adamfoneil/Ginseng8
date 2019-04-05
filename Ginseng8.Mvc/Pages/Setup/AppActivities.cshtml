@@ -1,0 +1,36 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Setup.AppActivitiesModel
+@{
+    ViewData["Title"] = "My App Activities";
+}
+
+<h4>My App Activities</h4>
+
+<p>Use this to indicate which <a asp-page="Activities">activities</a> you do in your organization for which <a asp-page="Applications">applications</a>.
+    This is how you can be notified when workflow might be waiting on you.</p>
+
+<table class="table">
+    <tr>
+        <th></th>
+        @foreach (var app in Model.Applications)
+        {
+            <th>@app.Name</th>
+        }
+    </tr>
+    @foreach  (var act in Model.Activities)
+    {
+        <tr>
+            <td>@act.Name</td>
+            @foreach  (var app in Model.Applications)
+            {
+                <td>
+                    <form method="post" asp-page-handler="UpdateSubscription">
+                        <input type="hidden" name="ApplicationId" value="@app.Id"/>
+                        <input type="hidden" name="ActivityId" value="@act.Id"/>
+                        @Html.CheckBox("IsSelected", Model.MyActivities.ContainsKey(new AppActivity() { ActivityId = act.Id, ApplicationId = app.Id }), new { onclick = "this.form.submit();" })
+                    </form>
+                </td>
+            }
+        </tr>
+    }
+</table>
