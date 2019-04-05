@@ -64,8 +64,10 @@ namespace Ginseng.Mvc.Queries
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
+		const string AssignedUserExpression = "CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END";
+
 		public OpenWorkItems() : base(
-			@"SELECT
+			$@"SELECT
                 [wi].[Id],
                 [wi].[Number],
 				[pri].[Value] AS [Priority],
@@ -87,10 +89,7 @@ namespace Ginseng.Mvc.Queries
                     WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
                     WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
                 END AS [AssignedUserName],
-				CASE [act].[ResponsibilityId]
-					WHEN 1 THEN [wi].[BusinessUserId]
-					WHEN 2 THEN [wi].[DeveloperUserId]
-				END AS [AssignedUserId],
+				{AssignedUserExpression} AS [AssignedUserId],
 				[p].[DataModelId],
                 [sz].[Name] AS [WorkItemSize],
                 [wi].[SizeId],
@@ -122,7 +121,7 @@ namespace Ginseng.Mvc.Queries
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
             WHERE
-                [wi].[OrganizationId]=@orgId {andWhere}
+                [wi].[OrganizationId]=@orgId {{andWhere}}
             ORDER BY
                 COALESCE([pri].[Value], 100000),
                 [wi].[Number]")
@@ -138,7 +137,7 @@ namespace Ginseng.Mvc.Queries
 		[Where("[wi].[Number]=@number")]
 		public int? Number { get; set; }
 
-		[Where("(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)=@assignedUserId")]
+		[Where("(" + AssignedUserExpression + ")=@assignedUserId")]
 		public int? AssignedUserId { get; set; }
 
 		[Where("[wi].[ApplicationId]=@appId")]
@@ -163,16 +162,20 @@ namespace Ginseng.Mvc.Queries
 		public int? ActivityId { get; set; }
 
 		[Where("[wi].[ActivityId] IN @activityIds")]
-		public int[] ActivityIds { get; set; }
+		public int[] ActivityIds { get; set; }		
 
-		[Case(false, "COALESCE(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END, [wi].[DeveloperUserId], [wi].[BusinessUserId]) IS NULL")]
+		[Case(false, "(" + AssignedUserExpression + ") IS NULL")]
+		[Case(true, "(" + AssignedUserExpression + ") IS NOT NULL")]
 		public bool? HasAssignedUserId { get; set; }
 	
-		[Where("[wi].[ActivityId] IS NOT NULL AND (CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END) IS NULL")]
-		public bool? IsPaused { get; set; }
+		[Case(true, "[wi].[ActivityId] IS NOT NULL AND (" + AssignedUserExpression + ") IS NULL")]
+		public bool? IsPaused { get; set; }		
 
-		[Where("[wi].[MilestoneId] IS NOT NULL AND [wi].[ActivityId] IS NULL")]
-		public bool? IsStopped { get; set; }
+		[Case(true, "[wi].[MilestoneId] IS NOT NULL AND [wi].[ActivityId] IS NULL")]
+		public bool? IsStopped { get; set; }		
+
+		[Case(true, "")]
+		public bool? IsHung { get; set; }
 
 		[Phrase("wi].[Title", "wi].[TextBody")]
 		public string TitleAndBodySearch { get; set; }

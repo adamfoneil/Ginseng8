@@ -45,6 +45,9 @@ namespace Ginseng.Models
 		[References(typeof(UserProfile))]
 		public int? DeveloperUserId { get; set; }
 
+		[References(typeof(HandOff))]
+		public int? LastHandOffId { get; set; }
+
 		public string TextBody { get; set; }
 
 		public string HtmlBody { get; set; }
