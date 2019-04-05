@@ -27,6 +27,8 @@ namespace Ginseng.Mvc.Pages.Setup
 		public IEnumerable<Responsibility> Responsibilities { get; set; }
 		public SelectList ActivitySelect { get; set; }
 
+		public SelectList TimeZoneSelect { get; set; }
+
 		public void OnGet()
 		{
 			WorkDays = WorkDay.WorkDays.ToArray();

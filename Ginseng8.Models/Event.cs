@@ -47,7 +47,6 @@ namespace Ginseng.Models
 				new Event() { Name = "Comment Added" },
 				new Event() { Name = "Impediment Added" },
 				new Event() { Name = "Priority Changed" },
-				new Event() { Name = "Hand Off" },
 				new Event() { Name = "Work Item Field Changed" },
 				new Event() { Name = "Milestone Date Changed" },
 				new Event() { Name = "Estimate Changed" },
