@@ -6,6 +6,12 @@
 
 <h4>Feed</h4>
 
+@if (!Model.CurrentOrgUser.CurrentAppId.HasValue)
+{
+    <p>Please select an App above.</p>
+    return;
+}
+
 <div class="row">
     <div class="col-3">
         <ul>

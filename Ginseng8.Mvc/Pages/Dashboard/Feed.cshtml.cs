@@ -39,8 +39,10 @@ namespace Ginseng.Mvc.Pages.Work
 
 		private async Task CreateDefaultEventSubscriptionsAsync(SqlConnection cn)
 		{
-			await cn.ExecuteAsync(
-				@"INSERT INTO [dbo].[EventSubscription] (
+			if (CurrentOrgUser.CurrentAppId.HasValue)
+			{
+				await cn.ExecuteAsync(
+					@"INSERT INTO [dbo].[EventSubscription] (
 					[EventId], [OrganizationId], [ApplicationId], [UserId], [Visible], [SendEmail], [SendText], [InApp],
 					[CreatedBy], [DateCreated]
 				) SELECT
@@ -56,6 +58,7 @@ namespace Ginseng.Mvc.Pages.Work
 							[ApplicationId]=@appId AND
 							[UserId]=@userId
 					)", new { OrgId, appId = CurrentOrgUser.CurrentAppId, UserId, CreatedBy = User.Identity.Name, dateCreated = CurrentUser.LocalTime });
+			}
 		}
 	}
 }
