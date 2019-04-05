@@ -89,3 +89,25 @@
 
     <button class="btn btn-dark">Save</button>
 </form>
+
+<hr/>
+
+<form method="post" asp-page-handler="SetTimeZone" class="form-inline">    
+    <label class="mr-2">Time Zone:</label>
+    <select name="TimeZoneOffset" asp-items="Model.TimeZoneSelect" class="form-control mr-2">
+        <option value="0">UTC time</option>
+    </select>
+
+    <label class="mr-2">
+        @Html.CheckBoxFor(m => m.AdjustForDaylightSaving)
+        Adjust for daylight saving
+    </label>
+    
+    <button class="btn btn-dark mr-2">Update</button>
+
+    <label>Current time: @Model.CurrentUser.LocalTime.ToShortTimeString()</label>
+</form>
+
+<p class="small text-muted mt-3">
+    Note, your selected time zone applies to all your organizations, if you have more than one.
+</p>

@@ -28,6 +28,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		public SelectList ActivitySelect { get; set; }
 
 		public SelectList TimeZoneSelect { get; set; }
+		public bool AdjustForDaylightSaving { get; set; }
 
 		public void OnGet()
 		{
@@ -38,6 +39,8 @@ namespace Ginseng.Mvc.Pages.Setup
 				MyOrgSelect = new MyOrgSelect() { UserId = CurrentUser.UserId }.ExecuteSelectList(cn, CurrentUser.OrganizationId);
 				ActivitySelect = new ActivitySelect() { OrgId = OrgId }.ExecuteSelectList(cn, CurrentOrgUser.DefaultActivityId);
 				Responsibilities = new Responsibilities().Execute(cn);
+				TimeZoneSelect = new TimeZoneSelect().ExecuteSelectList(cn, CurrentUser.TimeZoneOffset);
+				AdjustForDaylightSaving = CurrentUser.AdjustForDaylightSaving;
 			}
 
 			OrgUser = CurrentOrgUser ?? new OrganizationUser()
@@ -85,6 +88,16 @@ namespace Ginseng.Mvc.Pages.Setup
 			CurrentUser.OrganizationId = orgId;
 			await Data.TryUpdateAsync(CurrentUser, r => r.OrganizationId);
 			return RedirectToPage("/Setup/OrgUser");
+		}
+
+		public async Task<IActionResult> OnPostSetTimeZoneAsync(int timeZoneOffset, bool adjustForDaylightSaving)
+		{
+			CurrentUser.TimeZoneOffset = timeZoneOffset;
+			CurrentUser.AdjustForDaylightSaving = adjustForDaylightSaving;
+
+			await Data.TryUpdateAsync(CurrentUser, r => r.TimeZoneOffset, r => r.AdjustForDaylightSaving);
+
+			return RedirectToPage("OrgUser");
 		}
 	}
 }

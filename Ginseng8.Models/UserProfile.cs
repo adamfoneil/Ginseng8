@@ -22,6 +22,9 @@ namespace Ginseng.Models
 		[DefaultExpression("0")]
 		public int TimeZoneOffset { get; set; }
 
+		[DefaultExpression("1")]
+		public bool AdjustForDaylightSaving { get; set; }
+
 		[References(typeof(Organization))]
 		public int? OrganizationId { get; set; }
 
@@ -29,10 +32,16 @@ namespace Ginseng.Models
 		{
 			get
 			{
+				int dst = GetDaylightSavingOffset();
 				return (TimeZoneOffset < 24) ?
-					DateTime.UtcNow.AddHours(TimeZoneOffset) :
-					DateTime.UtcNow.AddMinutes(TimeZoneOffset);
+					DateTime.UtcNow.AddHours(TimeZoneOffset + dst) :
+					DateTime.UtcNow.AddMinutes(TimeZoneOffset + dst);
 			}
+		}
+
+		private int GetDaylightSavingOffset()
+		{
+			return (!DateTime.UtcNow.IsDaylightSavingTime() && AdjustForDaylightSaving) ? 1 : 0;
 		}
 	}
 }
