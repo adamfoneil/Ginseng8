@@ -159,6 +159,15 @@ namespace Ginseng.Mvc.Queries
 		[Where("[wi].[SizeId]=@sizeId")]
 		public int? SizeId { get; set; }
 
+		[Where("[wi].[ActivityId]=@activityId")]
+		public int? ActivityId { get; set; }
+
+		[Where("[wi].[ActivityId] IN @activityIds")]
+		public int[] ActivityIds { get; set; }
+
+		[Case(false, "COALESCE(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END, [wi].[DeveloperUserId], [wi].[BusinessUserId]) IS NULL")]
+		public bool? HasAssignedUserId { get; set; }
+	
 		[Where("[wi].[ActivityId] IS NOT NULL AND (CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END) IS NULL")]
 		public bool? IsPaused { get; set; }
 

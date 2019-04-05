@@ -3,6 +3,7 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
