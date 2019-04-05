@@ -64,7 +64,7 @@ namespace Ginseng.Mvc.Queries
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
-		const string AssignedUserExpression = "CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END";
+		const string AssignedUserExpression = "COALESCE((CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END), [wi].[DeveloperUserId], [wi].[BusinessUserId])";
 
 		public OpenWorkItems() : base(
 			$@"SELECT
