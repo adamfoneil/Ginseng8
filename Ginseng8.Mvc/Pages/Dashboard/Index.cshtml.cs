@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Ginseng.Models;
+using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Html;
+using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using Ginseng.Models;
-using Ginseng.Mvc.Queries;
-using Ginseng.Mvc.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Configuration;
 
 namespace Ginseng.Mvc.Pages.Dashboard
 {
@@ -15,7 +14,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 	public class MyItemsModel : DashboardPageModel
 	{
 		public MyItemsModel(IConfiguration config) : base(config)
-		{			
+		{
 		}
 
 		/// <summary>
@@ -26,20 +25,22 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		/// <summary>
 		/// All my hand-off activities
 		/// </summary>
-		public IEnumerable<ActivitySubscription> MyActivitySubscriptions { get; set; } 		
+		public IEnumerable<ActivitySubscription> MyActivitySubscriptions { get; set; }
 
 		/// <summary>
 		/// Hand-offs in my activities waiting for me to take
 		/// </summary>
 		public IEnumerable<HandOff> MyHandOffs { get; set; }
 
-		public string MyHandOffActivityList()
+		public HtmlString MyHandOffActivityList()
 		{
-			return (MyActivitySubscriptions?.Any() ?? false) ?
+			string result = (MyActivitySubscriptions?.Any() ?? false) ?
 				string.Join(", ", MyActivitySubscriptions
 					.GroupBy(asub => asub.ActivityId)
-					.Select(grp => $"{grp.First().ActivityName}: {string.Join(", ", grp.Select(asub => asub.AppName))}")) :
+					.Select(grp => $"<strong>{grp.First().ActivityName}:</strong> {string.Join(", ", grp.Select(asub => asub.AppName))}")) :
 				"none";
+
+			return new HtmlString(result);
 		}
 
 		protected override OpenWorkItems GetQuery()
@@ -63,7 +64,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
-			MyActivitySubscriptions = await new MyHandOffActivities() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);			
+			MyActivitySubscriptions = await new MyHandOffActivities() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
 		}
 	}
 }
