@@ -85,10 +85,10 @@ namespace Ginseng.Mvc.Queries
 				[act].[Order] AS [ActivityOrder],
                 COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessUserName],
                 COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperUserName],
-                CASE [act].[ResponsibilityId]
+                COALESCE(CASE [act].[ResponsibilityId]
                     WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
                     WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
-                END AS [AssignedUserName],
+                END, COALESCE([dev_ou].[DisplayName], [dusr].[UserName]), COALESCE([biz_ou].[DisplayName], [ousr].[UserName])) AS [AssignedUserName],
 				{AssignedUserExpression} AS [AssignedUserId],
 				[p].[DataModelId],
                 [sz].[Name] AS [WorkItemSize],
