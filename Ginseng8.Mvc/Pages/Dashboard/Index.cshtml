@@ -28,13 +28,21 @@
                 {
                     <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
                 }
-                @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+
+                @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
                 {
-                    { "applicationId", appGrp.Key },
-                    { "milestoneId", milestoneGrp.Key },
-                    { Model.UserIdColumnName, Model.UserId },
-                    { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
-                }))
+                    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                    {
+                        { "applicationId", appGrp.Key },
+                        { "milestoneId", milestoneGrp.Key },
+                        { Model.UserIdColumnName, Model.UserId },
+                        { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
+                    }))
+                }
+                else
+                {
+                    <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+                }
             </div>                        
         </div>
     }

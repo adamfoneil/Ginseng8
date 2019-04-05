@@ -64,7 +64,7 @@ namespace Ginseng.Mvc.Queries
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
-		const string AssignedUserExpression = "COALESCE((CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END), [wi].[DeveloperUserId], [wi].[BusinessUserId])";
+		const string AssignedUserExpression = "(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
 
 		public OpenWorkItems() : base(
 			$@"SELECT
@@ -85,10 +85,10 @@ namespace Ginseng.Mvc.Queries
 				[act].[Order] AS [ActivityOrder],
                 COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessUserName],
                 COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperUserName],
-                COALESCE(CASE [act].[ResponsibilityId]
+                CASE [act].[ResponsibilityId]
                     WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
                     WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
-                END, COALESCE([dev_ou].[DisplayName], [dusr].[UserName]), COALESCE([biz_ou].[DisplayName], [ousr].[UserName])) AS [AssignedUserName],
+                END [AssignedUserName],
 				{AssignedUserExpression} AS [AssignedUserId],
 				[p].[DataModelId],
                 [sz].[Name] AS [WorkItemSize],
