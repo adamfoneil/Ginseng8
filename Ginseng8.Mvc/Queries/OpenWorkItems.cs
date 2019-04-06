@@ -44,6 +44,10 @@ namespace Ginseng.Mvc.Queries
 		public int EstimateHours { get; set; }
 		public string WorkItemUserIdColumn { get; set; }
 		public decimal ColorGradientPosition { get; set; }
+		public string HandOffUserName { get; set; }
+		public bool? IsForward { get; set; }
+		public string FromActivityName { get; set; }
+		public DateTime? HandOffDate { get; set; }
 
 		public string ActivityStatus()
 		{
@@ -97,7 +101,12 @@ namespace Ginseng.Mvc.Queries
                 [sz].[EstimateHours] AS [SizeEstimateHours],
 				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
 				[r].[WorkItemUserIdColumn],
-				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition]
+				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition],
+				COALESCE([ho_ou].[DisplayName], [housr].[UserName]) AS [HandOffUserName],
+				[ho].[IsForward],
+				[from_act].[Name] AS [FromActivityName],
+				[ho].[HtmlBody] AS [HandOffBody],
+				[ho].[DateCreated] AS [HandOffDate]
             FROM
                 [dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
@@ -108,6 +117,7 @@ namespace Ginseng.Mvc.Queries
                 LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
                 LEFT JOIN [app].[CloseReason] [cr] ON [wi].[CloseReasonId]=[cr].[Id]
                 LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+				LEFT JOIN [dbo].[HandOff] [ho] ON [wi].[LastHandOffId]=[ho].[Id]
                 LEFT JOIN [dbo].[OrganizationUser] [biz_ou] ON
                     [wi].[OrganizationId]=[biz_ou].[OrganizationId] AND
                     [wi].[BusinessUserId]=[biz_ou].[UserId]
@@ -115,6 +125,11 @@ namespace Ginseng.Mvc.Queries
                 LEFT JOIN [dbo].[OrganizationUser] [dev_ou] ON
                     [wi].[OrganizationId]=[dev_ou].[OrganizationId] AND
                     [wi].[DeveloperUserId]=[dev_ou].[UserId]
+				LEFT JOIN [dbo].[AspNetUsers] [housr] ON [ho].[FromUserId]=[housr].[UserId]
+				LEFT JOIN [dbo].[OrganizationUser] [ho_ou] ON
+					[wi].[OrganizationId]=[ho_ou].[OrganizationId] AND
+					[ho].[FromUserId]=[ho_ou].[UserId]
+				LEFT JOIN [dbo].[Activity] [from_act] ON [ho].[FromActivityId]=[from_act].[Id]
                 LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
                 LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
@@ -185,7 +200,26 @@ namespace Ginseng.Mvc.Queries
 
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
+			// ideally here, you return instances of your query witch parameter set to get coverage of all the generated SQL combinations
+
 			yield return new OpenWorkItems() { OrgId = 0 };
+			yield return new OpenWorkItems() { IsOpen = true };
+			yield return new OpenWorkItems() { Number = 0 };
+			yield return new OpenWorkItems() { AssignedUserId = 0 };
+			yield return new OpenWorkItems() { AppId = 0 };
+			yield return new OpenWorkItems() { HasMilestone = true };
+			yield return new OpenWorkItems() { HasMilestone = false };
+			yield return new OpenWorkItems() { ProjectId = 0 };
+			yield return new OpenWorkItems() { LabelId = 1 };
+			yield return new OpenWorkItems() { MilestoneId = 1 };
+			yield return new OpenWorkItems() { ActivityId = 1 };
+			yield return new OpenWorkItems() { ActivityIds = new int[] { 1, 2, 3, } };
+			yield return new OpenWorkItems() { HasAssignedUserId = true };
+			yield return new OpenWorkItems() { HasAssignedUserId = false };
+			yield return new OpenWorkItems() { IsPaused = true };
+			yield return new OpenWorkItems() { IsStopped = true };
+			yield return new OpenWorkItems() { TitleAndBodySearch = "whatever this that" };
+			yield return new OpenWorkItems() { IsPastDue = true };
 		}
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)

@@ -8,7 +8,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Claims;
 using System.Security.Principal;
 using System.Threading.Tasks;
 
@@ -19,14 +18,14 @@ namespace Ginseng.Mvc.Services
 	/// </summary>
 	public class DataAccess
 	{
-		private readonly IConfiguration _config;				
+		private readonly IConfiguration _config;
 
 		public UserProfile CurrentUser { get; private set; }
 		public Organization CurrentOrg { get; private set; }
 		public OrganizationUser CurrentOrgUser { get; private set; }
 
 		public DataAccess(IConfiguration config)
-		{			
+		{
 			_config = config;
 		}
 
@@ -57,7 +56,7 @@ namespace Ginseng.Mvc.Services
 			using (var cn = GetConnection())
 			{
 				Initialize(cn, user, tempData);
-			}			
+			}
 		}
 
 		public async Task<T> FindWhereAsync<T>(SqlConnection connection, object criteria)
@@ -146,7 +145,7 @@ namespace Ginseng.Mvc.Services
 			{
 				using (var cn = GetConnection())
 				{
-					await cn.UpdateAsync(record, CurrentUser, setColumns);					
+					await cn.UpdateAsync(record, CurrentUser, setColumns);
 					return true;
 				}
 			}
