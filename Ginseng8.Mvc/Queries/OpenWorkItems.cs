@@ -137,7 +137,7 @@ namespace Ginseng.Mvc.Queries
 		[Where("[wi].[Number]=@number")]
 		public int? Number { get; set; }
 
-		[Where("(" + AssignedUserExpression + ")=@assignedUserId")]
+		[Where(AssignedUserExpression + "=@assignedUserId")]
 		public int? AssignedUserId { get; set; }
 
 		[Where("[wi].[ApplicationId]=@appId")]
@@ -164,8 +164,8 @@ namespace Ginseng.Mvc.Queries
 		[Where("[wi].[ActivityId] IN @activityIds")]
 		public int[] ActivityIds { get; set; }		
 
-		[Case(false, "(" + AssignedUserExpression + ") IS NULL")]
-		[Case(true, "(" + AssignedUserExpression + ") IS NOT NULL")]
+		[Case(false, AssignedUserExpression + " IS NULL")]
+		[Case(true, AssignedUserExpression + " IS NOT NULL")]
 		public bool? HasAssignedUserId { get; set; }
 	
 		[Case(true, "[wi].[ActivityId] IS NOT NULL AND (" + AssignedUserExpression + ") IS NULL")]
