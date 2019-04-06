@@ -1,6 +1,7 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Classes;
 using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -68,37 +69,39 @@ namespace Ginseng.Mvc.Queries
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
-		const string AssignedUserExpression = "(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
+		private const string AssignedUserExpression = "(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
 
-		public OpenWorkItems() : base(
+		private readonly List<QueryTrace> _traces;
+
+		public OpenWorkItems(List<QueryTrace> traces = null) : base(
 			$@"SELECT
-                [wi].[Id],
-                [wi].[Number],
+				[wi].[Id],
+				[wi].[Number],
 				[pri].[Value] AS [Priority],
-                [wi].[Title],
+				[wi].[Title],
 				[wi].[HtmlBody],
-                [wi].[BusinessUserId],
-                [wi].[DeveloperUserId],
-                [wi].[ApplicationId], [app].[Name] AS [ApplicationName],
+				[wi].[BusinessUserId],
+				[wi].[DeveloperUserId],
+				[wi].[ApplicationId], [app].[Name] AS [ApplicationName],
 				[wi].[HasImpediment],
-                COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
-                COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
-                [wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
-                COALESCE([wi].[ActivityId], 0) AS [ActivityId],
-                [act].[Name] AS [ActivityName],
+				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
+				COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
+				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
+				COALESCE([wi].[ActivityId], 0) AS [ActivityId],
+				[act].[Name] AS [ActivityName],
 				[act].[Order] AS [ActivityOrder],
-                COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessUserName],
-                COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperUserName],
-                CASE [act].[ResponsibilityId]
-                    WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
-                    WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
-                END [AssignedUserName],
+				COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessUserName],
+				COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperUserName],
+				CASE [act].[ResponsibilityId]
+					WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
+					WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
+				END [AssignedUserName],
 				{AssignedUserExpression} AS [AssignedUserId],
 				[p].[DataModelId],
-                [sz].[Name] AS [WorkItemSize],
-                [wi].[SizeId],
-                [wid].[EstimateHours] AS [DevEstimateHours],
-                [sz].[EstimateHours] AS [SizeEstimateHours],
+				[sz].[Name] AS [WorkItemSize],
+				[wi].[SizeId],
+				[wid].[EstimateHours] AS [DevEstimateHours],
+				[sz].[EstimateHours] AS [SizeEstimateHours],
 				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
 				[r].[WorkItemUserIdColumn],
 				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition],
@@ -107,43 +110,52 @@ namespace Ginseng.Mvc.Queries
 				[from_act].[Name] AS [FromActivityName],
 				[ho].[HtmlBody] AS [HandOffBody],
 				[ho].[DateCreated] AS [HandOffDate]
-            FROM
-                [dbo].[WorkItem] [wi]
-                INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
+			FROM
+				[dbo].[WorkItem] [wi]
+				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
-                LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
-                LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
-                LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
-                LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
-                LEFT JOIN [app].[CloseReason] [cr] ON [wi].[CloseReasonId]=[cr].[Id]
-                LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
+				LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
+				LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
+				LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
+				LEFT JOIN [app].[CloseReason] [cr] ON [wi].[CloseReasonId]=[cr].[Id]
+				LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
 				LEFT JOIN [dbo].[HandOff] [ho] ON [wi].[LastHandOffId]=[ho].[Id]
-                LEFT JOIN [dbo].[OrganizationUser] [biz_ou] ON
-                    [wi].[OrganizationId]=[biz_ou].[OrganizationId] AND
-                    [wi].[BusinessUserId]=[biz_ou].[UserId]
-                LEFT JOIN [dbo].[AspNetUsers] [ousr] ON [wi].[BusinessUserId]=[ousr].[UserId]
-                LEFT JOIN [dbo].[OrganizationUser] [dev_ou] ON
-                    [wi].[OrganizationId]=[dev_ou].[OrganizationId] AND
-                    [wi].[DeveloperUserId]=[dev_ou].[UserId]
+				LEFT JOIN [dbo].[OrganizationUser] [biz_ou] ON
+					[wi].[OrganizationId]=[biz_ou].[OrganizationId] AND
+					[wi].[BusinessUserId]=[biz_ou].[UserId]
+				LEFT JOIN [dbo].[AspNetUsers] [ousr] ON [wi].[BusinessUserId]=[ousr].[UserId]
+				LEFT JOIN [dbo].[OrganizationUser] [dev_ou] ON
+					[wi].[OrganizationId]=[dev_ou].[OrganizationId] AND
+					[wi].[DeveloperUserId]=[dev_ou].[UserId]
 				LEFT JOIN [dbo].[AspNetUsers] [housr] ON [ho].[FromUserId]=[housr].[UserId]
 				LEFT JOIN [dbo].[OrganizationUser] [ho_ou] ON
 					[wi].[OrganizationId]=[ho_ou].[OrganizationId] AND
 					[ho].[FromUserId]=[ho_ou].[UserId]
 				LEFT JOIN [dbo].[Activity] [from_act] ON [ho].[FromActivityId]=[from_act].[Id]
-                LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
-                LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
+				LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
+				LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
             WHERE
-                [wi].[OrganizationId]=@orgId {{andWhere}}
+				[wi].[OrganizationId]=@orgId {{andWhere}}
             ORDER BY
-                COALESCE([pri].[Value], 100000),
-                [wi].[Number]")
+				COALESCE([pri].[Value], 100000),
+				[wi].[Number]")
 		{
+			_traces = traces;
+		}
+
+		protected override void OnQueryExecuted(QueryTrace queryTrace)
+		{
+			_traces?.Add(queryTrace);
 		}
 
 		public int OrgId { get; set; }
+
+		//[Join("LEFT JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@userId")]
+		public bool InMyActivities { get; set; }
 
 		[Case(true, "[wi].[CloseReasonId] IS NULL")]
 		[Case(false, "[wi].[CloseReasonId] IS NOT NULL")]
@@ -177,17 +189,17 @@ namespace Ginseng.Mvc.Queries
 		public int? ActivityId { get; set; }
 
 		[Where("[wi].[ActivityId] IN @activityIds")]
-		public int[] ActivityIds { get; set; }		
+		public int[] ActivityIds { get; set; }
 
 		[Case(false, AssignedUserExpression + " IS NULL")]
 		[Case(true, AssignedUserExpression + " IS NOT NULL")]
 		public bool? HasAssignedUserId { get; set; }
-	
+
 		[Case(true, "[wi].[ActivityId] IS NOT NULL AND (" + AssignedUserExpression + ") IS NULL")]
-		public bool? IsPaused { get; set; }		
+		public bool? IsPaused { get; set; }
 
 		[Case(true, "[wi].[MilestoneId] IS NOT NULL AND [wi].[ActivityId] IS NULL")]
-		public bool? IsStopped { get; set; }		
+		public bool? IsStopped { get; set; }
 
 		[Case(true, "")]
 		public bool? IsHung { get; set; }

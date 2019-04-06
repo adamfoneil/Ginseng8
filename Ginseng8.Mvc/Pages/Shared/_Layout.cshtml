@@ -73,15 +73,22 @@
         <main role="main" class="pb-3">
             @RenderBody()
         </main>
+
+        <environment include="Development">
+        @if ((Model as DashboardPageModel)?.QueryTraces?.Any() ?? false)
+        {
+            <partial name="Items/_QueryTraces" model="(Model as DashboardPageModel).QueryTraces"/>
+        }
+        </environment>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2019 - Ginseng.Mvc - <a asp-area="" asp-page="/Privacy">Privacy</a>
+            &copy; 2019 - Ginseng.Mvc - <a asp-area="" asp-page="/Privacy">Privacy</a>            
         </div>
         <div id="antiForgeryToken">
             @Html.AntiForgeryToken()
-        </div>        
+        </div>                
     </footer>
 
     <environment include="Development">

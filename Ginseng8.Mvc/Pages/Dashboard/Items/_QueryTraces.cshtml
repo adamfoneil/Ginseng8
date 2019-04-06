@@ -1,0 +1,26 @@
+﻿@model  IEnumerable<Postulate.Base.Classes.QueryTrace>
+
+<button class="btn btn-sm btn-light mb-3" data-toggle="collapse" data-target="#queryTraces" aria-expanded="false" aria-controls="queryTraces">Query Traces</button>
+<div id="queryTraces" class="collapse">
+    <ul>
+        @foreach (var trace in Model)
+        {
+            <li>
+                <strong>@trace.Duration</strong>
+                <div>
+                    <pre>@trace.Sql</pre>
+                </div>
+                
+                @if (trace.Parameters.ParameterNames.Any())
+                {
+                    <ul>
+                        @foreach  (var param in trace.Parameters.ParameterNames)
+                        {
+                            <li>@param = @(trace.Parameters.Get<dynamic>(param))</li>
+                        }
+                    </ul>
+                }                
+            </li>
+        }
+    </ul>
+</div>

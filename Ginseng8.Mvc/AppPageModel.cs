@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Postulate.Base.Classes;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -32,6 +34,8 @@ namespace Ginseng.Mvc
 		public int UserId { get { return CurrentUser?.UserId ?? 0; } }
 		public int OrgId { get { return CurrentUser?.OrganizationId ?? 0; } }
 		public DateTime LocalTime { get { return CurrentUser.LocalTime; } }
+
+		public List<QueryTrace> QueryTraces { get; private set; } = new List<QueryTrace>();
 
 		public async Task<SelectList> CurrentOrgAppSelectAsync()
 		{

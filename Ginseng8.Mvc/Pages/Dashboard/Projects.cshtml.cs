@@ -94,7 +94,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			// we show details on only one project at a time
 			if (Id.HasValue)
 			{
-				return new OpenWorkItems()
+				return new OpenWorkItems(QueryTraces)
 				{
 					OrgId = OrgId,
 					ProjectId = Id,

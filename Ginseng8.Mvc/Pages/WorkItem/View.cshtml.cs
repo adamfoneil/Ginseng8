@@ -26,7 +26,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems() { OrgId = OrgId, Number = Id, IsOpen = null };
+			return new OpenWorkItems(QueryTraces) { OrgId = OrgId, Number = Id, IsOpen = null };
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace Ginseng.Mvc.Pages.Work
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
+			return new OpenWorkItems(QueryTraces) { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
 		}
 	}
 }

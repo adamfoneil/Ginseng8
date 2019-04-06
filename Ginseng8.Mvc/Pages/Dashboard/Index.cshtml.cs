@@ -42,7 +42,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems()
+			return new OpenWorkItems(QueryTraces)
 			{
 				OrgId = OrgId,
 				AssignedUserId = UserId,
