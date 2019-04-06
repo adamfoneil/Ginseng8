@@ -50,7 +50,7 @@
             </div>
         </div>
     </div>
-    <div class="collapse" id="item-@Model.WorkItem.Id" data-parent="#accordion">
+    <div class="collapse" id="item-@Model.WorkItem.Id" data-parent="#@(Model.AccordionElement)">
         <div class="card card-body">
             <partial name="Items/_ItemInner" model="Model"/>
         </div>

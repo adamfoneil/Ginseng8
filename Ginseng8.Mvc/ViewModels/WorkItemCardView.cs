@@ -9,6 +9,7 @@ namespace Ginseng.Mvc.ViewModels
 {
 	public class WorkItemCardView : IUserInfo
 	{
+		public string AccordionElement { get; set; } = "accordion";
 		public OpenWorkItemsResult WorkItem { get; set; }
 		public IEnumerable<Label> SelectedLabels { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
