@@ -200,7 +200,8 @@ namespace Ginseng.Mvc.Queries
 
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
-			// ideally here, you return instances of your query witch parameter set to get coverage of all the generated SQL combinations
+			// ideally here, you return instances of your query with each parameter set to get coverage of all the generated SQL combinations.
+			// we don't care what data is returned, only that the SQL compiles
 
 			yield return new OpenWorkItems() { OrgId = 0 };
 			yield return new OpenWorkItems() { IsOpen = true };
