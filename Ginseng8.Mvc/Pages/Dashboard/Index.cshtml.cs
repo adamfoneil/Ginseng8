@@ -27,7 +27,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		/// </summary>
 		public IEnumerable<ActivitySubscription> MyActivitySubscriptions { get; set; }
 		
-		public IEnumerable<OpenWorkItemsResult> PausedItems { get; set; }
+		/// <summary>
+		/// Items in activities that I follow that are paused
+		/// </summary>
+		public IEnumerable<OpenWorkItemsResult> MyHandOffItems { get; set; }
 
 		public HtmlString MyHandOffActivityList()
 		{
@@ -62,8 +65,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
 			MyActivitySubscriptions = await new MyHandOffActivities() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
-
-			PausedItems = await new OpenWorkItems() { OrgId = OrgId, IsPaused = true }.ExecuteAsync(connection);
+			MyHandOffItems = await new OpenWorkItems(QueryTraces) { OrgId = OrgId, InMyActivities = true, ActivityUserId = UserId, IsPaused = true }.ExecuteAsync(connection);
 		}
 	}
 }

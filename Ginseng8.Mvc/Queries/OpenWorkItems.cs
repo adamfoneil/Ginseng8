@@ -138,6 +138,7 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
+				{{join}}
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
             ORDER BY
@@ -154,8 +155,13 @@ namespace Ginseng.Mvc.Queries
 
 		public int OrgId { get; set; }
 
-		//[Join("LEFT JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@userId")]
+		[Join("INNER JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@activityUserId")]
 		public bool InMyActivities { get; set; }
+
+		/// <summary>
+		/// Use this when InMyActivities = true
+		/// </summary>		
+		public int ActivityUserId { get; set; }
 
 		[Case(true, "[wi].[CloseReasonId] IS NULL")]
 		[Case(false, "[wi].[CloseReasonId] IS NOT NULL")]
