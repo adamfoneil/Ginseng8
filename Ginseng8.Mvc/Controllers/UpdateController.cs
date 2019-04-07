@@ -205,5 +205,34 @@ namespace Ginseng.Mvc.Controllers
 				return Json(new { success = false, message = exc.Message });
 			}
 		}
+
+		public async Task<JsonResult> EventSubscription(int appId, int eventId, bool selected)
+		{
+			try
+			{
+				var ev = await _data.FindWhereAsync<EventSubscription>(new
+				{
+					EventId = eventId,
+					OrganizationId = _data.CurrentOrg.Id,
+					ApplicationId = appId,
+					_data.CurrentUser.UserId
+				}) ?? new EventSubscription()
+				{
+					EventId = eventId,
+					OrganizationId = _data.CurrentOrg.Id,
+					ApplicationId = appId,
+					UserId = _data.CurrentUser.UserId
+				};
+
+				ev.Visible = selected;
+				await _data.TrySaveAsync(ev);
+
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
 	}
 }

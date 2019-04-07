@@ -19,9 +19,10 @@
             {
                 <li>
                     <label>
-                        @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible)
+                        @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible, new { @class = "update-event-subscription", data_id = ev.Id, data_appId = Model.CurrentOrgUser.CurrentAppId })
                         @ev.Name
-                    </label>                    
+                        <img src="~/img/loading.gif" style="display:none" />
+                    </label>
                 </li>
             }
         </ul>
@@ -46,3 +47,7 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script src="~/js/Feed.js"></script>
+}
