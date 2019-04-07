@@ -9,7 +9,7 @@
 
 @if (Model.MyHandOffItems.Any())
 {
-    <button class="btn btn-sm btn-info mb-3" data-toggle="collapse" data-target="#handOffItems" aria-expanded="false" aria-controls="handOffItems">@Model.MyHandOffItems.Count() Paused Items</button>
+    <button class="btn btn-sm btn-light mb-3" data-toggle="collapse" data-target="#handOffItems" aria-expanded="false" aria-controls="handOffItems">@Model.MyHandOffItems.Count() Paused Items</button>
     <div class="collapse" id="handOffItems">
         @foreach (var appGrp in Model.MyHandOffItems.GroupBy(row => row.ApplicationId))
         {
