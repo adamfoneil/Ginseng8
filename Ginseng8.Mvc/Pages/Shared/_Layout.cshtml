@@ -77,7 +77,7 @@
         <environment include="Development">
         @if ((Model as DashboardPageModel)?.QueryTraces?.Any() ?? false)
         {
-            <partial name="Items/_QueryTraces" model="(Model as DashboardPageModel).QueryTraces"/>
+            <partial name="/Pages/Dashboard/Items/_QueryTraces.cshtml" model="(Model as DashboardPageModel).QueryTraces"/>
         }
         </environment>
     </div>
