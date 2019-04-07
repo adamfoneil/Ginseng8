@@ -1,0 +1,47 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Help.IndexModel
+
+<h3>In a Nutshell</h3>
+<div class="ml-3">
+    <p>Ginseng is for small business and software teams to track software projects and tasks.</p>
+</div>
+
+<h4>Definitions</h4>
+<div class="ml-3">
+    <p>In Ginseng, you connect to or create an <strong>organization</strong>. An organization is the top-level container of all your data.
+    You can belong to more than one organization. To change your organization, use <a asp-page="/Setup/Organization">Organization</a>.</p>
+
+    <p>Ginseng is built around <strong>projects</strong> and <strong>work items</strong>. A project is a group of work items organized
+        around a feature or other unifying theme. A work item is a single task within a project that can be estimated and done by one person.
+        An <strong>application</strong> is a product your team develops. Projects and work items apply to applications.
+        See: <a asp-page="/Setup/Applications">Setup Applications</a></p>
+
+    <p>To describe a due date or deadline, use <strong>milestones</strong>. By themselves, projects and work items have no due dates. When
+        you select a milestone for a work item, that becomes its due date. See: <a asp-page="/Setup/Milestones">Setup Milestones</a>, 
+        <a asp-page="/Dashboard/Milestones">Milestone Dashboard</a></p>
+
+    <p>Use <strong>labels</strong> on work items to describe them in a shorthand way, so people can tell at a glance what their scope or impact might be.
+        For example, you will typically have a &quot;bug&quot; label to describe defects, and a &quot;feature&quot; label to describe enhancements.
+        A single work item may have multiple labels. See: <a asp-page="/Setup/Labels">Setup Labels</a></p>
+
+    <p>Team workflow typically involves multiple <strong>activities</strong> such as &quot;Development&quot; and &quot;Testing&quot;.
+        To advance the workflow, you <strong>hand-off</strong> work items from one activity to the next.
+        See: <a asp-page="/Setup/Activities">Setup Activities</a></p>
+</div>
+
+<h4>Getting Around</h4>
+<div class="ml-3">
+    <p>The home page link in the upper left shows the <strong>organization</strong> you're connected to, and takes 
+    you to the <strong>My Items</strong> page, one of several <strong>dashboard</strong> pages. These pages have 
+    a menu across the top and are where you'll spend most of your time in Ginseng.</p>
+
+    <p>The dropdown the right of the home page link shows the current application you're focused on. Selecting an application
+    here filters the presentation of all pages to that application.</p>
+
+    <p>The search box searches open items and project names.</p>
+
+    <p>The <strong>Data</strong> link takes you to the <strong>Data Model</strong> feature. See: <a asp-page="/Setup/DataModels">Setup Data Models</a>,
+    <a asp-page="/Data/Index">Data Models</a></p>
+
+    <p>The <strong>Wiki</strong> link goes to the Wiki editing feature.</p>
+</div>

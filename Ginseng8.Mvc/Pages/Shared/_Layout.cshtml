@@ -26,7 +26,10 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Dashboard/Index">@Html.CurrentOrgName()</a>
+                <a class="navbar-brand" asp-area="" asp-page="/Dashboard/Index">
+                    <i class="fas fa-home" title="My Items"></i>
+                    @Html.CurrentOrgName()
+                </a>
                 @if (User.Identity.IsAuthenticated)
                 {
                     <partial name="_AppFilter" model="new AppFilterView() { CurrentAppName = Html.CurrentAppNameString(), AppOptions = await Html.AppFilterOptions() }" />
@@ -53,6 +56,9 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/Setup/Index">Setup</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-page="/Help/Index">Help</a>
                             </li>
                         }
                     </ul>
