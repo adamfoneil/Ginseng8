@@ -21,7 +21,15 @@
         <partial name="Dashboard/Items/_LabelControls" model="cardView"/>
     </div>
     <div class="col-2">
-        <partial name="/Pages/Dashboard/Items/_Status.cshtml" model="cardView"/>
+        @if (!Model.Item.CloseReasonId.HasValue)
+        {
+            <partial name="/Pages/Dashboard/Items/_Status.cshtml" model="cardView"/>
+        }
+        else
+        {
+            <i class="far fa-clipboard-check"></i>
+            <span>Closed: @Model.Item.CloseReasonName</span>
+        }
     </div>
 </div>
 
