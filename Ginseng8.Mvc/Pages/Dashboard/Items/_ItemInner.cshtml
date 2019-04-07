@@ -49,6 +49,17 @@
     </form>
 </div>
 <div>
+    @if (Model.WorkItem.LastHandOffId.HasValue)
+    {
+        <div class="bg-light p-3 mb-2">
+            <p>
+                <i class="@HandOff.GetIconClass(Model.WorkItem.IsForward.Value)" style="color:@HandOff.GetColor(Model.WorkItem.IsForward.Value)"></i>
+                <span>from @Model.WorkItem.FromActivityName @Model.WorkItem.HandOffUserName @Model.WorkItem.HandOffDate</span>
+            </p>
+            @Html.Raw(Model.WorkItem.HandOffBody)
+        </div>
+    }
+
     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Id, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true })
     <div id="comments-@Model.WorkItem.Id-output">
     @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, ObjectId = Model.WorkItem.Id, ObjectType = ObjectType.WorkItem })

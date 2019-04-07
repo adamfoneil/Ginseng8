@@ -45,7 +45,9 @@ namespace Ginseng.Mvc.Queries
 		public int EstimateHours { get; set; }
 		public string WorkItemUserIdColumn { get; set; }
 		public decimal ColorGradientPosition { get; set; }
+		public int? LastHandOffId { get; set; }
 		public string HandOffUserName { get; set; }
+		public string HandOffBody { get; set; }
 		public bool? IsForward { get; set; }
 		public string FromActivityName { get; set; }
 		public DateTime? HandOffDate { get; set; }
@@ -106,6 +108,7 @@ namespace Ginseng.Mvc.Queries
 				[r].[WorkItemUserIdColumn],
 				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition],
 				COALESCE([ho_ou].[DisplayName], [housr].[UserName]) AS [HandOffUserName],
+				[wi].[LastHandOffId],
 				[ho].[IsForward],
 				[from_act].[Name] AS [FromActivityName],
 				[ho].[HtmlBody] AS [HandOffBody],
