@@ -11,48 +11,13 @@
                 <partial name="Dashboard/Items/_LabelControls" model="Model"/>
             </div>
             <div class="col-12 col-md-auto d-flex align-items-center">                
-                @if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
-                {
-                    <div class="dropdown">
-                        <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            @Model.HandOffButtonText()
-                            <partial name="Items/_Priority" model="Model.WorkItem"/>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        @foreach (var act in Model.GetActivityOptions())
-                        {
-                            <partial name="Dashboard/Items/_Activities" model="act"/>
-                        }
-                        @if (Model.WorkItem.IsPaused())
-                        {
-                            <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">I'll take this</a>
-                        }
-                        @if (Model.WorkItem.AssignedUserId.HasValue)
-                        {
-                            <div class="dropdown-divider"></div>
-                            <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">Remove Me</a>
-                        }
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <span>
-                        @Model.WorkItem.ActivityStatus()
-                        <partial name="Items/_Priority" model="Model.WorkItem"/>
-                    </span>
-                }
-
-                @if (Model.WorkItem.HasImpediment)
-                {                    
-                    <i class="@Comment.ImpedimentIcon ml-2" style="color:darkred" title="This item has an impediment, please see the comments"></i>
-                }                
+                <partial name="Dashboard/Items/_Status" model="Model"/>
             </div>
         </div>
     </div>
     <div class="collapse" id="item-@Model.WorkItem.Id" data-parent="#@(Model.AccordionElement)">
         <div class="card card-body">
-            <partial name="Items/_ItemInner" model="Model"/>
+            <partial name="Dashboard/Items/_ItemInner" model="Model"/>
         </div>
     </div>
 </div>
