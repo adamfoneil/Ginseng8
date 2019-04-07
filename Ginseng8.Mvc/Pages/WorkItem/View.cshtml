@@ -1,7 +1,7 @@
 ﻿@page "/WorkItem/View/{id}"
 @model Ginseng.Mvc.Pages.WorkItem.ViewModel
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Work Item";
     var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id] };
 }
 
@@ -27,7 +27,7 @@
         }
         else
         {
-            <i class="far fa-clipboard-check"></i>
+            <i class="far fa-clipboard-check" style="color:green"></i>
             <span>Closed: @Model.Item.CloseReasonName</span>
         }
     </div>
