@@ -210,6 +210,9 @@ selfStartLinks.forEach(function (ele) {
         var element = ev.target;
         if (element.tagName == 'I') element = element.parentElement;
 
+        var loading = $(element).find('img');
+        $(loading).show();
+
         var data = {
             id: element.getAttribute('data-number'),
             activityId: element.getAttribute('data-activity-id')
@@ -220,9 +223,16 @@ selfStartLinks.forEach(function (ele) {
         fetch('/WorkItem/SelfStartActivity', {
             method: 'post',
             body: formData
-        }).then(function (response) {
-            // show success/fail or something?
+        }).then(function (response) {            
             return response.json();
+        }).then(function (result) {
+            $(loading).hide();
+            $(ev.target).hide();
+            if (result.success) {
+                $(ev.target).nextAll('.success').show();
+            } else {
+                $(ev.target).next('.error').show();
+            }
         });
     });
 });

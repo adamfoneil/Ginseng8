@@ -3,4 +3,8 @@
 <a href="@Model.Url(UriHelper.GetDisplayUrl(ViewContext.HttpContext.Request))" class="dropdown-item @Model.ClassName() no-propagation" data-number="@Model.Number" data-activity-id="@Model.Activity.Id">
     <i class="@Model.FontawesomeClass()" style="color:@HandOff.GetColor(Model.IsForward)"></i>    
     @Model.Activity.Name
+    <img src="~/img/loading.gif" style="display:none" />
 </a>
+<i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
+<span class="success small pr-2" style="display:none">Added successfully</span>
+<i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
