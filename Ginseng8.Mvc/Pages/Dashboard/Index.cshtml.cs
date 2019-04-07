@@ -31,6 +31,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		/// Items in activities that I follow that are paused
 		/// </summary>
 		public IEnumerable<OpenWorkItemsResult> MyHandOffItems { get; set; }
+		public ILookup<int, Label> HandOffLabels { get; set; }
+		public ILookup<int, Comment> HandOffComments { get; set; }
 
 		public HtmlString MyHandOffActivityList()
 		{
@@ -66,6 +68,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		{
 			MyActivitySubscriptions = await new MyHandOffActivities() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
 			MyHandOffItems = await new OpenWorkItems(QueryTraces) { OrgId = OrgId, InMyActivities = true, ActivityUserId = UserId, IsPaused = true }.ExecuteAsync(connection);
+
+			var itemIds = MyHandOffItems.Select(wi => wi.Id).ToArray();
+			var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(connection);
+			HandOffLabels = labelsInUse.ToLookup(row => row.WorkItemId);
+
+			var comments = await new Comments() { OrgId = OrgId, ObjectIds = itemIds, ObjectType = ObjectType.WorkItem }.ExecuteAsync(connection);
+			HandOffComments = comments.ToLookup(row => row.ObjectId);
 		}
 	}
 }
