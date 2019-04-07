@@ -239,6 +239,7 @@ namespace Ginseng.Mvc.Queries
 			yield return new OpenWorkItems() { IsStopped = true };
 			yield return new OpenWorkItems() { TitleAndBodySearch = "whatever this that" };
 			yield return new OpenWorkItems() { IsPastDue = true };
+			yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
 		}
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
