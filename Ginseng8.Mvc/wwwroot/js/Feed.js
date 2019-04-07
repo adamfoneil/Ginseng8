@@ -17,7 +17,8 @@ eventCheckboxes.forEach(function (ele) {
         }).then(function (response) {
             return response.json();
         }).then(function (result) {
-            $(loading).hide();                     
+            $(loading).hide();
+            $('#btnRefresh').show();
         });
     });
 });
