@@ -1,7 +1,10 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -29,7 +32,7 @@ namespace Ginseng.Mvc.Queries
 		public string Title { get; set; }
 	}
 
-	public class EventLogs : Query<EventLogsResult>
+	public class EventLogs : Query<EventLogsResult>, ITestableQuery
 	{
 		public EventLogs() : base(
 			@"SELECT TOP (100)
@@ -72,5 +75,17 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[el].[EventId] IN @eventIds")]
 		public int[] EventIds { get; set; }
+
+		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+		{
+			return TestExecuteHelper(connection);
+		}
+
+		public static IEnumerable<ITestableQuery> GetTestCases()
+		{
+			yield return new EventLogs() { OrgId = 0 };
+			yield return new EventLogs() { AppId = 0 };
+			yield return new EventLogs() { EventIds = new int[] { 1, 2, 3 } };
+		}
 	}
 }

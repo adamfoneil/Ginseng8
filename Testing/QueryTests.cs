@@ -37,5 +37,18 @@ namespace Testing
 				}				
 			}				
 		}
+
+		[TestMethod]
+		public void EventLogsQuery()
+		{
+			var qry = new EventLogs();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in EventLogs.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+		}
 	}
 }
