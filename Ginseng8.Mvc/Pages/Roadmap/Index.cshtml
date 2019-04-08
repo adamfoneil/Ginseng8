@@ -1,0 +1,58 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Roadmap.IndexModel
+@{
+    ViewData["Title"] = "Roadmap";
+}
+
+@{ 
+    int appMsId = 0;
+}
+<ul class="nav nav-tabs" role="tablist">
+    @foreach (var app in Model.Applications)
+    {
+        <li class="nav-item">
+            <a href="#app-@app.Id" data-toggle="tab" class="nav-link">@app.Name</a>
+        </li>
+    }
+</ul>
+<div class="tab-content my-3" id="tabContent">
+    @foreach (var app in Model.Applications)
+    {
+        <div id="app-@app.Id" class="tab-pane fade">
+            @foreach (var ms in Model.Milestones)
+            {
+                <div class="row">
+                    <div class="col-2">
+                        <i class="fas fa-flag-checkered"></i>
+                        <span>@ms.Name - @Html.FormatValue(ms.Date, "{0:M/d/yy}")</span>
+                        <br/><span class="text-muted small">@ms.DaysAway days away</span>
+                    </div>
+                    <div class="col-10">
+                        @{ 
+                            appMsId--; // negative Id values are needed for placeholder editors so that they have unique html element Ids
+                            var cell = new RoadmapCell(app.Id, ms.Id);
+                            var appMs = (Model.AppMilestones.ContainsKey(cell)) ? Model.AppMilestones[cell] : new AppMilestone() { ApplicationId = app.Id, MilestoneId = ms.Id, Id = appMsId };
+                        }
+                        <partial name="/Pages/Shared/_HtmlEditor.cshtml" model="@(new HtmlEditorView()
+                         {
+                             AllowComments = false,
+                             Content = appMs.HtmlBody,
+                             IdPrefix = "appMs", Id = appMs.Id,
+                             PostUrl = "/Update/AppMilestoneBody",
+                             PostFields = new Dictionary<string, object>()
+                             {
+                                 { "appId", app.Id },
+                                 { "milestoneId", ms.Id }
+                             }
+                         })"/>                        
+                    </div>
+                </div>
+                <hr/>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/Dashboard.js"></script>
+}

@@ -1,4 +1,6 @@
-﻿namespace Ginseng.Mvc.ViewModels
+﻿using System.Collections.Generic;
+
+namespace Ginseng.Mvc.ViewModels
 {
 	public class HtmlEditorView
 	{
@@ -6,6 +8,7 @@
 		public string IdPrefix { get; set; }
 		public string Content { get; set; }
 		public string PostUrl { get; set; }
-		public bool AllowComments { get; set; }		
+		public bool AllowComments { get; set; }
+		public Dictionary<string, object> PostFields { get; set; }
 	}
 }
