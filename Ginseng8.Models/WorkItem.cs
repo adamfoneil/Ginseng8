@@ -171,7 +171,12 @@ namespace Ginseng.Models
 		{
 			if (changes.Include(nameof(CloseReasonId)))
 			{
-				string text = (CloseReasonId.HasValue) ? $"Work item {Number} was closed" : $"Work item {Number} was re-opened";
+				string closeReason = string.Empty;
+				if (CloseReasonId.HasValue)
+				{
+					closeReason = await connection.QuerySingleAsync<string>("SELECT [Name] FROM [app].[CloseReason] WHERE [Id]=@id", new { id = CloseReasonId });
+				}
+				string text = (CloseReasonId.HasValue) ? $"Work item {Number} was closed {closeReason}" : $"Work item {Number} was re-opened";
 				await EventLog.WriteAsync(connection, new EventLog()
 				{
 					WorkItemId = Id,
