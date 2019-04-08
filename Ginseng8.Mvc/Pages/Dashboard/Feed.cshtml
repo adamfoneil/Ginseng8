@@ -32,18 +32,27 @@
         @foreach (var dateGrp in Model.EventLogs.GroupBy(row => row.EventDate))
         {
             <h5>@Html.FormatValue(dateGrp.Key, "{0:ddd M/d}")</h5>
-            <ul>
-            @foreach (var ev in dateGrp)
+            @foreach (var numberGrp in dateGrp.GroupBy(row => row.Number))
             {
-                <li>
-                    <i class="@ev.IconClass" style="color:@ev.IconColor"></i>
-                    <span class="font-weight-bold">@ev.WorkItemNumber</span>
-                    <span>@ev.EventName</span>
-                    <span>@ev.CreatedBy</span>
-                    @ev.HtmlBody
-                </li>
+                <div class="ml-4">
+                    <div class="border-bottom mb-1">
+                        <partial name="Dashboard/Items/_ItemNumber" model="numberGrp.First()"/>
+                        <a asp-page="/WorkItem/View" asp-route-id="@numberGrp.First().Number">
+                            <partial name="Dashboard/Items/_Title" model="numberGrp.First()"/>
+                        </a>
+                    </div>                                
+                    <ul style="list-style:none">
+                        @foreach (var ev in numberGrp)
+                        {
+                            <li>
+                                <i class="@ev.IconClass" style="color:@ev.IconColor"></i>                    
+                                <span>@(ev.DisplayName):</span>
+                                @ev.HtmlBody
+                            </li>
+                        }
+                    </ul>
+                </div>                
             }
-            </ul>
         }
     </div>
 </div>

@@ -1,10 +1,11 @@
-﻿using Postulate.Base;
+﻿using Ginseng.Mvc.Interfaces;
+using Postulate.Base;
 using Postulate.Base.Attributes;
 using System;
 
 namespace Ginseng.Mvc.Queries
 {
-	public class EventLogsResult
+	public class EventLogsResult : IWorkItemNumber, IWorkItemTitle
 	{
 		public string EventName { get; set; }
 		public int Id { get; set; }
@@ -17,9 +18,15 @@ namespace Ginseng.Mvc.Queries
 		public string HtmlBody { get; set; }
 		public string TextBody { get; set; }
 		public string CreatedBy { get; set; }
+		public string DisplayName { get; set; }
 		public DateTime DateCreated { get; set; }
-		public int WorkItemNumber { get; set; }
 		public DateTime EventDate { get; set; }
+		public int Number { get; set; }
+		public int EstimateHours { get; set; }
+		public decimal ColorGradientPosition { get; set; }
+		public int ProjectId { get; set; }
+		public string ProjectName { get; set; }
+		public string Title { get; set; }
 	}
 
 	public class EventLogs : Query<EventLogsResult>
@@ -28,12 +35,28 @@ namespace Ginseng.Mvc.Queries
 			@"SELECT TOP (100)
 				[ev].[Name] AS [EventName],
 				[el].*,
-				[wi].[Number] AS [WorkItemNumber],
-				CONVERT(date, [el].[DateCreated]) AS [EventDate]
+				[wi].[Number],
+				COALESCE([wi].[ProjectId], 0) AS [ProjectId],
+				[p].[Name] AS [ProjectName],
+				[wi].[Title],
+				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
+				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition],
+				CONVERT(date, [el].[DateCreated]) AS [EventDate],
+				COALESCE([ou].[DisplayName], [el].[CreatedBy]) AS [DisplayName]
 			FROM
 				[dbo].[EventLog] [el]
 				INNER JOIN [app].[Event] [ev] ON [el].[EventId]=[ev].[Id]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [el].[WorkItemId]=[wi].[Id]
+				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
+				LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+				LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
+				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
+					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
+					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
+				INNER JOIN [dbo].[AspNetUsers] [u] ON [el].[CreatedBy]=[u].[UserName]
+				INNER JOIN [dbo].[OrganizationUser] [ou] ON 
+					[u].[UserId]=[ou].[UserId] AND
+					[wi].[OrganizationId]=[ou].[OrganizationId]
 			WHERE
 				[el].[OrganizationId]=@orgId AND
 				[el].[ApplicationId]=@appId

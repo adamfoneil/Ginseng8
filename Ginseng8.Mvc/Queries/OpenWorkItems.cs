@@ -9,7 +9,7 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
-	public class OpenWorkItemsResult : IWorkItemNumber
+	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
 	{
 		public int Id { get; set; }
 		public int Number { get; set; }
