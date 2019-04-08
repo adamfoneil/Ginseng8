@@ -15,6 +15,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// A due date of some kind, such as a sprint end date or some other event with a known date
 	/// </summary>
+	[DereferenceId("SELECT [Name] + ' ' + FORMAT([Date], 'ddd M/d') AS [Name] FROM [dbo].[Milestone] WHERE [Id]=@id")]
 	public class Milestone : BaseTable
 	{
 		[PrimaryKey]

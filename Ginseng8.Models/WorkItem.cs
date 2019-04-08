@@ -193,8 +193,8 @@ namespace Ginseng.Models
 					ApplicationId = ApplicationId,
 					EventId = SystemEvent.MilestoneChanged,
 					IconClass = "fas fa-flag-checkered",
-					HtmlBody = $"Milestone changed from {milestoneChange.OldValue} to {milestoneChange.NewValue}",
-					TextBody = $"Milestone changed from {milestoneChange.OldValue} to {milestoneChange.NewValue}"
+					HtmlBody = $"Milestone changed from {milestoneChange.OldValue ?? "<null>"} to {milestoneChange.NewValue ?? "<null>"}",
+					TextBody = $"Milestone changed from {milestoneChange.OldValue ?? "<null>"} to {milestoneChange.NewValue ?? "<null>"}"
 				}, user);
 			}
 
