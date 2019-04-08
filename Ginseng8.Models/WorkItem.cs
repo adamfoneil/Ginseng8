@@ -24,7 +24,8 @@ namespace Ginseng.Models
 	[TrackChanges(IgnoreProperties = "ModifiedBy;DateModified")]
 	public class WorkItem : BaseTable, IBody, ITrackedRecord
 	{
-		public const string IconClass = "far fa-plus-hexagon";
+		public const string IconCreated = "far fa-plus-hexagon";
+		public const string IconClosed = "far fa-clipboard-check";
 
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -99,7 +100,7 @@ namespace Ginseng.Models
 					EventId = SystemEvent.WorkItemCreated,
 					HtmlBody = Title,
 					TextBody = Title,
-					IconClass = IconClass
+					IconClass = IconCreated
 				}, user);
 			}
 		}
@@ -177,7 +178,7 @@ namespace Ginseng.Models
 					OrganizationId = OrganizationId,
 					ApplicationId = ApplicationId,
 					EventId = (CloseReasonId.HasValue) ? SystemEvent.WorkItemClosed : SystemEvent.WorkItemOpened,
-					IconClass = (CloseReasonId.HasValue) ? "fas fa-clipboard-check" : "fas fa-play",
+					IconClass = (CloseReasonId.HasValue) ? IconClosed : "fas fa-play",
 					IconColor = (CloseReasonId.HasValue) ? "green" : "orange",
 					HtmlBody = text,
 					TextBody = text
