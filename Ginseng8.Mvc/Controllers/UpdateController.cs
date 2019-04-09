@@ -197,6 +197,16 @@ namespace Ginseng.Mvc.Controllers
 			return Content(newTitle);
 		}
 
+		public async Task<ContentResult> ProjectName(string elementId, string newName)
+		{
+			int projectId = IntFromText(elementId);
+			var project = await _data.FindAsync<Project>(projectId);
+			if (project.Application.OrganizationId != _data.CurrentOrg.Id) throw new Exception("Application is in a different organization.");
+			project.Name = newName;
+			await _data.TryUpdateAsync(project, r => r.Name);
+			return Content(newName);
+		}
+
 		private int IntFromText(string input)
 		{
 			var result = Regex.Match(input, @"\d+");

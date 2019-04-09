@@ -59,4 +59,12 @@ else
 
 @section Scripts {
     <script src="~/js/Projects.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.editable').editable('/Update/ProjectName', {
+                id: 'elementId',
+                name: 'newName'
+            });
+        })
+    </script>
 }
