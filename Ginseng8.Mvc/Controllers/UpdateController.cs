@@ -188,6 +188,15 @@ namespace Ginseng.Mvc.Controllers
 			return Content(newName);
 		}
 
+		public async Task<ContentResult> WorkItemTitle(string elementId, string newTitle)
+		{
+			int number = IntFromText(elementId);
+			var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, Number = number });
+			workItem.Title = newTitle;
+			await _data.TryUpdateAsync(workItem, r => r.Title);
+			return Content(newTitle);
+		}
+
 		private int IntFromText(string input)
 		{
 			var result = Regex.Match(input, @"\d+");

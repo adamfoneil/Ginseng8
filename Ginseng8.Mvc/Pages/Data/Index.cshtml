@@ -141,7 +141,7 @@
             }
 
             @if (Model.Children.Any())
-                    {
+            {
                 <h6>Child Classes</h6>
                 <ul>
                     @foreach (var child in Model.Children)
@@ -151,7 +151,7 @@
                                 <span>@child.PropertyName</span>
                                 <span class="small text-muted">
                                 @if (child.RelationshipType == RelationshipType.OneToOne)
-                    {
+                                {
                                     <text>one-to-one</text>
                                 }
                                 else

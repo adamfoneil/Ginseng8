@@ -208,6 +208,24 @@ namespace Ginseng.Models
 			{
 				// todo: log project change event
 			}
+
+			IEnumerable<PropertyChange> modifiedColumns;
+			if (changes.Include(new string[] { nameof(Title) }, out modifiedColumns))
+			{
+				foreach (var col in modifiedColumns)
+				{
+					await EventLog.WriteAsync(connection, new EventLog()
+					{
+						WorkItemId = Id,
+						OrganizationId = OrganizationId,
+						ApplicationId = ApplicationId,
+						EventId = SystemEvent.WorkItemFieldChanged,
+						IconClass = "far fa-pencil",
+						HtmlBody = $"{col.PropertyName} changed from <em>{col.OldValue}</em> to <em>{col.NewValue}</em>",
+						TextBody = $"{col.PropertyName} changed from {col.OldValue} to {col.NewValue}"
+					}, user);
+				}
+			}
 		}
 
 		/// <summary>

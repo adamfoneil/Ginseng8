@@ -12,7 +12,7 @@
         </h2>
     </div>
     <div class="col-10">
-        <h2>@Model.Item.Title</h2>        
+        <h2><span class="editable" id="title-@Model.Item.Number">@Model.Item.Title</span></h2>        
     </div>
 </div>
 <div class="row mb-2">
@@ -45,4 +45,13 @@
 
 @section Scripts {
     <script src="~/js/Dashboard.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.editable').editable('/Update/WorkItemTitle', {
+                id: 'elementId',
+                name: 'newTitle'
+            });
+        })
+    </script>
+
 }

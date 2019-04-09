@@ -20,5 +20,13 @@ namespace Ginseng.Models.Extensions
 			change = changes.FirstOrDefault(pc => pc.PropertyName.Equals(columnName));
 			return (change != null);
 		}
+
+		internal static bool Include(this IEnumerable<PropertyChange> changes, IEnumerable<string> columnNames, out IEnumerable<PropertyChange> modifiedColumns)
+		{
+			modifiedColumns = from ch in changes
+							  join col in columnNames on ch.PropertyName equals col
+							  select ch;
+			return modifiedColumns.Any();
+		}
 	}
 }

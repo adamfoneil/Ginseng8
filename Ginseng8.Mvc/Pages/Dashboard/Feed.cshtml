@@ -47,7 +47,7 @@
                             <li>
                                 <i class="@ev.IconClass" style="color:@ev.IconColor"></i>                    
                                 <span>@(ev.DisplayName):</span>
-                                @ev.HtmlBody
+                                @Html.Raw(@ev.HtmlBody)
                             </li>
                         }
                     </ul>
