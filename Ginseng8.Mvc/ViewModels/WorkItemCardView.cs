@@ -14,6 +14,7 @@ namespace Ginseng.Mvc.ViewModels
 		public IEnumerable<Label> SelectedLabels { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
 		public IEnumerable<Comment> Comments { get; set; }
+		public bool ShowDetailsButton { get; set; } = true;
 
 		public string HandOffButtonText()
 		{

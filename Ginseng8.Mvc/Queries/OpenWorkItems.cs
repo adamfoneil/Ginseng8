@@ -51,6 +51,8 @@ namespace Ginseng.Mvc.Queries
 		public bool? IsForward { get; set; }
 		public string FromActivityName { get; set; }
 		public DateTime? HandOffDate { get; set; }
+		public string CreatedByName { get; set; }
+		public DateTime DateCreated { get; set; }
 
 		public string ActivityStatus()
 		{
@@ -86,6 +88,7 @@ namespace Ginseng.Mvc.Queries
 				[wi].[DeveloperUserId],
 				[wi].[ApplicationId], [app].[Name] AS [ApplicationName],
 				[wi].[HasImpediment],
+				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
 				COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
 				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
@@ -138,6 +141,10 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[Activity] [from_act] ON [ho].[FromActivityId]=[from_act].[Id]
 				LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
 				LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
+				LEFT JOIN [dbo].[AspNetUsers] [createdBy_user] ON [wi].[CreatedBy]=[createdBy_user].[UserName]
+				LEFT JOIN [dbo].[OrganizationUser] [createdBy_ou] ON
+					[wi].[OrganizationId]=[createdBy_ou].[OrganizationId] AND
+					[createdBy_user].[UserId]=[createdBy_ou].[UserId]
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]

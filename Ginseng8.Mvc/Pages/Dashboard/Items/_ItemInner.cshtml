@@ -1,52 +1,66 @@
 ﻿@model WorkItemCardView
 
 <div class="pb-3">
-    <form class="form-inline">
-        <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
+    <div class="d-flex justify-content-between">
+        <form class="form-inline">
+            <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
                     
-        <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects"></select>
+            <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects"></select>
                     
-        <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number">
-            <option value="">- project -</option>
-        </select>
+            <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number">
+                <option value="">- project -</option>
+            </select>
 
-        @if (Model.WorkItem.ProjectId != 0)
-        {
-            <a asp-page="/Dashboard/Projects" asp-route-id="@Model.WorkItem.ProjectId" title="Goto project" class="mr-2">
-                <i class="fas fa-chevron-double-right small"></i>
-            </a>
-
-            @if (Model.WorkItem.DataModelId.HasValue)
+            @if (Model.WorkItem.ProjectId != 0)
             {
-                <a asp-page="/Data/Index" asp-route-modelId="@Model.WorkItem.DataModelId">
-                    <i class="far fa-database small mr-2"></i>
+                <a asp-page="/Dashboard/Projects" asp-route-id="@Model.WorkItem.ProjectId" title="Goto project" class="mr-2">
+                    <i class="fas fa-chevron-double-right small"></i>
+                </a>
+
+                @if (Model.WorkItem.DataModelId.HasValue)
+                {
+                    <a asp-page="/Data/Index" asp-route-modelId="@Model.WorkItem.DataModelId">
+                        <i class="far fa-database small mr-2"></i>
+                    </a>
+                }
+            }
+
+            <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
+                <option value="">- milestone -</option>
+            </select>
+                 
+            @if (Model.WorkItem.MilestoneId != 0)
+            {
+                <a asp-page="/Dashboard/Milestones" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
+                    <i class="fas fa-chevron-double-right small"></i>
                 </a>
             }
-        }
 
-        <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-            <option value="">- milestone -</option>
-        </select>
-                 
-        @if (Model.WorkItem.MilestoneId != 0)
-        {
-            <a asp-page="/Dashboard/Milestones" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
-                <i class="fas fa-chevron-double-right small"></i>
-            </a>
-        }
-
-        <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-            <option value="">- size -</option>
-        </select>
+            <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
+                <option value="">- size -</option>
+            </select>
                     
-        <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-            <option value="">- open -</option>
-        </select>
+            <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
+                <option value="">- open -</option>
+            </select>
 
-        <img src="~/img/loading.gif" id="loading-@Model.WorkItem.Number" style="display:none" />
-        <i class="fas fa-check-circle" style="color:green;display:none" id="update-success-@Model.WorkItem.Number"></i>
-        <i class="fas fa-exclamation-triangle" style="color:red;display:none" id="update-failed-@Model.WorkItem.Number"></i>
-    </form>
+            <img src="~/img/loading.gif" id="loading-@Model.WorkItem.Number" style="display:none" />
+            <i class="fas fa-check-circle" style="color:green;display:none" id="update-success-@Model.WorkItem.Number"></i>
+            <i class="fas fa-exclamation-triangle" style="color:red;display:none" id="update-failed-@Model.WorkItem.Number"></i>
+        </form>
+
+        <div class="d-flex flex-row-reverse align-items-center">
+            @if (Model.ShowDetailsButton)
+            {
+                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number">
+                    <i class="far fa-info-circle"></i>
+                    Details
+                </a>
+            }
+            <span class="text-muted small mr-2">@Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated</span>
+        </div>
+    </div>
+    
 </div>
 <div>
     @if (Model.WorkItem.LastHandOffId.HasValue)

@@ -18,12 +18,6 @@
     <div class="collapse" id="item-@Model.WorkItem.Id" data-parent="#@(Model.AccordionElement)">
         <div class="card card-body">
             <partial name="Dashboard/Items/_ItemInner" model="Model"/>
-            <div class="d-flex flex-row-reverse">
-                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number">
-                    <i class="far fa-info-circle"></i>
-                    Details
-                </a>
-            </div>            
         </div>
     </div>
 </div>
