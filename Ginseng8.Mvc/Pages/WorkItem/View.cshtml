@@ -41,10 +41,21 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-2"></div>
+    <div class="col-10">
+        <form asp-controller="Image" asp-action="Paste" method="post" class="dropzone" id="frmDropzone">            
+            <input type="hidden" name="Id" value="@Model.Item.Number"/>
+        </form>
+        <hr />
+    </div>
+</div>
+
 @*activity feed*@
 
 @section Scripts {
     <script src="~/js/Dashboard.js"></script>
+    <script src="~/lib/dropzone/min/dropzone.min.js"></script>
     <script>
         $(document).ready(function () {
             $('.editable').editable('/Update/WorkItemTitle', {
