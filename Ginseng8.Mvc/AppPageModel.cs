@@ -35,6 +35,11 @@ namespace Ginseng.Mvc
 		public int OrgId { get { return CurrentUser?.OrganizationId ?? 0; } }
 		public DateTime LocalTime { get { return CurrentUser.LocalTime; } }
 
+		/// <summary>
+		/// For populating home page button with org-switch links
+		/// </summary>
+		public IEnumerable<Organization> SwitchOrgs { get; set; }
+
 		public List<QueryTrace> QueryTraces { get; private set; } = new List<QueryTrace>();
 
 		public async Task<SelectList> CurrentOrgAppSelectAsync()
@@ -75,6 +80,11 @@ namespace Ginseng.Mvc
 				{
 					context.Result = new RedirectResult("/Setup/Organization?mustCreate=true");
 					return;
+				}
+
+				using (var cn = Data.GetConnection())
+				{
+					SwitchOrgs = new MySwitchOrgs() { CurrentOrgId = OrgId, UserId = UserId }.Execute(cn);
 				}
 			}
 		}
