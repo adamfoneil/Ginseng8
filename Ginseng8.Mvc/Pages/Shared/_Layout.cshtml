@@ -26,10 +26,24 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Dashboard/Index">
-                    <i class="fas fa-home" title="My Items"></i>
-                    @Html.CurrentOrgName()
-                </a>
+                <div class="btn-group">
+                    <a class="btn btn-light" asp-area="" asp-page="/Dashboard/Index">
+                        <i class="fas fa-home" title="My Items"></i>
+                        @Html.CurrentOrgName()
+                    </a>
+                    <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split mr-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-page="/Dashboard/Index">My Items</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Hung">Hung Items</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Projects">Projects</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Milestones">Milestones</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/AllItems">All Items</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Team">Team</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Feed">Feed</a>
+                    </div>
+                </div>
                 @if (User.Identity.IsAuthenticated)
                 {
                     <partial name="_AppFilter" model="new AppFilterView() { CurrentAppName = Html.CurrentAppNameString(), AppOptions = await Html.AppFilterOptions() }" />
