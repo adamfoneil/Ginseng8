@@ -38,7 +38,7 @@ namespace Ginseng.Mvc.Controllers
 				await container.CreateIfNotExistsAsync();
 				await container.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
 
-				string fileName = Path.GetFileName(file.FileName);
+				string fileName = $"{id}/{Path.GetFileName(file.FileName)}";
 				CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
 
 				using (var stream = file.OpenReadStream())
