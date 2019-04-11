@@ -16,6 +16,12 @@
         {
             <i class="far fa-bell" title="In app"></i>
         }
+
+        @if (!Model.SendEmail && !Model.SendText && !Model.InApp)
+        {
+            <i class="far fa-ban" title="No notifications"></i>
+            <span>None</span>
+        }
     </button>
     <div class="dropdown-menu">
         <a class="dropdown-item toggleNotification" href="#" data-id="@Model.Id" data-property-name="SendEmail" data-table-name="@Model.TableName">

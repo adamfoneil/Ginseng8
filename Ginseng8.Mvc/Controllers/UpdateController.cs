@@ -289,5 +289,10 @@ namespace Ginseng.Mvc.Controllers
 				return Json(new { success = false, message = exc.Message });
 			}
 		}
+
+		public async Task<JsonResult> Notification(int id, string propertyName, string tableName)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
