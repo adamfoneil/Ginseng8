@@ -61,7 +61,7 @@ namespace Ginseng.Models
 			// todo: app notifications
 		}
 
-		public static async Task CreateFromActivitySubscriptions(IDbConnection connection, int activityId, int applicationId)
+		public static async Task CreateFromActivitySubscriptions(IDbConnection connection, int handOffId)
 		{
 			throw new NotImplementedException();
 		}
