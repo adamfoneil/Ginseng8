@@ -60,6 +60,17 @@ namespace Ginseng.Models
 		[Required]
 		public string TextBody { get; set; }
 
+		/// <summary>
+		/// If the event refers to something besides a work item (such as a hand off, it goes here)
+		/// </summary>
+		public int? SourceId { get; set; }
+
+		/// <summary>
+		/// Table name where the SourceId came from
+		/// </summary>
+		[MaxLength(50)]
+		public string SourceTable { get; set; }
+
 		[MaxLength(50)]
 		public string CreatedBy { get; set; }
 
@@ -72,7 +83,7 @@ namespace Ginseng.Models
 			await WriteAsync(connection, eventLog);
 		}
 
-		public static async Task WriteAsync(IDbConnection connection, EventLog eventLog)
+		public static async Task<int> WriteAsync(IDbConnection connection, EventLog eventLog)
 		{
 			// the app and org might not be readily available in the various model classes that trigger events,
 			// so I provide a little helper for getting those during log write
@@ -83,9 +94,11 @@ namespace Ginseng.Models
 				eventLog.ApplicationId = orgAndApp.ApplicationId;
 			}
 
-			await connection.PlainInsertAsync(eventLog);
+			await connection.InsertAsync(eventLog);
 
 			await Notification.CreateFromEventSubscriptions(connection, eventLog.Id);
+
+			return eventLog.Id;
 		}				
 	}
 }

@@ -77,5 +77,32 @@ namespace Testing
 				}
 			}
 		}
+
+		[TestMethod]
+		public void ActivitySubscriptionEmailNotifications()
+		{
+			var qry = new InsertActivitySubscriptionEmailNotifications();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in InsertActivitySubscriptionEmailNotifications.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ActivitySubscriptionTextNotifications()
+		{
+			var qry = new InsertActivitySubscriptionTextNotifications();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in InsertActivitySubscriptionTextNotifications.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+		}
+
 	}
 }
