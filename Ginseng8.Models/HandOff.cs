@@ -74,7 +74,7 @@ namespace Ginseng.Models
 				});
 
 				// create pending notifications from ActivitySubscription
-				//ActivitySubscription.CreatePendingNotifications(connection, ToActivityId, workItem.ApplicationId);
+				await Notification.CreateFromActivitySubscriptions(connection, ToActivityId, workItem.ApplicationId);				
 			}
 		}
 	}

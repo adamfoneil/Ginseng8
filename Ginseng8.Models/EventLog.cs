@@ -85,7 +85,7 @@ namespace Ginseng.Models
 
 			await connection.PlainInsertAsync(eventLog);
 
-			// create pending notifications from EventSubscriptions
-		}		
+			await Notification.CreateFromEventSubscriptions(connection, eventLog.Id);
+		}				
 	}
 }

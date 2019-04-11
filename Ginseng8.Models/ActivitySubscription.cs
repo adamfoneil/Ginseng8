@@ -1,11 +1,7 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
-using Postulate.Base;
 using Postulate.Base.Attributes;
-using Postulate.Base.Interfaces;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
-using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
