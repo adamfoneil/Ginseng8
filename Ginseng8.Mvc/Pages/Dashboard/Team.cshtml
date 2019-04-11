@@ -5,55 +5,57 @@
 }
 
 <div id="accordion">
-@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
-{
-    <h4>@appGrp.First().ApplicationName</h4>
     <ul class="nav nav-tabs" id="assignedUserTab" role="tablist">
-        @foreach (var userGrp in appGrp.OrderBy(row => row.AssignedUserName).GroupBy(row => row.AssignedUserId))
+        @foreach (var userGrp in Model.WorkItems.OrderBy(row => row.AssignedUserName).GroupBy(row => row.AssignedUserId))
         {
             <li class="nav-item">
                 <a href="#user@(userGrp.Key ?? 0)" data-user-group-id="@(userGrp.Key ?? 0)" data-toggle="tab" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>
             </li>
         }
     </ul>
-    <div class="tab-content my-3" id="tabContent">
-        @foreach (var userGrp in appGrp.GroupBy(row => row.AssignedUserId))
-        {
+    <div class="tab-content my-3" id="tabContent">        
+        @foreach (var userGrp in Model.WorkItems.GroupBy(row => row.AssignedUserId))
+        {            
             <div class="tab-pane fade" id="user@(userGrp.Key ?? 0)" role="tabpanel">
-            @foreach (var milestoneGrp in userGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
-            {
-                var milestoneItem = milestoneGrp.First();
-
-                <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-
-                <div class="ml-3">
-                    <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
-                </div>
-                
-                <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-                <div class="ml-3 sortable" data-user-id="@(userGrp.Key ?? 0)">
-                    @foreach (var item in milestoneGrp)
+                @foreach (var appGrp in userGrp.GroupBy(row => row.ApplicationId))
+                {
+                    <h4>@appGrp.First().ApplicationName</h4>
+                    @foreach (var milestoneGrp in userGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
                     {
-                        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
+                        var milestoneItem = milestoneGrp.First();
+
+                        <partial name="Items/_MilestoneHeader" model="milestoneItem" />
+
+                        <div class="ml-3">
+                            <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
+                        </div>
+
+                        <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+                        <div class="ml-3 sortable" data-user-id="@(userGrp.Key ?? 0)">
+                            @foreach (var item in milestoneGrp)
+                            {
+                                <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
+                            }
+                            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                            {
+                                { "applicationId", appGrp.Key },
+                                { "milestoneId", milestoneGrp.Key }
+                            }))
+                            </div>
+                        </div>                                
                     }
-                    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-                    {
-                        { "applicationId", appGrp.Key },
-                        { "milestoneId", milestoneGrp.Key }
-                    }))
-                    </div>
-                </div>                                
-            }
+                }
 
-            @{
-                var recentlyClosed = Model.ClosedItems[userGrp.Key ?? 0].Take(10);
-            }
-            @if (recentlyClosed.Any())
-            {
-                <partial name="Items/_RecentlyClosed" model="recentlyClosed"/>
-            }
-            </div>
+                @{
+                    var recentlyClosed = Model.ClosedItems[userGrp.Key ?? 0].Take(10);
+                }
+
+                @if (recentlyClosed.Any())
+                {
+                    <partial name="Items/_RecentlyClosed" model="recentlyClosed"/>
+                }                    
+            </div>                    
         }
     </div>
-}
+
 </div>
