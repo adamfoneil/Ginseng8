@@ -21,8 +21,10 @@
                     @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible, new { @class = "update-event-subscription", data_id = ev.Id, data_appId = Model.CurrentOrgUser.CurrentAppId })
                     @ev.Name                    
                     <img src="~/img/loading.gif" style="display:none" />                    
-                </label>                
-                <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]"/>
+                </label>
+                <div id="notifyOptions-@ev.Id">
+                    <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]"/>
+                </div>                
             </div>            
         }      
         
@@ -60,4 +62,5 @@
 
 @section Scripts {
     <script src="~/js/Feed.js"></script>
+    <script src="~/js/Notification.js"></script>
 }

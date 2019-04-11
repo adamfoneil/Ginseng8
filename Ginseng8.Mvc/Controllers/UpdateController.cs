@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -290,9 +291,27 @@ namespace Ginseng.Mvc.Controllers
 			}
 		}
 
-		public async Task<JsonResult> Notification(int id, string propertyName, string tableName)
+		public async Task<PartialViewResult> ToggleNotification(int id, string propertyName, string tableName)
 		{
-			throw new NotImplementedException();
+			var getNotification = new Dictionary<string, Func<IDbConnection, Task<INotifyOptions>>>()
+			{
+				{ nameof(Ginseng.Models.EventSubscription), async (cn) => await cn.FindAsync<EventSubscription>(id) },
+				{ nameof(ActivitySubscription), async (cn) => await cn.FindAsync<ActivitySubscription>(id) }
+			};
+
+			using (var cn = _data.GetConnection())
+			{
+				var notification = await getNotification[tableName].Invoke(cn);
+				var property = notification.GetType().GetProperty(propertyName);
+				bool value = !(bool)property.GetValue(notification);
+				
+				// it's too bad this doesn't do BaseTable.BeforeUpdate (so user/date stamp not updated), but maybe some day
+				await cn.ExecuteAsync($"UPDATE [dbo].[{notification.TableName}] SET [{propertyName}]=@value WHERE [Id]=@id", new { value, id });
+
+				property.SetValue(notification, value);
+
+				return PartialView("/Pages/Shared/_NotifyOptions.cshtml", notification);
+			}					
 		}
 	}
 }

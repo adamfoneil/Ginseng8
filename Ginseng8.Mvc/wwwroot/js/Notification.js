@@ -1,22 +1,23 @@
 ﻿var notifyToggles = document.querySelectorAll('.toggleNotification');
 notifyToggles.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
+        var anchor = $(ev.target).parent('a')[0];
+        var id = anchor.getAttribute('data-id');
+
         var data = {
-            id: ev.target.getAttribute('data-id'),
-            propertyName: ev.target.getAttribute('data-property-name'),
-            tableName: ev.target.getAttribute('data-table-name')
+            id: id,
+            propertyName: anchor.getAttribute('data-property-name'),
+            tableName: anchor.getAttribute('data-table-name')
         };
 
         var formData = getFormData(data);
-        fetch('/Update/Notification', {
+        fetch('/Update/ToggleNotification', {
             method: 'post',
             body: formData
         }).then(function (response) {
-            return response.json();
+            return response.text();
         }).then(function (result) {
-            $(loading).hide();
-            $('#btnRefresh').show();
+            $('#notifyOptions-' + id).html(result);
         });
-
     });
 });
