@@ -95,13 +95,7 @@
     </div>
 }
 
-<div class="col-6 offset-3 mt-4">
-    <form method="post" asp-page-handler="Create" class="form-inline">
-        <input type="text" name="Name" class="form-control form-control-sm mr-2" placeholder="milestone name" required="required"/>
-        <input type="text" name="Date" class="form-control form-control-sm mr-2 datepicker" placeholder="date" required="required" autocomplete="off"/>
-        <button type="submit" class="btn btn-dark btn-sm">Add Milestone</button>
-    </form>
-</div>
+<partial name="Dashboard/Items/_CreateMilestone"/>
 
 @section Scripts {
     <script>

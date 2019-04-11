@@ -53,6 +53,13 @@
     }
 </div>
 
+<partial name="Dashboard/Items/_CreateMilestone"/>
+
 @section Scripts {
     <script src="~/js/Dashboard.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".datepicker").datepicker();
+        });
+    </script>
 }

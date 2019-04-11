@@ -63,11 +63,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			BacklogItems = await new OpenWorkItems() { OrgId = OrgId, HasMilestone = false }.ExecuteAsync(connection);
 		}
 
-		public async Task<IActionResult> OnPostCreate(Milestone record)
+		public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)
 		{
 			record.OrganizationId = OrgId;
 			await Data.TrySaveAsync(record);
-			return RedirectToPage("/Dashboard/Milestones");
+			return Redirect(returnUrl);
 		}
 
 		public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
