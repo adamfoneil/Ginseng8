@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,7 +9,7 @@ namespace Ginseng.Models
 	/// Describes a user's listening for hand-offs for a given app and activity.
 	/// Provides a hook for showing hung tasks on My Items in activities I follow
 	/// </summary>
-	public class ActivitySubscription : BaseTable
+	public class ActivitySubscription : BaseTable, INotifyOptions
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]

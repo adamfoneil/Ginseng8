@@ -1,9 +1,10 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 
 namespace Ginseng.Models
 {
-	public class EventSubscription : BaseTable
+	public class EventSubscription : BaseTable, INotifyOptions
 	{
 		[References(typeof(Event))]
 		[PrimaryKey]
