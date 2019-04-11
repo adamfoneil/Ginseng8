@@ -85,7 +85,7 @@ namespace Ginseng.Models
 
 			await connection.PlainInsertAsync(eventLog);
 
-			// todo: add message to Azure queue to process email and text notifications
+			// create pending notifications from EventSubscriptions
 		}		
 	}
 }

@@ -72,6 +72,9 @@ namespace Ginseng.Models
 					HtmlBody = text,
 					TextBody = text
 				});
+
+				// create pending notifications from ActivitySubscription
+				//ActivitySubscription.CreatePendingNotifications(connection, ToActivityId, workItem.ApplicationId);
 			}
 		}
 	}
