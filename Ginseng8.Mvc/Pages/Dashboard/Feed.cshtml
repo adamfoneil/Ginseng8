@@ -22,7 +22,7 @@
                     @ev.Name                    
                     <img src="~/img/loading.gif" style="display:none" />                    
                 </label>
-                <div id="notifyOptions-@ev.Id">
+                <div id="notifyOptions-@Model.Subscriptions[ev.Id].Id">
                     <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]"/>
                 </div>                
             </div>            
