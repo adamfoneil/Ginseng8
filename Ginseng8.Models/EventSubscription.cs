@@ -41,5 +41,7 @@ namespace Ginseng.Models
 		/// Show notification within the site
 		/// </summary>
 		public bool InApp { get; set; }
+
+		public string TableName => nameof(EventSubscription);
 	}
 }

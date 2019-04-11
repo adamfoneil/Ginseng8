@@ -46,6 +46,8 @@ namespace Ginseng.Models
 		public string AppName { get; set; }
 
 		[NotMapped]
-		public string ActivityName { get; set; }		
+		public string ActivityName { get; set; }
+
+		public string TableName => nameof(ActivitySubscription);
 	}
 }

@@ -1,0 +1,34 @@
+﻿@model INotifyOptions
+
+<div class="dropdown">
+    <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        @if (Model.SendEmail)
+        {
+            <i class="far fa-envelope-square mr-1" title="Email"></i>
+        }
+
+        @if (Model.SendText)
+        {
+            <i class="far fa-comment-alt-lines mr-1" title="Text"></i>
+        }
+
+        @if (Model.InApp)
+        {
+            <i class="far fa-bell" title="In app"></i>
+        }
+    </button>
+    <div class="dropdown-menu">
+        <a class="dropdown-item toggleNotification" href="#" data-id="@Model.Id" data-property-name="SendEmail" data-table-name="@Model.TableName">
+            <i class="far fa-envelope-square mr-1"></i>
+            <span>Email</span>
+        </a>
+        <a class="dropdown-item toggleNotification" href="#" data-id="@Model.Id" data-property-name="SendText" data-table-name="@Model.TableName">
+            <i class="far fa-comment-alt-lines mr-1"></i>
+            <span>Text</span>
+        </a>
+        <a class="dropdown-item toggleNotification" href="#" data-id="@Model.Id" data-property-name="InApp" data-table-name="@Model.TableName">
+            <i class="far fa-bell" title="In app"></i>
+            <span>In App</span>
+        </a>
+    </div>
+</div>

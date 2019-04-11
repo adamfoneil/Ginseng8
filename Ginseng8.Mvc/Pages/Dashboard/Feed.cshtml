@@ -20,6 +20,7 @@
                 <label class="small">
                     @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible, new { @class = "update-event-subscription", data_id = ev.Id, data_appId = Model.CurrentOrgUser.CurrentAppId })
                     @ev.Name
+                    <a class=""></a>
                     <img src="~/img/loading.gif" style="display:none" />
                 </label>
             </p>

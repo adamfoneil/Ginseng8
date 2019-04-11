@@ -2,9 +2,10 @@
 {
 	public interface INotifyOptions
 	{
-		int Id { get; set; }
-		bool SendEmail { get; set; }
-		bool SendText { get; set; }
-		bool InApp { get; set; }
+		int Id { get; }
+		string TableName { get; }
+		bool SendEmail { get; }
+		bool SendText { get; }
+		bool InApp { get; }
 	}
 }
