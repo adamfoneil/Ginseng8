@@ -1,7 +1,4 @@
-﻿var notifyToggles = document.querySelectorAll('.toggleNotification');
-
-$('.toggleNotification').on('click', function () { 
-        
+﻿$('.toggleNotification').on('click', function () {         
     var id = $(this).attr('data-id');
 
     var data = {
