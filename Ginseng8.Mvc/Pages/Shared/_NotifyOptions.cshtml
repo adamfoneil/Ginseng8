@@ -4,7 +4,7 @@
     <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         @if (Model.SendEmail)
         {
-            <i class="far fa-envelope-square mr-1" title="Email"></i>
+            <i class="far fa-envelope mr-1" title="Email"></i>            
         }
 
         @if (Model.SendText)
@@ -19,7 +19,7 @@
     </button>
     <div class="dropdown-menu">
         <a class="dropdown-item toggleNotification" href="#" data-id="@Model.Id" data-property-name="SendEmail" data-table-name="@Model.TableName">
-            <i class="far fa-envelope-square mr-1"></i>
+            <i class="far fa-envelope mr-1"></i>
             <span>Email</span>
         </a>
         <a class="dropdown-item toggleNotification" href="#" data-id="@Model.Id" data-property-name="SendText" data-table-name="@Model.TableName">

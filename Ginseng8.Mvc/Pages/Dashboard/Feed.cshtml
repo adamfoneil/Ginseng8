@@ -16,14 +16,14 @@
     <div class="col-3">        
         @foreach (var ev in Model.Events)
         {
-            <p class="mb-0">
-                <label class="small">
+            <div class="row mb-1">
+                <label class="small mr-2">
                     @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible, new { @class = "update-event-subscription", data_id = ev.Id, data_appId = Model.CurrentOrgUser.CurrentAppId })
-                    @ev.Name
-                    <a class=""></a>
-                    <img src="~/img/loading.gif" style="display:none" />
-                </label>
-            </p>
+                    @ev.Name                    
+                    <img src="~/img/loading.gif" style="display:none" />                    
+                </label>                
+                <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]"/>
+            </div>            
         }      
         
         <a class="btn btn-sm btn-info" asp-page="Feed" style="display:none" onclick="$(this).hide();" id="btnRefresh">Refresh</a>
