@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models.Queries;
 using Postulate.Base.Attributes;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -53,6 +54,12 @@ namespace Ginseng.Models
 		/// Indicates when message was delivered. If null, then it's still pending
 		/// </summary>
 		public DateTime? DateDelivered { get; set; }
+
+		public async Task MarkDelivered(IDbConnection connection)
+		{
+			DateDelivered = DateTime.UtcNow;
+			await connection.UpdateAsync(this, null, r => r.DateDelivered);
+		}
 
 		public static async Task CreateFromEventSubscriptions(IDbConnection connection, int eventLogId)
 		{
