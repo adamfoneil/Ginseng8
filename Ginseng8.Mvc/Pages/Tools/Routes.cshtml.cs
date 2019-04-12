@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Ginseng.Mvc.Pages.Debug
+namespace Ginseng.Mvc.Pages.Tools
 {
 	/// <summary>
 	/// Based on https://github.com/ardalis/AspNetCoreRouteDebugger/blob/master/SampleProject/Controllers/RoutesController.cs
