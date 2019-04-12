@@ -1,4 +1,5 @@
 using Ginseng.Mvc.Data;
+using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -47,7 +48,9 @@ namespace Ginseng.Mvc
 					options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
 				});
 
-            services.AddTransient<IEmailSender, Email>();
+            services
+                .AddTransient<IEmailSender, Email>()
+                .AddSingleton<IViewRenderService, ViewRenderService>();
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}

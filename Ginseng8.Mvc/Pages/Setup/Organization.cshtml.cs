@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ginseng.Mvc.Interfaces;
 
 namespace Ginseng.Mvc.Pages.Setup
 {
@@ -21,12 +22,17 @@ namespace Ginseng.Mvc.Pages.Setup
 	{
 		private readonly Email _email;
 		private readonly IConfiguration _config;
+        private readonly IViewRenderService _viewRender;
 
-		public OrganizationModel(IConfiguration config) : base(config)
+		public OrganizationModel(
+            IConfiguration config,
+            IViewRenderService viewRender) 
+            : base(config)
 		{
 			_config = config;
 			_email = new Email(config);
-		}
+            _viewRender = viewRender;
+        }
 
 		[BindProperty]
 		public Organization Organization { get; set; }
@@ -57,19 +63,19 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<IActionResult> OnPostJoinAsync(string name)
 		{
-			using (var cn = Data.GetConnection())
+            using (var cn = Data.GetConnection())
 			{
 				int orgUserId = await new CreateOrgUserJoinRequest() { OrgName = name, UserId = UserId }.ExecuteSingleAsync(cn);
 				var orgUser = await cn.FindAsync<OrganizationUser>(orgUserId);
 
 				var page = new EmailContent.JoinRequestModel(_config);
 				await page.OnGetAsync(orgUserId);
-				string content = await page.RenderViewAsync("JoinRequest");
+                var content = await _viewRender.RenderAsync("Pages.EmailContent.JoinRequest", page);
 
-				//var notify = new NotificationController(_config);
-				//string email = await notify.RenderViewAsync("JoinRequest")
-				//await _email.SendAsync(CurrentOrg.OwnerUser.Email, "Ginseng: New Join Request", );
-			}
+                //var notify = new NotificationController(_config);
+                //string email = await notify.RenderViewAsync("JoinRequest")
+                //await _email.SendAsync(CurrentOrg.OwnerUser.Email, "Ginseng: New Join Request", );
+            }
 
 			return RedirectToPage("/Setup/Organization");
 		}

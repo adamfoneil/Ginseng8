@@ -1,8 +1,11 @@
-﻿@page "/EmailContent/JoinRequest/{id}"
-@model Ginseng.Mvc.Pages.EmailContent.JoinRequestModel
+﻿@model Ginseng.Mvc.Pages.EmailContent.JoinRequestModel
+@{
+    Layout = "Pages.EmailContent._Layout.cshtml";
+}
 
 <h1>Org Join Request</h1>
 
 <p><strong>@Model.OrgUser.UserProfile.UserName</strong> is requesting to join organization <strong>@Model.OrgUser.Organization.Name</strong></p>
 
-<p><a href="@Url.Page("/Setup/Users")">Setup Users</a></p>
+<p><a href="/Setup/Users">Setup Users</a></p>
+
