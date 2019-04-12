@@ -1,12 +1,15 @@
-﻿using Dapper;
-using Ginseng.Models;
+﻿using Ginseng.Models;
 using Ginseng.Mvc.Attributes;
+using Ginseng.Mvc.Controllers;
+using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
+using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -16,8 +19,13 @@ namespace Ginseng.Mvc.Pages.Setup
 	[OrgNotRequired]
 	public class OrganizationModel : AppPageModel
 	{
+		private readonly Email _email;
+		private readonly IConfiguration _config;
+
 		public OrganizationModel(IConfiguration config) : base(config)
 		{
+			_config = config;
+			_email = new Email(config);
 		}
 
 		[BindProperty]
@@ -51,21 +59,27 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 			using (var cn = Data.GetConnection())
 			{
-				await cn.ExecuteAsync(
-					@"INSERT INTO [dbo].[OrganizationUser] (
-						[OrganizationId], [UserId], [IsEnabled], [IsRequest], [Responsibilities], [WorkDays], [DailyWorkHours], [CreatedBy], [DateCreated]
-					) SELECT
-						[org].[Id], @userId, 0, 1, 0, 0, 0, [u].[UserName], GETUTCDATE()
-					FROM
-						[dbo].[Organization] [org],
-						[dbo].[AspNetUsers] [u]
-					WHERE
-						NOT EXISTS(SELECT 1 FROM [dbo].[OrganizationUser] WHERE [OrganizationId]=[org].[Id] AND [UserId]=@userId) AND
-						[org].[Name]=@orgName AND
-						[u].[UserId]=@userId", new { orgName = name, userId = UserId });
+				int orgUserId = await new CreateOrgUserJoinRequest() { OrgName = name, UserId = UserId }.ExecuteSingleAsync(cn);
+				var orgUser = await cn.FindAsync<OrganizationUser>(orgUserId);
+
+				//var notify = new NotificationController(_config);
+				//string email = await notify.RenderViewAsync("JoinRequest")
+				//await _email.SendAsync(CurrentOrg.OwnerUser.Email, "Ginseng: New Join Request", );
 			}
 
 			return RedirectToPage("/Setup/Organization");
+		}
+
+		public async Task<IActionResult> OnGetDeleteJoinRequestAsync(int id)
+		{
+			using (var cn = Data.GetConnection())
+			{
+				var orgUser = await cn.FindAsync<OrganizationUser>(id);
+				if (orgUser.UserId != UserId) return BadRequest();
+				if (!orgUser.IsRequest) return BadRequest();
+				await cn.DeleteAsync<OrganizationUser>(orgUser.Id);
+				return RedirectToPage("/Setup/Organization");
+			}				
 		}
 
 		public async Task<ActionResult> OnPostAsync()
@@ -76,7 +90,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostSave(Organization org)
 		{
-			if (org.Id == 0) org.OwnerUserId = CurrentUser.UserId;						
+			if (org.Id == 0) org.OwnerUserId = CurrentUser.UserId;
 			await Data.TrySaveAsync(org);
 			return RedirectToPage("/Setup/Organization");
 		}

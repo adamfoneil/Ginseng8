@@ -55,7 +55,7 @@
 <dt>Join Existing Org</dt>
 <div class="ml-3">
     <form method="post" asp-page-handler="Join" class="form-inline">
-        <div class="form-group">            
+        <div class="form-group">
             <input type="text" name="Name" class="form-control mr-2" required="required" placeholder="Org Name"/>
         </div>
 
@@ -66,7 +66,7 @@
     <ul>
         @foreach (var item in Model.JoinRequests)
         {
-            <li>@item.OrgName</li>
+            <li>@item.OrgName <a asp-page-handler="DeleteJoinRequest" asp-route-id="@item.Id" onclick="return confirm('This will delete your join request.');">remove</a></li>
         }
     </ul>
 </div>

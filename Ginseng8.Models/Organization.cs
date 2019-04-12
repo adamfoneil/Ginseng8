@@ -30,6 +30,7 @@ namespace Ginseng.Models
 		public int MilestoneWorkDayValue { get; set; } = 6; // Friday	
 
 		public WorkDay MilestoneWorkDay { get; set; }
+		public UserProfile OwnerUser { get; set; }
 
 		public override bool Validate(IDbConnection connection, out string message)
 		{
@@ -88,11 +89,13 @@ namespace Ginseng.Models
 		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
 		{
 			MilestoneWorkDay = commandProvider.FindWhere<WorkDay>(connection, new { Value = MilestoneWorkDayValue });
+			OwnerUser = commandProvider.Find<UserProfile>(connection, OwnerUserId);
 		}
 
 		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
 		{
 			MilestoneWorkDay = await commandProvider.FindAsync<WorkDay>(connection, MilestoneWorkDayValue);
+			OwnerUser = await commandProvider.FindAsync<UserProfile>(connection, OwnerUserId);
 		}
 	}
 }
