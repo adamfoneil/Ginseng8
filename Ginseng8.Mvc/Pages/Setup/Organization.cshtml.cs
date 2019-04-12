@@ -1,7 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Attributes;
-using Ginseng.Mvc.Controllers;
-using Ginseng.Mvc.Extensions;
+using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.Services;
@@ -10,9 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ginseng.Mvc.Interfaces;
 
 namespace Ginseng.Mvc.Pages.Setup
 {
@@ -22,17 +21,17 @@ namespace Ginseng.Mvc.Pages.Setup
 	{
 		private readonly Email _email;
 		private readonly IConfiguration _config;
-        private readonly IViewRenderService _viewRender;
+		private readonly IViewRenderService _viewRender;
 
 		public OrganizationModel(
-            IConfiguration config,
-            IViewRenderService viewRender) 
-            : base(config)
+			IConfiguration config,
+			IViewRenderService viewRender)
+			: base(config)
 		{
 			_config = config;
 			_email = new Email(config);
-            _viewRender = viewRender;
-        }
+			_viewRender = viewRender;
+		}
 
 		[BindProperty]
 		public Organization Organization { get; set; }
@@ -63,19 +62,24 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<IActionResult> OnPostJoinAsync(string name)
 		{
-            using (var cn = Data.GetConnection())
+			try
 			{
-				int orgUserId = await new CreateOrgUserJoinRequest() { OrgName = name, UserId = UserId }.ExecuteSingleAsync(cn);
-				var orgUser = await cn.FindAsync<OrganizationUser>(orgUserId);
+				using (var cn = Data.GetConnection())
+				{
+					int orgUserId = await new CreateOrgUserJoinRequest() { OrgName = name, UserId = UserId }.ExecuteSingleAsync(cn);
+					var orgUser = await cn.FindAsync<OrganizationUser>(orgUserId);
 
-				var page = new EmailContent.JoinRequestModel(_config);
-				await page.OnGetAsync(orgUserId);
-                var content = await _viewRender.RenderAsync("Pages.EmailContent.JoinRequest", page);
-
-                //var notify = new NotificationController(_config);
-                //string email = await notify.RenderViewAsync("JoinRequest")
-                //await _email.SendAsync(CurrentOrg.OwnerUser.Email, "Ginseng: New Join Request", );
-            }
+					var page = new EmailContent.JoinRequestModel(_config);
+					await page.OnGetAsync(orgUserId);
+					var content = await _viewRender.RenderAsync("Pages.EmailContent.JoinRequest", page);
+					await _email.SendAsync(orgUser.Organization.OwnerUser.Email, "Ginseng: Org Join Request", content);
+				}
+				Data.ClearErrorMessage();
+			}
+			catch (Exception)
+			{
+				Data.SetErrorMessage("Error requesting org. You might have misspelled it.");
+			}
 
 			return RedirectToPage("/Setup/Organization");
 		}
@@ -89,7 +93,7 @@ namespace Ginseng.Mvc.Pages.Setup
 				if (!orgUser.IsRequest) return BadRequest();
 				await cn.DeleteAsync<OrganizationUser>(orgUser.Id);
 				return RedirectToPage("/Setup/Organization");
-			}				
+			}
 		}
 
 		public async Task<ActionResult> OnPostAsync()

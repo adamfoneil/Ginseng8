@@ -199,17 +199,28 @@ namespace Ginseng.Mvc.Services
 			return (record, properties.ToArray());
 		}
 
-		private void SetSuccessMessage(string message)
+		public void SetSuccessMessage(string message)
 		{
 			TempData.Remove(AlertCss.Success);
 			if (string.IsNullOrEmpty(message)) return;
 			TempData.Add(AlertCss.Success, message);
 		}
 
-		private void SetErrorMessage(Exception exception)
+		public void SetErrorMessage(string message)
+		{
+			TempData.Remove(AlertCss.Error);
+			TempData.Add(AlertCss.Error, message);
+		}
+
+		public void SetErrorMessage(Exception exception)
 		{
 			TempData.Remove(AlertCss.Error);
 			TempData.Add(AlertCss.Error, exception.Message);
+		}
+
+		public void ClearErrorMessage()
+		{
+			TempData.Remove(AlertCss.Error);
 		}
 	}
 }
