@@ -40,6 +40,7 @@ namespace Ginseng.Mvc.Controllers
 		/// <summary>
 		/// Set this up to be called by cron-job.org every 10 minutes or some other acceptable interval
 		/// </summary>		
+		[Route("Notification/Email{key}")]
 		public async Task<IActionResult> Email(string key, int batchSize = 50)
 		{
 			return await OnValidKeyAsync(key, async () =>
@@ -47,6 +48,11 @@ namespace Ginseng.Mvc.Controllers
 				using (var cn = _data.GetConnection())
 				{
 					var emails = await new PendingNotifications(batchSize) { Method = DeliveryMethod.Email }.ExecuteAsync(cn);
+					foreach (var msg in emails)
+					{
+						await _email.SendAsync(msg.SendTo, "Ginseng Notification", msg.Content);
+						await msg.MarkDeliveredAsync(cn);
+					}
 				}					
 			});
 		}

@@ -55,7 +55,7 @@ namespace Ginseng.Models
 		/// </summary>
 		public DateTime? DateDelivered { get; set; }
 
-		public async Task MarkDelivered(IDbConnection connection)
+		public async Task MarkDeliveredAsync(IDbConnection connection)
 		{
 			DateDelivered = DateTime.UtcNow;
 			await connection.UpdateAsync(this, null, r => r.DateDelivered);
