@@ -11,19 +11,19 @@ using System.Threading.Tasks;
 namespace Ginseng.Mvc.Controllers
 {
 	[Authorize]
-	public class ImageController : Controller
+	public class UploadController : Controller
 	{
 		private readonly DataAccess _data;
 		private readonly BlobStorage _blob;
 
-		public ImageController(IConfiguration config)
+		public UploadController(IConfiguration config)
 		{
 			_data = new DataAccess(config);
 			_blob = new BlobStorage(config);
 		}
 
 		[HttpPost]		
-		public async Task<JsonResult> Paste([FromForm]IFormFile file)
+		public async Task<JsonResult> Image([FromForm]IFormFile file, string folderName, int id)
 		{
 			// critical help from https://stackoverflow.com/a/44538773/2023653
 			try
@@ -38,7 +38,7 @@ namespace Ginseng.Mvc.Controllers
 				await container.CreateIfNotExistsAsync();
 				await container.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
 
-				string fileName = Path.GetFileName(file.FileName);
+				string fileName = $"{folderName}/{id}/{Path.GetFileName(file.FileName)}";
 				CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
 
 				using (var stream = file.OpenReadStream())

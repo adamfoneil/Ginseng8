@@ -4,7 +4,7 @@ using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.Threading.Tasks;
 
-namespace Ginseng.Mvc
+namespace Ginseng.Mvc.Services
 {
 	public class BlobStorageSettings
 	{

@@ -113,6 +113,16 @@ $(document)
     event.preventDefault();
 })
 
+$('.htmlEditor').on('froalaEditor.image.beforeUpload', function(event, editor, images) {
+    console.group('before upload image, update params');
+    editor.opts.imageUploadParams = {
+        'folderName': $(event.target).data('folder-name'),
+        'id': Number($(event.target).data('id')),
+    }
+    console.log(editor.opts.imageUploadParams);
+    console.groupEnd();
+});
+
 var htmlCancelEditLinks = document.querySelectorAll('.cancelHtmlEdit');
 htmlCancelEditLinks.forEach(function (e) {
     e.addEventListener('click', function (e) {

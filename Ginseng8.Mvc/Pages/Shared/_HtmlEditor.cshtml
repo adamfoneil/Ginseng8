@@ -13,7 +13,7 @@
                 <input type="hidden" name="@keyPair.Key" value="@keyPair.Value"/>
             }
         }
-        <textarea name="HtmlBody" id="@(Model.IdPrefix)-content-@(Model.Id)" class="htmlEditor">@Model.Content</textarea>
+        <textarea name="HtmlBody" id="@(Model.IdPrefix)-content-@(Model.Id)" class="htmlEditor" data-id="@Model.UploadId" data-folder-name="@Model.UploadFolderName">@Model.Content</textarea>
         <button type="button" class="btn btn-sm btn-secondary my-2 saveHtmlEdit" data-id-prefix="@Model.IdPrefix" data-id="@Model.Id" data-post-url="@Model.PostUrl">Update</button>
         <a class="cancelHtmlEdit" href="#" data-id="@Model.Id" data-id-prefix="@Model.IdPrefix">Cancel</a>
     </form>

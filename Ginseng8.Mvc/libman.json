@@ -38,6 +38,11 @@
         "jquery-ui.theme.css",
         "jquery-ui.theme.min.css"
       ]
+    },
+    {
+      "provider": "cdnjs",
+      "library": "dropzone@5.5.1",
+      "destination": "wwwroot/lib/dropzone/"
     }
   ]
 }
