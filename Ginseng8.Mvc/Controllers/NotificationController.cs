@@ -40,7 +40,7 @@ namespace Ginseng.Mvc.Controllers
 		/// <summary>
 		/// Set this up to be called by cron-job.org every 10 minutes or some other acceptable interval
 		/// </summary>				
-		public async Task<IActionResult> Email([FromQuery]string key, int batchSize = 50)
+		public async Task<IActionResult> SendEmail([FromQuery]string key, int batchSize = 50)
 		{
 			return await OnValidKeyAsync(key, async () =>
 			{
@@ -54,6 +54,6 @@ namespace Ginseng.Mvc.Controllers
 					}
 				}					
 			});
-		}
+		}		
 	}
 }

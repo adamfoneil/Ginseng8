@@ -62,6 +62,10 @@ namespace Ginseng.Mvc.Pages.Setup
 				int orgUserId = await new CreateOrgUserJoinRequest() { OrgName = name, UserId = UserId }.ExecuteSingleAsync(cn);
 				var orgUser = await cn.FindAsync<OrganizationUser>(orgUserId);
 
+				var page = new EmailContent.JoinRequestModel(_config);
+				await page.OnGetAsync(orgUserId);
+				string content = await page.RenderViewAsync("JoinRequest");
+
 				//var notify = new NotificationController(_config);
 				//string email = await notify.RenderViewAsync("JoinRequest")
 				//await _email.SendAsync(CurrentOrg.OwnerUser.Email, "Ginseng: New Join Request", );
