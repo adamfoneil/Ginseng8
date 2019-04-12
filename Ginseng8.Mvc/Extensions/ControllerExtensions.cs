@@ -29,10 +29,7 @@ namespace Ginseng.Mvc.Extensions
 				IViewEngine viewEngine = controller.HttpContext.RequestServices.GetService(typeof(ICompositeViewEngine)) as ICompositeViewEngine;
 				ViewEngineResult viewResult = viewEngine.FindView(controller.ControllerContext, viewName, !partial);
 
-				if (viewResult.Success == false)
-				{
-					return $"A view with the name {viewName} could not be found";
-				}
+				if (!viewResult.Success) throw new Exception($"A view with the name {viewName} could not be found");
 
 				ViewContext viewContext = new ViewContext(
 					controller.ControllerContext,

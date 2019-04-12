@@ -2,6 +2,9 @@
 
 namespace Ginseng.Mvc.Queries
 {
+	/// <summary>
+	/// Creates a join request org user record for the given orgName and userId
+	/// </summary>
 	public class CreateOrgUserJoinRequest : Query<int>
 	{
 		public CreateOrgUserJoinRequest() : base(
