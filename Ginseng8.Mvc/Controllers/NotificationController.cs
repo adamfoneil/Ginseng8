@@ -23,7 +23,7 @@ namespace Ginseng.Mvc.Controllers
 
 		private bool IsValidKey(string key)
 		{
-			return (key.Equals(_validKey));
+			return (key?.Equals(_validKey) ?? false);
 		}
 
 		private async Task<IActionResult> OnValidKeyAsync(string key, Func<Task> action)
@@ -39,9 +39,8 @@ namespace Ginseng.Mvc.Controllers
 
 		/// <summary>
 		/// Set this up to be called by cron-job.org every 10 minutes or some other acceptable interval
-		/// </summary>		
-		[Route("Notification/Email{key}")]
-		public async Task<IActionResult> Email(string key, int batchSize = 50)
+		/// </summary>				
+		public async Task<IActionResult> Email([FromQuery]string key, int batchSize = 50)
 		{
 			return await OnValidKeyAsync(key, async () =>
 			{
