@@ -32,6 +32,7 @@ namespace Ginseng.Mvc.Queries
 
 	public enum ProjectInfoSortOptions
 	{
+		Priority,
 		Name,
 
 		[Description("Open work items")]
@@ -60,7 +61,7 @@ namespace Ginseng.Mvc.Queries
 
 	public class ProjectInfo : Query<ProjectInfoResult>
 	{
-		public ProjectInfo(ProjectInfoSortOptions sort = ProjectInfoSortOptions.Name) : base(
+		public ProjectInfo(ProjectInfoSortOptions sort = ProjectInfoSortOptions.Priority) : base(
 			$@"WITH [source] AS (
 				SELECT
 					[p].*,
@@ -120,6 +121,7 @@ namespace Ginseng.Mvc.Queries
 			{
 				return new Dictionary<ProjectInfoSortOptions, string>()
 				{
+					{ ProjectInfoSortOptions.Priority, "[Priority] ASC, [Name] ASC" },
 					{ ProjectInfoSortOptions.Name, "[Name] ASC" },
 					{ ProjectInfoSortOptions.OpenWorkItems, "[OpenWorkItems] DESC" },
 					{ ProjectInfoSortOptions.TotalWorkItems, "[TotalWorkItems] DESC" },
