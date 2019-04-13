@@ -18,6 +18,7 @@ $(document).ready(function () {
 function InitProjectSortable() {
     $('.project-sortable').sortable({
         placeholder: "ui-state-highlight",                
+        connectWith: '.project-sortable',
         cancel: ':input, button, [contenteditable="true"]',
         start: sortableStart,
         stop: sortableStop,
@@ -26,7 +27,9 @@ function InitProjectSortable() {
             // This event is triggered when the user stopped sorting and the DOM position has changed.
 
             if (ui.sender == null) {
-                updateProjectPriorities($(ui.item).parents('.project-sortable'));
+                // issue here is we're not getting all the project cards on the page via .parents.... It's only
+                // including what's in the priority tier that was dropped on
+                updateProjectPriorities($(ui.item).parents('.project-sortable'));                
             } else {
                 // when an item from a connected sortable list has been dropped into another list
                 updateProjectPriorities($(ui.sender));
