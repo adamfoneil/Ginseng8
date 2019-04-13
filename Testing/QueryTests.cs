@@ -35,8 +35,8 @@ namespace Testing
 				foreach (var testCase in OpenWorkItems.GetTestCases())
 				{
 					testCase.TestExecute(cn);
-				}				
-			}				
+				}
+			}
 		}
 
 		[TestMethod]
@@ -51,7 +51,7 @@ namespace Testing
 				}
 			}
 		}
-		
+
 		[TestMethod]
 		public void EventSubscriptionEmailNotifications()
 		{
@@ -104,5 +104,17 @@ namespace Testing
 			}
 		}
 
+		[TestMethod]
+		public void ProjectInfoQuery()
+		{
+			var qry = new ProjectInfo();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in ProjectInfo.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+		}
 	}
 }

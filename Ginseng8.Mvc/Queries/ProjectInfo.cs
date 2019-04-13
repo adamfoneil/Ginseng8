@@ -1,8 +1,10 @@
 ﻿using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -28,6 +30,7 @@ namespace Ginseng.Mvc.Queries
 		public float PercentComplete { get; set; }
 		public bool AllowDelete { get; set; }
 		public int? EstimateHours { get; set; }
+		public bool HasImpediment { get; set; }
 	}
 
 	public enum ProjectInfoSortOptions
@@ -59,7 +62,7 @@ namespace Ginseng.Mvc.Queries
 		NoOpenItems
 	}
 
-	public class ProjectInfo : Query<ProjectInfoResult>
+	public class ProjectInfo : Query<ProjectInfoResult>, ITestableQuery
 	{
 		public ProjectInfo(ProjectInfoSortOptions sort = ProjectInfoSortOptions.Priority) : base(
 			$@"WITH [source] AS (
@@ -78,7 +81,11 @@ namespace Ginseng.Mvc.Queries
 						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) THEN 0
 						WHEN [p].[HtmlBody] IS NOT NULL THEN 0
 						ELSE 1
-					END AS [AllowDelete]
+					END AS [AllowDelete],
+					CASE
+						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [HasImpediment]=1 AND [ProjectId]=[p].[Id]) THEN 1
+						ELSE 0
+					END AS [HasImpediment]
 				FROM
 					[dbo].[Project] [p]
 					INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
@@ -129,6 +136,22 @@ namespace Ginseng.Mvc.Queries
 					{ ProjectInfoSortOptions.EstimateHours, "[EstimateHours] DESC" }
 				};
 			}
+		}
+
+		public static IEnumerable<ITestableQuery> GetTestCases()
+		{
+			yield return new ProjectInfo() { OrgId = 0 };
+			yield return new ProjectInfo(ProjectInfoSortOptions.Name) { OrgId = 0 };
+			yield return new ProjectInfo(ProjectInfoSortOptions.Priority) { OrgId = 0 };
+			yield return new ProjectInfo(ProjectInfoSortOptions.OpenWorkItems) { OrgId = 0 };
+			yield return new ProjectInfo(ProjectInfoSortOptions.TotalWorkItems) { OrgId = 0 };
+			yield return new ProjectInfo(ProjectInfoSortOptions.PercentComplete) { OrgId = 0 };
+			yield return new ProjectInfo(ProjectInfoSortOptions.EstimateHours) { OrgId = 0 };
+		}
+
+		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+		{
+			return TestExecuteHelper(connection);
 		}
 	}
 }
