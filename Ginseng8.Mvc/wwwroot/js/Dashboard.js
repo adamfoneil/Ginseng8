@@ -350,18 +350,6 @@ $(document).ready(function () {
     InitTableBodySortable();
 });
 
-function sortableStart(event, ui) {
-    // This event is triggered when sorting starts.
-    $('.ui-sortable-placeholder').outerHeight($(ui.item).outerHeight()); // update height of placeholder to current item height
-    $('body').addClass('dragging');
-}
-
-function sortableStop() {
-    setTimeout(function() {
-        $('body').removeClass('dragging');
-    });
-}
-
 function InitTableBodySortable() {
     $('.js-table-body-sortable').sortable({
         items: '.js-table-row-sortable',

@@ -8,7 +8,7 @@
     <div class="row">
         @foreach (var prj in appGrp)
         {
-            <div class="col-3 p-2">
+            <div class="col-3 p-2 project-card" data-project-id="@prj.Id">
                 <partial name="Items/_ProjectLinkButton" model="prj"/>
             </div>
         }        
