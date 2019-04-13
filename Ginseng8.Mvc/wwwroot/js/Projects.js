@@ -17,7 +17,7 @@ $(document).ready(function () {
 
 function InitProjectSortable() {
     $('.project-sortable').sortable({
-        placeholder: "ui-state-highlight",        
+        placeholder: "ui-state-highlight",                
         cancel: ':input, button, [contenteditable="true"]',
         start: sortableStart,
         stop: sortableStop,

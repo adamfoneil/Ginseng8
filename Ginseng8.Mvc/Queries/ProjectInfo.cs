@@ -16,6 +16,8 @@ namespace Ginseng.Mvc.Queries
 		public string Name { get; set; }
 		public string Description { get; set; }
 		public int? Priority { get; set; }
+		public string PriorityTier { get; set; }
+		public int? TierRank { get; set; }
 		public string BranchUrl { get; set; }
 		public string TextBody { get; set; }
 		public string HtmlBody { get; set; }
@@ -68,6 +70,8 @@ namespace Ginseng.Mvc.Queries
 			$@"WITH [source] AS (
 				SELECT
 					[p].*,
+					[ptr].[Name] AS [PriorityTier],
+					[ptr].[Rank] AS [TierRank],
 					[app].[Name] AS [ApplicationName],
 					(SELECT 
 						SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours])) 
@@ -89,6 +93,9 @@ namespace Ginseng.Mvc.Queries
 				FROM
 					[dbo].[Project] [p]
 					INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
+					LEFT JOIN [dbo].[FnPriorityTierRanges](@orgId) [ptr] ON
+						[p].[Priority] >= [ptr].[MinPriority] AND
+						[p].[Priority] <= [ptr].[MaxPriority]
 				WHERE
 					[app].[OrganizationId]=@orgId 					
 					{{andWhere}}
