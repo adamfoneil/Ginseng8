@@ -46,7 +46,7 @@ function updateProjectPriorities(list, taskObject) {
 
     list.find('.project-card').each(function (projectIndex, projectElement) {
         projectArray.push({
-            id: projectElement.getAttribute('data-project-id'),
+            number: projectElement.getAttribute('data-project-id'),
             index: projectIndex
         });
     });
@@ -59,4 +59,17 @@ function updateProjectPriorities(list, taskObject) {
 function ProjectReorder(data) {
     console.log('ProjectReorder data json', JSON.stringify(data));
     console.log('ProjectReorder data object', data);
+
+    fetch('/Update/ProjectPriorities', {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": getAntiForgeryToken()
+        },
+        body: JSON.stringify(data)
+    }).then(function (response) {
+        // success fail info?
+        return response.json();
+    });
+
 }
