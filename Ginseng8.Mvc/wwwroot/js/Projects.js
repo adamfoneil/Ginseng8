@@ -16,7 +16,7 @@ $(document).ready(function () {
 });
 
 function InitProjectSortable() {
-    $('.sortable').sortable({
+    $('.project-sortable').sortable({
         placeholder: "ui-state-highlight",        
         cancel: ':input, button, [contenteditable="true"]',
         start: sortableStart,
@@ -26,7 +26,7 @@ function InitProjectSortable() {
             // This event is triggered when the user stopped sorting and the DOM position has changed.
 
             if (ui.sender == null) {
-                updateProjectPriorities($(ui.item).parents('.sortable'));
+                updateProjectPriorities($(ui.item).parents('.project-sortable'));
             } else {
                 // when an item from a connected sortable list has been dropped into another list
                 updateProjectPriorities($(ui.sender));

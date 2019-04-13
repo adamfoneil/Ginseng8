@@ -5,7 +5,7 @@
 @foreach (var appGrp in Model.ProjectInfo.GroupBy(row => row.ApplicationId))
 {
     <h4>@appGrp.First().ApplicationName</h4>
-    <div class="row">
+    <div class="row project-sortable">
         @foreach (var prj in appGrp)
         {
             <div class="col-3 p-2 project-card" data-project-id="@prj.Id">
