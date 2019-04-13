@@ -23,6 +23,8 @@ namespace Ginseng.Mvc.Queries
 		public bool HasImpediment { get; set; }
 		public int ProjectId { get; set; }
 		public string ProjectName { get; set; }
+		public int? ProjectPriority { get; set; }
+		public string PriorityTier { get; set; }
 		public int? DataModelId { get; set; }
 		public int MilestoneId { get; set; }
 		public string MilestoneName { get; set; }
@@ -90,6 +92,8 @@ namespace Ginseng.Mvc.Queries
 				[wi].[HasImpediment],
 				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
+				[p].[Priority] AS [ProjectPriority],
+				[ptr].[Name] AS [PriorityTier],
 				COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
 				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
 				COALESCE([wi].[ActivityId], 0) AS [ActivityId],
@@ -148,6 +152,9 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
+				LEFT JOIN [dbo].[FnPriorityTierRanges](@orgId) [ptr] ON
+					[p].[Priority] >= [ptr].[MinPriority] AND
+					[p].[Priority] <= [ptr].[MaxPriority]
 				{{join}}
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
