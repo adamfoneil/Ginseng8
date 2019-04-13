@@ -7,9 +7,12 @@
 
 <h4>Priority Tiers</h4>
 <p>Use Priority Tiers to define the different levels of importance of your <a asp-page="/Dashboard/Projects">Projects</a>.
-    A typical setup would be to have something like <strong>A</strong>, <strong>B</strong>, and <strong>C</strong> tiers.</p>
+    This helps stakeholders and developers quickly grasp the relative importance of a project. A typical setup would be to have something 
+    like <strong>A</strong>, <strong>B</strong>, and <strong>C</strong> tiers. A best practice suggestion is to give higher priority 
+    tiers lower project maximums in order to minimize efficiency losses from multi-tasking.</p>
 
-<p>Tip: The last tier in your list is always a catch-all for projects that aren't more important, so the Max Projects value is ignored.</p>
+<p>Note: The last tier in your list is always a catch-all for low-priority projects, so please give it an impractically large number
+    that you're unlikely to exceed, such as one-thousand projects.</p>
 
 @Html.ActionAlert(TempData)
 
