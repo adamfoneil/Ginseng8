@@ -153,7 +153,8 @@ namespace Ginseng.Mvc.Queries
 				[wi].[OrganizationId]=@orgId {{andWhere}}
             ORDER BY
 				COALESCE([pri].[Value], 100000),
-				[wi].[Number]")
+				[wi].[Number]
+			{{offset}}")
 		{
 			_traces = traces;
 		}
@@ -164,6 +165,9 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+		[Offset(30)]
+		public int? Page { get; set; }
 
 		[Join("INNER JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@activityUserId")]
 		public bool InMyActivities { get; set; }

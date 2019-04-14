@@ -42,6 +42,9 @@ namespace Ginseng.Mvc.Pages.Work
 		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
 
+		[BindProperty(SupportsGet = true)]
+		public int? PageNumber { get; set; } = 0;
+
 		/// <summary>
 		/// Projects found by a search
 		/// </summary>
@@ -101,7 +104,8 @@ namespace Ginseng.Mvc.Pages.Work
 				IsPastDue = PastDue,
 				AssignedUserId = FilterUserId,
 				ActivityId = FilterActivityId,				
-				CloseReasonId = FilterCloseReasonId
+				CloseReasonId = FilterCloseReasonId,
+				Page = PageNumber
 			};
 		}
 	}
