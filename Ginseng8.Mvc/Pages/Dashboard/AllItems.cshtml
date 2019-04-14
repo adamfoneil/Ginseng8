@@ -59,6 +59,23 @@
 
 <p class="text-center">@Model.WorkItems.Count() work items shown</p>
 
+<div class="row justify-content-center">
+    @if (Model.PageNumber > 0)
+    {        
+        <form method="get">
+            <input type="hidden" value="@(Model.PageNumber - 1)" name="pageNumber"/>
+            @Request.ToHiddenFields("pageNumber")
+            <button type="submit" class="btn btn-sm btn-light">&lt;&lt; Prev</button>
+        </form>        
+    }
+    
+    <form method="get">
+        <input type="hidden" value="@(Model.PageNumber + 1)" name="pageNumber"/>
+        @Request.ToHiddenFields("pageNumber")
+        <button type="submit" class="btn btn-sm btn-light">Next &gt;&gt;</button>
+    </form>    
+</div>
+
 @if (Model.Projects?.Any() ?? false)
 {
     <h5 class="mt-3">Projects Found</h5>
