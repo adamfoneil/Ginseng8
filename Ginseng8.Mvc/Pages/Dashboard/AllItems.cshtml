@@ -33,8 +33,10 @@
         <select name="FilterSizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.FilterSizeId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all sizes)</option>
         </select>
-        <select name="FilterActivityId" asp-items="Model.ActivitySelect" class="form-control-sm" onchange="this.form.submit();">
+        <select name="FilterActivityId" asp-items="Model.ActivitySelect" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all activities)</option>
+        </select>
+        <select name="FilterCloseReasonId" asp-items="Model.CloseReasonSelect" class="form-control-sm" onchange="this.form.submit();">
         </select>
     </div>
 </form>

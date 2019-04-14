@@ -180,6 +180,11 @@ namespace Ginseng.Mvc.Queries
 		[Where("[wi].[Number]=@number")]
 		public int? Number { get; set; }
 
+		[Case(0, "[wi].[CloseReasonId] IS NULL")]
+		[Case(-1, "[wi].[CloseReasonId] IS NOT NULL")]
+		[Where("[wi].[CloseReasonId]=@closeReasonId")]
+		public int? CloseReasonId { get; set; }
+
 		[Case(0, AssignedUserExpression + " IS NULL")]
 		[Where(AssignedUserExpression + "=@assignedUserId")]
 		public int? AssignedUserId { get; set; }
