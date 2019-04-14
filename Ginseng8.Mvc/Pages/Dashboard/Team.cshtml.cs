@@ -18,7 +18,8 @@ namespace Ginseng.Mvc.Pages.Work
 			{
 				OrgId = OrgId,
 				AppId = CurrentOrgUser.CurrentAppId,
-				LabelId = LabelId
+				LabelId = LabelId,
+				HasAssignedUserId = true
 			};
 		}
 	}
