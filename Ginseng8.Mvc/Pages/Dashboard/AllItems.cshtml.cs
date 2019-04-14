@@ -2,8 +2,10 @@
 using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Postulate.Base.Extensions;
 
@@ -20,6 +22,9 @@ namespace Ginseng.Mvc.Pages.Work
 		public string Query { get; set; }
 
 		[BindProperty(SupportsGet = true)]
+		public int? FilterUserId { get; set; }
+
+		[BindProperty(SupportsGet = true)]
 		public int? FilterProjectId { get; set; }
 
 		[BindProperty(SupportsGet = true)]
@@ -29,12 +34,18 @@ namespace Ginseng.Mvc.Pages.Work
 		public int? FilterSizeId { get; set; }
 
 		[BindProperty(SupportsGet = true)]
+		public int? FilterActivityId { get; set; }
+
+		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
 
 		/// <summary>
 		/// Projects found by a search
 		/// </summary>
 		public IEnumerable<ProjectInfoResult> Projects { get; set; }
+
+		public SelectList UserSelect { get; set; }
+		public SelectList ActivitySelect { get; set; }
 
 		protected override async Task<RedirectResult> GetRedirectAsync(SqlConnection connection)
 		{
@@ -51,6 +62,15 @@ namespace Ginseng.Mvc.Pages.Work
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
+			var userList = await new UserSelect() { OrgId = OrgId }.ExecuteItemsAsync(connection);
+			userList.Insert(0, new SelectListItem() { Value = "0", Text = "- no assigned user -" });
+			UserSelect = new SelectList(userList, "Value", "Text", FilterUserId);
+
+			var activityList = await new ActivitySelect() { OrgId = OrgId }.ExecuteItemsAsync(connection);
+			activityList.Insert(0, new SelectListItem() { Value = "0", Text = "- no current activity -" });
+			ActivitySelect = new SelectList(activityList, "Value", "Text", FilterActivityId);
+			
+
 			if (!string.IsNullOrEmpty(Query))
 			{
 				// if a search was passed in, execute that on the project list
@@ -69,7 +89,9 @@ namespace Ginseng.Mvc.Pages.Work
 				MilestoneId = FilterMilestoneId,
 				SizeId = FilterSizeId,
 				TitleAndBodySearch = Query,
-				IsPastDue = PastDue
+				IsPastDue = PastDue,
+				AssignedUserId = FilterUserId,
+				ActivityId = FilterActivityId
 			};
 		}
 	}

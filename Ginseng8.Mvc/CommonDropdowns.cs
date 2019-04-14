@@ -38,9 +38,11 @@ namespace Ginseng.Mvc
 			return new SelectList(Applications, "Value", "Text", item?.ApplicationId);
 		}
 
-		public SelectList ProjectSelect(int appId, int? projectId)
+		public SelectList ProjectSelect(int appId, int? projectId, bool withNoneOption = false)
 		{
-			return new SelectList(AllProjects[appId], "Value", "Text", projectId);
+			var items = AllProjects[appId].ToList();
+			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no project -" });
+			return new SelectList(items, "Value", "Text", projectId);
 		}
 
 		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
@@ -53,9 +55,11 @@ namespace Ginseng.Mvc
 			return new SelectList(AllDataModels[appId], "Value", "Text", dataModelId);
 		}
 
-		public SelectList SizeSelect(int? sizeId)
+		public SelectList SizeSelect(int? sizeId, bool withNoneOption = false)
 		{
-			return new SelectList(Sizes, "Value", "Text", sizeId);
+			var items = Sizes.ToList();
+			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no size -" });
+			return new SelectList(items, "Value", "Text", sizeId);
 		}
 
 		public SelectList SizeSelect(OpenWorkItemsResult item = null)
@@ -68,9 +72,11 @@ namespace Ginseng.Mvc
 			return new SelectList(CloseReasons, "Value", "Text", item?.CloseReasonId);
 		}
 
-		public SelectList MilestoneSelect(int? milestoneId)
+		public SelectList MilestoneSelect(int? milestoneId, bool withNoneOption = false)
 		{
-			return new SelectList(Milestones, "Value", "Text", milestoneId);
+			var items = Milestones.ToList();
+			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no milestone -" });
+			return new SelectList(items, "Value", "Text", milestoneId);
 		}
 
 		public SelectList MilestoneSelect(OpenWorkItemsResult item = null)
