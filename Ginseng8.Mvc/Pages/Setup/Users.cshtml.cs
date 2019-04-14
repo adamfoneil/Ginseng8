@@ -20,7 +20,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 			using (var cn = Data.GetConnection())
 			{
-				Users = await new MyOrgUsers() { OrgId = OrgId, ExcludeUserId = UserId }.ExecuteAsync(cn);
+				Users = await new MyOrgUsers() { OrgId = OrgId, ExcludeUserId = UserId, ExcludeOwner = true }.ExecuteAsync(cn);
 			}
 		}
 

@@ -29,6 +29,12 @@ namespace Ginseng.Models
 		[DefaultExpression("6")]
 		public int MilestoneWorkDayValue { get; set; } = 6; // Friday	
 
+		/// <summary>
+		/// Default developer activity for users who haven't set it
+		/// </summary>
+		[References(typeof(Activity))]
+		public int? DeveloperActivityId { get; set; }
+
 		public WorkDay MilestoneWorkDay { get; set; }
 		public UserProfile OwnerUser { get; set; }
 

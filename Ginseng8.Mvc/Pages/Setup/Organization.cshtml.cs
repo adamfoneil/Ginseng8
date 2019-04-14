@@ -46,6 +46,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		public IEnumerable<Organization> MyOrgs { get; set; }
 
 		public SelectList DayOfWeekSelect { get; set; }
+		public SelectList ActivitySelect { get; set; }
 
 		public void OnGet(bool mustCreate = false)
 		{
@@ -55,8 +56,9 @@ namespace Ginseng.Mvc.Pages.Setup
 			using (var cn = Data.GetConnection())
 			{
 				MyOrgs = new MyOrgs() { UserId = UserId }.Execute(cn);
-				JoinRequests = new MyOrgUsers() { UserId = UserId, IsRequest = true, IsEnabled = false }.Execute(cn);
+				JoinRequests = new MyOrgUsers() { UserId = UserId, IsRequest = true, IsEnabled = false, ExcludeOwner = true }.Execute(cn);
 				DayOfWeekSelect = new WorkDaySelect().ExecuteSelectList(cn);
+				ActivitySelect = new ActivitySelect() { OrgId = OrgId }.ExecuteSelectList(cn);
 			}
 		}
 

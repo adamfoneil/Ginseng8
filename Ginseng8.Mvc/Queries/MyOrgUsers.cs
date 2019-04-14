@@ -15,11 +15,12 @@ namespace Ginseng.Mvc.Queries
 				[dbo].[OrganizationUser] [ou]
 				INNER JOIN [dbo].[Organization] [org] ON [ou].[OrganizationId]=[org].[Id]
 				INNER JOIN [dbo].[AspNetUsers] [u] ON [ou].[UserId]=[u].[UserId]
-			WHERE
-				[org].[OwnerUserId]<>[ou].[UserId]
-				{andWhere}")
+			{where}")
 		{
 		}
+
+		[Case(true, "[org].[OwnerUserId]<>[ou].[UserId]")]
+		public bool? ExcludeOwner { get; set; }
 
 		[Where("[ou].[UserId]=@userId")]
 		public int? UserId { get; set; }
