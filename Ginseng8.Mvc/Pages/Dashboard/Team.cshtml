@@ -20,7 +20,7 @@
                 @foreach (var appGrp in userGrp.GroupBy(row => row.ApplicationId))
                 {
                     <h4>@appGrp.First().ApplicationName</h4>
-                    @foreach (var milestoneGrp in userGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
+                    @foreach (var milestoneGrp in appGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
                     {
                         var milestoneItem = milestoneGrp.First();
 
@@ -45,6 +45,8 @@
                         </div>                                
                     }
                 }
+
+                <p class="text-center">@userGrp.Count() work items shown</p>
 
                 @{
                     var recentlyClosed = Model.ClosedItems[userGrp.Key ?? 0].Take(10);
