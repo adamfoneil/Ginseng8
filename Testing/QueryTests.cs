@@ -1,3 +1,4 @@
+using Ginseng.Models.Queries;
 using Ginseng.Mvc.Queries;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -50,5 +51,58 @@ namespace Testing
 				}
 			}
 		}
+		
+		[TestMethod]
+		public void EventSubscriptionEmailNotifications()
+		{
+			var qry = new InsertEventSubscriptionEmailNotifications();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in InsertEventSubscriptionEmailNotifications.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+		}
+
+		[TestMethod]
+		public void EventSubscriptionTextNotifications()
+		{
+			var qry = new InsertEventSubscriptionTextNotifications();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in InsertEventSubscriptionTextNotifications.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ActivitySubscriptionEmailNotifications()
+		{
+			var qry = new InsertActivitySubscriptionEmailNotifications();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in InsertActivitySubscriptionEmailNotifications.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+		}
+
+		[TestMethod]
+		public void ActivitySubscriptionTextNotifications()
+		{
+			var qry = new InsertActivitySubscriptionTextNotifications();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in InsertActivitySubscriptionTextNotifications.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+		}
+
 	}
 }

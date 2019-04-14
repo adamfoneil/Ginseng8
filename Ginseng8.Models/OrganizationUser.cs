@@ -67,6 +67,7 @@ namespace Ginseng.Models
 
 		public Application CurrentApp { get; set; }
 		public UserProfile UserProfile { get; set; }
+		public Organization Organization { get; set; }
 
 		[NotMapped]
 		public string OrgName { get; set; }
@@ -82,6 +83,7 @@ namespace Ginseng.Models
 			}
 
 			UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
+			Organization = commandProvider.Find<Organization>(connection, OrganizationId);
 		}
 
 		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
@@ -92,6 +94,7 @@ namespace Ginseng.Models
 			}
 
 			UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
+			Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
 		}
 
 		internal static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)

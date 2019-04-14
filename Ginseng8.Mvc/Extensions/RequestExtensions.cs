@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Extensions
@@ -12,6 +14,13 @@ namespace Ginseng.Mvc.Extensions
 			{
 				return await reader.ReadToEndAsync();
 			}
+		}
+
+		public static IHtmlContent ToHiddenFields(this HttpRequest request, params string[] except)
+		{
+			string[] fields = request.Query.Keys.Except(except ?? Enumerable.Empty<string>()).ToArray();
+			string result = string.Join("\r\n", fields.Select(field => $"<input type=\"hidden\" name=\"{field}\" value=\"{request.Query[field]}\"/>"));
+			return new HtmlString(result);
 		}
 	}
 }

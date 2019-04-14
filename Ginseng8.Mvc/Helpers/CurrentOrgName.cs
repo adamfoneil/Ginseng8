@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using Ginseng.Models;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Ginseng.Mvc.Helpers
 {
@@ -16,6 +19,12 @@ namespace Ginseng.Mvc.Helpers
 		{
 			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
 			return (model != null) ? model.OrgName : AppName;
+		}
+
+		public static IEnumerable<Organization> MySwitchOrgs(this IHtmlHelper<dynamic> html)
+		{
+			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+			return (model != null) ? model.SwitchOrgs : Enumerable.Empty<Organization>();
 		}
 	}
 }

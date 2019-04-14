@@ -14,6 +14,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -170,12 +171,25 @@ namespace Ginseng.Mvc.Controllers
 		}
 
 		[Route("/Update/CurrentApp/{id}")]
-		public async Task<ActionResult> CurrentApp(int id, string returnUrl)
+		public async Task<RedirectResult> CurrentApp(int id, string returnUrl)
 		{
 			if (_data.CurrentOrgUser == null) return Redirect(returnUrl);
 
 			_data.CurrentOrgUser.CurrentAppId = (id != 0) ? id : default(int?);
 			await _data.TryUpdateAsync(_data.CurrentOrgUser, r => r.CurrentAppId);
+			return Redirect(returnUrl);
+		}
+
+		[Route("/Update/CurrentOrg/{id}")]
+		public async Task<RedirectResult> CurrentOrg(int id, string returnUrl)
+		{
+			using (var cn = _data.GetConnection())
+			{
+				//var myOrgs = await new MyOrgs() { UserId = _data.CurrentUser.UserId }.ExecuteAsync(cn);
+			}
+				
+			_data.CurrentUser.OrganizationId = id;
+			await _data.TryUpdateAsync(_data.CurrentUser, r => r.OrganizationId);
 			return Redirect(returnUrl);
 		}
 
@@ -275,6 +289,29 @@ namespace Ginseng.Mvc.Controllers
 			{
 				return Json(new { success = false, message = exc.Message });
 			}
+		}
+
+		public async Task<PartialViewResult> ToggleNotification(int id, string propertyName, string tableName)
+		{
+			var getNotification = new Dictionary<string, Func<IDbConnection, Task<INotifyOptions>>>()
+			{
+				{ nameof(Ginseng.Models.EventSubscription), async (cn) => await cn.FindAsync<EventSubscription>(id) },
+				{ nameof(ActivitySubscription), async (cn) => await cn.FindAsync<ActivitySubscription>(id) }
+			};
+
+			using (var cn = _data.GetConnection())
+			{
+				var notification = await getNotification[tableName].Invoke(cn);
+				var property = notification.GetType().GetProperty(propertyName);
+				bool value = !(bool)property.GetValue(notification);
+				
+				// it's too bad this doesn't do BaseTable.BeforeUpdate (so user/date stamp not updated), but maybe some day
+				await cn.ExecuteAsync($"UPDATE [dbo].[{notification.TableName}] SET [{propertyName}]=@value WHERE [Id]=@id", new { value, id });
+
+				property.SetValue(notification, value);
+
+				return PartialView("/Pages/Shared/_NotifyOptions.cshtml", notification);
+			}					
 		}
 	}
 }

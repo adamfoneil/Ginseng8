@@ -47,11 +47,3 @@
         }
     }
 </div>
-
-@{ 
-    var recentlyClosed = Model.ClosedItems[Model.SelectedProject.Id].Take(10);                                    
-}               
-@if (recentlyClosed.Any())
-{
-    <partial name="Items/_RecentlyClosed" model="recentlyClosed"/>
-}

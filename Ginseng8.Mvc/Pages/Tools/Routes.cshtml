@@ -1,0 +1,34 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Tools.RoutesModel
+@{
+    ViewData["Title"] = "Routes";
+}
+
+<h1>Routes</h1>
+
+<table class="table">
+    <tr>
+        <th>Route Name</th>
+        <th>Controller</th>
+        <th>Action</th>
+        <th>Template</th>
+        <th>Constraints</th>
+    </tr>
+    @foreach (var item in Model.Routes)
+    {
+        <tr>
+            <td>@item.RouteName</td>
+            <td>@item.Controller</td>
+            <td>@item.Action</td>
+            <td>@item.Template</td>
+            <td>
+                <ul>
+                    @foreach (var constraint in item.Constraints)
+                    {
+                        <li>@constraint.ToString()</li>
+                    }
+                </ul>
+            </td>
+        </tr>
+    }
+</table>

@@ -23,14 +23,31 @@
             <td>@act.Name</td>
             @foreach  (var app in Model.Applications)
             {
+                var key = new AppActivity() { ActivityId = act.Id, ApplicationId = app.Id };
+                var isSelected = Model.MyActivities.ContainsKey(key);
+
                 <td>
-                    <form method="post" asp-page-handler="UpdateSubscription">
-                        <input type="hidden" name="ApplicationId" value="@app.Id"/>
-                        <input type="hidden" name="ActivityId" value="@act.Id"/>
-                        @Html.CheckBox("IsSelected", Model.MyActivities.ContainsKey(new AppActivity() { ActivityId = act.Id, ApplicationId = app.Id }), new { onclick = "this.form.submit();" })
-                    </form>
+                    <div class="row">
+                        <form method="post" asp-page-handler="UpdateSubscription">
+                            <input type="hidden" name="ApplicationId" value="@app.Id"/>
+                            <input type="hidden" name="ActivityId" value="@act.Id"/>
+                            @Html.CheckBox("IsSelected", isSelected, new { onclick = "this.form.submit();" })
+                        </form>
+
+                        @if (isSelected)
+                        {
+                            var notification = Model.MyActivities[key];
+                            <div id="notifyOptions-@notification.Id" class="ml-2">
+                                <partial name="Shared/_NotifyOptions" model="notification"/>
+                            </div>
+                        }
+                    </div>
                 </td>
             }
         </tr>
     }
 </table>
+
+@section Scripts {
+    <script src="~/js/Notification.js"></script>
+}

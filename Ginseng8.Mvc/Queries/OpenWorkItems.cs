@@ -153,7 +153,8 @@ namespace Ginseng.Mvc.Queries
 				[wi].[OrganizationId]=@orgId {{andWhere}}
             ORDER BY
 				COALESCE([pri].[Value], 100000),
-				[wi].[Number]")
+				[wi].[Number]
+			{{offset}}")
 		{
 			_traces = traces;
 		}
@@ -164,6 +165,9 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+		[Offset(30)]
+		public int? Page { get; set; }
 
 		[Join("INNER JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@activityUserId")]
 		public bool InMyActivities { get; set; }
@@ -180,6 +184,12 @@ namespace Ginseng.Mvc.Queries
 		[Where("[wi].[Number]=@number")]
 		public int? Number { get; set; }
 
+		[Case(0, "[wi].[CloseReasonId] IS NULL")]
+		[Case(-1, "[wi].[CloseReasonId] IS NOT NULL")]
+		[Where("[wi].[CloseReasonId]=@closeReasonId")]
+		public int? CloseReasonId { get; set; }
+
+		[Case(0, AssignedUserExpression + " IS NULL")]
 		[Where(AssignedUserExpression + "=@assignedUserId")]
 		public int? AssignedUserId { get; set; }
 
@@ -189,18 +199,22 @@ namespace Ginseng.Mvc.Queries
 		[Case(true, "[wi].[MilestoneId] IS NOT NULL")]
 		public bool? HasMilestone { get; set; }
 
+		[Case(0, "[wi].[ProjectId] IS NULL")]
 		[Where("[wi].[ProjectId]=@projectId")]
 		public int? ProjectId { get; set; }
 
 		[Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId]=@labelId)")]
 		public int? LabelId { get; set; }
 
+		[Case(0, "[wi].[MilestoneId] IS NULL")]
 		[Where("[wi].[MilestoneId]=@milestoneId")]
 		public int? MilestoneId { get; set; }
 
+		[Case(0, "[wi].[SizeId] IS NULL")]
 		[Where("[wi].[SizeId]=@sizeId")]
 		public int? SizeId { get; set; }
 
+		[Case(0, "[wi].[ActivityId] IS NULL")]
 		[Where("[wi].[ActivityId]=@activityId")]
 		public int? ActivityId { get; set; }
 

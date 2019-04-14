@@ -1,50 +1,59 @@
 ﻿@model WorkItemCardView
 
-@if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
+@if (!Model.WorkItem.CloseReasonId.HasValue)
 {
-    <div class="dropdown">
-        <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            @Model.HandOffButtonText()
-            <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
-        </button>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        @foreach (var act in Model.GetActivityOptions())
-        {
-            <partial name="Dashboard/Items/_Activities" model="act"/>
-        }
-        @if (Model.WorkItem.IsPaused())
-        {
-            <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">
-                I'll take this
-                <img src="~/img/loading.gif" style="display:none" />
-            </a>            
-            <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-            <span class="success small pr-2" style="display:none">Added successfully</span>
-            <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
-        }
-        @if (Model.WorkItem.AssignedUserId.HasValue)
-        {
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">
-                Remove Me
-                <img src="~/img/loading.gif" style="display:none" />
-            </a>
-            <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-            <span class="success small pr-2" style="display:none">Item removed</span>
-            <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
-        }
+    if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
+    {
+        <div class="dropdown">
+            <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                @Model.HandOffButtonText()
+                <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            @foreach (var act in Model.GetActivityOptions())
+            {
+                <partial name="Dashboard/Items/_Activities" model="act"/>
+            }
+            @if (Model.WorkItem.IsPaused())
+            {
+                <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">
+                    I'll take this
+                    <img src="~/img/loading.gif" style="display:none" />
+                </a>            
+                <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
+                <span class="success small pr-2" style="display:none">Added successfully</span>
+                <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
+            }
+            @if (Model.WorkItem.AssignedUserId.HasValue)
+            {
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">
+                    Remove Me
+                    <img src="~/img/loading.gif" style="display:none" />
+                </a>
+                <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
+                <span class="success small pr-2" style="display:none">Item removed</span>
+                <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
+            }
+            </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <span>
+            @Model.WorkItem.ActivityStatus()
+            <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
+        </span>
+    }
+
+    @if (Model.WorkItem.HasImpediment)
+    {                    
+        <i class="@Comment.ImpedimentIcon ml-2" style="color:darkred" title="This item has an impediment, please see the comments"></i>
+    }                
 }
 else
 {
-    <span>
-        @Model.WorkItem.ActivityStatus()
-        <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
-    </span>
+    <i class="@WorkItem.IconClosed" style="color:green"></i>
+    <span class="ml-2">Closed: @Model.WorkItem.CloseReasonName</span>
 }
 
-@if (Model.WorkItem.HasImpediment)
-{                    
-    <i class="@Comment.ImpedimentIcon ml-2" style="color:darkred" title="This item has an impediment, please see the comments"></i>
-}                

@@ -18,16 +18,26 @@
 }
 
 <form method="get">
-    <div class="form-row mb-3 justify-content-center">
-        <input type="hidden" asp-for="@Model.Query"/>
-        <select name="FilterProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.CurrentOrgUser.CurrentAppId ?? 0, Model.FilterProjectId)" class="form-control-sm mr-2" onchange="this.form.submit();">
+    <input type="hidden" asp-for="@Model.Query"/>
+    <div class="form-row mb-3 justify-content-center">       
+        <select name="FilterUserId" asp-items="Model.UserSelect" class="form-control-sm mr-2" onchange="this.form.submit();">
+            <option value="">(all users)</option>
+        </select>
+        <select name="FilterProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.CurrentOrgUser.CurrentAppId ?? 0, Model.FilterProjectId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all projects)</option>
         </select>
-        <select name="FilterMilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.FilterMilestoneId)" class="form-control-sm mr-2" onchange="this.form.submit();">
+        <select name="FilterMilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.FilterMilestoneId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all milestones)</option>
         </select>
-        <select name="FilterSizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.FilterSizeId)" class="form-control-sm" onchange="this.form.submit();">
+    </div>
+    <div class="form-row mb-3 justify-content-center">
+        <select name="FilterSizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.FilterSizeId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all sizes)</option>
+        </select>
+        <select name="FilterActivityId" asp-items="Model.ActivitySelect" class="form-control-sm mr-2" onchange="this.form.submit();">
+            <option value="">(all activities)</option>
+        </select>
+        <select name="FilterCloseReasonId" asp-items="Model.CloseReasonSelect" class="form-control-sm" onchange="this.form.submit();">
         </select>
     </div>
 </form>
@@ -48,6 +58,23 @@
 </div>
 
 <p class="text-center">@Model.WorkItems.Count() work items shown</p>
+
+<div class="row justify-content-center">
+    @if (Model.PageNumber > 0)
+    {        
+        <form method="get">
+            <input type="hidden" value="@(Model.PageNumber - 1)" name="pageNumber"/>
+            @Request.ToHiddenFields("pageNumber")
+            <button type="submit" class="btn btn-sm btn-light">&lt;&lt; Prev</button>
+        </form>        
+    }
+    
+    <form method="get">
+        <input type="hidden" value="@(Model.PageNumber + 1)" name="pageNumber"/>
+        @Request.ToHiddenFields("pageNumber")
+        <button type="submit" class="btn btn-sm btn-light">Next &gt;&gt;</button>
+    </form>    
+</div>
 
 @if (Model.Projects?.Any() ?? false)
 {

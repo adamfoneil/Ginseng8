@@ -2,10 +2,11 @@
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Ginseng.Mvc.Services
 {
-	public class Email
+	public class Email : IEmailSender
 	{
 		private readonly string _apiKey;
 		private readonly string _senderEmail;
@@ -34,5 +35,9 @@ namespace Ginseng.Mvc.Services
 
 			return await client.SendEmailAsync(message);
 		}
-	}
+
+        // IEmailSender.SendEmailAsync
+        public Task SendEmailAsync(string email, string subject, string htmlMessage)
+            => SendAsync(email, subject, null, htmlMessage);
+    }
 }

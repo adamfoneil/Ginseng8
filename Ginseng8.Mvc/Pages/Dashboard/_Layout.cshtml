@@ -2,7 +2,7 @@
     Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
-<ul class="nav nav-pills nav-fill" style="margin-top:15px;margin-bottom:15px">
+<ul class="nav nav-pills nav-fill mt-3 mb-3">
     <li class="nav-item">
         <activelink page="/Dashboard/Index" text="My Items" />
     </li>
@@ -36,7 +36,7 @@
         @if (model.LabelId.HasValue)
         {
             <div class="text-center">
-                <a asp-route-labelId="" class="btn btn-sm btn-light">show all</a>
+                <a asp-route-labelId="" class="btn btn-sm btn-light mb-2">show all</a>
             </div>            
         }
     }

@@ -26,10 +26,50 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Dashboard/Index">
-                    <i class="fas fa-home" title="My Items"></i>
-                    @Html.CurrentOrgName()
-                </a>
+                <div class="btn-group">
+                    <a class="btn btn-light" asp-area="" asp-page="/Dashboard/Index">
+                        <i class="fas fa-home" title="My Items"></i>
+                        @Html.CurrentOrgName()
+                    </a>
+                    <button type="button" class="btn btn-light dropdown-toggle dropdown-toggle-split mr-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" asp-page="/Dashboard/Index">My Items</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Hung">Hung Items</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Projects">Projects</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Milestones">Milestones</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/AllItems">All Items</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Team">Team</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Feed">Feed</a>
+                        <div class="dropdown-divider"></div>
+                        @if (Html.HasCurrentApp())
+                        {                         
+                            <a class="dropdown-item" asp-page="/Data/Index">Data Models</a>                         
+                        }
+                        <a class="dropdown-item" asp-page="/Wiki/Index">Wiki</a>
+                        <a class="dropdown-item" asp-page="/Roadmap/Index">Roadmap</a>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <a class="dropdown-item" asp-page="/Setup/Index">Setup</a>
+                        }                                                
+                        @{ 
+                            var switchOrgs = Html.MySwitchOrgs();
+                            string returnUrl = UriHelper.GetDisplayUrl(Html.ViewContext.HttpContext.Request);
+                        }
+                        @if (switchOrgs?.Any() ?? false)
+                        {
+                            <div class="dropdown-divider"></div>
+                            @foreach (var org in switchOrgs)
+                            {                                
+                                <a asp-action="CurrentOrg" asp-controller="Update" asp-route-id="@org.Id" asp-route-returnUrl="@returnUrl" class="dropdown-item">
+                                    <i class="far fa-arrow-circle-right"></i>
+                                    @org.Name
+                                </a>
+                            }
+                        }
+                    </div>
+                </div>
                 @if (User.Identity.IsAuthenticated)
                 {
                     <partial name="_AppFilter" model="new AppFilterView() { CurrentAppName = Html.CurrentAppNameString(), AppOptions = await Html.AppFilterOptions() }" />
@@ -45,15 +85,6 @@
                     <ul class="navbar-nav flex-grow-1">
                         @if (User.Identity.IsAuthenticated)
                         {
-                            if (Html.HasCurrentApp())
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-page="/Data/Index">Data</a>
-                                </li>
-                            }
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Wiki/Index">Wiki</a>
-                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-page="/Setup/Index">Setup</a>
                             </li>

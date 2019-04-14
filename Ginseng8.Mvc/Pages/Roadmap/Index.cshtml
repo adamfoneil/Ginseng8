@@ -2,11 +2,11 @@
 @model Ginseng.Mvc.Pages.Roadmap.IndexModel
 @{
     ViewData["Title"] = "Roadmap";
-}
-
-@{ 
     int appMsId = 0;
 }
+
+<h3>Roadmap</h3>
+
 <ul class="nav nav-tabs" role="tablist">
     @foreach (var app in Model.Applications)
     {
@@ -54,6 +54,13 @@
     }
 </div>
 
+<partial name="Dashboard/Items/_CreateMilestone"/>
+
 @section Scripts {
     <script src="~/js/Dashboard.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".datepicker").datepicker();
+        });
+    </script>
 }

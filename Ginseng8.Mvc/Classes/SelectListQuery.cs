@@ -21,6 +21,12 @@ namespace Ginseng.Mvc.Classes
 			return Execute(connection).ToList();
 		}
 
+		public async Task<List<SelectListItem>> ExecuteItemsAsync(IDbConnection connection)
+		{
+			var results = await ExecuteAsync(connection);
+			return results.ToList();
+		}
+
 		public SelectList ExecuteSelectList(IDbConnection connection, object selectedValue = null)
 		{
 			IEnumerable<SelectListItem> items = Execute(connection);

@@ -64,14 +64,18 @@ namespace Ginseng.Models
 				string displayUser = await OrganizationUser.GetUserDisplayNameAsync(connection, workItem.OrganizationId, FromUserId, user);
 				string text = $"{displayUser} handed off work item {workItem.Number} from {fromActivity.Name} to {toActivity.Name}";
 
-				await EventLog.WriteAsync(connection, new EventLog(WorkItemId, user)
+				int eventLogId = await EventLog.WriteAsync(connection, new EventLog(WorkItemId, user)
 				{
 					EventId = (IsForward) ? SystemEvent.HandOffForward : SystemEvent.HandOffBackward,
 					IconClass = GetIconClass(IsForward),
 					IconColor = GetColor(IsForward),
 					HtmlBody = text,
-					TextBody = text
+					TextBody = text,
+					SourceId = Id,
+					SourceTable = "HandOff"
 				});
+				
+				await Notification.CreateFromActivitySubscriptions(connection, eventLogId);				
 			}
 		}
 	}
