@@ -18,9 +18,8 @@
 }
 
 <form method="get">
-    <div class="form-row mb-3 justify-content-center">
-        <input type="hidden" asp-for="@Model.Query"/>
-
+    <input type="hidden" asp-for="@Model.Query"/>
+    <div class="form-row mb-3 justify-content-center">       
         <select name="FilterUserId" asp-items="Model.UserSelect" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all users)</option>
         </select>
@@ -30,6 +29,8 @@
         <select name="FilterMilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.FilterMilestoneId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all milestones)</option>
         </select>
+    </div>
+    <div class="form-row mb-3 justify-content-center">
         <select name="FilterSizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.FilterSizeId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all sizes)</option>
         </select>
