@@ -135,5 +135,13 @@ namespace Ginseng.Mvc.Services
 
 			return results;
 		}
+
+		public async Task DeleteAsync(string orgName, string name)
+		{
+			var client = GetClient();
+			var container = await GetOrgContainerAsync(client, orgName);
+			var blob = container.GetBlockBlobReference(name);
+			await blob.DeleteIfExistsAsync();
+		}
 	}
 }

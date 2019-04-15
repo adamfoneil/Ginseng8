@@ -45,5 +45,17 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		{
 			return new OpenWorkItems(QueryTraces) { OrgId = OrgId, Number = Id, IsOpen = null };
 		}
+
+		public async Task<IActionResult> OnPostDeleteAttachmentAsync(int id)
+		{
+			using (var cn = Data.GetConnection())
+			{
+				var att = await cn.FindAsync<Attachment>(id);
+				await _blobStorage.DeleteAsync(CurrentOrg.Name, att.Url);
+				await cn.DeleteAsync<Attachment>(id);
+			}
+
+			return RedirectToPage("View");
+		}
 	}
 }
