@@ -1,0 +1,50 @@
+﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@model Ginseng.Mvc.Pages.Setup.PriorityTiersModel
+@{
+    ViewData["Title"] = "Priority Tiers";
+}
+
+<h4>Priority Tiers</h4>
+<p>Use Priority Tiers to define the different levels of importance of your <a asp-page="/Dashboard/Projects">Projects</a>.
+    This helps stakeholders and developers quickly grasp the relative importance of a project. A typical setup would be to have something 
+    like <strong>A</strong>, <strong>B</strong>, and <strong>C</strong> tiers. A best practice suggestion is to give higher priority 
+    tiers lower project maximums in order to minimize efficiency losses from multi-tasking.</p>
+
+<p>Note: The last tier in your list is always a catch-all for low-priority projects, so please give it an impractically large number
+    that you're unlikely to exceed, such as one-thousand projects.</p>
+
+@Html.ActionAlert(TempData)
+
+@{
+    var grid = new GridEditor<PriorityTier>(this, Xsrf);
+}
+
+<table class="table">
+    <tr>
+        <th>Tier Name</th>
+        <th>Max Projects</th>
+        <th>Rank</th>
+        <th></th>
+    </tr>
+    @foreach  (var item in Model.PriorityTiers)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(model => model.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(model => model.MaxProjects, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(model => model.Rank, new { @class = "form-control" })</td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }
+    <tr id="@grid.NewRowId()">
+        <td>@grid.TextBox(model => model.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(model => model.MaxProjects, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(model => model.Rank, new { @class = "form-control" })</td>
+        <td>@grid.Controls()</td>
+    </tr>
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+}

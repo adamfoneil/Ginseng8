@@ -313,5 +313,32 @@ namespace Ginseng.Mvc.Controllers
 				return PartialView("/Pages/Shared/_NotifyOptions.cshtml", notification);
 			}					
 		}
+
+		[HttpPost]
+		public async Task<JsonResult> ProjectPriorities()
+		{
+			try
+			{
+				string body = await Request.ReadStringAsync();
+				var data = JsonConvert.DeserializeObject<ProjectPriorityUpdate>(body);
+
+				using (var cn = _data.GetConnection())
+				{
+					await cn.ExecuteAsync("dbo.UpdateProjectPriorities", new
+					{
+						userName = User.Identity.Name,
+						localTime = _data.CurrentUser.LocalTime,
+						orgId = _data.CurrentOrg.Id,
+						priorities = data.Items.AsTableValuedParameter("dbo.WorkItemPriority", "Number", "Index")
+					}, commandType: CommandType.StoredProcedure);
+				}
+
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
 	}
 }

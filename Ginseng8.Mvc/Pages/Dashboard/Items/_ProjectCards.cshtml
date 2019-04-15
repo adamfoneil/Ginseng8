@@ -5,14 +5,20 @@
 @foreach (var appGrp in Model.ProjectInfo.GroupBy(row => row.ApplicationId))
 {
     <h4>@appGrp.First().ApplicationName</h4>
-    <div class="row">
-        @foreach (var prj in appGrp)
-        {
-            <div class="col-3 p-2">
-                <partial name="Items/_ProjectLinkButton" model="prj"/>
-            </div>
-        }        
+    <div class="app-container">
+    @foreach (var tierGrp in appGrp.OrderBy(row => row.TierRank).GroupBy(row => row.PriorityTier))
+    {
+        <h5>@tierGrp.First().PriorityTier</h5>
+        <div class="row project-sortable ml-3">
+            @foreach (var prj in tierGrp)
+            {
+                <div class="col-3 p-2 project-card" data-project-id="@prj.Id">
+                    <partial name="Items/_ProjectLinkButton" model="prj"/>
+                </div>
+            }        
+        </div>
+    }
     </div>
-
+    
     <partial name="Items/_ProjectCreate" model="appGrp.Key"/>
 }
