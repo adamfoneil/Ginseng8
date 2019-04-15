@@ -18,6 +18,7 @@ namespace Ginseng.Mvc.Queries
 		public int? Priority { get; set; }
 		public string PriorityTier { get; set; }
 		public int? TierRank { get; set; }
+		public int? MaxProjects { get; set; }
 		public string BranchUrl { get; set; }
 		public string TextBody { get; set; }
 		public string HtmlBody { get; set; }
@@ -72,6 +73,7 @@ namespace Ginseng.Mvc.Queries
 					[p].*,
 					[ptr].[Name] AS [PriorityTier],
 					[ptr].[Rank] AS [TierRank],
+					[ptr].[MaxProjects] AS [MaxProjects],
 					[app].[Name] AS [ApplicationName],
 					(SELECT 
 						SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours])) 

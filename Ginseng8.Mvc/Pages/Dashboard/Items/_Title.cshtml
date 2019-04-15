@@ -2,7 +2,13 @@
 
 @if (Model.ProjectId != 0)
 {
-    <span class="font-weight-bold">@Model.ProjectName</span>
+    <span class="font-weight-bold">
+        @Model.ProjectName
+        @if (Model.ProjectPriority.HasValue)
+        {
+            <sup title="Overall project priority" class="font-weight-light">@Model.ProjectPriority</sup>
+        }
+    </span>
 }
 
 <span>@Model.Title</span>
