@@ -77,6 +77,13 @@
                 id: 'elementId',
                 name: 'newTitle'
             });
+
+            var dz = $('.dropzone');
+            dz.on('success', function (file) {
+                // need some indication that file was uploaded
+                // to trigger refresh of attachment list
+                console.log(file);
+            });
         })
     </script>
 }
