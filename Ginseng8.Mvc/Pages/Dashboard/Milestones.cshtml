@@ -14,7 +14,7 @@
         {
             var milestoneItem = milestoneGrp.First();
             <li class="nav-item">
-                <a href="#app-@appGrp.Key-ms@(milestoneGrp.Key)" data-toggle="tab" class="nav-link">
+                <a href="#app-@appGrp.Key-ms@(milestoneGrp.Key)" data-toggle="tab" class="nav-link" id="tab-@milestoneGrp.Key">
                     <partial name="Items/_MilestoneHeader" model="milestoneItem"/>
                 </a>
             </li>
@@ -23,7 +23,7 @@
     <div class="tab-content my-3" id="tabContent">
     @foreach (var milestoneGrp in appGrp.OrderBy(row => row.MilestoneDate).GroupBy(row => row.MilestoneId))
     {    
-        <div id="app-@appGrp.Key-ms@(milestoneGrp.Key)" class="tab-pane fade" data-milestone-id="@milestoneGrp.Key" role="tabpanel">
+        <div id="app-@appGrp.Key-ms@(milestoneGrp.Key)" class="tab-pane fade" data-milestone-id="@milestoneGrp.Key" data-tab-id="tab-@milestoneGrp.Key" role="tabpanel">
             <div class="ml-3">
                 <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
 
