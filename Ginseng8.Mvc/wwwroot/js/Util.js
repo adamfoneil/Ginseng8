@@ -17,6 +17,12 @@ function sortableStart(event, ui) {
     $('body').addClass('dragging');
 }
 
+function sortableStartUpdateHeightAndWidth(event, ui) {
+    // This event is triggered when sorting starts.
+    $('.ui-sortable-placeholder').outerWidth($(ui.item).outerWidth()); // update width of placeholder to current item height
+    sortableStart(event, ui);
+}
+
 function sortableStop() {
     setTimeout(function () {
         $('body').removeClass('dragging');

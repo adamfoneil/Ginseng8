@@ -19,8 +19,8 @@ function InitProjectSortable() {
     $('.project-sortable').sortable({
         placeholder: "ui-state-highlight",                
         connectWith: '.project-sortable',
-        cancel: ':input, button, [contenteditable="true"]',
-        start: sortableStart,
+        cancel: 'button',
+        start: sortableStartUpdateHeightAndWidth,
         stop: sortableStop,
 
         update: function (event, ui) {
@@ -29,7 +29,7 @@ function InitProjectSortable() {
             if (ui.sender == null) {
                 // issue here is we're not getting all the project cards on the page via .parents.... It's only
                 // including what's in the priority tier that was dropped on
-                updateProjectPriorities($(ui.item).parents('.project-sortable'));                
+                updateProjectPriorities($(ui.item).parents('.project-sortable'));
             } else {
                 // when an item from a connected sortable list has been dropped into another list
                 updateProjectPriorities($(ui.sender));
@@ -38,19 +38,21 @@ function InitProjectSortable() {
     });
 }
 
-function updateProjectPriorities(list, taskObject) {
-    var task = taskObject || list.prevObject;
-
-    if (list.length === 0 || task == null) {
+function updateProjectPriorities(list) {
+    if (list.length === 0) {
         return;
     }
-   
+
     var projectArray = [];
 
-    list.find('.project-card').each(function (projectIndex, projectElement) {
+    list.find('.project-card').each(function (index, element) {
+        var priority = $('.project-card').index(element);
+
+        $(element).find('sup').html(priority + 1);
+
         projectArray.push({
-            number: projectElement.getAttribute('data-project-id'),
-            index: projectIndex
+            number: element.getAttribute('data-project-id'),
+            index: priority
         });
     });
 
@@ -60,8 +62,7 @@ function updateProjectPriorities(list, taskObject) {
 }
 
 function ProjectReorder(data) {
-    console.log('ProjectReorder data json', JSON.stringify(data));
-    console.log('ProjectReorder data object', data);
+    console.log('ProjectReorder data object', data, '\n\n');
 
     fetch('/Update/ProjectPriorities', {
         method: 'post',
