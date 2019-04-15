@@ -37,7 +37,7 @@ namespace Ginseng.Mvc.Controllers
 				var client = _blob.GetClient();
 				var container = client.GetContainerReference(orgName);
 				await container.CreateIfNotExistsAsync();
-				await container.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Blob });
+				await container.SetPermissionsAsync(new BlobContainerPermissions() { PublicAccess = BlobContainerPublicAccessType.Off });
 
 				string fileName = $"{folderName}/{id}/{Path.GetFileName(file.FileName)}";
 				CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
@@ -48,7 +48,7 @@ namespace Ginseng.Mvc.Controllers
 					await blob.UploadFromStreamAsync(stream);
 				}
 					
-				return Json(new { link = _blob.GetUrl(orgName, fileName) });
+				return Json(new { link = _blob.GetUrlWithSas(blob) });
 			}
 			catch (Exception exc)
 			{

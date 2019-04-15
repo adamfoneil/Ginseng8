@@ -1,4 +1,5 @@
-﻿using Ginseng.Mvc.Models;
+﻿using System;
+using Ginseng.Mvc.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Auth;
@@ -61,7 +62,60 @@ namespace Ginseng.Mvc.Services
 			return $"https://{AccountName}.blob.core.windows.net:443/{orgName}/{blobName}";
 		}
 
-		public async Task<IEnumerable<BlobInfo>> ListBlobs(string orgName, string prefix)
+        /// <summary>
+        /// Returns blob's absolute URL (including SAS token if <c>includeSas == true</c>)
+        /// </summary>
+        /// <param name="blob">Existed Azure Storage Block Blob reference</param>
+        /// <exception cref="ArgumentNullException">Thrown when <c>blob</c> parameter is null</exception>
+        /// <returns>Blob's absolute URL (without SAS token)</returns>
+        public string GetUrl(CloudBlockBlob blob)
+        {
+            if (blob == null) throw new ArgumentNullException(nameof(blob));
+            return blob.Uri.AbsoluteUri;
+        }
+
+        /// <summary>
+        /// Returns blob's SAS token
+        /// </summary>
+        /// <param name="blob">Existed Azure Storage Block Blob reference</param>
+        /// <param name="permissions">Required access permissions</param>
+        /// <param name="sasTokenLifetime">SAS token lifetime, when <c>null</c> expiration time is in 10 years</param>
+        /// <exception cref="ArgumentNullException">Thrown when <c>blob</c> parameter is null</exception>
+        /// <returns>Blob's SAS token</returns>
+        public string GetSas(
+            CloudBlockBlob blob,
+            SharedAccessBlobPermissions permissions = SharedAccessBlobPermissions.Read,
+            TimeSpan? sasTokenLifetime = null)
+        {
+            if (blob == null) throw new ArgumentNullException(nameof(blob));
+
+            var policy = new SharedAccessBlobPolicy()
+            {
+                Permissions = permissions,
+                SharedAccessExpiryTime = DateTimeOffset.UtcNow.Add(sasTokenLifetime ?? TimeSpan.FromDays(3650))
+            };
+
+            return blob.GetSharedAccessSignature(policy);
+        }
+
+        /// <summary>
+        /// Returns blob's absolute URL including SAS token
+        /// </summary>
+        /// <param name="blob">Existed Azure Storage Block Blob reference</param>
+        /// <param name="permissions">Required access permissions</param>
+        /// <param name="sasTokenLifetime">SAS token lifetime</param>
+        /// <exception cref="ArgumentNullException">Thrown when <c>blob</c> parameter is null</exception>
+        /// <returns>Blob's absolute URL with SAS token </returns>
+        public string GetUrlWithSas(
+            CloudBlockBlob blob,
+            SharedAccessBlobPermissions permissions = SharedAccessBlobPermissions.Read,
+            TimeSpan? sasTokenLifetime = null)
+        {
+            if (blob == null) throw new ArgumentNullException(nameof(blob));
+            return GetUrl(blob) + GetSas(blob, permissions, sasTokenLifetime);
+        }
+
+        public async Task<IEnumerable<BlobInfo>> ListBlobs(string orgName, string prefix)
 		{			
 			var container = await GetOrgContainerAsync(orgName);
 			BlobContinuationToken token = new BlobContinuationToken();
