@@ -274,5 +274,11 @@ namespace Ginseng.Mvc.Controllers
 				return Json(new { success = false, message = exc.Message });
 			}
 		}
+
+		[HttpGet]
+		public async Task<PartialViewResult> Attachments(int id)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

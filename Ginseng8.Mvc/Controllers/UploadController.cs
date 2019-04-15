@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
@@ -40,6 +41,7 @@ namespace Ginseng.Mvc.Controllers
 
 				string fileName = $"{folderName}/{id}/{Path.GetFileName(file.FileName)}";
 				CloudBlockBlob blob = container.GetBlockBlobReference(fileName);
+				blob.Properties.ContentType = GetMimeType(fileName);
 
 				using (var stream = file.OpenReadStream())
 				{
@@ -52,6 +54,16 @@ namespace Ginseng.Mvc.Controllers
 			{
 				return Json(exc);
 			}
+		}
+
+		/// <summary>
+		/// thanks to https://dotnetcoretutorials.com/2018/08/14/getting-a-mime-type-from-a-file-name-in-net-core/
+		/// </summary>
+		private string GetMimeType(string fileName)
+		{
+			const string defaultType = "application/octet-stream";
+			var provider = new FileExtensionContentTypeProvider();
+			return (provider.TryGetContentType(fileName, out string result)) ? result : defaultType;
 		}
 	}
 }

@@ -5,6 +5,11 @@
     var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id], ShowDetailsButton = false };
 }
 
+@section Head {
+    <link rel="stylesheet" href="~/lib/dropzone/basic.css"/>
+    <link rel="stylesheet" href="~/lib/dropzone/dropzone.css"/>
+}
+
 <div class="row">
     <div class="col-2 text-right">
         <h2>
@@ -36,8 +41,17 @@
 <div class="row">
     <div class="col-2"></div>
     <div class="col-10">
-        <form asp-controller="Image" asp-action="Paste" method="post" class="dropzone" id="frmDropzone">            
+
+        <ul>
+            @foreach (var att in Model.Attachments.Blobs)
+            {
+                <li><a href="@att.Uri.ToString()">@att.Filename</a></li>
+            }
+        </ul>
+
+        <form asp-controller="Upload" asp-action="Image" method="post" class="dropzone" id="frmDropzone">            
             <input type="hidden" name="Id" value="@Model.Item.Number"/>
+            <input type="hidden" name="FolderName" value="WorkItems"/>
         </form>
         <hr />
     </div>
