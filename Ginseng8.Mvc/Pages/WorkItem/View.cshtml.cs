@@ -1,12 +1,13 @@
-﻿using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Services;
-using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
+using System.Collections.Generic;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.WorkItem
 {
@@ -26,7 +27,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 		public int Id { get; set; }
 
 		public OpenWorkItemsResult Item { get; set; }
-		public AttachmentsView Attachments { get; set; }
+		public IEnumerable<Attachment> Attachments { get; set; }
 
 		protected override void OnGetInternal(SqlConnection connection)
 		{
@@ -37,13 +38,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
-			var workItem = await connection.FindWhereAsync<Ginseng.Models.WorkItem>(new { OrganizationId = CurrentOrg.Id, Number = Id });
-			var blobs = await _blobStorage.ListBlobs(CurrentOrg.Name, $"WorkItems/{Id}");			
-			Attachments = new AttachmentsView()
-			{
-				AllowDelete = (workItem.CreatedBy.Equals(User.Identity.Name)),
-				Blobs = blobs
-			};
+			Attachments = await new Attachments(QueryTraces) { OrgId = OrgId, ObjectType = ObjectType.WorkItem, ObjectId = Id, UserName = User.Identity.Name }.ExecuteAsync(connection);			
 		}
 
 		protected override OpenWorkItems GetQuery()

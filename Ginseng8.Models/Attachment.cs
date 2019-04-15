@@ -3,6 +3,7 @@ using Postulate.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
@@ -40,6 +41,9 @@ namespace Ginseng.Models
 		[MaxLength(500)]
 		[Required]
 		public string DisplayName { get; set; }
+
+		[NotMapped]
+		public bool AllowDelete { get; set; }
 
 		public static ObjectType FromFolderName(string folderName)
 		{

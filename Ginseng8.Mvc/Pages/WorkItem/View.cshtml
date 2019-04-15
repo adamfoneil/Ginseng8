@@ -43,9 +43,18 @@
     <div class="col-10">
 
         <ul>
-            @foreach (var att in Model.Attachments.Blobs)
+            @foreach (var att in Model.Attachments)
             {
-                <li><a href="@att.Uri.ToString()">@att.Filename</a></li>
+                <li class="mb-2">
+                    <a href="@att.Url">@att.DisplayName</a>
+                    @if (att.AllowDelete)
+                    {                        
+                        <form method="post" asp-page-handler="DeleteAttachment" class="d-inline-block">
+                            <input type="hidden" name="Id" value="@att.Id"/>
+                            <button class="btn btn-sm" onclick="return confirm('This will delete the attachment.')">Delete...</button>
+                        </form>                        
+                    }
+                </li>
             }
         </ul>
 
