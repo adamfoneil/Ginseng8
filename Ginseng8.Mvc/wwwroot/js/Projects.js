@@ -82,7 +82,7 @@ $('.project-work-items').tooltip({
     items: 'a',
     content: function () {
         var projectId = $(this).data('project-id');
-        fetch('/WorkItem/List?projectId=' + projectId, {
+        fetch('/WorkItem/List?handler=List&projectId=' + projectId, {
             method: 'get'
         }).then(function (response) {
             return response.text();

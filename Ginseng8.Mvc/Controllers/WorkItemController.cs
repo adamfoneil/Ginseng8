@@ -281,26 +281,5 @@ namespace Ginseng.Mvc.Controllers
 		{
 			throw new NotImplementedException();
 		}
-
-		[HttpGet]
-		public async Task<PartialViewResult> List(int projectId)
-		{
-			using (var cn = _data.GetConnection())
-			{
-				var vm = new WorkItemListView();
-				vm.WorkItems = await new OpenWorkItems()
-				{
-					OrgId = _data.CurrentOrg.Id,
-					ProjectId = projectId
-				}.ExecuteAsync(cn);
-
-
-				var itemIds = vm.WorkItems.Select(wi => wi.Id).ToArray();
-				var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = _data.CurrentOrg.Id }.ExecuteAsync(cn);
-				vm.SelectedLabels = labelsInUse.ToLookup(row => row.WorkItemId);
-
-				return PartialView(vm);
-			}
-		}
 	}
 }
