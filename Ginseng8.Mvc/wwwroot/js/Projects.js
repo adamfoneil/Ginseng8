@@ -80,9 +80,9 @@ function ProjectReorder(data) {
 
 $('.project-work-items').tooltip({
     items: 'a',
-    content: function () {
-        var projectId = $(this).data('project-id');
-        fetch('/WorkItem/List?handler=List&projectId=' + projectId, {
+    content: async function () {
+        var projectId = $(this).data('project-id');                
+        return await fetch('/Project/WorkItems/' + projectId, {
             method: 'get'
         }).then(function (response) {
             return response.text();
@@ -90,6 +90,6 @@ $('.project-work-items').tooltip({
             $('#project-items-' + projectId).empty();
             $('#project-items-' + projectId).html(content);
             return $('#project-items-' + projectId).html();
-        });
+        });        
     }
 });

@@ -1,0 +1,12 @@
+﻿@model Ginseng.Mvc.ViewModels.WorkItemListView
+
+<ul>
+@foreach (var item in Model.WorkItems)
+{
+    <li>
+        @await Html.PartialAsync("/Pages/Dashboard/Items/_ItemNumber.cshtml", item)        
+        <a href="@Url.Action("View", "WorkItem", new { id = item.Id })">@item.Title</a>
+        @await  Html.PartialAsync("/Pages/Dashboard/Items/_Labels.cshtml", Model.SelectedLabels[item.Id])        
+    </li>
+}
+</ul>
