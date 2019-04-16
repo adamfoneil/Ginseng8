@@ -79,7 +79,7 @@ namespace Ginseng.Mvc.Queries
 						SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours])) 
 						FROM [dbo].[WorkItem] [wi] LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id] 
 						LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
-						WHERE [wi].[ProjectId]=[p].[Id]) AS [EstimateHours],
+						WHERE [wi].[ProjectId]=[p].[Id] AND [wi].[CloseReasonId] IS NULL) AS [EstimateHours],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) AS [TotalWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems],

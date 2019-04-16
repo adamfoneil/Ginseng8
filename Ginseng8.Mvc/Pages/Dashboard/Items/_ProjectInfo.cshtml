@@ -1,7 +1,7 @@
 ﻿@model ProjectInfoResult
 
 <span class="text-muted small mr-2">
-    @Model.TotalWorkItems work items | 
+    @Model.OpenWorkItems work items | 
     @if (Model.EstimateHours.HasValue)
     {
         @(Model.EstimateHours)<text> hrs | </text>
