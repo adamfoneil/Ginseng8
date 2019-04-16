@@ -45,11 +45,8 @@ namespace Ginseng.Mvc.Pages.WorkItem
 			handOff.Id = 0;
 
 			handOff.IsForward = await GetIsForwardAsync(handOff.FromActivityId, handOff.ToActivityId);
-
-			using (var cn = Data.GetConnection())
-			{
-				handOff.SaveHtml(cn);
-			}
+			
+			await handOff.SaveHtmlAsync(Data);			
 				
 			await Data.TrySaveAsync(handOff);
 			return Redirect(ReturnUrl);
