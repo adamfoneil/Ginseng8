@@ -6,5 +6,14 @@
     {
         @(Model.EstimateHours)<text> hrs | </text>
     }    
-    @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete</span>
+    @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete
+</span>
+
+@if (Model.HasImpediment)
+{
+    <span>
+        <i class="@Comment.ImpedimentIcon" style="color:darkred" title="Has impediment"></i>
+    </span>
+}
+
 <br/><meter value="@Model.PercentComplete" max="1"></meter>
