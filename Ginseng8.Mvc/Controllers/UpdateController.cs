@@ -101,7 +101,7 @@ namespace Ginseng.Mvc.Controllers
 						new AppMilestone() { ApplicationId = appId, MilestoneId = milestoneId };
 
 					appMs.HtmlBody = htmlBody;
-					appMs.SaveHtml();
+					await appMs.SaveHtmlAsync(_data, cn);
 
 					await cn.SaveAsync(appMs, _data.CurrentUser);
 				}
@@ -131,9 +131,10 @@ namespace Ginseng.Mvc.Controllers
 			try
 			{
 				record.HtmlBody = htmlBody;
-				record.SaveHtml();
 				record.ModifiedBy = User.Identity.Name;
-				record.DateModified = _data.CurrentUser.LocalTime;
+				record.DateModified = _data.CurrentUser.LocalTime;				
+				await record.SaveHtmlAsync(_data);				
+
 				await _data.TryUpdateAsync(record, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
 				return Json(new { success = true });
 			}

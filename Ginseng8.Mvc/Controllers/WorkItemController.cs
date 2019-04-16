@@ -48,10 +48,10 @@ namespace Ginseng.Mvc.Controllers
 
 			// make sure item is part of this org
 			workItem.OrganizationId = _data.CurrentOrg.Id;
-			workItem.SaveHtml();
-
+						
 			using (var cn = _data.GetConnection())
 			{
+				await workItem.SaveHtmlAsync(_data, cn);
 				await workItem.SetNumberAsync(cn);
 				if (await _data.TrySaveAsync(cn, workItem))
 				{
@@ -228,7 +228,7 @@ namespace Ginseng.Mvc.Controllers
 			using (var cn = _data.GetConnection())
 			{
 				comment.OrganizationId = _data.CurrentOrg.Id;
-				comment.SaveHtml();
+				await comment.SaveHtmlAsync(_data, cn);
 				await _data.TrySaveAsync(comment);
 
 				var vm = new CommentView();				

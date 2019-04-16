@@ -89,7 +89,7 @@ namespace Ginseng.Mvc.Queries
 						ELSE 1
 					END AS [AllowDelete],
 					CASE
-						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [HasImpediment]=1 AND [ProjectId]=[p].[Id]) THEN 1
+						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [HasImpediment]=1 AND [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL) THEN 1
 						ELSE 0
 					END AS [HasImpediment]
 				FROM

@@ -45,9 +45,9 @@ namespace Ginseng.Mvc.Pages.WorkItem
 			handOff.Id = 0;
 
 			handOff.IsForward = await GetIsForwardAsync(handOff.FromActivityId, handOff.ToActivityId);
-
-			handOff.SaveHtml();
-
+			
+			await handOff.SaveHtmlAsync(Data);			
+				
 			await Data.TrySaveAsync(handOff);
 			return Redirect(ReturnUrl);
 		}
