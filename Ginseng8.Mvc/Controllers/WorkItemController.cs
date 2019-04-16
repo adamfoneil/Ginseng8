@@ -47,7 +47,11 @@ namespace Ginseng.Mvc.Controllers
 
 			// make sure item is part of this org
 			workItem.OrganizationId = _data.CurrentOrg.Id;
-			workItem.SaveHtml();
+
+			using (var cn = _data.GetConnection())
+			{
+				workItem.SaveHtml(cn);
+			}				
 
 			using (var cn = _data.GetConnection())
 			{
@@ -227,7 +231,7 @@ namespace Ginseng.Mvc.Controllers
 			using (var cn = _data.GetConnection())
 			{
 				comment.OrganizationId = _data.CurrentOrg.Id;
-				comment.SaveHtml();
+				comment.SaveHtml(cn);
 				await _data.TrySaveAsync(comment);
 
 				var vm = new CommentView();				
