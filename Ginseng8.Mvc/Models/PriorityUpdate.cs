@@ -23,10 +23,15 @@
 		public Item[] Items { get; set; }
 	}
 
+	public class ProjectPriorityUpdate
+	{
+		public Item[] Items { get; set; }
+	}
+
 	public class Item
 	{
 		/// <summary>
-		/// Work item number
+		/// Work item number (or Project.Id)
 		/// </summary>
 		public int Number { get; set; }
 

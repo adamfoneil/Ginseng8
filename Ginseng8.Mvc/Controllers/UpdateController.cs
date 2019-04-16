@@ -101,7 +101,7 @@ namespace Ginseng.Mvc.Controllers
 						new AppMilestone() { ApplicationId = appId, MilestoneId = milestoneId };
 
 					appMs.HtmlBody = htmlBody;
-					appMs.SaveHtml();
+					await appMs.SaveHtmlAsync(_data, cn);
 
 					await cn.SaveAsync(appMs, _data.CurrentUser);
 				}
@@ -131,9 +131,10 @@ namespace Ginseng.Mvc.Controllers
 			try
 			{
 				record.HtmlBody = htmlBody;
-				record.SaveHtml();
 				record.ModifiedBy = User.Identity.Name;
-				record.DateModified = _data.CurrentUser.LocalTime;
+				record.DateModified = _data.CurrentUser.LocalTime;				
+				await record.SaveHtmlAsync(_data);				
+
 				await _data.TryUpdateAsync(record, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
 				return Json(new { success = true });
 			}
@@ -312,6 +313,33 @@ namespace Ginseng.Mvc.Controllers
 
 				return PartialView("/Pages/Shared/_NotifyOptions.cshtml", notification);
 			}					
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> ProjectPriorities()
+		{
+			try
+			{
+				string body = await Request.ReadStringAsync();
+				var data = JsonConvert.DeserializeObject<ProjectPriorityUpdate>(body);
+
+				using (var cn = _data.GetConnection())
+				{
+					await cn.ExecuteAsync("dbo.UpdateProjectPriorities", new
+					{
+						userName = User.Identity.Name,
+						localTime = _data.CurrentUser.LocalTime,
+						orgId = _data.CurrentOrg.Id,
+						priorities = data.Items.AsTableValuedParameter("dbo.WorkItemPriority", "Number", "Index")
+					}, commandType: CommandType.StoredProcedure);
+				}
+
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
 		}
 	}
 }

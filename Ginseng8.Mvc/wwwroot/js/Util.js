@@ -11,3 +11,21 @@ function getAntiForgeryToken() {
     return input.value;
 }
 
+function sortableStart(event, ui) {
+    // This event is triggered when sorting starts.
+    $('.ui-sortable-placeholder').outerHeight($(ui.item).outerHeight()); // update height of placeholder to current item height
+    $('body').addClass('dragging');
+}
+
+function sortableStartUpdateHeightAndWidth(event, ui) {
+    // This event is triggered when sorting starts.
+    $('.ui-sortable-placeholder').outerWidth($(ui.item).outerWidth()); // update width of placeholder to current item height
+    sortableStart(event, ui);
+}
+
+function sortableStop() {
+    setTimeout(function () {
+        $('body').removeClass('dragging');
+    });
+}
+

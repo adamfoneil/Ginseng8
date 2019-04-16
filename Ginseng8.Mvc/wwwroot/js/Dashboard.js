@@ -342,25 +342,22 @@ noPropagateItems.forEach(function (ele) {
 });
 
 $(document).ready(function () {
-    $('.nav-tabs li:first-child a').tab('show');
-
+    var hash = window.location.hash;
+    if (hash) {
+        var workItemNum = hash.substring(1);
+        var workItemAnchor = $('a[name=' + workItemNum + ']');
+        var tabId = workItemAnchor.parents('.tab-pane').data('tab-id');
+        $('#' + tabId).tab('show');        
+    } else {
+        // no current work item, so show first tab by default
+        $('.nav-tabs li:first-child a').tab('show');
+    }
+    
     InitWorkItemSortable();
     initDraggableItems();
     InitProjectCrosstabWorkItemDroppable();
     InitTableBodySortable();
 });
-
-function sortableStart(event, ui) {
-    // This event is triggered when sorting starts.
-    $('.ui-sortable-placeholder').outerHeight($(ui.item).outerHeight()); // update height of placeholder to current item height
-    $('body').addClass('dragging');
-}
-
-function sortableStop() {
-    setTimeout(function() {
-        $('body').removeClass('dragging');
-    });
-}
 
 function InitTableBodySortable() {
     $('.js-table-body-sortable').sortable({

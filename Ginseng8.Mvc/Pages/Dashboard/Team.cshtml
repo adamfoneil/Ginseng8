@@ -9,14 +9,14 @@
         @foreach (var userGrp in Model.WorkItems.OrderBy(row => row.AssignedUserName).GroupBy(row => row.AssignedUserId))
         {
             <li class="nav-item">
-                <a href="#user@(userGrp.Key ?? 0)" data-user-group-id="@(userGrp.Key ?? 0)" data-toggle="tab" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>
+                <a href="#user@(userGrp.Key ?? 0)" data-user-group-id="@(userGrp.Key ?? 0)" data-toggle="tab" id="tab-@userGrp.Key" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>
             </li>
         }
     </ul>
     <div class="tab-content my-3" id="tabContent">        
         @foreach (var userGrp in Model.WorkItems.GroupBy(row => row.AssignedUserId ?? 0))
         {            
-            <div class="tab-pane fade" id="user@(userGrp.Key)" role="tabpanel">
+            <div class="tab-pane fade" id="user@(userGrp.Key)" role="tabpanel" data-tab-id="tab-@userGrp.Key">
                 @foreach (var appGrp in userGrp.GroupBy(row => row.ApplicationId))
                 {
                     <h4>@appGrp.First().ApplicationName</h4>

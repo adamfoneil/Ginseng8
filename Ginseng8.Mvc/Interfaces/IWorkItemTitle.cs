@@ -4,6 +4,7 @@
 	{
 		int ProjectId { get; }
 		string ProjectName { get; }
+		int? ProjectPriority { get; }
 		string Title { get; }
 	}
 }

@@ -30,6 +30,7 @@ namespace Ginseng.Mvc.Queries
 		public int ProjectId { get; set; }
 		public string ProjectName { get; set; }
 		public string Title { get; set; }
+		public int? ProjectPriority { get; set; }
 	}
 
 	public class EventLogs : Query<EventLogsResult>, ITestableQuery
@@ -40,7 +41,7 @@ namespace Ginseng.Mvc.Queries
 				[el].*,
 				[wi].[Number],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId],
-				[p].[Name] AS [ProjectName],
+				[p].[Name] AS [ProjectName], [p].[Priority] AS [ProjectPriority],				
 				[wi].[Title],
 				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
 				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition],
