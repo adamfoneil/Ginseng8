@@ -11,10 +11,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Ginseng.Mvc
 {
-	public class Startup
+    public class Startup
 	{
 		public Startup(IConfiguration configuration)
 		{
@@ -40,13 +41,39 @@ namespace Ginseng.Mvc
 			services.AddDefaultIdentity<IdentityUser>(ConfigureIdentity)
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
+           
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
+                    options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
+                })
+                .AddCookie()
+                .AddOpenIdConnect("Microsoft", "Microsoft/O365", options =>
+                {
+                    options.SignInScheme = IdentityConstants.ExternalScheme;
 
-			services.AddAuthentication()
-				.AddGoogle(options =>
-				{
-					options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
-					options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
-				});
+                    var tenant = "common"; // allow both personal and org identities
+                    options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
+                    options.ClientId = Configuration["AzureAd:ClientId"];
+                    options.ClientSecret = Configuration["AzureAd:ClientSecret"];
+
+                    options.CallbackPath = new PathString("/signin-oidc");
+
+                    options.Scope.Clear();
+                    options.Scope.Add("openid");
+                    options.Scope.Add("email");
+                    options.ResponseType = "code";
+
+                    options.SaveTokens = true;
+                    options.GetClaimsFromUserInfoEndpoint = true;
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = false, // set to true and populate ValidIssuers to only allow login from registered directories
+                        NameClaimType = "name"
+                    };
+                });
 
             services
                 .AddTransient<IEmailSender, Email>()
@@ -84,7 +111,8 @@ namespace Ginseng.Mvc
 
         private void ConfigureIdentity(IdentityOptions options)
         {
-            options.SignIn.RequireConfirmedEmail = true;
+            // Requiring a confirmed email breaks external logins.
+            //options.SignIn.RequireConfirmedEmail = true;
         }
     }
 }
