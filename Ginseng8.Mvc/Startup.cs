@@ -1,6 +1,7 @@
 using Ginseng.Mvc.Data;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Services;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -12,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
 {
@@ -62,6 +64,7 @@ namespace Ginseng.Mvc
 
                     options.Scope.Clear();
                     options.Scope.Add("openid");
+                    options.Scope.Add("profile");
                     options.Scope.Add("email");
                     options.ResponseType = "code";
 
@@ -72,6 +75,16 @@ namespace Ginseng.Mvc
                     {
                         ValidateIssuer = false, // set to true and populate ValidIssuers to only allow login from registered directories
                         NameClaimType = "name"
+                    };
+
+                    options.Events = new OpenIdConnectEvents
+                    {
+                        OnTicketReceived = (context) =>
+                        {
+                            // Demo how to intercept an incoming user
+                            var claims = context.Principal.Claims;
+                            return Task.CompletedTask;
+                        }
                     };
                 });
 
