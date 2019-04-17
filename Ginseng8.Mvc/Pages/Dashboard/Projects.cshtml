@@ -22,7 +22,7 @@ else
     {
         @if (Model.SelectedProject != null)
         {
-            <h5>@Model.SelectedProject.Name</h5>        
+            <h5><span class="editable" id="project-name-@Model.SelectedProject.Id">@Model.SelectedProject.Name</span></h5>        
             <partial name="Items/_ProjectInfo" model="Model.SelectedProjectInfo"/>
 
             <div class="ml-3">
