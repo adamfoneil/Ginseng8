@@ -1,6 +1,6 @@
 ﻿@model Ginseng.Mvc.ViewModels.WorkItemListView
 
-@foreach  (var userGrp in Model.WorkItems.GroupBy(row => row.AssignedUserId))
+@foreach  (var userGrp in Model.WorkItems.OrderBy(row => row.AssignedUserName).GroupBy(row => row.AssignedUserId))
 {
     <h6>@(userGrp.First().AssignedUserName ?? "(unassigned)")</h6>
     <ul>
