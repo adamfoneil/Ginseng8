@@ -1,7 +1,12 @@
 ﻿@model ProjectInfoResult
 
 <span class="text-muted small mr-2">
-    @Model.OpenWorkItems work items | @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete    
+    @Model.OpenWorkItems work items
+    @if (Model.OpenWorkItems > 0)
+    {
+        <span> | </span>
+        @Html.FormatValue(Model.PercentComplete, "{0:P0}")<span> complete</span>
+    }    
 </span>
 
 @if (Model.HasModifiers())

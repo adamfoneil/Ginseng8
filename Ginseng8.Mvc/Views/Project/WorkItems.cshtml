@@ -10,10 +10,7 @@
             @await Html.PartialAsync("/Pages/Dashboard/Items/_ItemNumber.cshtml", item)
             <a href="@Url.Action("View", "WorkItem", new { id = item.Id })">@item.Title</a>
             @await  Html.PartialAsync("/Pages/Dashboard/Items/_Labels.cshtml", Model.SelectedLabels[item.Id])        
-            @foreach (var mod in item.GetModifiers())
-            {
-                <i class="@mod.Icon" style="color:@mod.Color"></i>
-            }
+            @await Html.PartialAsync("/Pages/Dashboard/Items/_Modifiers.cshtml", item)
         </li>
     }
 </ul>
