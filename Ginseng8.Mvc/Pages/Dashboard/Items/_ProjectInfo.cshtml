@@ -1,42 +1,38 @@
 ﻿@model ProjectInfoResult
 
 <span class="text-muted small mr-2">
-    @Model.OpenWorkItems work items | @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete
+    @Model.OpenWorkItems work items | @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete    
+</span>
 
-    @if (Model.HasImpediment)
+@if (Model.HasModifiers())
+{
+    <br/>
+    <span>
+    @if (Model.ImpededWorkItems > 0)
     {
-        <span>
-            <i class="@Comment.ImpedimentIcon" style="color:darkred" title="Has impediment"></i>
+        <span class="mr-1">
+            <i class="@Comment.ImpedimentIcon" style="color:@OpenWorkItemsResult.ImpedimentColor" title="@Model.ImpededWorkItems impeded items"></i>
+            <sup>@Model.ImpededWorkItems</sup>
         </span>
     }
-    
-    <br/>
 
-    @if (Model.EstimateHours.HasValue)
+    @if (Model.UnestimatedWorkItems > 0)
     {
-        <span>@(Model.EstimateHours) est hrs</span>
-        if (Model.UnestimatedWorkItems > 0)
-        {
-            <span> | </span>
-        }
-    }    
-
-    @if  (Model.UnestimatedWorkItems > 0)
-    {
-        <span title="Percentage of project work items without estimate">@Html.FormatValue(Model.PercentUnknown, "{0:P0}") unknown</span>
-        <i class="fas fa-question-circle" style="color:mediumpurple"></i>
-        if (Model.UnassignedWorkItems > 0)
-        {
-            <span> | </span>
-        }
+        <span class="mr-1">
+            <i class="@OpenWorkItemsResult.UnestimatedIcon" style="color:@OpenWorkItemsResult.UnestimatedColor" title="@Model.UnestimatedWorkItems unestimated items"></i>
+            <sup>@Model.UnestimatedWorkItems</sup>
+        </span>
     }
-    
+
     @if (Model.UnassignedWorkItems > 0)
     {
-        <span title="Percentage of unassigned project work items that have milestones">@Html.FormatValue(Model.PercentUnassigned, "{0:P0}") stopped</span>
-        <i class="fas fa-stop-circle" style="color:orangered"></i>
+        <span class="mr-1">
+            <i class="@OpenWorkItemsResult.StoppedIcon" style="color:@OpenWorkItemsResult.StoppedColor" title="@Model.UnassignedWorkItems unassigned items"></i>
+            <sup>@Model.UnestimatedWorkItems</sup>
+        </span>
     }
-</span>
+    </span>
+}
 
 <br/>
 <meter value="@Model.PercentComplete" max="1"></meter>
