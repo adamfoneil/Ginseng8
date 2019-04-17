@@ -75,5 +75,42 @@ function ProjectReorder(data) {
         // success fail info?
         return response.json();
     });
-
 }
+
+$('.project-work-items').tooltip({
+    items: 'a',
+    content: function() {
+        var projectId = $(this).data('project-id');
+        return '<div class="fa fa-spinner fa-spin" data-project-id="' + projectId + '"></div>';
+    },
+    show: null,
+    open: function(event, ui) {
+        if (typeof(event.originalEvent) === 'undefined') {
+            return false;
+        }
+
+        // close any lingering tooltips
+        var $id = $(ui.tooltip).attr('id');
+        $('div.ui-tooltip').not('#' + $id).remove();
+
+        var projectId = $(ui.tooltip).find('[data-project-id]').data('project-id');
+
+        fetch('/Project/WorkItems/' + projectId, {
+            method: 'get'
+        }).then(function (response) {
+            return response.text();
+        }).then(function (content) {
+            console.log($(ui.tooltip).find('.ui-tooltip-content'));
+            $(ui.tooltip).find('.ui-tooltip-content').html(content);
+        });
+    },
+    close: function(event, ui) {
+        ui.tooltip.hover(function() {
+            $(this).stop(true).fadeTo(400, 1);
+        }, function() {
+            $(this).fadeOut('400', function() {
+                $(this).remove();
+            });
+        });
+    }
+});

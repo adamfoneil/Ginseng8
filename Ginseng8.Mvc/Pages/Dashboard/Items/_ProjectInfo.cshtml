@@ -1,19 +1,43 @@
 ﻿@model ProjectInfoResult
 
 <span class="text-muted small mr-2">
-    @Model.OpenWorkItems work items | 
-    @if (Model.EstimateHours.HasValue)
+    @Model.OpenWorkItems work items
+    @if (Model.OpenWorkItems > 0)
     {
-        @(Model.EstimateHours)<text> hrs | </text>
+        <span> | </span>
+        @Html.FormatValue(Model.PercentComplete, "{0:P0}")<span> complete</span>
     }    
-    @Html.FormatValue(Model.PercentComplete, "{0:P0}") complete
 </span>
 
-@if (Model.HasImpediment)
+@if (Model.HasModifiers())
 {
+    <br/>
     <span>
-        <i class="@Comment.ImpedimentIcon" style="color:darkred" title="Has impediment"></i>
+    @if (Model.ImpededWorkItems > 0)
+    {
+        <span class="mr-1">
+            <i class="@Comment.ImpedimentIcon" style="color:@OpenWorkItemsResult.ImpedimentColor" title="@Model.ImpededWorkItems impeded items"></i>
+            <sup>@Model.ImpededWorkItems</sup>
+        </span>
+    }
+
+    @if (Model.UnestimatedWorkItems > 0)
+    {
+        <span class="mr-1">
+            <i class="@OpenWorkItemsResult.UnestimatedIcon" style="color:@OpenWorkItemsResult.UnestimatedColor" title="@Model.UnestimatedWorkItems unestimated items"></i>
+            <sup>@Model.UnestimatedWorkItems</sup>
+        </span>
+    }
+
+    @if (Model.StoppedWorkItems > 0)
+    {
+        <span class="mr-1">
+            <i class="@OpenWorkItemsResult.StoppedIcon" style="color:@OpenWorkItemsResult.StoppedColor" title="@Model.StoppedWorkItems unassigned items"></i>
+            <sup>@Model.StoppedWorkItems</sup>
+        </span>
+    }
     </span>
 }
 
-<br/><meter value="@Model.PercentComplete" max="1"></meter>
+<br/>
+<meter value="@Model.PercentComplete" max="1"></meter>

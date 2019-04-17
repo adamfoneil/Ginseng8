@@ -1,0 +1,6 @@
+﻿@model OpenWorkItemsResult
+
+@foreach (var mod in Model.GetModifiers())
+{
+    <i class="@mod.Icon" style="color:@mod.Color" title="@mod.Description"></i>
+}

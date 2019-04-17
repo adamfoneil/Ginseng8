@@ -1,4 +1,5 @@
-﻿using Postulate.Base;
+﻿using Ginseng.Mvc.ViewModels;
+using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
@@ -30,10 +31,20 @@ namespace Ginseng.Mvc.Queries
 		public int? TotalWorkItems { get; set; }
 		public int? OpenWorkItems { get; set; }
 		public int? ClosedWorkItems { get; set; }
+		public int? UnestimatedWorkItems { get; set; }
+		public int? StoppedWorkItems { get; set; }
+		public int? ImpededWorkItems { get; set; }
 		public float PercentComplete { get; set; }
 		public bool AllowDelete { get; set; }
-		public int? EstimateHours { get; set; }
-		public bool HasImpediment { get; set; }
+		public int? EstimateHours { get; set; }		
+
+		public bool HasModifiers()
+		{
+			return
+				ImpededWorkItems > 0 ||
+				UnestimatedWorkItems > 0 ||
+				StoppedWorkItems > 0;
+		}
 	}
 
 	public enum ProjectInfoSortOptions
@@ -83,15 +94,22 @@ namespace Ginseng.Mvc.Queries
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) AS [TotalWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems],
+					(SELECT COUNT(1) 
+						FROM 
+							[dbo].[WorkItem] [wi]
+							LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+							LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id] 
+						WHERE 
+							[ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND
+							COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) IS NULL) AS [UnestimatedWorkItems],
+					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND [MilestoneId] IS NOT NULL AND [ActivityId] IS NULL) AS [StoppedWorkItems],
+					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND [MilestoneId] IS NULL) AS [UnscheduledWorkItems],
+					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND [HasImpediment]=1) AS [ImpededWorkItems],
 					CASE
 						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) THEN 0
 						WHEN [p].[HtmlBody] IS NOT NULL THEN 0
 						ELSE 1
-					END AS [AllowDelete],
-					CASE
-						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [HasImpediment]=1 AND [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL) THEN 1
-						ELSE 0
-					END AS [HasImpediment]
+					END AS [AllowDelete]
 				FROM
 					[dbo].[Project] [p]
 					INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
@@ -106,7 +124,7 @@ namespace Ginseng.Mvc.Queries
 				CASE
 					WHEN [TotalWorkItems] > 0 THEN CONVERT(float, [ClosedWorkItems]) / CONVERT(float, [TotalWorkItems])
 					ELSE 0
-				END AS [PercentComplete]
+				END AS [PercentComplete]				
 			FROM
 				[source]
 			ORDER BY {SortOptions[sort]}")

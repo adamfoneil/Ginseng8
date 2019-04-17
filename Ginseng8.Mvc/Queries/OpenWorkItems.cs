@@ -1,4 +1,5 @@
-﻿using Ginseng.Mvc.Interfaces;
+﻿using Ginseng.Models;
+using Ginseng.Mvc.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Classes;
@@ -11,6 +12,13 @@ namespace Ginseng.Mvc.Queries
 {
 	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
 	{
+		public const string ImpedimentIcon = Comment.ImpedimentIcon;
+		public const string ImpedimentColor = "darkred";
+		public const string UnestimatedIcon = "fas fa-question-circle";
+		public const string UnestimatedColor = "mediumpurple";
+		public const string StoppedIcon = "fas fa-stop-circle";
+		public const string StoppedColor = "orangered";
+
 		public int Id { get; set; }
 		public int Number { get; set; }
 		public string Title { get; set; }
@@ -56,6 +64,13 @@ namespace Ginseng.Mvc.Queries
 		public string CreatedByName { get; set; }
 		public DateTime DateCreated { get; set; }
 
+		public IEnumerable<Modifier> GetModifiers()
+		{
+			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
+			if (EstimateHours == 0) yield return new Modifier() { Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
+			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };			
+		}
+
 		public string ActivityStatus()
 		{
 			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";
@@ -70,6 +85,13 @@ namespace Ginseng.Mvc.Queries
 		public bool IsStopped()
 		{
 			return (MilestoneId != 0 && ActivityId == 0);
+		}
+
+		public class Modifier
+		{
+			public string Icon { get; set; }
+			public string Color { get; set; }
+			public string Description { get; set; }
 		}
 	}
 
