@@ -13,6 +13,7 @@ viewProjectDetailLinks.forEach(function (e) {
 
 $(document).ready(function () {
     InitProjectSortable();
+    InitProjectWorkItemsTooltips();
 });
 
 function InitProjectSortable() {
@@ -75,21 +76,31 @@ function ProjectReorder(data) {
         // success fail info?
         return response.json();
     });
-
 }
 
-$('.project-work-items').tooltip({
-    items: 'a',
-    content: async function () {
-        var projectId = $(this).data('project-id');                
-        return await fetch('/Project/WorkItems/' + projectId, {
+function InitProjectWorkItemsTooltips() {
+    preloadTooltipsContent();
+
+    $('.project-work-items').tooltip({
+        items: 'a',
+        content: function () {
+            var projectId = $(this).data('project-id');
+
+            return $('#project-items-' + projectId).html();
+        }
+    });
+}
+
+function preloadTooltipsContent() {
+    $('.project-work-items').each(function() {
+        var projectId = $(this).data('project-id');
+
+        fetch('/Project/WorkItems/' + projectId, {
             method: 'get'
         }).then(function (response) {
             return response.text();
         }).then(function (content) {
-            $('#project-items-' + projectId).empty();
             $('#project-items-' + projectId).html(content);
-            return $('#project-items-' + projectId).html();
-        });        
-    }
-});
+        });
+    });
+}
