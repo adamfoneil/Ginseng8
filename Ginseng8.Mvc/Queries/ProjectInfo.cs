@@ -118,7 +118,7 @@ namespace Ginseng.Mvc.Queries
 					ELSE 0
 				END AS [PercentComplete],
 				CASE
-					WHEN [TotalWorkItems] > 0 THEN CONVERT(float, [WorkItemsWithoutEstimate]) / CONVERT(float, [OpenWorkItems])
+					WHEN [OpenWorkItems] > 0 THEN CONVERT(float, [WorkItemsWithoutEstimate]) / CONVERT(float, [OpenWorkItems])
 					ELSE 0
 				END AS [PercentUnknown]
 			FROM
