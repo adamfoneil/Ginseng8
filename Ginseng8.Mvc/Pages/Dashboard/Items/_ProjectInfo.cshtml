@@ -24,11 +24,11 @@
         </span>
     }
 
-    @if (Model.UnassignedWorkItems > 0)
+    @if (Model.StoppedWorkItems > 0)
     {
         <span class="mr-1">
-            <i class="@OpenWorkItemsResult.StoppedIcon" style="color:@OpenWorkItemsResult.StoppedColor" title="@Model.UnassignedWorkItems unassigned items"></i>
-            <sup>@Model.UnestimatedWorkItems</sup>
+            <i class="@OpenWorkItemsResult.StoppedIcon" style="color:@OpenWorkItemsResult.StoppedColor" title="@Model.StoppedWorkItems unassigned items"></i>
+            <sup>@Model.StoppedWorkItems</sup>
         </span>
     }
     </span>

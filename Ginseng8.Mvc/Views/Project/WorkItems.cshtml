@@ -9,11 +9,11 @@
         <li>
             @await Html.PartialAsync("/Pages/Dashboard/Items/_ItemNumber.cshtml", item)
             <a href="@Url.Action("View", "WorkItem", new { id = item.Id })">@item.Title</a>
-            @if (item.HasImpediment)
-            {
-                <i class="@Ginseng.Models.Comment.ImpedimentIcon" style="color:darkred"></i>
-            }
             @await  Html.PartialAsync("/Pages/Dashboard/Items/_Labels.cshtml", Model.SelectedLabels[item.Id])        
+            @foreach (var mod in item.GetModifiers())
+            {
+                <i class="@mod.Icon" style="color:@mod.Color"></i>
+            }
         </li>
     }
 </ul>

@@ -32,7 +32,7 @@ namespace Ginseng.Mvc.Queries
 		public int? OpenWorkItems { get; set; }
 		public int? ClosedWorkItems { get; set; }
 		public int? UnestimatedWorkItems { get; set; }
-		public int? UnassignedWorkItems { get; set; }
+		public int? StoppedWorkItems { get; set; }
 		public int? ImpededWorkItems { get; set; }
 		public float PercentComplete { get; set; }
 		public bool AllowDelete { get; set; }
@@ -43,7 +43,7 @@ namespace Ginseng.Mvc.Queries
 			return
 				ImpededWorkItems > 0 ||
 				UnestimatedWorkItems > 0 ||
-				UnassignedWorkItems > 0;
+				StoppedWorkItems > 0;
 		}
 	}
 
@@ -101,8 +101,8 @@ namespace Ginseng.Mvc.Queries
 							LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id] 
 						WHERE 
 							[ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND
-							COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) IS NULL AND [MilestoneId] IS NOT NULL) AS [UnestimatedWorkItems],
-					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND [DeveloperUserId] IS NULL AND [MilestoneId] IS NOT NULL) AS [UnassignedWorkItems],
+							COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) IS NULL) AS [UnestimatedWorkItems],
+					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND [MilestoneId] IS NOT NULL AND [ActivityId] IS NULL) AS [StoppedWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND [MilestoneId] IS NULL) AS [UnscheduledWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND [HasImpediment]=1) AS [ImpededWorkItems],
 					CASE

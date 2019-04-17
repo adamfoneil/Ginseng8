@@ -64,6 +64,13 @@ namespace Ginseng.Mvc.Queries
 		public string CreatedByName { get; set; }
 		public DateTime DateCreated { get; set; }
 
+		public IEnumerable<Modifier> GetModifiers()
+		{
+			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor };
+			if (EstimateHours == 0) yield return new Modifier() { Icon = UnestimatedIcon, Color = UnestimatedColor };
+			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor };			
+		}
+
 		public string ActivityStatus()
 		{
 			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";
@@ -78,6 +85,12 @@ namespace Ginseng.Mvc.Queries
 		public bool IsStopped()
 		{
 			return (MilestoneId != 0 && ActivityId == 0);
+		}
+
+		public class Modifier
+		{
+			public string Icon { get; set; }
+			public string Color { get; set; }
 		}
 	}
 
