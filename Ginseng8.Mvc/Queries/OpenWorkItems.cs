@@ -66,9 +66,9 @@ namespace Ginseng.Mvc.Queries
 
 		public IEnumerable<Modifier> GetModifiers()
 		{
-			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor };
-			if (EstimateHours == 0) yield return new Modifier() { Icon = UnestimatedIcon, Color = UnestimatedColor };
-			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor };			
+			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
+			if (EstimateHours == 0) yield return new Modifier() { Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
+			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };			
 		}
 
 		public string ActivityStatus()
@@ -91,6 +91,7 @@ namespace Ginseng.Mvc.Queries
 		{
 			public string Icon { get; set; }
 			public string Color { get; set; }
+			public string Description { get; set; }
 		}
 	}
 

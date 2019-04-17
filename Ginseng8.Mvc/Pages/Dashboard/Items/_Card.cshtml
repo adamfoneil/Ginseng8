@@ -9,6 +9,10 @@
                 <partial name="Dashboard/Items/_ItemNumber" model="Model.WorkItem"/>
                 <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />                
                 <partial name="Dashboard/Items/_LabelControls" model="Model"/>
+                @foreach (var mod in Model.WorkItem.GetModifiers())
+                {
+                    <i class="@mod.Icon" style="color:@mod.Color"></i>
+                }
             </div>
             <div class="col-12 col-md-auto d-flex align-items-center">                
                 <partial name="Dashboard/Items/_Status" model="Model"/>

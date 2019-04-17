@@ -45,11 +45,6 @@
             <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
         </span>
     }
-
-    @if (Model.WorkItem.HasImpediment)
-    {                    
-        <i class="@Comment.ImpedimentIcon ml-2" style="color:darkred" title="This item has an impediment, please see the comments"></i>
-    }                
 }
 else
 {
