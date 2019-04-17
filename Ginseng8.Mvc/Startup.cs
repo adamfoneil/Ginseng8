@@ -54,7 +54,7 @@ namespace Ginseng.Mvc
                 {
                     options.SignInScheme = IdentityConstants.ExternalScheme;
 
-                    var tenant = "common"; // allow both personal and org identities
+                    var tenant = "aeriehub.com";
                     options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
                     options.ClientId = Configuration["AzureAd:ClientId"];
                     options.ClientSecret = Configuration["AzureAd:ClientSecret"];
