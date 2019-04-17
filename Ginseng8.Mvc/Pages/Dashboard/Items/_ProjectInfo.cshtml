@@ -15,15 +15,26 @@
     @if (Model.EstimateHours.HasValue)
     {
         <span>@(Model.EstimateHours) est hrs</span>
-        if (Model.WorkItemsWithoutEstimate > 0)
+        if (Model.UnestimatedWorkItems > 0)
         {
             <span> | </span>
         }
     }    
 
-    @if  (Model.WorkItemsWithoutEstimate > 0)
+    @if  (Model.UnestimatedWorkItems > 0)
     {
         <span title="Percentage of project work items without estimate">@Html.FormatValue(Model.PercentUnknown, "{0:P0}") unknown</span>
+        <i class="fas fa-question-circle" style="color:mediumpurple"></i>
+        if (Model.UnassignedWorkItems > 0)
+        {
+            <span> | </span>
+        }
+    }
+    
+    @if (Model.UnassignedWorkItems > 0)
+    {
+        <span title="Percentage of unassigned project work items that have milestones">@Html.FormatValue(Model.PercentUnassigned, "{0:P0}") stopped</span>
+        <i class="fas fa-stop-circle" style="color:orangered"></i>
     }
 </span>
 
