@@ -7,8 +7,12 @@
     @foreach (var item in userGrp)
     {
         <li>
-            @await Html.PartialAsync("/Pages/Dashboard/Items/_ItemNumber.cshtml", item)        
+            @await Html.PartialAsync("/Pages/Dashboard/Items/_ItemNumber.cshtml", item)
             <a href="@Url.Action("View", "WorkItem", new { id = item.Id })">@item.Title</a>
+            @if (item.HasImpediment)
+            {
+                <i class="@Ginseng.Models.Comment.ImpedimentIcon" style="color:darkred"></i>
+            }
             @await  Html.PartialAsync("/Pages/Dashboard/Items/_Labels.cshtml", Model.SelectedLabels[item.Id])        
         </li>
     }
