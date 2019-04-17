@@ -30,7 +30,9 @@ namespace Ginseng.Mvc.Queries
 		public int? TotalWorkItems { get; set; }
 		public int? OpenWorkItems { get; set; }
 		public int? ClosedWorkItems { get; set; }
+		public int? WorkItemsWithoutEstimate { get; set; }
 		public float PercentComplete { get; set; }
+		public float PercentUnknown { get; set; }
 		public bool AllowDelete { get; set; }
 		public int? EstimateHours { get; set; }
 		public bool HasImpediment { get; set; }
@@ -83,6 +85,14 @@ namespace Ginseng.Mvc.Queries
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) AS [TotalWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems],
+					(SELECT COUNT(1) 
+						FROM 
+							[dbo].[WorkItem] [wi]
+							LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+							LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id] 
+						WHERE 
+							[ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL AND
+							COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) IS NULL) AS [WorkItemsWithoutEstimate],
 					CASE
 						WHEN EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) THEN 0
 						WHEN [p].[HtmlBody] IS NOT NULL THEN 0
@@ -106,7 +116,11 @@ namespace Ginseng.Mvc.Queries
 				CASE
 					WHEN [TotalWorkItems] > 0 THEN CONVERT(float, [ClosedWorkItems]) / CONVERT(float, [TotalWorkItems])
 					ELSE 0
-				END AS [PercentComplete]
+				END AS [PercentComplete],
+				CASE
+					WHEN [TotalWorkItems] > 0 THEN CONVERT(float, [WorkItemsWithoutEstimate]) / CONVERT(float, [OpenWorkItems])
+					ELSE 0
+				END AS [PercentUnknown]
 			FROM
 				[source]
 			ORDER BY {SortOptions[sort]}")
