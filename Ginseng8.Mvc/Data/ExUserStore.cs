@@ -1,30 +1,30 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Data
 {
-    public class ExUserStore : UserStore<IdentityUser>
-    {		
+	public class ExUserStore : UserStore<IdentityUser>
+	{
 		private readonly DataAccess _data;
 
-        public ExUserStore(
-            ApplicationDbContext context,
+		public ExUserStore(
+			ApplicationDbContext context,
 			IConfiguration config,
-            IdentityErrorDescriber describer = null)
-            : base(context, describer)
-        {
+			IdentityErrorDescriber describer = null)
+			: base(context, describer)
+		{
 			_data = new DataAccess(config);
-        }		
+		}
 
-        /// <inheritdoc />
-        public override async Task<IdentityResult> CreateAsync(
-            IdentityUser user, 
-            CancellationToken cancellationToken = new CancellationToken())
+		/// <inheritdoc />
+		public override async Task<IdentityResult> CreateAsync(
+			IdentityUser user,
+			CancellationToken cancellationToken = new CancellationToken())
 		{
 			var result = await base.CreateAsync(user, cancellationToken);
 
@@ -35,14 +35,14 @@ namespace Ginseng.Mvc.Data
 
 		/// <inheritdoc />
 		public override async Task AddLoginAsync(
-            IdentityUser user, 
-            UserLoginInfo login,
-            CancellationToken cancellationToken = new CancellationToken())
-        {
-            await base.AddLoginAsync(user, login, cancellationToken);
+			IdentityUser user,
+			UserLoginInfo login,
+			CancellationToken cancellationToken = new CancellationToken())
+		{
+			await base.AddLoginAsync(user, login, cancellationToken);
 
 			await CreateOrgUserAsync(user);
-        }
+		}
 
 		private async Task CreateOrgUserAsync(IdentityUser user)
 		{
@@ -50,7 +50,7 @@ namespace Ginseng.Mvc.Data
 			{
 				await cn.ExecuteAsync(
 					@"INSERT INTO [dbo].[OrganizationUser] (
-						[OrganizationId], [UserId], [DisplayName], [DailyWorkHours], [Responsibilities], 
+						[OrganizationId], [UserId], [DisplayName], [DailyWorkHours], [Responsibilities],
 						[WorkDays], [IsEnabled], [IsRequest], [CreatedBy], [DateCreated]
 					) SELECT
 						[org].[Id], [u].[UserId], [er].[DisplayName], 6, 3, 62, 1, 0, 'OAuth', getutcdate()
