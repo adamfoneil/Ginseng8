@@ -10,11 +10,13 @@
 
   <ItemGroup>
     <Content Remove="Pages\EmailContent\JoinRequest.cshtml" />
+    <Content Remove="Pages\EmailContent\Notification.cshtml" />
     <Content Remove="Pages\EmailContent\_Layout.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Pages\EmailContent\JoinRequest.cshtml" />
+    <EmbeddedResource Include="Views\Notification\Notification.cshtml" />
     <EmbeddedResource Include="Pages\EmailContent\_Layout.cshtml" />
   </ItemGroup>
 
