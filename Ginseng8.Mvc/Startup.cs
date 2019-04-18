@@ -1,6 +1,7 @@
 using Ginseng.Mvc.Data;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,6 +40,7 @@ namespace Ginseng.Mvc
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
 					Configuration.GetSection("ConnectionStrings").GetValue<string>("Default")));
+
 			services.AddDefaultIdentity<IdentityUser>(ConfigureIdentity)
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
@@ -50,42 +52,7 @@ namespace Ginseng.Mvc
                     options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
                 })
                 .AddCookie()
-                .AddOpenIdConnect("Microsoft", "Microsoft/O365", options =>
-                {
-                    options.SignInScheme = IdentityConstants.ExternalScheme;
-
-                    var tenant = "aeriehub.com";
-                    options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
-                    options.ClientId = Configuration["AzureAd:ClientId"];
-                    options.ClientSecret = Configuration["AzureAd:ClientSecret"];
-
-                    options.CallbackPath = new PathString("/signin-oidc");
-
-                    options.Scope.Clear();
-                    options.Scope.Add("openid");
-                    options.Scope.Add("profile");
-                    options.Scope.Add("email");
-                    options.ResponseType = "code";
-
-                    options.SaveTokens = true;
-                    options.GetClaimsFromUserInfoEndpoint = true;
-
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = false, // set to true and populate ValidIssuers to only allow login from registered directories
-                        NameClaimType = "name"
-                    };
-
-                    options.Events = new OpenIdConnectEvents
-                    {
-                        OnTicketReceived = (context) =>
-                        {
-                            // Demo how to intercept an incoming user
-                            var claims = context.Principal.Claims;
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+				.AddAerieHub(Configuration);
 
             services
                 .AddTransient<IEmailSender, Email>()

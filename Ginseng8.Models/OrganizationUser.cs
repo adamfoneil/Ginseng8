@@ -1,4 +1,5 @@
-﻿using Ginseng.Models.Conventions;
+﻿using Dapper;
+using Ginseng.Models.Conventions;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
@@ -7,6 +8,9 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -66,6 +70,7 @@ namespace Ginseng.Models
 		public bool IsEnabled { get; set; }
 
 		public Application CurrentApp { get; set; }
+
 		public UserProfile UserProfile { get; set; }
 		public Organization Organization { get; set; }
 
@@ -120,6 +125,39 @@ namespace Ginseng.Models
 			// if this is an accepted join request, then it's no longer a request
 			if (IsEnabled && IsRequest) IsRequest = false;
 			base.BeforeSave(connection, action, user);			
+		}
+
+		public static async Task ConnectPrincipalAsync(SqlConnection cn, ClaimsPrincipal principal, string orgName)
+		{
+			var properties = principal.Claims.OfType<Claim>().ToDictionary(item => item.Type, item => item.Value);
+
+			string userName = properties["preferred_username"];
+			int userId = await cn.QuerySingleAsync<int>("SELECT [UserId] FROM [dbo].[AspNetUsers] WHERE [UserName]=@userName", new { userName });
+			var profile = await cn.FindAsync<UserProfile>(userId);			
+			int orgId = await cn.QuerySingleAsync<int>("SELECT [Id] FROM [dbo].[Organization] WHERE [name]=@orgName", new { orgName });
+			var orgUser = await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });
+
+			var sysUser = new SystemUser() { UserName = "OAuth", LocalTime = DateTime.UtcNow };
+
+			if (orgUser == null)
+			{
+				orgUser = new OrganizationUser()
+				{
+					UserId = userId,
+					OrganizationId = orgId,
+					DisplayName = properties["name"],
+					DailyWorkHours = 6, // 8 is too many IMO
+					WorkDays = 62, // mon -> fri
+					IsEnabled = true
+				};
+				await cn.SaveAsync(orgUser, sysUser);
+			}
+
+			if (!profile.OrganizationId.HasValue)
+			{
+				profile.OrganizationId = orgId;
+				await cn.UpdateAsync(profile, sysUser, r => r.OrganizationId);
+			}
 		}
 	}
 }
