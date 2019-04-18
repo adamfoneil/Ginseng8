@@ -275,6 +275,34 @@ resumeWorkLinks.forEach(function (ele) {
     });
 });
 
+var cancelWorkLinks = document.querySelectorAll('.cancel-activity');
+cancelWorkLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var loading = $(ev.target).find('img');
+        $(loading).show();
+
+        var data = {
+            id: ev.target.getAttribute('data-number')
+        };
+
+        var formData = getFormData(data);
+        fetch('/WorkItem/CancelActivity', {
+            method: 'post',
+            body: formData
+        }).then(function (response) {
+            return response.json();
+        }).then(function (result) {
+            $(loading).hide();
+            $(ev.target).hide();
+            if (result.success) {
+                $(ev.target).nextAll('.success').show();
+            } else {
+                $(ev.target).next('.error').show();
+            }
+        });
+    });
+});
+
 var unassignWorkLinks = document.querySelectorAll('.unassign-work-item');
 unassignWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {

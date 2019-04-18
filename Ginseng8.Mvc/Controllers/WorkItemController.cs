@@ -106,6 +106,24 @@ namespace Ginseng.Mvc.Controllers
 			}
 		}
 
+		public async Task<JsonResult> CancelActivity([FromForm]int id)
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+					workItem.ActivityId = null;
+					await _data.TrySaveAsync(cn, workItem);
+					return Json(new { success = true });
+				}
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
+
 		[HttpPost]
 		public async Task<JsonResult> UnassignMe([FromForm]int id)
 		{

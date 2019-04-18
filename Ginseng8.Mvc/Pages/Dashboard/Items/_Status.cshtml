@@ -19,9 +19,13 @@
                 <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">
                     I'll take this
                     <img src="~/img/loading.gif" style="display:none" />
-                </a>            
+                </a>
+                <a href="#" class="dropdown-item no-propagation cancel-activity" data-number="@Model.WorkItem.Number">
+                    Work canceled
+                    <img src="~/img/loading.gif" style="display:none" />
+                </a>
                 <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                <span class="success small pr-2" style="display:none">Added successfully</span>
+                <span class="success small pr-2" style="display:none">Updated successfully</span>
                 <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
             }
             @if (Model.WorkItem.AssignedUserId.HasValue)
