@@ -1,0 +1,9 @@
+﻿@model Notification
+
+@{
+    Layout = "~/Pages/EmailContent/_Layout.cshtml";
+}
+
+@Html.Raw(Model.Content)
+
+<p><a href="@Url.Action("Unsubscribe", "Notification", new { id = Model.Id }, Html.ViewContext.HttpContext.Request.Scheme)">Unsubscribe</a></p>

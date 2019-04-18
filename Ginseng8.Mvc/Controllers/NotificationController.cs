@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -12,13 +13,13 @@ namespace Ginseng.Mvc.Controllers
 	{
 		private readonly DataAccess _data;
 		private readonly string _validKey;
-		private readonly Email _email;
+		private readonly Email _email;		
 
 		public NotificationController(IConfiguration config)
 		{
 			_data = new DataAccess(config);
 			_validKey = config.GetValue<string>("Notification:Key");
-			_email = new Email(config);
+			_email = new Email(config);			
 		}
 
 		private bool IsValidKey(string key)
