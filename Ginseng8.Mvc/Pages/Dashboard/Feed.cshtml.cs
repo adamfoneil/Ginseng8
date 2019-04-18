@@ -47,7 +47,7 @@ namespace Ginseng.Mvc.Pages.Work
 					[EventId], [OrganizationId], [ApplicationId], [UserId], [Visible], [SendEmail], [SendText], [InApp],
 					[CreatedBy], [DateCreated]
 				) SELECT
-					[e].[Id], @orgId, @appId, @userId, 1, 1, 1, 1, @createdBy, @dateCreated
+					[e].[Id], @orgId, @appId, @userId, 1, 0, 0, 0, @createdBy, @dateCreated
 				FROM 
 					[app].[Event] [e]
 				WHERE
