@@ -14,13 +14,13 @@ namespace Ginseng.Mvc
 	{
 		internal static AuthenticationBuilder AddAerieHub(this AuthenticationBuilder builder, IConfiguration config)
 		{
-			const string OrgName = "AerieHub.com";
+			const string TenantName = "AerieHub.com";
 
-			return builder.AddOpenIdConnect("Microsoft", OrgName, options =>
+			return builder.AddOpenIdConnect("Microsoft", TenantName, options =>
 			{
 				options.SignInScheme = IdentityConstants.ExternalScheme;
 
-				var tenant = OrgName;
+				var tenant = TenantName;
 				options.Authority = $"https://login.microsoftonline.com/{tenant}/v2.0";
 				options.ClientId = config["AzureAd:ClientId"];
 				options.ClientSecret = config["AzureAd:ClientSecret"];
@@ -49,7 +49,7 @@ namespace Ginseng.Mvc
 						var data = new DataAccess(config);
 						using (var cn = data.GetConnection())
 						{
-							await OrganizationUser.ConnectPrincipalAsync(cn, context.Principal, OrgName);
+							await OrganizationUser.ConnectPrincipalAsync(cn, context.Principal, TenantName);
 						}
 					}
 				};

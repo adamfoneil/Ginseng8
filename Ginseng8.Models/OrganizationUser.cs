@@ -127,7 +127,7 @@ namespace Ginseng.Models
 			base.BeforeSave(connection, action, user);			
 		}
 
-		public static async Task ConnectPrincipalAsync(SqlConnection cn, ClaimsPrincipal principal, string orgName)
+		public static async Task ConnectPrincipalAsync(SqlConnection cn, ClaimsPrincipal principal, string tenantName)
 		{
 			var properties = principal.Claims.OfType<Claim>().ToDictionary(item => item.Type, item => item.Value);
 
@@ -137,7 +137,7 @@ namespace Ginseng.Models
 			int userId = await cn.QuerySingleAsync<int>("SELECT [UserId] FROM [dbo].[AspNetUsers] WHERE [UserName]=@userName", new { userName });
 
 			var profile = await cn.FindAsync<UserProfile>(userId);			
-			int orgId = await cn.QuerySingleAsync<int>("SELECT [Id] FROM [dbo].[Organization] WHERE [name]=@orgName", new { orgName });
+			int orgId = await cn.QuerySingleAsync<int>("SELECT [Id] FROM [dbo].[Organization] WHERE [TenantName]=@tenantName", new { tenantName });
 			var orgUser = await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });
 
 			var sysUser = new SystemUser() { UserName = "OAuth", LocalTime = DateTime.UtcNow };
