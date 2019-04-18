@@ -1,8 +1,6 @@
 using Ginseng.Mvc.Data;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Services;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -13,12 +11,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Threading.Tasks;
 
 namespace Ginseng.Mvc
 {
-    public class Startup
+	public class Startup
 	{
 		public Startup(IConfiguration configuration)
 		{
@@ -44,30 +40,30 @@ namespace Ginseng.Mvc
 			services.AddDefaultIdentity<IdentityUser>(ConfigureIdentity)
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
-           
-            services.AddAuthentication()
-                .AddGoogle(options =>
-                {
-                    options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
-                    options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
-                })
-                .AddCookie()
+
+			services.AddAuthentication()
+				.AddGoogle(options =>
+				{
+					options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
+					options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
+				})
+				.AddCookie()
 				.AddAerieHub(Configuration);
 
-            services
-                .AddTransient<IEmailSender, Email>()
-                .AddSingleton<IViewRenderService, ViewRenderService>();
+			services
+				.AddTransient<IEmailSender, Email>()
+				.AddSingleton<IViewRenderService, ViewRenderService>();
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				app.UseDatabaseErrorPage();				
+				app.UseDatabaseErrorPage();
 			}
 			else
 			{
@@ -88,10 +84,10 @@ namespace Ginseng.Mvc
 			});
 		}
 
-        private void ConfigureIdentity(IdentityOptions options)
-        {
-            // Requiring a confirmed email breaks external logins.
-            //options.SignIn.RequireConfirmedEmail = true;
-        }
-    }
+		private void ConfigureIdentity(IdentityOptions options)
+		{
+			// Requiring a confirmed email breaks external logins.
+			//options.SignIn.RequireConfirmedEmail = true;
+		}
+	}
 }
