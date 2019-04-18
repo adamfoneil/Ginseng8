@@ -35,8 +35,8 @@
 
         <div class="form-group col-4">
             <label>OAuth Tenant Name:</label>
-            <input asp-for="Organization.TenantName" class="form-control" type="text"/>
-            <span class="small text-muted">Used with external OAuth configuration</span>
+            <input asp-for="Organization.TenantName" class="form-control" type="text" required="required"/>
+            <span class="small text-muted">Used with external OAuth configuration, can be your org name</span>
         </div>
     </div>
 
