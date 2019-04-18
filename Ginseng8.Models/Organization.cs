@@ -35,6 +35,12 @@ namespace Ginseng.Models
 		[References(typeof(Activity))]
 		public int? DeveloperActivityId { get; set; }
 
+		/// <summary>
+		/// Used with Microsoft OAuth at least, maybe others
+		/// </summary>
+		[MaxLength(50)]
+		public string TenantName { get; set; }
+
 		public WorkDay MilestoneWorkDay { get; set; }
 		public UserProfile OwnerUser { get; set; }
 
