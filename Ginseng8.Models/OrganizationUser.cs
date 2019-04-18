@@ -132,7 +132,10 @@ namespace Ginseng.Models
 			var properties = principal.Claims.OfType<Claim>().ToDictionary(item => item.Type, item => item.Value);
 
 			string userName = properties["preferred_username"];
+
+			// problem is user doesn't exist yet
 			int userId = await cn.QuerySingleAsync<int>("SELECT [UserId] FROM [dbo].[AspNetUsers] WHERE [UserName]=@userName", new { userName });
+
 			var profile = await cn.FindAsync<UserProfile>(userId);			
 			int orgId = await cn.QuerySingleAsync<int>("SELECT [Id] FROM [dbo].[Organization] WHERE [name]=@orgName", new { orgName });
 			var orgUser = await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });
