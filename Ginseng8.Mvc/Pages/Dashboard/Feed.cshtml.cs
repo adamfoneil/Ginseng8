@@ -2,6 +2,7 @@
 using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -59,6 +60,22 @@ namespace Ginseng.Mvc.Pages.Work
 							[UserId]=@userId
 					)", new { OrgId, appId = CurrentOrgUser.CurrentAppId, UserId, CreatedBy = User.Identity.Name, dateCreated = CurrentUser.LocalTime });
 			}
+		}
+
+		public async Task<IActionResult> OnGetDisableNotificationsAsync()
+		{
+			using (var cn = Data.GetConnection())
+			{
+				await cn.ExecuteAsync(
+					@"UPDATE [es] SET [SendEmail]=0, [SendText]=0, [InApp]=0, [DateModified]=@localTime, [ModifiedBy]=@userName
+					FROM [dbo].[EventSubscription] [es]
+					WHERE 
+						[es].[UserId]=@userId AND 
+						[es].[OrganizationId]=@orgId AND
+						[es].[ApplicationId]=@appId", 
+					new { UserId, OrgId, localTime = CurrentUser.LocalTime, userName = User.Identity.Name, AppId = CurrentOrgUser.CurrentAppId });
+			}
+			return RedirectToPage("/Dashboard/Feed");
 		}
 	}
 }
