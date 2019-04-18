@@ -39,6 +39,8 @@ namespace Ginseng.Models
 		/// Used with Microsoft OAuth at least, maybe others
 		/// </summary>
 		[MaxLength(50)]
+		[Required]		
+		[UniqueKey]
 		public string TenantName { get; set; }
 
 		public WorkDay MilestoneWorkDay { get; set; }
