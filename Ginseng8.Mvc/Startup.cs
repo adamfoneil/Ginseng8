@@ -37,11 +37,14 @@ namespace Ginseng.Mvc
 				options.UseSqlServer(
 					Configuration.GetSection("ConnectionStrings").GetValue<string>("Default")));
 
-			services.AddDefaultIdentity<IdentityUser>(ConfigureIdentity)
+			services
+                .AddTransient<IUserStore<IdentityUser>, ExUserStore>()
+                .AddTransient<IUserLoginStore<IdentityUser>, ExUserStore>()
+                .AddDefaultIdentity<IdentityUser>(ConfigureIdentity)
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
-			services.AddAuthentication()
+            services.AddAuthentication()
 				.AddGoogle(options =>
 				{
 					options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
