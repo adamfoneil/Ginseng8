@@ -41,7 +41,7 @@ namespace Ginseng.Mvc
 					ValidateIssuer = false, // set to true and populate ValidIssuers to only allow login from registered directories
 					NameClaimType = "name"
 				};
-
+				
 				options.Events = new OpenIdConnectEvents
 				{
 					OnTicketReceived = async (context) =>
@@ -49,10 +49,10 @@ namespace Ginseng.Mvc
 						var data = new DataAccess(config);
 						using (var cn = data.GetConnection())
 						{
-							await OrganizationUser.ConnectPrincipalAsync(cn, context.Principal, TenantName);
+							await ExternalRegistration.CreateAsync(cn, context.Principal, TenantName);							
 						}
 					}
-				};
+				};				
 			});
 		}
 	}

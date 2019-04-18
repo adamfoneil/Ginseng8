@@ -126,41 +126,5 @@ namespace Ginseng.Models
 			if (IsEnabled && IsRequest) IsRequest = false;
 			base.BeforeSave(connection, action, user);			
 		}
-
-		public static async Task ConnectPrincipalAsync(SqlConnection cn, ClaimsPrincipal principal, string tenantName)
-		{
-			var properties = principal.Claims.OfType<Claim>().ToDictionary(item => item.Type, item => item.Value);
-
-			string userName = properties["preferred_username"];
-
-			// problem is user doesn't exist yet
-			int userId = await cn.QuerySingleAsync<int>("SELECT [UserId] FROM [dbo].[AspNetUsers] WHERE [UserName]=@userName", new { userName });
-
-			var profile = await cn.FindAsync<UserProfile>(userId);			
-			int orgId = await cn.QuerySingleAsync<int>("SELECT [Id] FROM [dbo].[Organization] WHERE [TenantName]=@tenantName", new { tenantName });
-			var orgUser = await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });
-
-			var sysUser = new SystemUser() { UserName = "OAuth", LocalTime = DateTime.UtcNow };
-
-			if (orgUser == null)
-			{
-				orgUser = new OrganizationUser()
-				{
-					UserId = userId,
-					OrganizationId = orgId,
-					DisplayName = properties["name"],
-					DailyWorkHours = 6, // 8 is too many IMO
-					WorkDays = 62, // mon -> fri
-					IsEnabled = true
-				};
-				await cn.SaveAsync(orgUser, sysUser);
-			}
-
-			if (!profile.OrganizationId.HasValue)
-			{
-				profile.OrganizationId = orgId;
-				await cn.UpdateAsync(profile, sysUser, r => r.OrganizationId);
-			}
-		}
 	}
 }
