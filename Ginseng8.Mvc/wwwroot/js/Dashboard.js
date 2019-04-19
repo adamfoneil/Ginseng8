@@ -330,21 +330,6 @@ unassignWorkLinks.forEach(function (ele) {
     });
 });
 
-var addCommentButtons = document.querySelectorAll('.addComment');
-addCommentButtons.forEach(function (ele) {
-    ele.addEventListener('click', function (ev) {
-        var button = $(ev.target).closest('.addComment')[0];
-        var target = button.getAttribute('data-target');
-        var div = document.getElementById(target);
-        $(div).slideToggle('fast', function () {
-            if ($(div).is(':visible')) {
-                var field = document.getElementById(target + '-HtmlBody');
-                field.focus();
-            }
-        });
-    });
-});
-
 $(document)
 .on('click', '.add-comment-submit', function(ev) {
     ev.preventDefault();
@@ -359,6 +344,19 @@ $(document)
     }).then(function (html) {
         var objectId = frm.ObjectId.value;
         $('#comments-' + objectId + '-output').first().html(html);
+    });
+})
+.on('click', '.addComment', function(event) {
+    event.preventDefault();
+
+    var button = $(event.target).closest('.addComment')[0];
+    var target = button.getAttribute('data-target');
+    var div = document.getElementById(target);
+    $(div).slideToggle('fast', function () {
+        if ($(div).is(':visible')) {
+            var field = document.getElementById(target + '-HtmlBody');
+            field.focus();
+        }
     });
 });
 
