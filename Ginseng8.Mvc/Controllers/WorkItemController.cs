@@ -231,7 +231,8 @@ namespace Ginseng.Mvc.Controllers
 				await comment.SaveHtmlAsync(_data, cn);
 				await _data.TrySaveAsync(comment);
 
-				var vm = new CommentView();				
+				var vm = new CommentView();
+				vm.ObjectId = comment.ObjectId;
 				vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, ObjectType = comment.ObjectType, ObjectIds = new int[] { comment.ObjectId } }.ExecuteAsync(cn);
 				return PartialView("/Pages/Dashboard/Items/_Comments.cshtml", vm);
 			}
