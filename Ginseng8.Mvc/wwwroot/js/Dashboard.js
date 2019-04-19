@@ -318,8 +318,10 @@ $(document)
         $('#comments-' + objectId + '-output').first().html(html);
     });
 })
-.on('click', '.addComment', function(ev) {
-    var button = $(ev.target).closest('.addComment')[0];
+.on('click', '.addComment', function(event) {
+    event.preventDefault();
+
+    var button = $(event.target).closest('.addComment')[0];
     var target = button.getAttribute('data-target');
     var div = document.getElementById(target);
     $(div).slideToggle('fast', function () {
