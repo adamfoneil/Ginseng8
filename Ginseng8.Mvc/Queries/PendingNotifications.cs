@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
+using Dapper;
 using Ginseng.Models;
 using Postulate.Base;
 using Postulate.Base.Attributes;
@@ -7,13 +10,53 @@ using Postulate.Base.Interfaces;
 
 namespace Ginseng.Mvc.Queries
 {
-	public class PendingNotifications : Query<Notification>, ITestableQuery
+	public class PendingNotificationResult
+	{
+		public int Id { get; set; }
+		public int EventLogId { get; set; }
+		public DateTime DateCreated { get; set; }
+		public int Method { get; set; }
+		public string SendTo { get; set; }
+		public string Content { get; set; }
+		public int SourceId { get; set; }
+		public string SourceTable { get; set; }
+		public DateTime? DateDelivered { get; set; }
+		public string IconClass { get; set; }
+		public string IconColor { get; set; }
+		public int WorkItemNumber { get; set; }
+		public string WorkItemTitle { get; set; }
+		public string OrganizationName { get; set; }
+		public string ApplicationName { get; set; }
+		public string EventName { get; set; }
+
+		public async Task MarkDeliveredAsync(IDbConnection connection)
+		{
+			await connection.ExecuteAsync("UPDATE [dbo].[Notification] SET [DateDelivered]=getutcdate() WHERE [Id]=@id", new { Id });
+		}
+	}
+
+	public class PendingNotifications : Query<PendingNotificationResult>, ITestableQuery
 	{
 		public PendingNotifications(int count) : base(
-			$@"SELECT TOP ({count}) [n].*, [el].[IconClass], [el].[IconColor]
-			FROM [dbo].[Notification] [n]
-			INNER JOIN [dbo].[EventLog] [el] ON [n].[EventLogId]=[el].[Id]
-			WHERE [DateDelivered] IS NULL {{andWhere}} ORDER BY [n].[DateCreated] ASC")
+			$@"SELECT TOP ({count})
+				[n].*, 
+				[el].[IconClass], [el].[IconColor],
+				[wi].[Number] AS [WorkItemNumber],
+				[wi].[Title] AS [WorkItemTitle], 
+				[org].[Name] AS [OrganizationName],
+				[app].[Name] AS [ApplicationName],
+				[e].[Name] AS [EventName]
+			FROM 
+				[dbo].[Notification] [n]
+				INNER JOIN [dbo].[EventLog] [el] ON [n].[EventLogId]=[el].[Id]
+				INNER JOIN [app].[Event] [e] ON [el].[EventId]=[e].[Id]
+				INNER JOIN [dbo].[WorkItem] [wi] ON [el].[WorkItemId]=[wi].[Id]
+				INNER JOIN [dbo].[Application] [app] ON [el].[ApplicationId]=[app].[Id]
+				INNER JOIN [dbo].[Organization] [org] ON [el].[OrganizationId]=[org].[Id]
+			WHERE
+				[DateDelivered] IS NULL {{andWhere}} 
+			ORDER BY 
+				[n].[DateCreated] ASC")
 		{
 		}
 

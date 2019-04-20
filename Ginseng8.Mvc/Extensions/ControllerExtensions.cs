@@ -3,15 +3,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Extensions
 {
 	/// <summary>
 	/// thanks to https://stackoverflow.com/a/50024209/2023653
+	/// also https://long2know.com/2017/08/rendering-and-emailing-embedded-razor-views-with-net-core/
 	/// </summary>
 	public static class ControllerExtensions
 	{

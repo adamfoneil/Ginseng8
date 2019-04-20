@@ -59,18 +59,6 @@ namespace Ginseng.Models
 		/// </summary>
 		public DateTime? DateDelivered { get; set; }
 
-		[NotMapped]
-		public string IconClass { get; set; }
-
-		[NotMapped]
-		public string IconColor { get; set; }
-
-		public async Task MarkDeliveredAsync(IDbConnection connection)
-		{
-			DateDelivered = DateTime.UtcNow;
-			await connection.UpdateAsync(this, null, r => r.DateDelivered);
-		}
-
 		public static async Task CreateFromEventSubscriptions(IDbConnection connection, int eventLogId)
 		{
 			await new InsertEventSubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);

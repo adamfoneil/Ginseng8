@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Services;
@@ -50,7 +51,8 @@ namespace Ginseng.Mvc.Controllers
 					var emails = await new PendingNotifications(batchSize) { Method = DeliveryMethod.Email }.ExecuteAsync(cn);
 					foreach (var msg in emails)
 					{
-						await _email.SendAsync(msg.SendTo, "Ginseng Notification", msg.Content);
+						string content = await this.RenderViewAsync("Notification", msg);
+						await _email.SendAsync(msg.SendTo, $"{msg.ApplicationName} {msg.EventName} - {msg.WorkItemNumber}", content);
 						await msg.MarkDeliveredAsync(cn);
 					}
 				}
