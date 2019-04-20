@@ -67,7 +67,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
 			MyActivitySubscriptions = await new MyHandOffActivities() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
-			MyHandOffItems = await new OpenWorkItems(QueryTraces) { OrgId = OrgId, InMyActivities = true, ActivityUserId = UserId, IsPaused = true }.ExecuteAsync(connection);
+			MyHandOffItems = await new OpenWorkItems(QueryTraces) { OrgId = OrgId, InMyActivities = true, ActivityUserId = UserId, IsPaused = true, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 
 			var itemIds = MyHandOffItems.Select(wi => wi.Id).ToArray();
 			var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(connection);

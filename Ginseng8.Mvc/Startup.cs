@@ -35,9 +35,12 @@ namespace Ginseng.Mvc
 
 			services.AddDbContext<ApplicationDbContext>(options =>
 				options.UseSqlServer(
-					Configuration.GetSection("ConnectionStrings").GetValue<string>("Default")
-					/*Configuration.GetConnectionString("DefaultConnection")*/));
-			services.AddDefaultIdentity<IdentityUser>(ConfigureIdentity)
+					Configuration.GetSection("ConnectionStrings").GetValue<string>("Default")));
+
+			services
+				.AddTransient<IUserStore<IdentityUser>, ExUserStore>()
+				.AddTransient<IUserLoginStore<IdentityUser>, ExUserStore>()
+				.AddDefaultIdentity<IdentityUser>(ConfigureIdentity)
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -46,22 +49,24 @@ namespace Ginseng.Mvc
 				{
 					options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
 					options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
-				});
+				})
+				.AddCookie()
+				.AddAerieHub(Configuration);
 
-            services
-                .AddTransient<IEmailSender, Email>()
-                .AddSingleton<IViewRenderService, ViewRenderService>();
+			services
+				.AddTransient<IEmailSender, Email>()
+				.AddSingleton<IViewRenderService, ViewRenderService>();
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				app.UseDatabaseErrorPage();				
+				app.UseDatabaseErrorPage();
 			}
 			else
 			{
@@ -82,9 +87,10 @@ namespace Ginseng.Mvc
 			});
 		}
 
-        private void ConfigureIdentity(IdentityOptions options)
-        {
-            options.SignIn.RequireConfirmedEmail = true;
-        }
-    }
+		private void ConfigureIdentity(IdentityOptions options)
+		{
+			// Requiring a confirmed email breaks external logins.
+			//options.SignIn.RequireConfirmedEmail = true;
+		}
+	}
 }

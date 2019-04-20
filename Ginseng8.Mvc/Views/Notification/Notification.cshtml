@@ -1,0 +1,19 @@
+﻿@model Ginseng.Mvc.Queries.PendingNotificationResult
+
+@{
+    Layout = "~/Pages/EmailContent/_Layout.cshtml";
+}
+
+<i class="@Model.IconClass" style="color:@Model.IconColor"></i>
+
+<p>@Model.ApplicationName @Model.EventName</p>
+<p>Work Item @Model.WorkItemNumber: @Model.WorkItemTitle</p>
+<hr/>
+
+<div>
+@Html.Raw(Model.Content)
+</div>
+<hr/>
+
+<p><a href="@Url.Action("View", "WorkItem", new { id = Model.WorkItemNumber }, Html.ViewContext.HttpContext.Request.Scheme)">View Work Item</a></p>
+<p><a href="@Url.Action("Unsubscribe", "Notification", new { id = Model.Id }, Html.ViewContext.HttpContext.Request.Scheme)">Unsubscribe</a></p>

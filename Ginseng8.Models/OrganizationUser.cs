@@ -1,4 +1,5 @@
-﻿using Ginseng.Models.Conventions;
+﻿using Dapper;
+using Ginseng.Models.Conventions;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
@@ -7,6 +8,9 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -66,6 +70,7 @@ namespace Ginseng.Models
 		public bool IsEnabled { get; set; }
 
 		public Application CurrentApp { get; set; }
+
 		public UserProfile UserProfile { get; set; }
 		public Organization Organization { get; set; }
 

@@ -35,18 +35,26 @@ namespace Ginseng.Models
 		[References(typeof(Activity))]
 		public int? DeveloperActivityId { get; set; }
 
+		/// <summary>
+		/// Used with Microsoft OAuth at least, maybe others
+		/// </summary>
+		[MaxLength(50)]
+		[Required]		
+		[UniqueKey]
+		public string TenantName { get; set; }
+
 		public WorkDay MilestoneWorkDay { get; set; }
 		public UserProfile OwnerUser { get; set; }
 
 		public override bool Validate(IDbConnection connection, out string message)
 		{
-			if (Name.Contains("--"))
+			if (Name.Contains("--") || Name.Contains(".."))
 			{
-				message = "Name may not contain consecutive dashes.";
+				message = "Name may not contain consecutive dashes or periods.";
 				return false;
 			}
 
-			var allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890-".ToCharArray();
+			var allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890-.".ToCharArray();
 			var nameChars = Name.Select(c => char.ToLower(c)).ToArray();
 			var invalid = nameChars.Except(allowedChars);
 

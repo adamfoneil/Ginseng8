@@ -25,9 +25,12 @@
                 <div id="notifyOptions-@Model.Subscriptions[ev.Id].Id">
                     <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]"/>
                 </div>                
-            </div>            
+            </div>
         }      
         
+        <a asp-page-handler="DisableNotifications" class="small" onclick="return confirm('This will disable all event notifications. Hand-off (activity) notifications are not affected.');">Turn off all notifications</a>
+        <br/>
+
         <a class="btn btn-sm btn-info" asp-page="Feed" style="display:none" onclick="$(this).hide();" id="btnRefresh">Refresh</a>
     </div>
 

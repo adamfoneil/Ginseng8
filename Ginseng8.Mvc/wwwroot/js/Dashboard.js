@@ -275,6 +275,34 @@ resumeWorkLinks.forEach(function (ele) {
     });
 });
 
+var cancelWorkLinks = document.querySelectorAll('.cancel-activity');
+cancelWorkLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var loading = $(ev.target).find('img');
+        $(loading).show();
+
+        var data = {
+            id: ev.target.getAttribute('data-number')
+        };
+
+        var formData = getFormData(data);
+        fetch('/WorkItem/CancelActivity', {
+            method: 'post',
+            body: formData
+        }).then(function (response) {
+            return response.json();
+        }).then(function (result) {
+            $(loading).hide();
+            $(ev.target).hide();
+            if (result.success) {
+                $(ev.target).nextAll('.success').show();
+            } else {
+                $(ev.target).next('.error').show();
+            }
+        });
+    });
+});
+
 var unassignWorkLinks = document.querySelectorAll('.unassign-work-item');
 unassignWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
@@ -302,21 +330,6 @@ unassignWorkLinks.forEach(function (ele) {
     });
 });
 
-var addCommentButtons = document.querySelectorAll('.addComment');
-addCommentButtons.forEach(function (ele) {
-    ele.addEventListener('click', function (ev) {
-        var button = $(ev.target).closest('.addComment')[0];
-        var target = button.getAttribute('data-target');
-        var div = document.getElementById(target);
-        $(div).slideToggle('fast', function () {
-            if ($(div).is(':visible')) {
-                var field = document.getElementById(target + '-HtmlBody');
-                field.focus();
-            }
-        });
-    });
-});
-
 $(document)
 .on('click', '.add-comment-submit', function(ev) {
     ev.preventDefault();
@@ -331,6 +344,19 @@ $(document)
     }).then(function (html) {
         var objectId = frm.ObjectId.value;
         $('#comments-' + objectId + '-output').first().html(html);
+    });
+})
+.on('click', '.addComment', function(event) {
+    event.preventDefault();
+
+    var button = $(event.target).closest('.addComment')[0];
+    var target = button.getAttribute('data-target');
+    var div = document.getElementById(target);
+    $(div).slideToggle('fast', function () {
+        if ($(div).is(':visible')) {
+            var field = document.getElementById(target + '-HtmlBody');
+            field.focus();
+        }
     });
 });
 

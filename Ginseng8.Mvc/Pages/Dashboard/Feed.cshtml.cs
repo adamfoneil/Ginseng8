@@ -2,6 +2,7 @@
 using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -43,22 +44,38 @@ namespace Ginseng.Mvc.Pages.Work
 			{
 				await cn.ExecuteAsync(
 					@"INSERT INTO [dbo].[EventSubscription] (
-					[EventId], [OrganizationId], [ApplicationId], [UserId], [Visible], [SendEmail], [SendText], [InApp],
-					[CreatedBy], [DateCreated]
-				) SELECT
-					[e].[Id], @orgId, @appId, @userId, 1, 1, 1, 1, @createdBy, @dateCreated
-				FROM 
-					[app].[Event] [e]
-				WHERE
-					NOT EXISTS(
-						SELECT 1 FROM [dbo].[EventSubscription] 
-						WHERE 
-							[EventId]=[e].[Id] AND
-							[OrganizationId]=@orgId AND
-							[ApplicationId]=@appId AND
-							[UserId]=@userId
-					)", new { OrgId, appId = CurrentOrgUser.CurrentAppId, UserId, CreatedBy = User.Identity.Name, dateCreated = CurrentUser.LocalTime });
+						[EventId], [OrganizationId], [ApplicationId], [UserId], [Visible], [SendEmail], [SendText], [InApp],
+						[CreatedBy], [DateCreated]
+					) SELECT
+						[e].[Id], @orgId, @appId, @userId, 1, 0, 0, 0, @createdBy, @dateCreated
+					FROM 
+						[app].[Event] [e]
+					WHERE
+						NOT EXISTS(
+							SELECT 1 FROM [dbo].[EventSubscription] 
+							WHERE 
+								[EventId]=[e].[Id] AND
+								[OrganizationId]=@orgId AND
+								[ApplicationId]=@appId AND
+								[UserId]=@userId
+						)", new { OrgId, appId = CurrentOrgUser.CurrentAppId, UserId, CreatedBy = User.Identity.Name, dateCreated = CurrentUser.LocalTime });
 			}
+		}
+
+		public async Task<IActionResult> OnGetDisableNotificationsAsync()
+		{
+			using (var cn = Data.GetConnection())
+			{
+				await cn.ExecuteAsync(
+					@"UPDATE [es] SET [SendEmail]=0, [SendText]=0, [InApp]=0, [DateModified]=@localTime, [ModifiedBy]=@userName
+					FROM [dbo].[EventSubscription] [es]
+					WHERE 
+						[es].[UserId]=@userId AND 
+						[es].[OrganizationId]=@orgId AND
+						[es].[ApplicationId]=@appId", 
+					new { UserId, OrgId, localTime = CurrentUser.LocalTime, userName = User.Identity.Name, AppId = CurrentOrgUser.CurrentAppId });
+			}
+			return RedirectToPage("/Dashboard/Feed");
 		}
 	}
 }
