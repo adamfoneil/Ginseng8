@@ -53,7 +53,7 @@ namespace Ginseng.Mvc.Controllers
 						await _email.SendAsync(msg.SendTo, "Ginseng Notification", msg.Content);
 						await msg.MarkDeliveredAsync(cn);
 					}
-				}					
+				}
 			});
 		}		
 	}
