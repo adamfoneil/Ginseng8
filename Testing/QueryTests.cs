@@ -116,5 +116,19 @@ namespace Testing
 				}
 			}
 		}
+
+		[TestMethod]
+		public void PendingNotificationsQuery()
+		{
+			var qry = new PendingNotifications(10);
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in PendingNotifications.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
+
+		}
 	}
 }

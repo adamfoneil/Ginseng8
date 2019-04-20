@@ -9,9 +9,9 @@ namespace Ginseng.Models.Queries
 	{
 		public InsertEventSubscriptionTextNotifications() : base(
 			@"INSERT INTO [dbo].[Notification] (
-				[DateCreated], [Method], [SendTo], [Content], [SourceId], [SourceTable]
+				[EventLogId], [DateCreated], [Method], [SendTo], [Content], [SourceId], [SourceTable]
 			) SELECT
-				getutcdate(), 2, [u].[PhoneNumber], [el].[TextBody], [es].[Id], 'EventSubscription'
+				@id, getutcdate(), 2, [u].[PhoneNumber], [el].[TextBody], [es].[Id], 'EventSubscription'
 			FROM
 				[dbo].[EventSubscription] [es]
 				INNER JOIN [dbo].[EventLog] [el] ON

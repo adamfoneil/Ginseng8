@@ -9,9 +9,9 @@ namespace Ginseng.Models.Queries
 	{
 		public InsertActivitySubscriptionEmailNotifications() : base(
 			@"INSERT INTO [dbo].[Notification] (
-				[DateCreated], [Method], [SendTo], [Content], [SourceId], [SourceTable]
+				[EventLogId], [DateCreated], [Method], [SendTo], [Content], [SourceId], [SourceTable]
 			) SELECT
-				getutcdate(), 1, [u].[Email], [el].[HtmlBody], [as].[Id], 'ActivitySubscription'
+				@id, getutcdate(), 1, [u].[Email], [el].[HtmlBody], [as].[Id], 'ActivitySubscription'
 			FROM
 				[dbo].[EventLog] [el]
 				INNER JOIN [dbo].[HandOff] [ho] ON [el].[SourceId]=[ho].[Id]
@@ -24,7 +24,7 @@ namespace Ginseng.Models.Queries
 				[el].[SourceTable]='HandOff' AND
 				[el].[Id]=@id AND
 				[as].[SendEmail]=1 AND
-				[u].[EmailConfirmed]=1")
+				([u].[EmailConfirmed]=1 OR [u].[PasswordHash] IS NULL)")
 		{
 		}
 
