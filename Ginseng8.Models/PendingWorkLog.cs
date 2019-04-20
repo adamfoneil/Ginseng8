@@ -1,8 +1,12 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
@@ -49,5 +53,36 @@ namespace Ginseng.Models
 		/// Commit message or comment id that this record was generated from
 		/// </summary>
 		public int? SourceId { get; set; }
+
+		public static async Task FromCommentAsync(IDbConnection connection, Comment comment, UserProfile user)
+		{
+			(int projectId, int? workItemId) = await FindProjectAndWorkItemIdAsync(connection, comment);
+		
+			var workLog = new PendingWorkLog()
+			{
+				ProjectId = projectId,
+				WorkItemId = workItemId,
+				UserId = user.UserId,
+				Date = comment.DateCreated,
+				Hours = ParseHoursFromBody(comment.TextBody),
+				TextBody = comment.TextBody,
+				HtmlBody = comment.HtmlBody,
+				SourceType = HoursSourceType.Comment,
+				SourceId = comment.Id
+			};
+
+			await connection.SaveAsync(workLog, user);
+		}
+
+		public static decimal ParseHoursFromBody(string input)
+		{
+			var match = Regex.Match(input, @"\+(\d*(\.[0-9][0-9]?)?)");
+			throw new NotImplementedException();
+		}
+
+		private static Task<(int projectId, int? workItemId)> FindProjectAndWorkItemIdAsync(IDbConnection connection, Comment comment)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
