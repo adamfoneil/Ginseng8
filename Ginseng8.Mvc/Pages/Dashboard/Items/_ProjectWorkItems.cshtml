@@ -19,7 +19,7 @@
                     </div>                    
                     
                     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "prj", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody, UploadFolderName = "Projects", AllowComments = true })
-                    <div id="prj-comments-@Model.SelectedProject.Id-output">
+                    <div id="comments-@Model.SelectedProject.Id-Project-output">
                     @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.ProjectComments, ObjectId = Model.SelectedProject.Id, ObjectType = ObjectType.Project })
                     </div>
                 </div>                

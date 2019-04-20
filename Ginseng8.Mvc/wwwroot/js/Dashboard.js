@@ -343,7 +343,8 @@ $(document)
         return response.text();
     }).then(function (html) {
         var objectId = frm.ObjectId.value;
-        $('#comments-' + objectId + '-output').first().html(html);
+        var objectType = frm.ObjectType.value;
+        $('#comments-' + objectId + '-' + objectType + '-output').first().html(html);
     });
 })
 .on('click', '.addComment', function(event) {
