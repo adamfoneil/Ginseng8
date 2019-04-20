@@ -3,6 +3,7 @@ using Postulate.Base.Attributes;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -23,6 +24,9 @@ namespace Ginseng.Models
 	public class Notification
 	{
 		public int Id { get; set; }
+
+		[References(typeof(EventLog))]
+		public int EventLogId { get; set; }
 
 		/// <summary>
 		/// User's local time
@@ -54,12 +58,6 @@ namespace Ginseng.Models
 		/// Indicates when message was delivered. If null, then it's still pending
 		/// </summary>
 		public DateTime? DateDelivered { get; set; }
-
-		public async Task MarkDeliveredAsync(IDbConnection connection)
-		{
-			DateDelivered = DateTime.UtcNow;
-			await connection.UpdateAsync(this, null, r => r.DateDelivered);
-		}
 
 		public static async Task CreateFromEventSubscriptions(IDbConnection connection, int eventLogId)
 		{
