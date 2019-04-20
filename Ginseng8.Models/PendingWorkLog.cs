@@ -27,16 +27,6 @@ namespace Ginseng.Models
 		[References(typeof(WorkItem))]
 		public int? WorkItemId { get; set; }		
 
-		/// <summary>
-		/// if the hours came from a comment or commit message, that's indicated here
-		/// </summary>
-		public HoursSourceType? SourceType { get; set; }
-
-		/// <summary>
-		/// Commit message or comment id that this record was generated from
-		/// </summary>
-		public int? SourceId { get; set; }
-
 		[References(typeof(UserProfile))]
 		public int UserId { get; set; }
 
@@ -49,5 +39,15 @@ namespace Ginseng.Models
 		public string TextBody { get; set; }
 
 		public string HtmlBody { get; set; }
+
+		/// <summary>
+		/// if the hours came from a comment or commit message, that's indicated here
+		/// </summary>
+		public HoursSourceType? SourceType { get; set; }
+
+		/// <summary>
+		/// Commit message or comment id that this record was generated from
+		/// </summary>
+		public int? SourceId { get; set; }
 	}
 }
