@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,7 +23,7 @@ namespace Ginseng.Models
 		/// Work must at minimum be related to a project
 		/// </summary>
 		[References(typeof(Project))]
-		public int ProjectId { get; set; }
+		public int? ProjectId { get; set; }
 
 		/// <summary>
 		/// work hours are usually in reference to a specific work item.
@@ -54,35 +55,87 @@ namespace Ginseng.Models
 		/// </summary>
 		public int? SourceId { get; set; }
 
-		public static async Task FromCommentAsync(IDbConnection connection, Comment comment, UserProfile user)
+		public override bool Validate(IDbConnection connection, out string message)
 		{
-			(int projectId, int? workItemId) = await FindProjectAndWorkItemIdAsync(connection, comment);
-		
-			var workLog = new PendingWorkLog()
+			if (!ProjectId.HasValue && !WorkItemId.HasValue)
 			{
-				ProjectId = projectId,
-				WorkItemId = workItemId,
-				UserId = user.UserId,
-				Date = comment.DateCreated,
-				Hours = ParseHoursFromBody(comment.TextBody),
-				TextBody = comment.TextBody,
-				HtmlBody = comment.HtmlBody,
-				SourceType = HoursSourceType.Comment,
-				SourceId = comment.Id
-			};
+				message = "Work logs must specify the project or work item.";
+				return false;
+			}
 
-			await connection.SaveAsync(workLog, user);
+			message = null;
+			return true;
 		}
 
-		public static decimal ParseHoursFromBody(string input)
+		public static async Task FromCommentAsync(IDbConnection connection, Comment comment, IUser user)
+		{
+			if (comment.ObjectType != ObjectType.WorkItem && comment.ObjectType != ObjectType.Project) return;
+			var currentUser = user as UserProfile;
+			if (currentUser == null) throw new Exception("Couldn't determine the current user profile.");
+
+			if (ParseHoursFromText(comment.TextBody, out decimal hours))
+			{
+				var link = await FindProjectAndWorkItemIdAsync(connection, comment);
+
+				var workLog = new PendingWorkLog()
+				{
+					ProjectId = link.ProjectId,
+					WorkItemId = link.WorkItemId,
+					UserId = currentUser.UserId,
+					Date = comment.DateCreated,
+					Hours = hours,
+					TextBody = comment.TextBody,
+					HtmlBody = comment.HtmlBody,
+					SourceType = HoursSourceType.Comment,
+					SourceId = comment.Id
+				};
+
+				await connection.SaveAsync(workLog, user ?? new SystemUser() { UserName = "system", LocalTime = DateTime.UtcNow });
+			}			
+		}
+
+		private static async Task<PendingHoursLink> FindProjectAndWorkItemIdAsync(IDbConnection connection, Comment comment)
+		{
+			switch (comment.ObjectType)
+			{
+				case ObjectType.Project:
+					return new PendingHoursLink()
+					{
+						ProjectId = comment.ObjectId,
+						WorkItemId = null
+					};										
+
+				case ObjectType.WorkItem:
+					var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);
+					return new PendingHoursLink()
+					{
+						ProjectId = workItem.ProjectId,
+						WorkItemId = workItem.Id
+					};
+			}
+
+			throw new ArgumentException($"Comment object type {comment.ObjectType} does not support hours reporting");
+		}
+
+		public static bool ParseHoursFromText(string input, out decimal hours)
 		{
 			var match = Regex.Match(input, @"\+(\d*(\.[0-9][0-9]?)?)");
-			throw new NotImplementedException();
-		}
+			
+			if (match.Success)
+			{
+				hours = decimal.Parse(match.Value.Substring(1));
+				return true;
+			}
 
-		private static Task<(int projectId, int? workItemId)> FindProjectAndWorkItemIdAsync(IDbConnection connection, Comment comment)
-		{
-			throw new NotImplementedException();
+			hours = 0;
+			return false;
 		}
 	}
+
+	internal class PendingHoursLink
+	{
+		public int? ProjectId { get; set; }
+		public int? WorkItemId { get; set; }
+	}
+
 }

@@ -74,6 +74,8 @@ namespace Ginseng.Models
 						TextBody = TextBody
 					});
 				}
+
+				await PendingWorkLog.FromCommentAsync(connection, this, user as UserProfile);
 			}
 		}
 	}
