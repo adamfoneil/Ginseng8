@@ -20,10 +20,16 @@
         <th>Enabled</th>
         <th></th>
     </tr>
-    @foreach  (var user in Model.Users)
+    @foreach (var user in Model.Users)
     {
-        <tr id="@grid.RowId(user)">
-            <td>@user.UserName</td>
+        <tr id="@grid.RowId(user)" class="@((!user.IsEnabled) ? "table-dark" : "")">
+            <td>
+                <span class="mr-2">@user.UserName</span>
+                @if (user.Email != null)
+                {
+                    <span class="small text-muted">@user.Email</span>
+                }
+            </td>
             <td>@grid.CheckBox(f => f.IsRequest)</td>
             <td>@grid.CheckBox(f => f.IsEnabled)</td>
             <td>@grid.Controls()</td>

@@ -80,6 +80,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public string UserName { get; set; }
 
+		[NotMapped]
+		public string Email { get; set; }
+
 		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
 		{
 			if (CurrentAppId.HasValue)

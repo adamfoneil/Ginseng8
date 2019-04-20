@@ -10,7 +10,11 @@ namespace Ginseng.Mvc.Queries
 			@"SELECT 
 				[ou].*,
 				[org].[Name] AS [OrgName],
-				COALESCE([ou].[DisplayName], [u].[UserName]) AS [UserName]
+				COALESCE([ou].[DisplayName], [u].[UserName]) AS [UserName],
+				CASE
+					WHEN [ou].[DisplayName] IS NOT NULL THEN [u].[UserName]
+					ELSE NULL
+				END AS [Email]
 			FROM 
 				[dbo].[OrganizationUser] [ou]
 				INNER JOIN [dbo].[Organization] [org] ON [ou].[OrganizationId]=[org].[Id]
