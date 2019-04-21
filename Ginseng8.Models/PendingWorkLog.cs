@@ -19,6 +19,9 @@ namespace Ginseng.Models
 
 	public class PendingWorkLog : BaseTable, IBody
 	{
+		[References(typeof(Organization))]
+		public int OrganizationId { get; set; }
+
 		/// <summary>
 		/// Work must at minimum be related to a project
 		/// </summary>
@@ -79,6 +82,7 @@ namespace Ginseng.Models
 
 				var workLog = new PendingWorkLog()
 				{
+					OrganizationId = link.OrganizationId,
 					ProjectId = link.ProjectId,
 					WorkItemId = link.WorkItemId,
 					UserId = currentUser.UserId,
@@ -99,8 +103,10 @@ namespace Ginseng.Models
 			switch (comment.ObjectType)
 			{
 				case ObjectType.Project:
+					var prj = await connection.FindAsync<Project>(comment.ObjectId);
 					return new PendingHoursLink()
 					{
+						OrganizationId = prj.Application.OrganizationId,
 						ProjectId = comment.ObjectId,
 						WorkItemId = null
 					};										
@@ -109,6 +115,7 @@ namespace Ginseng.Models
 					var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);
 					return new PendingHoursLink()
 					{
+						OrganizationId = workItem.OrganizationId,
 						ProjectId = workItem.ProjectId,
 						WorkItemId = workItem.Id
 					};
@@ -134,6 +141,7 @@ namespace Ginseng.Models
 
 	internal class PendingHoursLink
 	{
+		public int OrganizationId { get; set; }
 		public int? ProjectId { get; set; }
 		public int? WorkItemId { get; set; }
 	}
