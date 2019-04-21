@@ -59,6 +59,9 @@ namespace Ginseng.Models
 		[References(typeof(Activity))]
 		public int? DefaultActivityId { get; set; }
 
+		[Column(TypeName = "money")]
+		public decimal? InvoiceRate { get; set; }
+
 		/// <summary>
 		/// This is a join request (or invite)
 		/// </summary>
