@@ -1,4 +1,5 @@
 ﻿using Postulate.Base;
+using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -31,27 +32,38 @@ namespace Ginseng.Mvc.Queries
 	public class PendingWorkLogs : Query<PendingWorkLogsResult>, ITestableQuery
 	{
 		public PendingWorkLogs() : base(
-		@"SELECT
-            [wl].*,
-            CASE
-                WHEN [wl].[ProjectId] IS NOT NULL THEN [p].[Name]
-                WHEN [wl].[WorkItemId] IS NOT NULL THEN [wi].[Title]
-            END AS [Title],
-            CONVERT(bit, CASE
-                WHEN [wl].[ProjectId] IS NOT NULL THEN 1
-                ELSE 0
-            END) AS [IsProject],
-            [wi].[Number] AS [WorkItemNumber]
-        FROM
-            [dbo].[PendingWorkLog] [wl]
-            LEFT JOIN [dbo].[WorkItem] [wi] ON [wl].[WorkItemId]=[wi].[Id]
-            LEFT JOIN [dbo].[Project] [p] ON [wl].[ProjectId]=[p].[Id]
-        WHERE
-            [wl].[OrganizationId]=@orgId")
+			@"SELECT
+				[wl].*,
+				CASE
+					WHEN [wl].[ProjectId] IS NOT NULL THEN [p].[Name]
+					WHEN [wl].[WorkItemId] IS NOT NULL THEN [wi].[Title]
+				END AS [Title],
+				CONVERT(bit, CASE
+					WHEN [wl].[ProjectId] IS NOT NULL THEN 1
+					ELSE 0
+				END) AS [IsProject],
+				[wi].[Number] AS [WorkItemNumber],
+				DATEPART(yyyy, [wl].[Date]) AS [Year],
+				DATEPART(ww, [wl].[Date]) AS [WeekNumber]
+			FROM
+				[dbo].[PendingWorkLog] [wl]
+				LEFT JOIN [dbo].[WorkItem] [wi] ON [wl].[WorkItemId]=[wi].[Id]
+				LEFT JOIN [dbo].[Project] [p] ON [wl].[ProjectId]=[p].[Id]
+			WHERE
+				[wl].[OrganizationId]=@orgId {andWhere}")
 		{
 		}
 
 		public int OrgId { get; set; }
+
+		[Where("[wl].[UserId]=@userId")]
+		public int? UserId { get; set; }
+
+		[Where("DATEPART(yyyy, [wl].[Date])=@year")]
+		public int? Year { get; set; }
+
+		[Where("DATEPART(ww, [wl].[Date])=@weekNumber")]
+		public int? WeekNumber { get; set; }
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
 		{
@@ -61,6 +73,9 @@ namespace Ginseng.Mvc.Queries
 		public static IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new PendingWorkLogs() { OrgId = 0 };
+			yield return new PendingWorkLogs() { Year = 2019 };
+			yield return new PendingWorkLogs() { WeekNumber = 1 };
+			yield return new PendingWorkLogs() { UserId = 1 };
 		}
 	}
 }
