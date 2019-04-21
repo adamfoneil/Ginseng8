@@ -101,7 +101,7 @@ namespace Ginseng.Mvc.Queries
 
 		private readonly List<QueryTrace> _traces;
 
-		public OpenWorkItems(List<QueryTrace> traces = null) : base(
+		public OpenWorkItems() : base(
 			$@"SELECT
 				[wi].[Id],
 				[wi].[Number],
@@ -184,6 +184,10 @@ namespace Ginseng.Mvc.Queries
 				COALESCE([pri].[Value], 100000),
 				[wi].[Number]
 			{{offset}}")
+		{
+		}
+
+		public OpenWorkItems(List<QueryTrace> traces = null) : this()
 		{
 			_traces = traces;
 		}
@@ -269,7 +273,12 @@ namespace Ginseng.Mvc.Queries
 		[Where("[ms].[Date]<getdate()")]
 		public bool? IsPastDue { get; set; }
 
-		public static IEnumerable<ITestableQuery> GetTestCases()
+		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+		{
+			return TestExecuteHelper(connection);
+		}
+
+		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			// ideally here, you return instances of your query with each parameter set to get coverage of all the generated SQL combinations.
 			// we don't care what data is returned, only that the SQL compiles
@@ -293,11 +302,6 @@ namespace Ginseng.Mvc.Queries
 			yield return new OpenWorkItems() { TitleAndBodySearch = "whatever this that" };
 			yield return new OpenWorkItems() { IsPastDue = true };
 			yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
-		}
-
-		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
-		{
-			return TestExecuteHelper(connection);
 		}
 	}
 }

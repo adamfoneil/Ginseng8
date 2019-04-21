@@ -78,8 +78,9 @@ namespace Ginseng.Mvc.Queries
 
 	public class ProjectInfo : Query<ProjectInfoResult>, ITestableQuery
 	{
-		public ProjectInfo(ProjectInfoSortOptions sort = ProjectInfoSortOptions.Priority) : base(
-			$@"WITH [source] AS (
+		private static string BaseSql(ProjectInfoSortOptions sort = ProjectInfoSortOptions.Priority)
+		{
+			return $@"WITH [source] AS (
 				SELECT
 					[p].*,
 					[ptr].[Name] AS [PriorityTier],
@@ -127,7 +128,14 @@ namespace Ginseng.Mvc.Queries
 				END AS [PercentComplete]				
 			FROM
 				[source]
-			ORDER BY {SortOptions[sort]}")
+			ORDER BY {SortOptions[sort]}";
+		}
+
+		public ProjectInfo() : base(BaseSql(ProjectInfoSortOptions.Priority))
+		{
+		}
+
+		public ProjectInfo(ProjectInfoSortOptions sort = ProjectInfoSortOptions.Priority) : base(BaseSql(sort))
 		{
 		}
 
@@ -165,7 +173,12 @@ namespace Ginseng.Mvc.Queries
 			}
 		}
 
-		public static IEnumerable<ITestableQuery> GetTestCases()
+		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+		{
+			return TestExecuteHelper(connection);
+		}
+
+		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new ProjectInfo() { OrgId = 0 };
 			yield return new ProjectInfo(ProjectInfoSortOptions.Name) { OrgId = 0 };
@@ -174,11 +187,6 @@ namespace Ginseng.Mvc.Queries
 			yield return new ProjectInfo(ProjectInfoSortOptions.TotalWorkItems) { OrgId = 0 };
 			yield return new ProjectInfo(ProjectInfoSortOptions.PercentComplete) { OrgId = 0 };
 			yield return new ProjectInfo(ProjectInfoSortOptions.EstimateHours) { OrgId = 0 };
-		}
-
-		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
-		{
-			return TestExecuteHelper(connection);
 		}
 	}
 }
