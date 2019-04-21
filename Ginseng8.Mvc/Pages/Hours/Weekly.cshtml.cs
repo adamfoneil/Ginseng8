@@ -1,4 +1,5 @@
 ﻿using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -16,6 +17,8 @@ namespace Ginseng.Mvc.Pages.Hours
 		public IEnumerable<CalendarWeeksResult> Weeks { get; set; }
 		public IEnumerable<PendingWorkLogsResult> WorkLogs { get; set; }
 
+		public SelectList WeekSelect { get; set; }
+
 		public IEnumerable<DateTime> GetColumns()
 		{
 			return WorkLogs.GroupBy(row => row.Date).Select(grp => grp.Key);
@@ -26,7 +29,9 @@ namespace Ginseng.Mvc.Pages.Hours
 			using (var cn = Data.GetConnection())
 			{
 				// populate week selection dropdown going 3 weeks prior to the selected week
-				Weeks = await new CalendarWeeks() { Seed = DateTime.Today, Weeks = Math.Abs(weeksBack) + 3 }.ExecuteAsync(cn);
+				Weeks = await new CalendarWeeks() { Seed = DateTime.Today, Weeks = weeksBack + 3 }.ExecuteAsync(cn);
+
+				WeekSelect = new SelectList(Weeks.Select(wk => new SelectListItem() { Value = wk.WeekIndex.ToString(), Text = $"{wk.WeekNumber}: {wk.StartDate:M/d/yy} - {wk.EndDate:M/d/yy}" }), "Value", "Text", weeksBack);
 
 				var weekDictionary = Weeks.ToDictionary(row => row.WeekIndex);
 

@@ -26,7 +26,7 @@ namespace Ginseng.Mvc.Queries
 				FROM
 				dbo.FnIntRange(0, @weeks)
 			) SELECT
-				[WeekIndex],
+				ABS([WeekIndex]) AS [WeekIndex],
 				DATEADD(d, [Offset], [Date]) AS [StartDate],
 				DATEADD(d, 6, DATEADD(d, [Offset], [Date])) AS [EndDate],
 				YEAR(DATEADD(d, [Offset], [Date])) AS [Year],
