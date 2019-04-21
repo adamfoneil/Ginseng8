@@ -128,7 +128,19 @@ namespace Testing
 					testCase.TestExecute(cn);
 				}
 			}
+		}
 
+		[TestMethod]
+		public void PendingWorkLogsQuery()
+		{
+			var qry = new PendingWorkLogs();
+			using (var cn = GetConnection())
+			{
+				foreach (var testCase in PendingWorkLogs.GetTestCases())
+				{
+					testCase.TestExecute(cn);
+				}
+			}
 		}
 	}
 }

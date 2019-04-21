@@ -74,7 +74,7 @@ namespace Ginseng.Models
 		{
 			if (comment.ObjectType != ObjectType.WorkItem && comment.ObjectType != ObjectType.Project) return;
 			var currentUser = user as UserProfile;
-			if (currentUser == null) throw new Exception("Couldn't determine the current user profile.");
+			if (currentUser == null) throw new Exception("Couldn't determine the current user profile when creating work log.");
 
 			if (ParseHoursFromText(comment.TextBody, out decimal hours))
 			{
