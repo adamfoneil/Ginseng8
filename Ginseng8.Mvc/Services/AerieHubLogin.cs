@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Ginseng.Mvc
+namespace Ginseng.Mvc.Services
 {
 	internal static class AerieHubLogin
 	{
