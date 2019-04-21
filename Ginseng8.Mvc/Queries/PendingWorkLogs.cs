@@ -27,6 +27,8 @@ namespace Ginseng.Mvc.Queries
 		public string Title { get; set; }
 		public bool IsProject { get; set; }
 		public int? WorkItemNumber { get; set; }
+		public int Year { get; set; }
+		public int WeekNumber { get; set; }
 	}
 
 	public class PendingWorkLogs : Query<PendingWorkLogsResult>, ITestableQuery
