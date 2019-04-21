@@ -69,7 +69,8 @@ namespace Ginseng.Mvc.Pages.Setup
 				nameof(OrganizationUser.DailyWorkHours),
 				nameof(OrganizationUser.WorkDays),
 				nameof(OrganizationUser.Responsibilities),
-				nameof(OrganizationUser.DefaultActivityId)
+				nameof(OrganizationUser.DefaultActivityId),
+				nameof(OrganizationUser.InvoiceRate)
 			}.ToList();
 
 			if (OrgUser.Id == 0)

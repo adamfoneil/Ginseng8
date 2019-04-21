@@ -70,7 +70,7 @@
     </div>
 
     <div class="row">
-        <div class="col-12">
+        <div class="col-6">
             <label>Responsibilities:</label>
             <input type="hidden" asp-for="OrgUser.Responsibilities" />
             <ul class="list-inline">
@@ -84,6 +84,11 @@
                     </li>
                 }
             </ul>
+        </div>
+
+        <div class="col-6">
+            <label>Invoice Rate:</label>
+            <input type="text" asp-for="OrgUser.InvoiceRate" class="form-control" asp-format="{0:n2}" />
         </div>
     </div>
 
