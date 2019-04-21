@@ -51,7 +51,8 @@ namespace Ginseng.Mvc
 					options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
 				})
 				.AddCookie()
-				.AddAerieHub(Configuration);
+				.AddAerieHub(Configuration)
+				.AddGitHub(Configuration);
 
 			services
 				.AddTransient<IEmailSender, Email>()
@@ -91,6 +92,7 @@ namespace Ginseng.Mvc
 		{
 			// Requiring a confirmed email breaks external logins.
 			//options.SignIn.RequireConfirmedEmail = true;
+			options.User.RequireUniqueEmail = false;
 		}
 	}
 }
