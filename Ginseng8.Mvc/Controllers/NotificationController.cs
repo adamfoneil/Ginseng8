@@ -49,7 +49,7 @@ namespace Ginseng.Mvc.Controllers
 				using (var cn = _data.GetConnection())
 				{
 					var emails = await new PendingNotifications(batchSize) { Method = DeliveryMethod.Email }.ExecuteAsync(cn);
-					foreach (var msg in emails)
+                    foreach (var msg in emails)
 					{
 						string content = await this.RenderViewAsync("Notification", msg);
 						await _email.SendAsync(msg.SendTo, $"{msg.ApplicationName} {msg.EventName} - {msg.WorkItemNumber}", content);
@@ -57,6 +57,9 @@ namespace Ginseng.Mvc.Controllers
 					}
 				}
 			});
-		}		
-	}
+		}
+
+        public IActionResult Unsubscribe(int id)
+            => throw new NotImplementedException();
+    }
 }
