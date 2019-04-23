@@ -9,7 +9,7 @@ namespace Ginseng.Models.Queries
 	public class OrgUserByName : Query<OrganizationUser>, ITestableQuery
 	{
 		public OrgUserByName() : base(
-			@"SELECT [ou].*, [u].[UserName], [u].[Email]
+			@"SELECT [ou].*, [u].[UserName], [u].[Email], [u].[PhoneNumber]
 			FROM [dbo].[OrganizationUser] [ou]
 			INNER JOIN [dbo].[AspNetUsers] [u] ON [ou].[UserId]=[u].[UserId]
 			WHERE

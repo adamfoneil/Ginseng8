@@ -103,11 +103,11 @@ namespace Ginseng.Models
 				var users = await new OrgUserByName() { OrgId = comment.OrganizationId, Name = name.Value.Substring(1) }.ExecuteAsync(connection);
 				if (users.Any())
 				{
-					var orgUser = users.First();
-					string mentionName = orgUser.DisplayName ?? orgUser.Email;
-					await ReplaceMentionNameAsync(connection, comment, name.Value, orgUser);
+					var mentionedUser = users.First();
+					string mentionName = mentionedUser.DisplayName ?? mentionedUser.Email;
+					await ReplaceMentionNameAsync(connection, comment, name.Value, mentionedUser);
 					int eventLogId = await CreateEventLogFromMentionAsync(connection, comment, senderName, mentionName);
-					await Notification.CreateFromMentionAsync(connection, eventLogId, comment, senderName, orgUser);
+					await Notification.CreateFromMentionAsync(connection, eventLogId, comment, senderName, mentionedUser);
 				}
 			}
 		}
@@ -118,6 +118,7 @@ namespace Ginseng.Models
 
 			return await EventLog.WriteAsync(connection, new EventLog()
 			{
+				DateCreated = comment.DateCreated,
 				OrganizationId = comment.OrganizationId,
 				ApplicationId = workItem.ApplicationId,
 				WorkItemId = workItem.Id,

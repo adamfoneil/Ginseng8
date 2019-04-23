@@ -72,26 +72,32 @@ namespace Ginseng.Models
 			// todo: app notifications
 		}
 
-		internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, string senderName, OrganizationUser orgUser)
+		internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, string senderName, OrganizationUser mentionUser)
 		{
-			if (orgUser.SendEmail)
+			if (mentionUser.SendEmail)
 			{
-				await CreateFromCommentAsync(connection, eventLogId, comment, DeliveryMethod.Email, senderName, (c) => c.HtmlBody);
+				await CreateFromCommentAsync(connection, eventLogId, comment, DeliveryMethod.Email, senderName, mentionUser, (ou) => ou.Email, (c) => c.HtmlBody);
 			}
 
-			if (orgUser.SendText)
+			if (mentionUser.SendText)
 			{
-				await CreateFromCommentAsync(connection, eventLogId, comment, DeliveryMethod.Text, senderName, (c) => c.TextBody);
+				await CreateFromCommentAsync(connection, eventLogId, comment, DeliveryMethod.Text, senderName, mentionUser, (ou) => ou.PhoneNumber, (c) => c.TextBody);
 			}
 
 			// todo: app notification
 		}
 
-		private static async Task CreateFromCommentAsync(IDbConnection connection, int eventLogId, Comment comment, DeliveryMethod method, string senderName, Func<Comment, string> contentGetter)
+		private static async Task CreateFromCommentAsync(
+			IDbConnection connection, int eventLogId, Comment comment, DeliveryMethod method, string senderName, OrganizationUser mentionUser,
+			Func<OrganizationUser, string> addressGetter, Func<Comment, string> contentGetter)
 		{
+			string sendTo = addressGetter.Invoke(mentionUser);
+			if (string.IsNullOrEmpty(sendTo)) return;
+
 			await connection.SaveAsync(new Notification()
 			{
 				EventLogId = eventLogId,
+				SendTo = sendTo,
 				DateCreated = comment.DateCreated,
 				Method = method,
 				Content = $"{senderName} writes: {contentGetter.Invoke(comment)}",

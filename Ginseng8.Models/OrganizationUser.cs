@@ -84,6 +84,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public string Email { get; set; }
 
+		[NotMapped]
+		public string PhoneNumber { get; set; }
+
 		[DefaultExpression("0")]
 		public bool SendEmail { get; set; }
 
