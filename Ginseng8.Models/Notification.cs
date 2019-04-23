@@ -72,5 +72,10 @@ namespace Ginseng.Models
 			await new InsertActivitySubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);
 			// todo: app notifications
 		}
+
+		internal static async Task CreateFromMentionAsync(IDbConnection connection, Comment comment, OrganizationUser orgUser)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }

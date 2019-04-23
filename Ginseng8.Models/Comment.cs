@@ -7,6 +7,8 @@ using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -77,16 +79,26 @@ namespace Ginseng.Models
 				}
 
 				await PendingWorkLog.FromCommentAsync(connection, this, user as UserProfile);
-				//await ParseMentionsAsync(connection, this.TextBody, user as UserProfile);
+				await ParseMentionsAsync(connection, this, user as UserProfile);
 			}
 		}
 
 		/// <summary>
 		/// Queues notifications to people from comment text based on @ symbols 
 		/// </summary>		
-		private static async Task ParseMentionsAsync(IDbConnection connection, string commentText, UserProfile userProfile)
+		private async Task ParseMentionsAsync(IDbConnection connection, Comment comment, UserProfile userProfile)
 		{
-			throw new NotImplementedException();
+			var names = Regex.Matches(comment.TextBody, "@([a-zA-Z][a-zA-Z0-9_]*)").OfType<Match>();
+			if (!names.Any()) return;
+
+			foreach (var name in names)
+			{
+				OrganizationUser orgUser = OrganizationUser.FindFromNameAsync(connection, name);
+				if (orgUser != null)
+				{
+					await Notification.CreateFromMentionAsync(connection, comment, orgUser);
+				}
+			}
 		}
 	}
 }

@@ -4,9 +4,11 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -114,6 +116,11 @@ namespace Ginseng.Models
 
 			UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
 			Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
+		}
+
+		internal static OrganizationUser FindFromNameAsync(IDbConnection connection, Match name)
+		{
+			throw new NotImplementedException();
 		}
 
 		internal static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)
