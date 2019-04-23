@@ -47,11 +47,12 @@
                         @if (Html.HasCurrentApp())
                         {                         
                             <a class="dropdown-item" asp-page="/Data/Index">Data Models</a>                         
-                        }
-                        <a class="dropdown-item" asp-page="/Wiki/Index">Wiki</a>                        
+                        }                        
                         @if (User.Identity.IsAuthenticated)
                         {
+                            <a class="dropdown-item" asp-page="/Wiki/Index">Wiki</a>                        
                             <a class="dropdown-item" asp-page="/Setup/Index">Setup</a>
+                            <a class="dropdown-item" asp-page="/Help/Index">Help</a>
                         }                                                
                         @{ 
                             var switchOrgs = Html.MySwitchOrgs();
