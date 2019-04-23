@@ -86,5 +86,10 @@ namespace Testing
 		{
 			TestQuery<PendingNotifications>();
 		}
+
+		public void OrgUserByNameQuery()
+		{
+			TestQuery<OrgUserByName>();
+		}
 	}
 }

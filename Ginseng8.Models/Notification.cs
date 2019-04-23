@@ -1,9 +1,7 @@
 ﻿using Ginseng.Models.Queries;
 using Postulate.Base.Attributes;
-using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -14,7 +12,7 @@ namespace Ginseng.Models
 		Email = 1,
 		Text = 2,
 		App = 3
-	}	
+	}
 
 	/// <summary>
 	/// Holds pending and delivered notifications. This is queried through a call from cron-job.org
@@ -31,7 +29,7 @@ namespace Ginseng.Models
 		/// <summary>
 		/// User's local time
 		/// </summary>
-		public DateTime DateCreated { get; set; }		
+		public DateTime DateCreated { get; set; }
 
 		public DeliveryMethod Method { get; set; }
 
@@ -46,7 +44,7 @@ namespace Ginseng.Models
 		/// EventSubscription.Id or ActivitySubscription.Id (used for unsubscribe link)
 		/// </summary>
 		public int SourceId { get; set; }
-		
+
 		/// <summary>
 		/// EventSubscription or ActivitySubscription (needed for unsubscribe link)
 		/// </summary>
@@ -73,9 +71,11 @@ namespace Ginseng.Models
 			// todo: app notifications
 		}
 
-		internal static async Task CreateFromMentionAsync(IDbConnection connection, Comment comment, OrganizationUser orgUser)
+		internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, OrganizationUser orgUser, string mentionName)
 		{
-			throw new NotImplementedException();
+			// insert the Notification record using the org user's notification options
+
+			// update the comment html to show that the mention was understood using <a mailto>
 		}
 	}
 }

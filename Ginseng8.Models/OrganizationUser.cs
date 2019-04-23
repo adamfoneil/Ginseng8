@@ -118,11 +118,6 @@ namespace Ginseng.Models
 			Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
 		}
 
-		internal static OrganizationUser FindFromNameAsync(IDbConnection connection, Match name)
-		{
-			throw new NotImplementedException();
-		}
-
 		internal static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)
 		{
 			var orgUser = await connection.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });

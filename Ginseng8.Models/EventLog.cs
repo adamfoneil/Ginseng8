@@ -76,11 +76,11 @@ namespace Ginseng.Models
 
 		public DateTime DateCreated { get; set; }
 
-		public static async Task WriteAsync(IDbConnection connection, EventLog eventLog, IUser user)
+		public static async Task<int> WriteAsync(IDbConnection connection, EventLog eventLog, IUser user)
 		{
 			eventLog.CreatedBy = user.UserName;
 			eventLog.DateCreated = user.LocalTime;
-			await WriteAsync(connection, eventLog);
+			return await WriteAsync(connection, eventLog);
 		}
 
 		public static async Task<int> WriteAsync(IDbConnection connection, EventLog eventLog)

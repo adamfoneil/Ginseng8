@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
+using Ginseng.Models.Queries;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
@@ -93,12 +94,54 @@ namespace Ginseng.Models
 
 			foreach (var name in names)
 			{
-				OrganizationUser orgUser = OrganizationUser.FindFromNameAsync(connection, name);
-				if (orgUser != null)
+				var users = await new OrgUserByName() { OrgId = comment.OrganizationId, Name = name.Value.Substring(1) }.ExecuteAsync(connection);
+				if (users.Any())
 				{
-					await Notification.CreateFromMentionAsync(connection, comment, orgUser);
+					var eventLog = await EventLogFromCommentAsync(connection, comment);					
+					int eventLogId = await EventLog.WriteAsync(connection, eventLog, userProfile);
+					// there might be multiple names found from the name entered, but we're just picking one to prevent accidental spamming
+					await Notification.CreateFromMentionAsync(connection, eventLogId, comment, users.First(), name.Value);
 				}
 			}
+		}
+
+		/// <summary>
+		/// Sets the appId, sourceId, and workItemId based on the context of the comment object type
+		/// </summary>
+		private async Task<EventLog> EventLogFromCommentAsync(IDbConnection connection, Comment comment)
+		{
+			var result = new EventLog()
+			{
+				OrganizationId = comment.OrganizationId,
+				EventId = SystemEvent.UserMentioned,
+				IconClass = "fas fa-at",
+				IconColor = "blue",
+				HtmlBody = comment.HtmlBody,
+				TextBody = comment.TextBody
+			};
+
+			switch (comment.ObjectType)
+			{
+				case ObjectType.WorkItem:
+					var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);
+					result.WorkItemId = comment.ObjectId;
+					result.ApplicationId = workItem.ApplicationId;
+					break;
+
+				case ObjectType.Project:
+					var prj = await connection.FindAsync<Project>(comment.ObjectId);
+					result.ApplicationId = prj.ApplicationId;
+					result.SourceId = comment.ObjectId;
+					result.SourceTable = nameof(Project);
+					break;
+
+				default:
+					result.SourceId = comment.ObjectId;
+					result.SourceTable = "unknown"; // will have to figure these out eventually
+					break;
+			}
+
+			return result;
 		}
 	}
 }
