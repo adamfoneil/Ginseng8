@@ -96,36 +96,39 @@ namespace Ginseng.Models
 			var names = Regex.Matches(comment.TextBody, "@([a-zA-Z][a-zA-Z0-9_]*)").OfType<Match>();
 			if (!names.Any()) return;
 
+			string senderName = await OrganizationUser.GetUserDisplayNameAsync(connection, comment.OrganizationId, userProfile.UserId, userProfile);
+
 			foreach (var name in names)
 			{
 				var users = await new OrgUserByName() { OrgId = comment.OrganizationId, Name = name.Value.Substring(1) }.ExecuteAsync(connection);
 				if (users.Any())
 				{
 					var orgUser = users.First();
+					string mentionName = orgUser.DisplayName ?? orgUser.Email;
 					await ReplaceMentionNameAsync(connection, comment, name.Value, orgUser);
-					var eventLog = CreateEventLogFromCommentAsync(connection, comment);
-					await Notification.CreateFromMentionAsync(connection, comment, orgUser);
+					int eventLogId = await CreateEventLogFromMentionAsync(connection, comment, senderName, mentionName);
+					await Notification.CreateFromMentionAsync(connection, eventLogId, comment, senderName, orgUser);
 				}
 			}
 		}
 
-		private async Task<EventLog> CreateEventLogFromCommentAsync(IDbConnection connection, Comment comment)
+		private async Task<int> CreateEventLogFromMentionAsync(IDbConnection connection, Comment comment, string senderName, string mentionName)
 		{
-			var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);
+			var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);			
 
-			return new EventLog()
+			return await EventLog.WriteAsync(connection, new EventLog()
 			{
 				OrganizationId = comment.OrganizationId,
 				ApplicationId = workItem.ApplicationId,
-				WorkItemId = comment.ObjectId,
+				WorkItemId = workItem.Id,
 				EventId = SystemEvent.UserMentioned,
 				IconClass = "fas fa-at",
 				IconColor = "auto",
-				HtmlBody = comment.HtmlBody, // should be mention names, not comment body
-				TextBody = comment.TextBody,
+				HtmlBody = $"<strong>{senderName}</strong> mentioned <strong>{mentionName}</strong> in a comment",
+				TextBody = $"{senderName} mentioned {mentionName} in a comment",
 				SourceId = comment.Id,
 				SourceTable = nameof(Comment)
-			};
+			});			
 		}
 
 		private async Task ReplaceMentionNameAsync(IDbConnection connection, Comment comment, string mentionName, OrganizationUser orgUser)

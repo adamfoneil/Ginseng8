@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models.Queries;
 using Postulate.Base.Attributes;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -71,28 +72,32 @@ namespace Ginseng.Models
 			// todo: app notifications
 		}
 
-		internal static async Task CreateFromMentionAsync(IDbConnection connection, Comment comment, OrganizationUser orgUser)
+		internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, string senderName, OrganizationUser orgUser)
 		{
 			if (orgUser.SendEmail)
 			{
-				var notif = CreateFromComment(comment, orgUser, DeliveryMethod.Email);
-
+				await CreateFromCommentAsync(connection, eventLogId, comment, DeliveryMethod.Email, senderName, (c) => c.HtmlBody);
 			}
 
+			if (orgUser.SendText)
+			{
+				await CreateFromCommentAsync(connection, eventLogId, comment, DeliveryMethod.Text, senderName, (c) => c.TextBody);
+			}
 
+			// todo: app notification
 		}
 
-		private static Notification CreateFromComment(Comment comment, OrganizationUser orgUser, DeliveryMethod method)
+		private static async Task CreateFromCommentAsync(IDbConnection connection, int eventLogId, Comment comment, DeliveryMethod method, string senderName, Func<Comment, string> contentGetter)
 		{
-			return new Notification()
+			await connection.SaveAsync(new Notification()
 			{
+				EventLogId = eventLogId,
 				DateCreated = comment.DateCreated,
 				Method = method,
-				SendTo = orgUser.Email,
-				Content = comment.HtmlBody,
+				Content = $"{senderName} writes: {contentGetter.Invoke(comment)}",
 				SourceId = comment.Id,
 				SourceTable = nameof(Comment)
-			};
+			});			
 		}
 	}
 }
