@@ -1,21 +1,17 @@
-﻿using Dapper;
-using Ginseng.Models.Conventions;
+﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	public class OrganizationUser : BaseTable, IFindRelated<int>
+	public class OrganizationUser : BaseTable, IFindRelated<int>, INotifyOptions
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -42,7 +38,7 @@ namespace Ginseng.Models
 		/// <summary>
 		/// Average daily productive work hours
 		/// </summary>
-		[DecimalPrecision(4,2)]
+		[DecimalPrecision(4, 2)]
 		public decimal DailyWorkHours { get; set; }
 
 		/// <summary>
@@ -86,6 +82,18 @@ namespace Ginseng.Models
 		[NotMapped]
 		public string Email { get; set; }
 
+		[DefaultExpression("0")]
+		public bool SendEmail { get; set; }
+
+		[DefaultExpression("0")]
+		public bool SendText { get; set; }
+
+		[DefaultExpression("0")]
+		public bool InApp { get; set; }
+
+		[NotMapped]
+		public string TableName => nameof(OrganizationUser);
+
 		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
 		{
 			if (CurrentAppId.HasValue)
@@ -118,19 +126,19 @@ namespace Ginseng.Models
 		{
 			message = null;
 			if ((MaxWorkInProgress ?? 1) < 1)
-			{								
+			{
 				message = "Max WIP cannot be less than one.";
-				return false;				
+				return false;
 			}
 
 			return true;
 		}
 
 		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
-		{			
+		{
 			// if this is an accepted join request, then it's no longer a request
 			if (IsEnabled && IsRequest) IsRequest = false;
-			base.BeforeSave(connection, action, user);			
+			base.BeforeSave(connection, action, user);
 		}
 	}
 }
