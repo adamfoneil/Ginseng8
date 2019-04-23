@@ -71,11 +71,28 @@ namespace Ginseng.Models
 			// todo: app notifications
 		}
 
-		internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, OrganizationUser orgUser, string mentionName)
+		internal static async Task CreateFromMentionAsync(IDbConnection connection, Comment comment, OrganizationUser orgUser)
 		{
-			// insert the Notification record using the org user's notification options
+			if (orgUser.SendEmail)
+			{
+				var notif = CreateFromComment(comment, orgUser, DeliveryMethod.Email);
 
-			// update the comment html to show that the mention was understood using <a mailto>
+			}
+
+
+		}
+
+		private static Notification CreateFromComment(Comment comment, OrganizationUser orgUser, DeliveryMethod method)
+		{
+			return new Notification()
+			{
+				DateCreated = comment.DateCreated,
+				Method = method,
+				SendTo = orgUser.Email,
+				Content = comment.HtmlBody,
+				SourceId = comment.Id,
+				SourceTable = nameof(Comment)
+			};
 		}
 	}
 }

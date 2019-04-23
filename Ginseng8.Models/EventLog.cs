@@ -61,7 +61,7 @@ namespace Ginseng.Models
 		public string TextBody { get; set; }
 
 		/// <summary>
-		/// If the event refers to something besides a work item (such as a hand off, it goes here)
+		/// If the event refers to something besides a work item (such as a hand off or comment, it goes here)
 		/// </summary>
 		public int? SourceId { get; set; }
 
