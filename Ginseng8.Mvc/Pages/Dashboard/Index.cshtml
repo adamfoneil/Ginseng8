@@ -74,10 +74,17 @@
 
 @if (!Model.WorkItems.Any() && Html.CurrentAppId() != 0)
 {
-    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+    @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
     {
-        { "applicationId", Html.CurrentAppId() },        
-        { Model.UserIdColumnName, Model.UserId },
-        { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
-    }))
+        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+        {
+            { "applicationId", Html.CurrentAppId() },        
+            { Model.UserIdColumnName, Model.UserId },
+            { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
+        }))
+    }
+    else
+    {
+        <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+    }
 }
