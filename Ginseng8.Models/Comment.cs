@@ -4,6 +4,7 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
@@ -76,7 +77,16 @@ namespace Ginseng.Models
 				}
 
 				await PendingWorkLog.FromCommentAsync(connection, this, user as UserProfile);
+				//await ParseMentionsAsync(connection, this.TextBody, user as UserProfile);
 			}
+		}
+
+		/// <summary>
+		/// Queues notifications to people from comment text based on @ symbols 
+		/// </summary>		
+		private static async Task ParseMentionsAsync(IDbConnection connection, string commentText, UserProfile userProfile)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }
