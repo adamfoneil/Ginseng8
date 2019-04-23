@@ -9,8 +9,7 @@
 
 <form method="post" asp-page-handler="SelectOrg">
     <label>
-        Current Organization
-        <span class="small text-muted">changes take effect immediately</span>
+        Current Organization<sup style="color:darkred">*</sup>        
     </label>
     <select name="orgId" asp-items="Model.MyOrgSelect" class="form-control" onchange="this.form.submit();">
         <option value="" disabled="disabled">(select)</option>
@@ -70,7 +69,7 @@
     </div>
 
     <div class="row">
-        <div class="col-6">
+        <div class="col-3">
             <label>Responsibilities:</label>
             <input type="hidden" asp-for="OrgUser.Responsibilities" />
             <ul class="list-inline">
@@ -86,6 +85,13 @@
             </ul>
         </div>
 
+        <div class="col-3">
+            <label>Notify me from comment mentions:<sup style="color:darkred">*</sup></label>
+            <div id="notifyOptions-@Model.CurrentOrgUser.Id" class="ml-2">
+                <partial name="Shared/_NotifyOptions" model="Model.OrgUser"/>
+            </div>
+        </div>
+
         <div class="col-6">
             <label>Invoice Rate:</label>
             <input type="text" asp-for="OrgUser.InvoiceRate" class="form-control" asp-format="{0:n2}" />
@@ -94,6 +100,12 @@
 
     <button class="btn btn-dark">Save</button>
 </form>
+
+<p class="mt-3">
+    <sup style="color:darkred">*</sup>
+    <span class="text-muted small">Changes take effect immediately without clicking <strong>Save</strong></span>
+</p>
+
 
 <hr/>
 
@@ -116,3 +128,7 @@
 <p class="small text-muted mt-3">
     Note, your selected time zone applies to all your organizations, if you have more than one.
 </p>
+
+@section Scripts {
+    <script src="~/js/Notification.js"></script>
+}

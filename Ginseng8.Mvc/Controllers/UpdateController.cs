@@ -297,7 +297,8 @@ namespace Ginseng.Mvc.Controllers
 			var getNotification = new Dictionary<string, Func<IDbConnection, Task<INotifyOptions>>>()
 			{
 				{ nameof(Ginseng.Models.EventSubscription), async (cn) => await cn.FindAsync<EventSubscription>(id) },
-				{ nameof(ActivitySubscription), async (cn) => await cn.FindAsync<ActivitySubscription>(id) }
+				{ nameof(ActivitySubscription), async (cn) => await cn.FindAsync<ActivitySubscription>(id) },
+				{ nameof(OrganizationUser), async (cn) => await cn.FindAsync<OrganizationUser>(id) }
 			};
 
 			using (var cn = _data.GetConnection())
