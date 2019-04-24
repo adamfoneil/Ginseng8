@@ -31,6 +31,9 @@
         </select>
     </div>
     <div class="form-row mb-3 justify-content-center">
+        <select name="FilterLabelId" asp-items="@Model.LabelSelect" class="form-control-sm mr-2" onchange="this.form.submit()">
+            <option value="">(all labels)</option>
+        </select>
         <select name="FilterSizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.FilterSizeId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all sizes)</option>
         </select>

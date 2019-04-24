@@ -16,6 +16,7 @@ namespace Ginseng.Mvc.Pages.Work
 	{
 		public AllItemsModel(IConfiguration config) : base(config)
 		{
+			ShowLabelFilter = false;
 		}
 
 		[BindProperty(SupportsGet = true)]
@@ -40,6 +41,9 @@ namespace Ginseng.Mvc.Pages.Work
 		public int? FilterCloseReasonId { get; set; } = 0;
 
 		[BindProperty(SupportsGet = true)]
+		public int? FilterLabelId { get; set; }
+
+		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
 
 		[BindProperty(SupportsGet = true)]
@@ -53,6 +57,7 @@ namespace Ginseng.Mvc.Pages.Work
 		public SelectList UserSelect { get; set; }
 		public SelectList ActivitySelect { get; set; }
 		public SelectList CloseReasonSelect { get; set; }
+		public SelectList LabelSelect { get; set; }
 
 		protected override async Task<RedirectResult> GetRedirectAsync(SqlConnection connection)
 		{
@@ -82,6 +87,9 @@ namespace Ginseng.Mvc.Pages.Work
 			closeReasonList.Insert(1, new SelectListItem() { Value = "-1", Text = "- closed any reason -" });
 			CloseReasonSelect = new SelectList(closeReasonList, "Value", "Text", FilterCloseReasonId);
 
+			var labelList = await new LabelSelect() { OrgId = OrgId }.ExecuteItemsAsync(connection);
+			LabelSelect = new SelectList(labelList, "Value", "Text", FilterLabelId);
+
 			if (!string.IsNullOrEmpty(Query))
 			{
 				// if a search was passed in, execute that on the project list
@@ -97,15 +105,15 @@ namespace Ginseng.Mvc.Pages.Work
 				OrgId = OrgId,
 				AppId = CurrentOrgUser.CurrentAppId,
 				ProjectId = FilterProjectId,
-				LabelId = LabelId,				
+				LabelId = FilterLabelId,				
 				MilestoneId = FilterMilestoneId,
 				SizeId = FilterSizeId,
 				TitleAndBodySearch = Query,
 				IsPastDue = PastDue,
 				AssignedUserId = FilterUserId,
 				ActivityId = FilterActivityId,				
-				CloseReasonId = FilterCloseReasonId,
-				Page = PageNumber
+				CloseReasonId = FilterCloseReasonId,				
+				Page = PageNumber,				
 			};
 		}
 	}
