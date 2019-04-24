@@ -1,11 +1,16 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
+using Ginseng.Models.Queries;
+using Html2Markdown;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -76,7 +81,64 @@ namespace Ginseng.Models
 				}
 
 				await PendingWorkLog.FromCommentAsync(connection, this, user as UserProfile);
+				await ParseMentionsAsync(connection, this, user as UserProfile);
 			}
 		}
+
+		/// <summary>
+		/// Queues notifications to people from comment text based on @ symbols 
+		/// </summary>		
+		private async Task ParseMentionsAsync(IDbConnection connection, Comment comment, UserProfile userProfile)
+		{
+			// for now, can do mentions only on work item comments because EventLog.WorkItemId is required
+			if (comment.ObjectType != ObjectType.WorkItem) return;
+
+			var names = Regex.Matches(comment.TextBody, "@([a-zA-Z][a-zA-Z0-9_]*)").OfType<Match>();
+			if (!names.Any()) return;
+
+			string senderName = await OrganizationUser.GetUserDisplayNameAsync(connection, comment.OrganizationId, userProfile.UserId, userProfile);
+
+			foreach (var name in names)
+			{
+				var users = await new OrgUserByName() { OrgId = comment.OrganizationId, Name = name.Value.Substring(1) }.ExecuteAsync(connection);
+				if (users.Any())
+				{
+					var mentionedUser = users.First();
+					string mentionName = mentionedUser.DisplayName ?? mentionedUser.Email;
+					await ReplaceMentionNameAsync(connection, comment, name.Value, mentionedUser);
+					int eventLogId = await CreateEventLogFromMentionAsync(connection, comment, senderName, mentionName);
+					await Notification.CreateFromMentionAsync(connection, eventLogId, comment, senderName, mentionedUser);
+				}
+			}
+		}
+
+		private async Task<int> CreateEventLogFromMentionAsync(IDbConnection connection, Comment comment, string senderName, string mentionName)
+		{
+			var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);			
+
+			return await EventLog.WriteAsync(connection, new EventLog()
+			{
+				DateCreated = comment.DateCreated,
+				OrganizationId = comment.OrganizationId,
+				ApplicationId = workItem.ApplicationId,
+				WorkItemId = workItem.Id,
+				EventId = SystemEvent.UserMentioned,
+				IconClass = "fas fa-at",
+				IconColor = "auto",
+				HtmlBody = $"<strong>{senderName}</strong> mentioned <strong>{mentionName}</strong> in a comment",
+				TextBody = $"{senderName} mentioned {mentionName} in a comment",
+				SourceId = comment.Id,
+				SourceTable = nameof(Comment)
+			});			
+		}
+
+		private async Task ReplaceMentionNameAsync(IDbConnection connection, Comment comment, string mentionName, OrganizationUser orgUser)
+		{
+			string result = comment.HtmlBody;
+			result = result.Replace(mentionName, $"<a href=\"mailto:{orgUser.Email}\">{orgUser.DisplayName ?? orgUser.UserName}</a>");
+			comment.HtmlBody = result;
+			comment.TextBody = new Converter().Convert(comment.HtmlBody);
+			await connection.SaveAsync(comment);
+		}		
 	}
 }

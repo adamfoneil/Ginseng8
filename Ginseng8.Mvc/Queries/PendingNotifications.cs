@@ -49,8 +49,8 @@ namespace Ginseng.Mvc.Queries
 				[e].[Name] AS [EventName]
 			FROM 
 				[dbo].[Notification] [n]
-				INNER JOIN [dbo].[EventLog] [el] ON [n].[EventLogId]=[el].[Id]
-				INNER JOIN [app].[Event] [e] ON [el].[EventId]=[e].[Id]
+				LEFT JOIN [dbo].[EventLog] [el] ON [n].[EventLogId]=[el].[Id]
+				LEFT JOIN [app].[Event] [e] ON [el].[EventId]=[e].[Id]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [el].[WorkItemId]=[wi].[Id]
 				INNER JOIN [dbo].[Application] [app] ON [el].[ApplicationId]=[app].[Id]
 				INNER JOIN [dbo].[Organization] [org] ON [el].[OrganizationId]=[org].[Id]

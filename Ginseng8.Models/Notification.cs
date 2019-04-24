@@ -5,7 +5,6 @@ using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -16,7 +15,7 @@ namespace Ginseng.Models
 		Email = 1,
 		Text = 2,
 		App = 3
-	}	
+	}
 
 	/// <summary>
 	/// Holds pending and delivered notifications. This is queried through a call from cron-job.org
@@ -33,7 +32,7 @@ namespace Ginseng.Models
 		/// <summary>
 		/// User's local time
 		/// </summary>
-		public DateTime DateCreated { get; set; }		
+		public DateTime DateCreated { get; set; }
 
 		public DeliveryMethod Method { get; set; }
 
@@ -48,7 +47,7 @@ namespace Ginseng.Models
 		/// EventSubscription.Id or ActivitySubscription.Id (used for unsubscribe link)
 		/// </summary>
 		public int SourceId { get; set; }
-		
+
 		/// <summary>
 		/// EventSubscription or ActivitySubscription (needed for unsubscribe link)
 		/// </summary>
@@ -77,14 +76,38 @@ namespace Ginseng.Models
 			// todo: app notifications
 		}
 
-		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+		internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, string senderName, OrganizationUser mentionUser)
 		{
-			EventLog = commandProvider.Find<EventLog>(connection, EventLogId);
+			if (mentionUser.SendEmail)
+			{
+				await CreateFromCommentAsync(connection, eventLogId, comment, DeliveryMethod.Email, senderName, mentionUser, (ou) => ou.Email, (c) => c.HtmlBody);
+			}
+
+			if (mentionUser.SendText)
+			{
+				await CreateFromCommentAsync(connection, eventLogId, comment, DeliveryMethod.Text, senderName, mentionUser, (ou) => ou.PhoneNumber, (c) => c.TextBody);
+			}
+
+			// todo: app notification
 		}
 
-		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+		private static async Task CreateFromCommentAsync(
+			IDbConnection connection, int eventLogId, Comment comment, DeliveryMethod method, string senderName, OrganizationUser mentionUser,
+			Func<OrganizationUser, string> addressGetter, Func<Comment, string> contentGetter)
 		{
-			EventLog = await commandProvider.FindAsync<EventLog>(connection, EventLogId);
+			string sendTo = addressGetter.Invoke(mentionUser);
+			if (string.IsNullOrEmpty(sendTo)) return;
+
+			await connection.SaveAsync(new Notification()
+			{
+				EventLogId = eventLogId,
+				SendTo = sendTo,
+				DateCreated = comment.DateCreated,
+				Method = method,
+				Content = $"{senderName} writes: {contentGetter.Invoke(comment)}",
+				SourceId = comment.Id,
+				SourceTable = nameof(Comment)
+			});			
 		}
 	}
 }

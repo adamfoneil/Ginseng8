@@ -61,7 +61,7 @@ namespace Ginseng.Models
 		public string TextBody { get; set; }
 
 		/// <summary>
-		/// If the event refers to something besides a work item (such as a hand off, it goes here)
+		/// If the event refers to something besides a work item (such as a hand off or comment, it goes here)
 		/// </summary>
 		public int? SourceId { get; set; }
 
@@ -76,11 +76,11 @@ namespace Ginseng.Models
 
 		public DateTime DateCreated { get; set; }
 
-		public static async Task WriteAsync(IDbConnection connection, EventLog eventLog, IUser user)
+		public static async Task<int> WriteAsync(IDbConnection connection, EventLog eventLog, IUser user)
 		{
 			eventLog.CreatedBy = user.UserName;
 			eventLog.DateCreated = user.LocalTime;
-			await WriteAsync(connection, eventLog);
+			return await WriteAsync(connection, eventLog);
 		}
 
 		public static async Task<int> WriteAsync(IDbConnection connection, EventLog eventLog)
