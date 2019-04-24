@@ -1,5 +1,7 @@
 ﻿using Ginseng.Models.Queries;
+using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -21,7 +23,7 @@ namespace Ginseng.Models
 	/// every 10 minutes or whatever that sends notifications in batches of 50 or some such.
 	/// </summary>
 	[Identity(nameof(Id))]
-	public class Notification
+	public class Notification : IFindRelated<int>
 	{
 		public int Id { get; set; }
 
@@ -59,6 +61,8 @@ namespace Ginseng.Models
 		/// </summary>
 		public DateTime? DateDelivered { get; set; }
 
+		public EventLog EventLog { get; set; }		
+
 		public static async Task CreateFromEventSubscriptions(IDbConnection connection, int eventLogId)
 		{
 			await new InsertEventSubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
@@ -71,6 +75,16 @@ namespace Ginseng.Models
 			await new InsertActivitySubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
 			await new InsertActivitySubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);
 			// todo: app notifications
+		}
+
+		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+		{
+			EventLog = commandProvider.Find<EventLog>(connection, EventLogId);
+		}
+
+		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+		{
+			EventLog = await commandProvider.FindAsync<EventLog>(connection, EventLogId);
 		}
 	}
 }

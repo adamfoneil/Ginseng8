@@ -300,5 +300,7 @@ namespace Ginseng.Mvc.Controllers
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+		public IActionResult View(int id) => RedirectToPage("/WorkItem/View", new { id });
+    }
 }
