@@ -109,5 +109,15 @@ namespace Ginseng.Models
 				SourceTable = nameof(Comment)
 			});			
 		}
+
+		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+		{
+			EventLog = commandProvider.Find<EventLog>(connection, EventLogId);
+		}
+
+		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+		{
+			EventLog = await commandProvider.FindAsync<EventLog>(connection, EventLogId);
+		}
 	}
 }
