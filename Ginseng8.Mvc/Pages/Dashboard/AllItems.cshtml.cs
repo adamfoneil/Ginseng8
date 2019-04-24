@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
@@ -87,8 +88,9 @@ namespace Ginseng.Mvc.Pages.Work
 			closeReasonList.Insert(1, new SelectListItem() { Value = "-1", Text = "- closed any reason -" });
 			CloseReasonSelect = new SelectList(closeReasonList, "Value", "Text", FilterCloseReasonId);
 
-			var labelList = await new LabelSelect() { OrgId = OrgId }.ExecuteItemsAsync(connection);
-			LabelSelect = new SelectList(labelList, "Value", "Text", FilterLabelId);
+			var labelList = await new OpenLabels() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+			var items = labelList.Select(row => new SelectListItem() { Value = row.Id.ToString(), Text = $"{row.Name}: {row.WorkItemCount}" });
+			LabelSelect = new SelectList(items, "Value", "Text", FilterLabelId);
 
 			if (!string.IsNullOrEmpty(Query))
 			{
