@@ -10,6 +10,16 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
+	/// <summary>
+	/// see <see cref="PriorityGroup"/>
+	/// </summary>
+	public enum PriorityGroupOptions
+	{
+		WorkOnNext = 1,
+		Backlog = 2,
+		Assigned = 3
+	}
+
 	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
 	{
 		public const string ImpedimentIcon = Comment.ImpedimentIcon;
@@ -63,6 +73,7 @@ namespace Ginseng.Mvc.Queries
 		public DateTime? HandOffDate { get; set; }
 		public string CreatedByName { get; set; }
 		public DateTime DateCreated { get; set; }
+		public PriorityGroupOptions PriorityGroup { get; set; }
 
 		public IEnumerable<Modifier> GetModifiers()
 		{
@@ -141,7 +152,12 @@ namespace Ginseng.Mvc.Queries
 				[ho].[IsForward],
 				[from_act].[Name] AS [FromActivityName],
 				[ho].[HtmlBody] AS [HandOffBody],
-				[ho].[DateCreated] AS [HandOffDate]
+				[ho].[DateCreated] AS [HandOffDate],
+				CASE
+					WHEN [pri].[Id] IS NOT NULL AND {AssignedUserExpression} IS NULL THEN 1 -- work on next (may be prioritized)
+					WHEN [pri].[Id] IS NULL THEN 2 -- backlog (cannot be prioritized)
+					ELSE 3 -- everything assigned (already has priority by individual)
+				END AS [PriorityGroup]
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]

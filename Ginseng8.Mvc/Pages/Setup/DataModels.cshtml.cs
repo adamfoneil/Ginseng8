@@ -40,7 +40,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
 			var dm = await Data.FindAsync<DataModel>(id);
-			await Data.TryDelete<DataModel>(id);
+			await Data.TryDeleteAsync<DataModel>(id);
 			return Redirect($"/Setup/DataModels?AppId={dm.ApplicationId}");
 		}
 	}

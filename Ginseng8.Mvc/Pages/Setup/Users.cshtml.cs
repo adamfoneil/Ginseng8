@@ -58,7 +58,7 @@ namespace Ginseng.Mvc.Pages.Setup
 				throw new Exception("Can't modify the organization owner account.");
 			}
 
-			await Data.TryDelete<OrganizationUser>(id);
+			await Data.TryDeleteAsync<OrganizationUser>(id);
 			return RedirectToPage("/Setup/Users");
 		}
 	}

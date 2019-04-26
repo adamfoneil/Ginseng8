@@ -40,7 +40,7 @@ namespace Ginseng.Mvc.Pages.Setup
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
 			var prj = await Data.FindAsync<Project>(id);
-			await Data.TryDelete<Project>(id);
+			await Data.TryDeleteAsync<Project>(id);
 			return Redirect($"/Setup/Projects?AppId={prj.ApplicationId}");
 		}
 	}

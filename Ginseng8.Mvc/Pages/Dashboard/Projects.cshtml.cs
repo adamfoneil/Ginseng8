@@ -159,7 +159,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		public async Task<IActionResult> OnPostDelete(int id)
 		{
-			await Data.TryDelete<Project>(id);
+			await Data.TryDeleteAsync<Project>(id);
 			return Redirect("Projects");
 		}
 

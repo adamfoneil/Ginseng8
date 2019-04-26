@@ -36,7 +36,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await Data.TryDelete<Application>(id);
+			await Data.TryDeleteAsync<Application>(id);
 			return RedirectToPage("/Setup/Applications");
 		}
 	}

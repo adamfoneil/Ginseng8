@@ -57,7 +57,7 @@ namespace Ginseng.Mvc.Pages.Setup
 				}
 				else
 				{
-					await Data.TryDelete<ActivitySubscription>(actSub.Id);
+					await Data.TryDeleteAsync<ActivitySubscription>(actSub.Id);
 				}				
 			}
 				

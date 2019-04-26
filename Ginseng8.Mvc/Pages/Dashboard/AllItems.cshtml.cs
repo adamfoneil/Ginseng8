@@ -2,6 +2,7 @@
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
@@ -55,6 +56,8 @@ namespace Ginseng.Mvc.Pages.Work
 		/// </summary>
 		public IEnumerable<ProjectInfoResult> Projects { get; set; }
 
+		public Dictionary<PriorityGroupOptions, PriorityGroup> PriorityGroups { get; set; }
+
 		public SelectList UserSelect { get; set; }
 		public SelectList ActivitySelect { get; set; }
 		public SelectList CloseReasonSelect { get; set; }
@@ -75,6 +78,9 @@ namespace Ginseng.Mvc.Pages.Work
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
+			var groups = await new PriorityGroups().ExecuteAsync(connection);
+			PriorityGroups = groups.ToDictionary(row => (PriorityGroupOptions)row.Id);
+
 			var userList = await new UserSelect() { OrgId = OrgId }.ExecuteItemsAsync(connection);
 			userList.Insert(0, new SelectListItem() { Value = "0", Text = "- no assigned user -" });
 			UserSelect = new SelectList(userList, "Value", "Text", FilterUserId);

@@ -87,9 +87,17 @@ namespace Testing
 			TestQuery<PendingNotifications>();
 		}
 
+		[TestMethod]
 		public void OrgUserByNameQuery()
 		{
 			TestQuery<OrgUserByName>();
 		}
+
+		[TestMethod]
+		public void NextPriorityQuery()
+		{
+			TestQuery<NextPriority>();
+		}
+
 	}
 }

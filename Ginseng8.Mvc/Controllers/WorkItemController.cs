@@ -155,6 +155,66 @@ namespace Ginseng.Mvc.Controllers
 		}
 
 		[HttpPost]
+		public async Task<JsonResult> WorkOnNext([FromForm]int id)
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+
+					// work item can have just one priority, so we look to see if there's one existing
+					if (!(await cn.ExistsWhereAsync<WorkItemPriority>(new { WorkItemId = workItem.Id })))
+					{
+						var nextPriority = await new NextPriority() { OrgId = _data.CurrentOrg.Id, AppId = workItem.ApplicationId }.ExecuteSingleAsync(cn);
+						var wip = new WorkItemPriority()
+						{
+							WorkItemId = workItem.Id,
+							MilestoneId = 0,
+							UserId = 0,
+							Value = nextPriority.NextValue
+						};
+						if (await _data.TrySaveAsync(wip))
+						{
+							return Json(new { success = true });
+						}
+						else
+						{
+							return Json(new { success = false, message = TempData[AlertCss.Error] });
+						}
+					}					
+				}
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> RemovePriority([FromForm]int id)
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+					var wip = await _data.FindWhereAsync<WorkItemPriority>(cn, new { WorkItemId = workItem.Id });
+					if (wip != null)
+					{
+						await _data.TryDeleteAsync<WorkItemPriority>(wip.Id);
+					}
+				}
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
+
+		[HttpPost]
 		public async Task<JsonResult> SetPriorities()
 		{
 			try

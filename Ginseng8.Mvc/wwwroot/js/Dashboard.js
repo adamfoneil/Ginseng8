@@ -250,85 +250,62 @@ selfStartLinks.forEach(function (ele) {
 var resumeWorkLinks = document.querySelectorAll('.resume-work-item');
 resumeWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
-        var loading = $(ev.target).find('img');
-        $(loading).show();
-
-        var data = {
-            id: ev.target.getAttribute('data-number')
-        };
-
-        var formData = getFormData(data);
-        fetch('/WorkItem/ResumeActivity', {
-            method: 'post',
-            body: formData
-        }).then(function (response) {
-            return response.json();
-        }).then(function (result) {
-            $(loading).hide();
-            $(ev.target).hide();
-            if (result.success) {
-                $(ev.target).nextAll('.success').show();
-            } else {
-                $(ev.target).next('.error').show();
-            }
-        });
+        AssignActionEventHandler(ev, '/WorkItem/ResumeActivity');
     });
 });
 
 var cancelWorkLinks = document.querySelectorAll('.cancel-activity');
 cancelWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
-        var loading = $(ev.target).find('img');
-        $(loading).show();
-
-        var data = {
-            id: ev.target.getAttribute('data-number')
-        };
-
-        var formData = getFormData(data);
-        fetch('/WorkItem/CancelActivity', {
-            method: 'post',
-            body: formData
-        }).then(function (response) {
-            return response.json();
-        }).then(function (result) {
-            $(loading).hide();
-            $(ev.target).hide();
-            if (result.success) {
-                $(ev.target).nextAll('.success').show();
-            } else {
-                $(ev.target).next('.error').show();
-            }
-        });
+        AssignActionEventHandler(ev, '/WorkItem/CancelActivity');
     });
 });
 
 var unassignWorkLinks = document.querySelectorAll('.unassign-work-item');
 unassignWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
-        var loading = $(ev.target).find('img');
-        $(loading).show();
-
-        var data = {
-            id: ev.target.getAttribute('data-number')
-        };
-        var formData = getFormData(data);
-        fetch('/WorkItem/UnassignMe', {
-            method: 'post',
-            body: formData
-        }).then(function (response) {
-            return response.json();
-        }).then(function (result) {
-            $(loading).hide();
-            $(ev.target).hide();
-            if (result.success) {
-                $(ev.target).nextAll('.success').show();
-            } else {
-                $(ev.target).next('.error').show();
-            }
-        });
+        AssignActionEventHandler(ev, '/WorkItem/UnassignMe');
     });
 });
+
+var workOnNextLinks = document.querySelectorAll('.work-on-next');
+workOnNextLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        AssignActionEventHandler(ev, '/WorkItem/WorkOnNext');
+    });
+});
+
+var removePriorityLinks = document.querySelectorAll('.remove-priority');
+removePriorityLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        AssignActionEventHandler(ev, '/WorkItem/RemovePriority');
+    });
+});
+
+function AssignActionEventHandler(ev, postUrl) {
+    ev.preventDefault();
+    var loading = $(ev.target).find('img');
+    $(loading).show();
+
+    var data = {
+        id: ev.target.getAttribute('data-number')
+    };
+    var formData = getFormData(data);
+    fetch(postUrl, {
+        method: 'post',
+        body: formData
+    }).then(function (response) {
+        return response.json();
+    }).then(function (result) {
+        $(loading).hide();
+        $(ev.target).hide();
+        if (result.success) {
+            $(ev.target).nextAll('.success').show();
+        } else {
+            $(ev.target).next('.error').show();
+        }
+    });
+}
 
 $(document)
 .on('click', '.add-comment-submit', function(ev) {
