@@ -63,11 +63,15 @@
             <i class="@pg.IconClass"></i>
             @pg.Name
             <span class="small text-muted">@pg.Description</span>
-        </h5>        
+        </h5>
+
+        string sortableClass = (pg.IsSortable()) ? "sortable" : string.Empty;
+        <div class="ml-3 @sortableClass">
         @foreach (var item in priorityGrp)
         {
             <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
         }        
+        </div>
     }
 }
 </div>

@@ -270,6 +270,9 @@ namespace Ginseng.Mvc.Controllers
 
 		private async Task UpdateAssignedUserAsync(SqlConnection cn, WorkItem workItem, int userId)
 		{
+			// can't use a zero as userId because the OrgUser FindWhere fails ("sequence contains more than one element")
+			if (userId == 0) userId = -1;
+
 			// get the responsibility from the work item activity (if set)
 			// or fall back to the user profile
 			int responsibilityId = (workItem.ActivityId.HasValue) ?
@@ -279,7 +282,7 @@ namespace Ginseng.Mvc.Controllers
 			// if user has both biz and dev responsibility, assume dev
 			if (responsibilityId == 3 || responsibilityId == 0) responsibilityId = 2;
 						
-			if (userId != 0)
+			if (userId > 0)
 			{
 				Responsibility.SetWorkItemUserActions[responsibilityId].Invoke(workItem, userId);
 			}

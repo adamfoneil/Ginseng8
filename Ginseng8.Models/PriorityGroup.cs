@@ -19,6 +19,12 @@ namespace Ginseng.Models
 		[MaxLength(50)]
 		public string IconClass { get; set; }
 
+		public bool IsSortable()
+		{
+			// only the "work on next" items can be prioritized from the All Items page, where priority group is shown
+			return (Id == 1);
+		}
+
 		public static DataTable GetSeedData()
 		{
 			return new PriorityGroup[]
