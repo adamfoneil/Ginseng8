@@ -29,24 +29,27 @@ function InitProjectSortable() {
             if (ui.sender == null) {
                 // issue here is we're not getting all the project cards on the page via .parents.... It's only
                 // including what's in the priority tier that was dropped on
-                updateProjectPriorities($(ui.item).parents('.project-sortable'));
+                updateAppProjectsPriorities($(ui.item).parents('.project-sortable'));
             } else {
                 // when an item from a connected sortable list has been dropped into another list
-                updateProjectPriorities($(ui.sender));
+                updateAppProjectsPriorities($(ui.sender));
             }
         }
     });
 }
 
-function updateProjectPriorities(list) {
+function updateAppProjectsPriorities(list) {
     if (list.length === 0) {
         return;
     }
 
     var projectArray = [];
 
+    var appContainer = list.parents('.app-container');
+    var appProjectsCards = appContainer.find('.project-card');
+
     list.find('.project-card').each(function (index, element) {
-        var priority = $('.project-card').index(element);
+        var priority = appProjectsCards.index(element);
 
         $(element).find('sup').html(priority + 1);
 
@@ -100,7 +103,6 @@ $('.project-work-items').tooltip({
         }).then(function (response) {
             return response.text();
         }).then(function (content) {
-            console.log($(ui.tooltip).find('.ui-tooltip-content'));
             $(ui.tooltip).find('.ui-tooltip-content').html(content);
         });
     },
