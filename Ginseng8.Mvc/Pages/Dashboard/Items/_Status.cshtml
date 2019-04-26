@@ -28,9 +28,9 @@
                 <span class="success small pr-2" style="display:none">Updated successfully</span>
                 <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
             }
+            <div class="dropdown-divider"></div>
             @if (Model.WorkItem.AssignedUserId.HasValue)
-            {
-                <div class="dropdown-divider"></div>
+            {                
                 <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">
                     Remove Me
                     <img src="~/img/loading.gif" style="display:none" />
