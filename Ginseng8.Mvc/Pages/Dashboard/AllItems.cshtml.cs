@@ -25,6 +25,9 @@ namespace Ginseng.Mvc.Pages.Work
 		public string Query { get; set; }
 
 		[BindProperty(SupportsGet = true)]
+		public int? FilterPriorityGroupId { get; set; }
+
+		[BindProperty(SupportsGet = true)]
 		public int? FilterUserId { get; set; }
 
 		[BindProperty(SupportsGet = true)]
@@ -58,6 +61,7 @@ namespace Ginseng.Mvc.Pages.Work
 
 		public Dictionary<PriorityGroupOptions, PriorityGroup> PriorityGroups { get; set; }
 
+		public SelectList PriorityGroupSelect { get; set; }
 		public SelectList UserSelect { get; set; }
 		public SelectList ActivitySelect { get; set; }
 		public SelectList CloseReasonSelect { get; set; }
@@ -80,6 +84,8 @@ namespace Ginseng.Mvc.Pages.Work
 		{
 			var groups = await new PriorityGroups().ExecuteAsync(connection);
 			PriorityGroups = groups.ToDictionary(row => (PriorityGroupOptions)row.Id);
+			var groupItems = groups.Select(row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
+			PriorityGroupSelect = new SelectList(groupItems, "Value", "Text", FilterPriorityGroupId);
 
 			var userList = await new UserSelect() { OrgId = OrgId }.ExecuteItemsAsync(connection);
 			userList.Insert(0, new SelectListItem() { Value = "0", Text = "- no assigned user -" });
@@ -121,6 +127,7 @@ namespace Ginseng.Mvc.Pages.Work
 				AssignedUserId = FilterUserId,
 				ActivityId = FilterActivityId,				
 				CloseReasonId = FilterCloseReasonId,				
+				PriorityGroupId = FilterPriorityGroupId,
 				Page = PageNumber,				
 			};
 		}

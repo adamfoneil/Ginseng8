@@ -19,7 +19,10 @@
 
 <form method="get">
     <input type="hidden" asp-for="@Model.Query"/>
-    <div class="form-row mb-3 justify-content-center">       
+    <div class="form-row mb-3 justify-content-center">
+        <select name="FilterPriorityGroupId" asp-items="Model.PriorityGroupSelect" class="form-control-sm mr-2" onchange="this.form.submit();">
+            <option value="">(all groups)</option>
+        </select>
         <select name="FilterUserId" asp-items="Model.UserSelect" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all users)</option>
         </select>

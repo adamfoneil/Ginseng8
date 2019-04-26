@@ -108,7 +108,11 @@ namespace Ginseng.Mvc.Queries
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
-		private const string AssignedUserExpression = "(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
+		private const string AssignedUserExpression = 
+			"(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
+
+		private const string PriorityGroupExpression = 
+			"(CASE WHEN [pri].[Id] IS NOT NULL AND " + AssignedUserExpression + " IS NULL AND [wi].[ActivityId] IS NULL THEN 1 WHEN [pri].[Id] IS NULL AND " + AssignedUserExpression + " IS NULL THEN 2 ELSE 3 END)";
 
 		private readonly List<QueryTrace> _traces;
 
@@ -153,11 +157,7 @@ namespace Ginseng.Mvc.Queries
 				[from_act].[Name] AS [FromActivityName],
 				[ho].[HtmlBody] AS [HandOffBody],
 				[ho].[DateCreated] AS [HandOffDate],
-				CASE
-					WHEN [pri].[Id] IS NOT NULL AND {AssignedUserExpression} IS NULL THEN 1 -- work on next (may be prioritized)
-					WHEN [pri].[Id] IS NULL THEN 2 -- backlog (cannot be prioritized)
-					ELSE 3 -- everything assigned (already has priority by individual)
-				END AS [PriorityGroup]
+				{PriorityGroupExpression} AS [PriorityGroup]
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
@@ -237,6 +237,9 @@ namespace Ginseng.Mvc.Queries
 		[Case(-1, "[wi].[CloseReasonId] IS NOT NULL")]
 		[Where("[wi].[CloseReasonId]=@closeReasonId")]
 		public int? CloseReasonId { get; set; }
+
+		[Where(PriorityGroupExpression + "=@priorityGroupId")]
+		public int? PriorityGroupId { get; set; }
 
 		[Case(0, AssignedUserExpression + " IS NULL")]
 		[Where(AssignedUserExpression + "=@assignedUserId")]
