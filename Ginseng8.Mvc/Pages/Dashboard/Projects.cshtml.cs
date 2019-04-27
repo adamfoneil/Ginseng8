@@ -23,7 +23,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 	public class ProjectsModel : DashboardPageModel, IActive
 	{
 		public ProjectsModel(IConfiguration config) : base(config)
-		{			
+		{
+			ShowExcelDownload = false; // because there are too many different options on this page for a single download, IMO
 		}
 
 		protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (ci) => ci.ProjectId ?? 0;

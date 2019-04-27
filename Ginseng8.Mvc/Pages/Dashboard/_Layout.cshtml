@@ -49,6 +49,11 @@
 
 @RenderBody()
 
+@if ((Model as DashboardPageModel)?.ShowExcelDownload ?? false)
+{
+    <a class="btn btn-light" asp-page-handler="ExcelDownload">Download to Excel</a>
+}
+
 @section Scripts {
     @RenderSection("Scripts", false)
     <script src="~/js/Dashboard.js"></script>
