@@ -97,21 +97,21 @@ projectUpdateFields.forEach(function (ele) {
 });
 
 $(document)
-.on('click', '.editHtml', function(event) {
-    event.preventDefault();
+    .on('click', '.editHtml', function (event) {
+        event.preventDefault();
 
-    var $target = $(event.target);
-    var idPrefix = $target.attr('data-id-prefix');
-    var id = $target.attr('data-id');
+        var $target = $(event.target);
+        var idPrefix = $target.attr('data-id-prefix');
+        var id = $target.attr('data-id');
 
-    $target.hide();
-    $('#' + idPrefix + '-edit-' + id).show();
-    $('#' + idPrefix + '-view-' + id).hide();
-    $('#' + idPrefix + '-content-' + id).froalaEditor('events.focus');
-})
-.on('click', '.cancelHtmlEdit', function(event) {
-    event.preventDefault();
-})
+        $target.hide();
+        $('#' + idPrefix + '-edit-' + id).show();
+        $('#' + idPrefix + '-view-' + id).hide();
+        $('#' + idPrefix + '-content-' + id).froalaEditor('events.focus');
+    })
+    .on('click', '.cancelHtmlEdit', function (event) {
+        event.preventDefault();
+    });
 
 $('.htmlEditor').on('froalaEditor.image.beforeUpload', function(event, editor, images) {
     console.group('before upload image, update params');
@@ -549,3 +549,12 @@ function projectCrosstabWorkItemUpdate(data) {
         return response.json();
     });
 }
+
+$(document).ready(function () {
+    $('.editable').each(function (index, element) {
+        $(element).editable($(this).data('url'), {
+            id: 'elementId',
+            name: 'newName'
+        });
+    });
+});

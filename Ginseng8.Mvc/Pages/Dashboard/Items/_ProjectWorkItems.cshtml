@@ -7,7 +7,7 @@
         foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
         {
             var projectItem = projectGrp.First();
-            <h5><span class="editable" id="project-name-@projectGrp.Key">@projectItem.ProjectName</span></h5>
+            <h5><span class="editable" id="project-name-@projectGrp.Key" data-url="/Update/ProjectName">@projectItem.ProjectName</span></h5>
 
             @if (projectGrp.Key != 0)
             {
