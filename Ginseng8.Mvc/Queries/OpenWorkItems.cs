@@ -74,6 +74,7 @@ namespace Ginseng.Mvc.Queries
 		public string CreatedByName { get; set; }
 		public DateTime DateCreated { get; set; }
 		public PriorityGroupOptions PriorityGroup { get; set; }
+		public string CreatedBy { get; set; }
 
 		public IEnumerable<Modifier> GetModifiers()
 		{
@@ -157,7 +158,8 @@ namespace Ginseng.Mvc.Queries
 				[from_act].[Name] AS [FromActivityName],
 				[ho].[HtmlBody] AS [HandOffBody],
 				[ho].[DateCreated] AS [HandOffDate],
-				{PriorityGroupExpression} AS [PriorityGroup]
+				{PriorityGroupExpression} AS [PriorityGroup],
+				[wi].[CreatedBy]
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]

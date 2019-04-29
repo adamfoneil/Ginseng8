@@ -6,5 +6,6 @@
 		string ProjectName { get; }
 		int? ProjectPriority { get; }
 		string Title { get; }
+		string CreatedBy { get; }
 	}
 }
