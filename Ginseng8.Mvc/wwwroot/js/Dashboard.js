@@ -554,7 +554,28 @@ $(document).ready(function () {
     $('.editable').each(function (index, element) {
         $(element).editable($(this).data('url'), {
             id: 'elementId',
-            name: 'newName'
+            name: 'newName',
+            before: function() {
+                if ($(element).parents('h5').length) {
+                    $(element).width('100%');
+                } else {
+                    $(element).outerWidth($(element).outerWidth());
+                }
+            },
+            onsubmit: function() {
+                $(element).width('auto');
+            },
+            onreset: function() {
+                $(element).width('auto');
+            }
         });
+    });
+
+    $('.editable')
+    .on('focus', 'input', function() {
+        $(this).parents('.editable').addClass('active');
+    })
+    .on('blur', 'input', function() {
+        $(this).parents('.editable').removeClass('active');
     });
 });

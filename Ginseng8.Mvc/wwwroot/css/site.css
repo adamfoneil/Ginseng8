@@ -97,3 +97,46 @@ body {
 .ui-draggable-handle {
   z-index: 1000;
 }
+
+.editable {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  padding-right: 24px;
+}
+
+.editable.active {
+  padding-right: 0;
+}
+
+.editable input {
+  width: 100% !important;
+}
+
+.editable:not(.active):hover {
+  background-color: #f8f9fa;
+  outline: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: .25rem;
+}
+
+.editable:not(.active):before {
+  display: -ms-flexbox;
+  display: flex;
+  content: "\f303";
+  color: #333;
+  font-family: "Font Awesome 5 Pro";
+  font-size: 12px;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 4px;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}
+
+.editable.active:before {
+  display: none;
+}
