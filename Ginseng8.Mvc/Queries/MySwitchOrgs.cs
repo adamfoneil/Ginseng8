@@ -9,7 +9,7 @@ namespace Ginseng.Mvc.Queries
 			@"SELECT [org].*
 			FROM [dbo].[Organization] [org]
 			WHERE (
-				EXISTS(SELECT 1 FROM [dbo].[OrganizationUser] WHERE [UserId]=@userId AND [IsEnabled]=1) OR
+				EXISTS(SELECT 1 FROM [dbo].[OrganizationUser] WHERE [UserId]=@userId AND [IsEnabled]=1 AND [OrganizationId]=[org].[Id]) OR
 				[org].[OwnerUserId]=@userId
 			) AND [org].[Id]<>@currentOrgId")
 		{
