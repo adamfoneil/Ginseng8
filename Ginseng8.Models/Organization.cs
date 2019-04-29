@@ -43,18 +43,21 @@ namespace Ginseng.Models
 		[UniqueKey]
 		public string TenantName { get; set; }
 
+		[MaxLength(255)]
+		public string FreshdeskUrl { get; set; }
+
 		public WorkDay MilestoneWorkDay { get; set; }
 		public UserProfile OwnerUser { get; set; }
 
 		public override bool Validate(IDbConnection connection, out string message)
 		{
-			if (Name.Contains("--") || Name.Contains(".."))
+			if (Name.Contains("--"))
 			{
-				message = "Name may not contain consecutive dashes or periods.";
+				message = "Name may not contain consecutive dashes.";
 				return false;
 			}
 
-			var allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890-.".ToCharArray();
+			var allowedChars = "abcdefghijklmnopqrstuvwxyz1234567890-".ToCharArray();
 			var nameChars = Name.Select(c => char.ToLower(c)).ToArray();
 			var invalid = nameChars.Except(allowedChars);
 
