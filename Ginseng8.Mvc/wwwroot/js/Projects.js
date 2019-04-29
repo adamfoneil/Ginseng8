@@ -16,25 +16,29 @@ $(document).ready(function () {
 });
 
 function InitProjectSortable() {
-    $('.project-sortable').sortable({
-        placeholder: "ui-state-highlight",                
-        connectWith: '.project-sortable',
-        cancel: 'button',
-        start: sortableStartUpdateHeightAndWidth,
-        stop: sortableStop,
+    $('.app-container').each(function(index, appContainer) {
+        var appContainerProjectsSortable = $(appContainer).find('.project-sortable');
 
-        update: function (event, ui) {
-            // This event is triggered when the user stopped sorting and the DOM position has changed.
+        appContainerProjectsSortable.sortable({
+            placeholder: 'ui-state-highlight',
+            connectWith: appContainerProjectsSortable,
+            cancel: 'button',
+            start: sortableStartUpdateHeightAndWidth,
+            stop: sortableStop,
 
-            if (ui.sender == null) {
-                // issue here is we're not getting all the project cards on the page via .parents.... It's only
-                // including what's in the priority tier that was dropped on
-                updateAppProjectsPriorities($(ui.item).parents('.project-sortable'));
-            } else {
-                // when an item from a connected sortable list has been dropped into another list
-                updateAppProjectsPriorities($(ui.sender));
+            update: function (event, ui) {
+                // This event is triggered when the user stopped sorting and the DOM position has changed.
+
+                if (ui.sender == null) {
+                    // issue here is we're not getting all the project cards on the page via .parents.... It's only
+                    // including what's in the priority tier that was dropped on
+                    updateAppProjectsPriorities($(ui.item).parents('.project-sortable'));
+                } else {
+                    // when an item from a connected sortable list has been dropped into another list
+                    updateAppProjectsPriorities($(ui.sender));
+                }
             }
-        }
+        });
     });
 }
 
