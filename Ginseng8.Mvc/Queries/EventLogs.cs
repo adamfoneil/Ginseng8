@@ -31,6 +31,11 @@ namespace Ginseng.Mvc.Queries
 		public string ProjectName { get; set; }
 		public string Title { get; set; }
 		public int? ProjectPriority { get; set; }
+
+		public bool IsEditable(string userName)
+		{
+			return false;
+		}
 	}
 
 	public class EventLogs : Query<EventLogsResult>, ITestableQuery

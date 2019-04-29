@@ -76,6 +76,11 @@ namespace Ginseng.Mvc.Queries
 		public PriorityGroupOptions PriorityGroup { get; set; }
 		public string CreatedBy { get; set; }
 
+		public bool IsEditable(string userName)
+		{
+			return CreatedBy.Equals(userName);
+		}
+
 		public IEnumerable<Modifier> GetModifiers()
 		{
 			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };

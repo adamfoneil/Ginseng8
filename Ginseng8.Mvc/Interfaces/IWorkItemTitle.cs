@@ -7,6 +7,6 @@
 		string ProjectName { get; }
 		int? ProjectPriority { get; }
 		string Title { get; }
-		string CreatedBy { get; }
+		bool IsEditable(string userName);
 	}
 }
