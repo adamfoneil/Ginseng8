@@ -203,13 +203,13 @@ namespace Ginseng.Mvc.Controllers
 			return Content(newName);
 		}
 
-		public async Task<ContentResult> WorkItemTitle(string elementId, string newTitle)
+		public async Task<ContentResult> WorkItemTitle(string elementId, string newName)
 		{
 			int number = IntFromText(elementId);
 			var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, Number = number });
-			workItem.Title = newTitle;
+			workItem.Title = newName;
 			await _data.TryUpdateAsync(workItem, r => r.Title);
-			return Content(newTitle);
+			return Content(newName);
 		}
 
 		public async Task<ContentResult> ProjectName(string elementId, string newName)

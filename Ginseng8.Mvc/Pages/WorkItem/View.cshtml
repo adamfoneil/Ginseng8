@@ -73,11 +73,6 @@
     <script src="~/lib/dropzone/min/dropzone.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('.editable').editable('/Update/WorkItemTitle', {
-                id: 'elementId',
-                name: 'newTitle'
-            });
-
             var dz = $('.dropzone');
             dz.on('success', function (file) {
                 // need some indication that file was uploaded

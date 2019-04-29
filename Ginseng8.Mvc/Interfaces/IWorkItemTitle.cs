@@ -2,6 +2,7 @@
 {
 	public interface IWorkItemTitle
 	{
+		int Number { get; }
 		int ProjectId { get; }
 		string ProjectName { get; }
 		int? ProjectPriority { get; }
