@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Freshdesk.Client\Freshdesk.Client.csproj" />
     <ProjectReference Include="..\Ginseng8.Mvc\Ginseng.Mvc.csproj" />
   </ItemGroup>
 
