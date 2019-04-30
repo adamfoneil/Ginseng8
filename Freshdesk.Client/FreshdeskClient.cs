@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;
+using System;
 using System.Collections.Generic;
 
 namespace Ginseng.Integration.Services
@@ -19,27 +20,35 @@ namespace Ginseng.Integration.Services
 			_endpointPrefix = endpointPrefix;
 		}
 
+		public IEnumerable<Ticket> ListTickets()
+		{
+			return ExecuteGet<Ticket[]>("/tickets");
+		}
+
 		/// <summary>
 		/// This affects our daily usage limit, so be aware
 		/// </summary>
 		private T ExecuteGet<T>(string resource)
 		{
 			var client = GetClient();
-			var request = Get(resource);
+			var request = GetRequest(resource);
 			var response = client.Get(request);
 			if (response.IsSuccessful)
 			{
-				return JsonConvert.DeserializeObject<T>(response.Content);
+				try
+				{
+					return JsonConvert.DeserializeObject<T>(response.Content);
+				}
+				catch (Exception exc)
+				{
+					// response.Content should be logged somewhere maybe
+					throw new Exception($"API call to {resource} succeeded, but Json deserialization of the result failed. {exc.Message}", exc);
+				}				
 			}
 			else
 			{
 				throw response.ErrorException;
 			}
-		}
-
-		public IEnumerable<Ticket> ListTickets()
-		{
-			return ExecuteGet<Ticket[]>("/tickets");
 		}
 
 		private RestClient GetClient()
@@ -52,7 +61,7 @@ namespace Ginseng.Integration.Services
 			return client;
 		}
 
-		private RestRequest Get(string resource)
+		private RestRequest GetRequest(string resource)
 		{
 			return new RestRequest(_endpointPrefix + resource, Method.GET);
 		}
