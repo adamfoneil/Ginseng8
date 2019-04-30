@@ -30,10 +30,13 @@ namespace Ginseng.Mvc.Services
 			_blobStorage = new BlobStorage(config);
 		}
 
+		/// <summary>
+		/// Was data retrieved from cache (blob storage) or queried live?
+		/// </summary>
 		public LoadedFrom LoadedFrom { get; private set; }
 
 		/// <summary>
-		/// Implement this to return the items the cache manager
+		/// Implement this to return the T items from the API
 		/// </summary>		
 		protected abstract Task<IEnumerable<T>> CallApiAsync(string orgName);		
 
