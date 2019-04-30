@@ -46,6 +46,9 @@ namespace Ginseng.Models
 		[MaxLength(255)]
 		public string FreshdeskUrl { get; set; }
 
+		[MaxLength(255)]
+		public string FreshdeskApiKey { get; set; }
+
 		public WorkDay MilestoneWorkDay { get; set; }
 		public UserProfile OwnerUser { get; set; }
 

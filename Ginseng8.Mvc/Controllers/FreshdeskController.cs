@@ -26,15 +26,11 @@ namespace Ginseng.Mvc.Controllers
 			_data = new DataAccess(_config);
 		}
 
-		public override void OnActionExecuting(ActionExecutingContext context)
-		{
-			base.OnActionExecuting(context);
-			_data.Initialize(User, TempData);
-		}
-
 		public IActionResult Login(string host_url = null)
 		{
 			if (!User.Identity.IsAuthenticated) return RedirectToPage("/Index");
+
+			_data.Initialize(User, TempData);
 
 			string secret = _config["Freshdesk:SSOSecret"];
 			string portalHost = (!string.IsNullOrEmpty(host_url)) ? host_url : _config["Freshdesk:HostUrl"];
@@ -55,7 +51,7 @@ namespace Ginseng.Mvc.Controllers
 			return Redirect(path);
 		}
 
-		public ActionResult FreshdeskLogout()
+		public ActionResult Logout()
 		{
 			return View();
 		}
