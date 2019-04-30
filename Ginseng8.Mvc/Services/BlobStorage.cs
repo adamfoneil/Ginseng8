@@ -114,25 +114,41 @@ namespace Ginseng.Mvc.Services
 			return GetUrl(blob) + GetSas(blob, permissions, sasTokenLifetime);
 		}
 
-		public async Task<IEnumerable<BlobInfo>> ListBlobs(string orgName, string prefix)
+		public async Task<IEnumerable<T>> ListBlobsAsync<T>(string orgName, string prefix, Func<CloudBlockBlob, Task<T>> initializer, Func<CloudBlockBlob, bool> filter = null) where T : new()
 		{
 			var container = await GetOrgContainerAsync(orgName);
 			BlobContinuationToken token = new BlobContinuationToken();
-			List<BlobInfo> results = new List<BlobInfo>();
+			List<T> results = new List<T>();
 			do
 			{
 				var response = await container.ListBlobsSegmentedAsync(prefix, true, BlobListingDetails.None, null, token, null, null);
 				token = response.ContinuationToken;
-				results.AddRange(response.Results.OfType<CloudBlockBlob>().Select(blob => new BlobInfo()
+				var blobs = response.Results.OfType<CloudBlockBlob>();
+				foreach (var blob in blobs)
+				{
+					if (filter?.Invoke(blob) ?? true)
+					{
+						var @object = await initializer.Invoke(blob);
+						results.Add(@object);
+					}
+				}				
+			} while (token != null);
+
+			return results;
+		}
+
+		public async Task<IEnumerable<BlobInfo>> ListBlobsAsync(string orgName, string prefix)
+		{
+			return await ListBlobsAsync(orgName, prefix, async (blob) =>
+			{
+				return await Task.FromResult(new BlobInfo()
 				{
 					Uri = blob.Uri,
 					Filename = Path.GetFileName(blob.Uri.ToString()),
 					Length = blob.Properties.Length,
 					LastModified = blob.Properties.LastModified
-				}));
-			} while (token != null);
-
-			return results;
+				});
+			});
 		}
 
 		public async Task DeleteAsync(string orgName, string name)

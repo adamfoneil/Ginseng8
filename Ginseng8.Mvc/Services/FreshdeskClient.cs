@@ -1,4 +1,4 @@
-﻿using Freshdesk.Client.Models;
+﻿using Ginseng.Models.Freshdesk;
 using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Authenticators;

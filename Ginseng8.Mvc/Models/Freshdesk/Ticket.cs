@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 using System;
 using System.Globalization;
 
-namespace Freshdesk.Client.Models
+namespace Ginseng.Models.Freshdesk
 {
 	/// <summary>
 	/// Generated at https://app.quicktype.io/#l=cs&r=json2csharp

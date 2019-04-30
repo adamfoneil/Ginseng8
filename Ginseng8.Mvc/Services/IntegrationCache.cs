@@ -7,87 +7,116 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Services
 {
+	public enum LoadedFrom
+	{
+		Live,
+		Cache
+	}
+
 	/// <summary>
 	/// Stores json-serialized objects retrieved from API calls in a blob storage folder,
 	/// with controls for throttling API calls to prevent use overages
 	/// </summary>
-	public abstract class IntegrationCache<T>
+	public abstract class IntegrationCache<T> where T : new()
 	{
 		private readonly string _folderName;
-		private readonly BlobStorage _blobStorage;
-		private readonly string _orgName;
+		private readonly BlobStorage _blobStorage;		
 
 		private const string markerBlobName = "cache_time_marker.json";
 
-		public IntegrationCache(IConfiguration config, string orgName, string folderName)
+		public IntegrationCache(IConfiguration config, string folderName)
 		{
-			_folderName = folderName;
-			_orgName = orgName;
+			_folderName = folderName;			
 			_blobStorage = new BlobStorage(config);
 		}
+
+		public LoadedFrom LoadedFrom { get; private set; }
 
 		/// <summary>
 		/// Implement this to return the items the cache manager
 		/// </summary>		
-		protected abstract Task<IEnumerable<T>> CallApiAsync();		
+		protected abstract Task<IEnumerable<T>> CallApiAsync(string orgName);		
 
 		/// <summary>
 		/// How much time passes before we allow API to called again
 		/// </summary>
 		public abstract TimeSpan CallInterval { get; }
 
-		public async Task<IEnumerable<T>> QueryAsync()
+		/// <summary>
+		/// When given a blob, how do we convert this to T?
+		/// </summary>
+		protected abstract Task<T> ConvertFromBlobAsync(CloudBlockBlob blob);
+
+		/// <summary>
+		/// How do we name the blobs from the incoming object?
+		/// </summary>
+		protected abstract string GetBlobName(T @object);
+
+		/// <summary>
+		/// Override this if you need to customize how serialization happens
+		/// </summary>
+		protected virtual string SerializeObject(T @object)
+		{
+			return JsonConvert.SerializeObject(@object);
+		}
+
+		public async Task<IEnumerable<T>> QueryAsync(string orgName)
 		{
 			IEnumerable<T> results = null;
 
-			if (await AllowApiCallAsync())
+			if (await AllowApiCallAsync(orgName))
 			{
 				// enough time has passed since last API call
-				results = await CallApiAsync();
-				await CacheResultsAsync(results);				
+				results = await CallApiAsync(orgName);
+
+				// save results in blob storage so I can get them again without hitting the API
+				var container = await _blobStorage.GetOrgContainerAsync(orgName);
+				foreach (T item in results)
+				{
+					string blobName = GetBlobName(item);
+					var blob = container.GetBlockBlobReference(_folderName + "/" + blobName);
+					string content = SerializeObject(item);
+					blob.Properties.ContentType = "text/json";
+					await blob.UploadTextAsync(content);
+				}
+				await SetLastApiCallTimeAsync(orgName);
+				LoadedFrom = LoadedFrom.Live;
 			}
 			else
 			{
-				// load from cache
-				await _blobStorage.ListBlobs(_orgName, _folderName);
+				// load from blob storage (except for the time marker)
+				results = await _blobStorage.ListBlobsAsync(orgName, _folderName, 
+					async (blob) => await ConvertFromBlobAsync(blob), 
+					(blob) => !blob.Name.Equals(_folderName + "/" + markerBlobName));
+				LoadedFrom = LoadedFrom.Cache;
 			}
 
 			return results;
 		}
 
-		private async Task<bool> AllowApiCallAsync()
+		private async Task<bool> AllowApiCallAsync(string orgName)
 		{
-			var lastCall = await GetLastApiCallTimeAsync();
+			var lastCall = await GetLastApiCallTimeAsync(orgName);
 			return (DateTime.UtcNow.Subtract(lastCall) > CallInterval);
 		}
 
-		private async Task CacheResultsAsync(IEnumerable<T> results)
+		private async Task SetLastApiCallTimeAsync(string orgName)
 		{
-			foreach (T item in results)
-			{
-
-			}
-
-			await SetLastApiCallTimeAsync();
-		}
-
-		private async Task SetLastApiCallTimeAsync()
-		{
-			var marker = await GetTimeMarkerBlobAsync();
+			var marker = await GetTimeMarkerBlobAsync(orgName);
 			await marker.UploadTextAsync(JsonConvert.SerializeObject(DateTime.UtcNow));
 		}
 
-		private async Task<DateTime> GetLastApiCallTimeAsync()
+		private async Task<DateTime> GetLastApiCallTimeAsync(string orgName)
 		{
-			var marker = await GetTimeMarkerBlobAsync();
+			var marker = await GetTimeMarkerBlobAsync(orgName);
 			if (!(await marker.ExistsAsync())) return DateTime.MinValue;
 			string dateTime = await marker.DownloadTextAsync();
 			return JsonConvert.DeserializeObject<DateTime>(dateTime);
 		}
 
-		private async Task<CloudBlockBlob> GetTimeMarkerBlobAsync()
+		private async Task<CloudBlockBlob> GetTimeMarkerBlobAsync(string orgName)
 		{
-			var container = await _blobStorage.GetOrgContainerAsync(_orgName);
+			var container = await _blobStorage.GetOrgContainerAsync(orgName);
 			var blob = container.GetBlockBlobReference(_folderName + "/" + markerBlobName);
 			blob.Properties.ContentType = "text/json";
 			return blob;

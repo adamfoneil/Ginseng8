@@ -1,0 +1,20 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Tickets.IndexModel
+
+<h3>Freshdesk Tickets</h3>
+
+<table class="table">
+    <tr>
+        <th>Id</th>
+        <th>Subject</th>
+        <th>Date</th>
+    </tr>
+    @foreach (var item in Model.Tickets)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.Subject</td>
+            <td>@item.CreatedAt.DateTime</td>
+        </tr>
+    }
+</table>
