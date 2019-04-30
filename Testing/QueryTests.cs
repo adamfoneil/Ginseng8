@@ -14,7 +14,7 @@ namespace Testing
 		// https://www.jerriepelser.com/blog/using-configuration-files-in-dotnet-core-unit-tests/
 		// https://weblog.west-wind.com/posts/2018/Feb/18/Accessing-Configuration-in-NET-Core-Test-Projects
 
-		private IConfiguration _config;
+		private readonly IConfiguration _config;
 
 		public QueryTests()
 		{

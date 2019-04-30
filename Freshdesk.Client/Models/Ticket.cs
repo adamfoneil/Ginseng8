@@ -29,25 +29,25 @@ namespace Freshdesk.Client.Models
 		public bool Spam { get; set; }
 
 		[JsonProperty("email_config_id")]
-		public long EmailConfigId { get; set; }
+		public long? EmailConfigId { get; set; }
 
 		[JsonProperty("group_id")]
-		public int GroupId { get; set; }
+		public int? GroupId { get; set; }
 
 		[JsonProperty("priority")]
-		public long Priority { get; set; }
+		public int Priority { get; set; }
 
 		[JsonProperty("requester_id")]
 		public long RequesterId { get; set; }
 
 		[JsonProperty("responder_id")]
-		public int ResponderId { get; set; }
+		public long? ResponderId { get; set; }
 
 		[JsonProperty("source")]
 		public long Source { get; set; }
 
 		[JsonProperty("company_id")]
-		public int CompanyId { get; set; }
+		public long? CompanyId { get; set; }
 
 		[JsonProperty("status")]
 		public int Status { get; set; }
@@ -89,7 +89,7 @@ namespace Freshdesk.Client.Models
 		public DateTimeOffset UpdatedAt { get; set; }
 
 		[JsonProperty("associated_tickets_count")]
-		public int AssociatedTicketsCount { get; set; }
+		public int? AssociatedTicketsCount { get; set; }
 
 		[JsonProperty("tags")]
 		public string[] Tags { get; set; }
