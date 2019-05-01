@@ -11,7 +11,7 @@ namespace Ginseng.Mvc.Pages.Tickets
 	[Authorize]
 	public class IndexModel : AppPageModel
 	{
-		private FreshdeskTicketCache _cache;
+		private readonly FreshdeskTicketCache _cache;
 
 		public IndexModel(IConfiguration config) : base(config)
 		{			
