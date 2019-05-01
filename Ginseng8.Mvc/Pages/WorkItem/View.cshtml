@@ -42,22 +42,26 @@
     <div class="col-2"></div>
     <div class="col-10">
 
-        <ul>
-            @foreach (var att in Model.Attachments)
-            {
-                <li class="mb-2">
-                    <a href="@att.Url">@att.DisplayName</a>
-                    @if (att.AllowDelete)
-                    {                        
-                        <form method="post" asp-page-handler="DeleteAttachment" class="d-inline-block">
-                            <input type="hidden" name="Id" value="@att.Id"/>
-                            <button class="btn btn-sm" onclick="return confirm('This will delete the attachment.')">Delete...</button>
-                        </form>                        
-                    }
-                </li>
-            }
-        </ul>
-
+        @if (Model.Attachments.Any())
+        {
+            <ul>
+                @foreach (var att in Model.Attachments)
+                {
+                    <li class="mb-2">
+                        <a href="@att.Url">@att.DisplayName</a>
+                        @if (att.AllowDelete)
+                        {                        
+                            <form method="post" asp-page-handler="DeleteAttachment" class="d-inline-block">
+                                <input type="hidden" name="Id" value="@att.Id"/>
+                                <button class="btn btn-sm" onclick="return confirm('This will delete the attachment.')">Delete...</button>
+                            </form>                        
+                        }
+                    </li>
+                }
+            </ul>
+            <a asp-page-handler="DownloadAllAttachments" class="btn btn-light btn-sm">Download All Attachments</a>
+        }
+        
         <form asp-controller="Upload" asp-action="Attachment" method="post" class="dropzone" id="frmDropzone">            
             <input type="hidden" name="Id" value="@Model.Item.Number"/>
             <input type="hidden" name="FolderName" value="WorkItems"/>
