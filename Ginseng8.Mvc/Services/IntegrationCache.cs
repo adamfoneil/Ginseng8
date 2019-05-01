@@ -36,6 +36,11 @@ namespace Ginseng.Mvc.Services
 		public LoadedFrom LoadedFrom { get; private set; }
 
 		/// <summary>
+		/// UTC time of last API call
+		/// </summary>
+		public DateTime LastApiCallDateTime { get; private set; }
+
+		/// <summary>
 		/// Implement this to return the T items from the API
 		/// </summary>		
 		protected abstract Task<IEnumerable<T>> CallApiAsync(string orgName);		
@@ -100,13 +105,15 @@ namespace Ginseng.Mvc.Services
 		private async Task<bool> AllowApiCallAsync(string orgName)
 		{
 			var lastCall = await GetLastApiCallTimeAsync(orgName);
+			LastApiCallDateTime = lastCall;
 			return (DateTime.UtcNow.Subtract(lastCall) > CallInterval);
 		}
 
 		private async Task SetLastApiCallTimeAsync(string orgName)
 		{
+			LastApiCallDateTime = DateTime.UtcNow;
 			var marker = await GetTimeMarkerBlobAsync(orgName);
-			await marker.UploadTextAsync(JsonConvert.SerializeObject(DateTime.UtcNow));
+			await marker.UploadTextAsync(JsonConvert.SerializeObject(LastApiCallDateTime));
 		}
 
 		private async Task<DateTime> GetLastApiCallTimeAsync(string orgName)
