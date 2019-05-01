@@ -3,9 +3,13 @@ using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Postulate.SqlServer.IntKey;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -56,6 +60,34 @@ namespace Ginseng.Mvc.Pages.WorkItem
 			}
 
 			return RedirectToPage("View");
+		}
+
+		public async Task<FileResult> OnGetDownloadAllAttachmentsAsync()
+		{
+			using (var cn = Data.GetConnection())
+			{
+				var attachments = await new Attachments() { OrgId = OrgId, ObjectType = ObjectType.WorkItem, ObjectId = Id, UserName = User.Identity.Name }.ExecuteAsync(cn);
+
+				var container = await _blobStorage.GetOrgContainerAsync(Data.CurrentOrg.Name);
+
+				using (var stream = new MemoryStream())
+				{
+					using (var zip = new ZipArchive(stream, ZipArchiveMode.Create))
+					{
+						foreach (var att in attachments)
+						{
+							var uri = new Uri(att.Url);
+							var blob = new CloudBlockBlob(uri);
+							var entry = zip.CreateEntry(blob.Name);
+							using (var entryStream = entry.Open())
+							{
+								await blob.DownloadToStreamAsync(entryStream);
+							}
+						}
+					}
+					return File(stream.ToArray(), "application/zip", $"WorkItem-{Id}.zip");
+				}				
+			}
 		}
 	}
 }
