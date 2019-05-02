@@ -7,6 +7,7 @@ namespace Ginseng.Models.Freshdesk
 {
 	/// <summary>
 	/// Generated at https://app.quicktype.io/#l=cs&r=json2csharp
+	/// Note this is persisted in blob storage as json, not in database
 	/// </summary>
 	public partial class Ticket
 	{
