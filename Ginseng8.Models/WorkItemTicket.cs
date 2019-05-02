@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
+using System;
 
 namespace Ginseng.Models
 {
@@ -17,6 +18,13 @@ namespace Ginseng.Models
 		[PrimaryKey]
 		public long TicketId { get; set; }
 
+		/// <summary>
+		/// Maps to Ginseng.Mvc.Models.Freshdesk.Ticket.Status
+		/// </summary>
+		public int TicketStatus { get; set; }
+
+		public DateTime? TicketStatusDateModified { get; set; }
+
 		[References(typeof(Organization))]
 		public int OrganizationId { get; set; }
 
@@ -25,4 +33,19 @@ namespace Ginseng.Models
 		/// </summary>
 		public int WorkItemNumber { get; set; }
 	}
+
+	/*
+	events to handle:
+
+	- WorkItemTicket created: 
+		Set custom field on corresponding Freshdesk ticket so users can see Ginseng work item and its status.
+		The custom field should be a link like this: <a href="https://ginseng8.azurewebsites.net/WorkItem/View/{number}">{number} {status}</a>
+		[pseudocode] status = (WorkItem.CloseReasonId == null) ? "Open" : CloseReason.Name;
+
+	- WorkItem CloseReasonId changes:
+		Update the ticket custom field with link with reflecting new status
+
+	- Freshdesk ticket status changes:
+		Update WorkItemTicket.TicketStatus and TicketStatusDateModified with UTC datetime
+	*/
 }
