@@ -1,4 +1,4 @@
-﻿CREATE PROC [dbo].[CancelInvoice]
+﻿ALTER PROC [dbo].[CancelInvoice]
 	@userName nvarchar(50),
 	@orgId int,
 	@number int
@@ -13,7 +13,7 @@ BEGIN
 	RETURN
 END
 
-IF EXISTS(SELECT 1 FROM [dbo].[Invoice] WHERE [StatusId]=1 AND [Number]=@number AND [OrganizationId]=@orgId)
+IF EXISTS(SELECT 1 FROM [dbo].[Invoice] WHERE [StatusId]=2 AND [Number]=@number AND [OrganizationId]=@orgId)
 BEGIN
 	RAISERROR('Can''t cancel a paid invoice.', 16, 1)
 	RETURN
@@ -44,6 +44,7 @@ BEGIN TRY
 	
 	UPDATE [inv] SET
 		[StatusId]=4, --canceled
+		[StatusDate]=dbo.LocalTimeNow(@userName),
 		[ModifiedBy]=@userName,
 		[DateModified]=dbo.LocalTimeNow(@userName)
 	FROM
