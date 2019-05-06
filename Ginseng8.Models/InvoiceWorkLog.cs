@@ -35,6 +35,13 @@ namespace Ginseng.Models
         [DecimalPrecision(4, 2)]
         public decimal Hours { get; set; }
 
+        [Column(TypeName = "money")]
+        public decimal Rate { get; set; }
+
+        [Calculated("[Hours]*[Rate]", true)]
+        [DecimalPrecision(5,2)]
+        public decimal Amount { get; set; }
+
         public string TextBody { get; set; }
 
         public string HtmlBody { get; set; }
@@ -48,5 +55,10 @@ namespace Ginseng.Models
         /// Commit message or comment id that this record was generated from
         /// </summary>
         public int? SourceId { get; set; }
+
+        /// <summary>
+		/// PendingWorkLog.Id, used during post process to clear the pending rows based on what was just posted
+		/// </summary>
+        public int PendingId { get; set; }
     }
 }
