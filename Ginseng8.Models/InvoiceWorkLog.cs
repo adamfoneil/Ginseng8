@@ -26,6 +26,9 @@ namespace Ginseng.Models
         [References(typeof(WorkItem))]
         public int? WorkItemId { get; set; }
 
+        [References(typeof(Application))]
+        public int ApplicationId { get; set; }
+
         [References(typeof(UserProfile))]
         public int UserId { get; set; }
 

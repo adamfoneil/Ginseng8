@@ -35,6 +35,9 @@ namespace Ginseng.Models
 		[References(typeof(WorkItem))]
 		public int? WorkItemId { get; set; }		
 
+        [References(typeof(Application))]
+        public int ApplicationId { get; set; }
+
 		[References(typeof(UserProfile))]
 		public int UserId { get; set; }
 
@@ -83,6 +86,7 @@ namespace Ginseng.Models
 				var workLog = new PendingWorkLog()
 				{
 					OrganizationId = link.OrganizationId,
+                    ApplicationId = link.ApplicationId,
 					ProjectId = link.ProjectId,
 					WorkItemId = link.WorkItemId,
 					UserId = currentUser.UserId,
@@ -107,6 +111,7 @@ namespace Ginseng.Models
 					return new PendingHoursLink()
 					{
 						OrganizationId = prj.Application.OrganizationId,
+                        ApplicationId = prj.ApplicationId,
 						ProjectId = comment.ObjectId,
 						WorkItemId = null
 					};										
@@ -116,6 +121,7 @@ namespace Ginseng.Models
 					return new PendingHoursLink()
 					{
 						OrganizationId = workItem.OrganizationId,
+                        ApplicationId = workItem.ApplicationId,
 						ProjectId = workItem.ProjectId,
 						WorkItemId = workItem.Id
 					};
@@ -142,6 +148,7 @@ namespace Ginseng.Models
 	internal class PendingHoursLink
 	{
 		public int OrganizationId { get; set; }
+        public int ApplicationId { get; set; }
 		public int? ProjectId { get; set; }
 		public int? WorkItemId { get; set; }
 	}
