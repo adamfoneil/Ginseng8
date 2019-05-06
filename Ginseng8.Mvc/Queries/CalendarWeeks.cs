@@ -1,4 +1,5 @@
-﻿using Postulate.Base;
+﻿using Ginseng.Mvc.Queries.Models;
+using Postulate.Base;
 using System;
 
 namespace Ginseng.Mvc.Queries
@@ -10,6 +11,8 @@ namespace Ginseng.Mvc.Queries
 		public DateTime EndDate { get; set; }
 		public int Year { get; set; }
 		public int WeekNumber { get; set; }
+
+        public Week ToWeek() { return new Week() { Year = Year, WeekNumber = WeekNumber }; }
 	}
 
 	/// <summary>
