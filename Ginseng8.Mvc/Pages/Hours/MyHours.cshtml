@@ -1,0 +1,48 @@
+﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@model Ginseng.Mvc.Pages.Hours.InvoiceModel
+
+@if (!Model.CurrentOrgUser.CurrentAppId.HasValue)
+{
+    <p>Please select an App above.</p>
+    return;
+}
+
+@Html.ActionAlert(TempData)
+
+@{
+    var grid = new GridEditor<PendingWorkLog>(this, Xsrf);
+}
+
+<h4>My Hours</h4>
+<p>Use this to edit hours that haven't been invoiced yet.</p>
+
+<table class="table">
+    @foreach (var log in Model.WorkLogs)
+    {
+        <tr id="@grid.RowId(log)">
+            <td>@grid.DropDownList(m => m.ProjectId, Model.ProjectSelect, new { @class = "form-control" })</td>
+            <td>
+                @grid.TextBox(m => m.WorkItemNumber, new { @class = "form-control", style = "width:80px" })
+                @log.WorkItemTitle
+            </td>
+            <td>@grid.TextBox(m => m.Date, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Hours, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.TextBody, new { @class = "form-control" })</td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }        
+    <tr id="@grid.NewRowId()">
+        <td>@grid.DropDownList(m => m.ProjectId, Model.ProjectSelect, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.WorkItemNumber, new { @class = "form-control", style = "width:80px" })</td>
+        <td>@grid.TextBox(m => m.Date, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Hours, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.TextBody, new { @class = "form-control" })</td>
+        <td>@grid.Controls()</td>
+    </tr>
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+}

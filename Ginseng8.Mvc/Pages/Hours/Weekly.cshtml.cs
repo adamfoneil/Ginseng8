@@ -30,7 +30,7 @@ namespace Ginseng.Mvc.Pages.Hours
 
                 var weekDictionary = Results.Weeks.ToDictionary(row => row.WeekIndex);
 
-                Results.WorkLogs = await new PendingWorkLogs()
+                Results.WorkLogs = await new AllPendingWorkLogs()
                 {
                     OrgId = OrgId,
                     UserId = UserId,

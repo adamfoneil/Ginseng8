@@ -61,6 +61,12 @@ namespace Ginseng.Models
 		/// </summary>
 		public int? SourceId { get; set; }
 
+        [NotMapped]
+        public int? WorkItemNumber { get; set; }
+
+        [NotMapped]
+        public string WorkItemTitle { get; set; }
+
 		public override bool Validate(IDbConnection connection, out string message)
 		{
 			if (!ProjectId.HasValue && !WorkItemId.HasValue)

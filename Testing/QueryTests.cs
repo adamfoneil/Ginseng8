@@ -100,9 +100,9 @@ namespace Testing
 		}
 
         [TestMethod]
-        public void PendingWorkLogsQuery()
+        public void AllPendingWorkLogsQuery()
         {
-            TestQuery<PendingWorkLogs>();
+            TestQuery<AllPendingWorkLogs>();
         }
 	}
 }
