@@ -16,10 +16,10 @@ namespace Ginseng.Mvc.Queries
 
         public int OrgId { get; set; }
 
-        [Where("[ApplicationId]=@appId")]
+        [Where("[wl].[ApplicationId]=@appId")]
         public int? AppId { get; set; }
 
-        [Where("[UserId]=@userId")]
+        [Where("[wl].[UserId]=@userId")]
         public int? UserId { get; set; }
     }
 }
