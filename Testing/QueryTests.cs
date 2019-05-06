@@ -104,5 +104,11 @@ namespace Testing
         {
             TestQuery<AllPendingWorkLogs>();
         }
+
+        [TestMethod]
+        public void AllInvoiceWorkItemsQuery()
+        {
+            TestQuery<AllInvoiceWorkLogs>();
+        }
 	}
 }
