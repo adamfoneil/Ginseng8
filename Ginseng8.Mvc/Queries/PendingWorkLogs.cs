@@ -13,6 +13,7 @@ namespace Ginseng.Mvc.Queries
 		public int? ProjectId { get; set; }
 		public int? WorkItemId { get; set; }
 		public int UserId { get; set; }
+        public string DeveloperName { get; set; }
 		public DateTime Date { get; set; }
 		public decimal Hours { get; set; }
 		public string TextBody { get; set; }
@@ -36,6 +37,7 @@ namespace Ginseng.Mvc.Queries
 		public PendingWorkLogs() : base(
 			@"SELECT
 				[wl].*,
+                COALESCE([ou].[DisplayName], [u].[UserName]) AS [DeveloperName],
 				CASE
 					WHEN [wl].[ProjectId] IS NOT NULL THEN [p].[Name]
 					WHEN [wl].[WorkItemId] IS NOT NULL THEN [wi].[Title]
@@ -51,6 +53,8 @@ namespace Ginseng.Mvc.Queries
 				[dbo].[PendingWorkLog] [wl]
 				LEFT JOIN [dbo].[WorkItem] [wi] ON [wl].[WorkItemId]=[wi].[Id]
 				LEFT JOIN [dbo].[Project] [p] ON [wl].[ProjectId]=[p].[Id]
+                INNER JOIN [dbo].[OrganizationUser] [ou] ON [wl].[UserId]=[ou].[UserId] AND [wl].[OrganizationId]=[ou].[OrganizationId]
+                INNER JOIN [dbo].[AspNetUsers] [u] ON [wl].[UserId]=[u].[UserId]
 			WHERE
 				[wl].[OrganizationId]=@orgId {andWhere}")
 		{
@@ -72,7 +76,7 @@ namespace Ginseng.Mvc.Queries
 			return TestExecuteHelper(connection);
 		}
 
-		public static IEnumerable<ITestableQuery> GetTestCases()
+		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new PendingWorkLogs() { OrgId = 0 };
 			yield return new PendingWorkLogs() { Year = 2019 };

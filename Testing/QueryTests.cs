@@ -99,5 +99,10 @@ namespace Testing
 			TestQuery<NextPriority>();
 		}
 
+        [TestMethod]
+        public void PendingWorkLogsQuery()
+        {
+            TestQuery<PendingWorkLogs>();
+        }
 	}
 }
