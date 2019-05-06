@@ -85,7 +85,7 @@ namespace Ginseng.Mvc.Queries
 				[dbo].[PendingWorkLog] [wl]
 				LEFT JOIN [dbo].[WorkItem] [wi] ON [wl].[WorkItemId]=[wi].[Id]                
 				LEFT JOIN [dbo].[Project] [p] ON [wl].[ProjectId]=[p].[Id]
-                LEFT JOIN [dbo].[Application] [app] ON COALESCE([wi].[ApplicationId], [p].[ApplicationId])=[app].[Id]
+                LEFT JOIN [dbo].[Application] [app] ON [wl].[ApplicationId]=[app].[Id]
                 INNER JOIN [dbo].[OrganizationUser] [ou] ON [wl].[UserId]=[ou].[UserId] AND [wl].[OrganizationId]=[ou].[OrganizationId]
                 INNER JOIN [dbo].[AspNetUsers] [u] ON [wl].[UserId]=[u].[UserId]
 			WHERE
