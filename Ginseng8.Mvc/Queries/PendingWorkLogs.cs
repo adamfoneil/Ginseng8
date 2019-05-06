@@ -38,16 +38,11 @@ namespace Ginseng.Mvc.Queries
         public int? InvoiceId { get; set; }
 
         public int Number => WorkItemNumber ?? 0;
-
         public string ProjectName => Title;
-
         public int? ProjectPriority => null;
-
         public int EstimateHours { get; set; }
         public decimal ColorGradientPosition { get; set; }
-
         int IWorkItemTitle.ProjectId => ProjectId ?? 0;
-
         int IWorkItemNumber.Number { get { return WorkItemNumber ?? 0; } set { WorkItemNumber = value; } }
 
         public bool IsEditable(string userName)
