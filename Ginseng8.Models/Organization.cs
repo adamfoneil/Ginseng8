@@ -23,6 +23,9 @@ namespace Ginseng.Models
 		[DefaultExpression("1000")]
 		public int NextWorkItemNumber { get; set; } = 1000;
 
+        [DefaultExpression("1000")]
+        public int NextInvoiceNumber { get; set; } = 1000;
+
 		[DefaultExpression("3")]
 		public int IterationWeeks { get; set; } = 3;
 
