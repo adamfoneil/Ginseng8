@@ -27,14 +27,14 @@ namespace Ginseng.Models.Queries
 
 		public int Id { get; set; }
 
+		public IEnumerable<ITestableQuery> GetTestCases()
+		{
+			yield return new InsertEventSubscriptionEmailNotifications() { Id = 0 };
+		}
+
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
 		{
 			return TestExecuteHelper(connection);
-		}
-
-		public static IEnumerable<ITestableQuery> GetTestCases()
-		{
-			yield return new InsertEventSubscriptionEmailNotifications() { Id = 0 };
 		}
 	}
 }

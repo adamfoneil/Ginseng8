@@ -97,21 +97,21 @@ projectUpdateFields.forEach(function (ele) {
 });
 
 $(document)
-.on('click', '.editHtml', function(event) {
-    event.preventDefault();
+    .on('click', '.editHtml', function (event) {
+        event.preventDefault();
 
-    var $target = $(event.target);
-    var idPrefix = $target.attr('data-id-prefix');
-    var id = $target.attr('data-id');
+        var $target = $(event.target);
+        var idPrefix = $target.attr('data-id-prefix');
+        var id = $target.attr('data-id');
 
-    $target.hide();
-    $('#' + idPrefix + '-edit-' + id).show();
-    $('#' + idPrefix + '-view-' + id).hide();
-    $('#' + idPrefix + '-content-' + id).froalaEditor('events.focus');
-})
-.on('click', '.cancelHtmlEdit', function(event) {
-    event.preventDefault();
-})
+        $target.hide();
+        $('#' + idPrefix + '-edit-' + id).show();
+        $('#' + idPrefix + '-view-' + id).hide();
+        $('#' + idPrefix + '-content-' + id).froalaEditor('events.focus');
+    })
+    .on('click', '.cancelHtmlEdit', function (event) {
+        event.preventDefault();
+    });
 
 $('.htmlEditor').on('froalaEditor.image.beforeUpload', function(event, editor, images) {
     console.group('before upload image, update params');
@@ -250,85 +250,62 @@ selfStartLinks.forEach(function (ele) {
 var resumeWorkLinks = document.querySelectorAll('.resume-work-item');
 resumeWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
-        var loading = $(ev.target).find('img');
-        $(loading).show();
-
-        var data = {
-            id: ev.target.getAttribute('data-number')
-        };
-
-        var formData = getFormData(data);
-        fetch('/WorkItem/ResumeActivity', {
-            method: 'post',
-            body: formData
-        }).then(function (response) {
-            return response.json();
-        }).then(function (result) {
-            $(loading).hide();
-            $(ev.target).hide();
-            if (result.success) {
-                $(ev.target).nextAll('.success').show();
-            } else {
-                $(ev.target).next('.error').show();
-            }
-        });
+        AssignActionEventHandler(ev, '/WorkItem/ResumeActivity');
     });
 });
 
 var cancelWorkLinks = document.querySelectorAll('.cancel-activity');
 cancelWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
-        var loading = $(ev.target).find('img');
-        $(loading).show();
-
-        var data = {
-            id: ev.target.getAttribute('data-number')
-        };
-
-        var formData = getFormData(data);
-        fetch('/WorkItem/CancelActivity', {
-            method: 'post',
-            body: formData
-        }).then(function (response) {
-            return response.json();
-        }).then(function (result) {
-            $(loading).hide();
-            $(ev.target).hide();
-            if (result.success) {
-                $(ev.target).nextAll('.success').show();
-            } else {
-                $(ev.target).next('.error').show();
-            }
-        });
+        AssignActionEventHandler(ev, '/WorkItem/CancelActivity');
     });
 });
 
 var unassignWorkLinks = document.querySelectorAll('.unassign-work-item');
 unassignWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
-        var loading = $(ev.target).find('img');
-        $(loading).show();
-
-        var data = {
-            id: ev.target.getAttribute('data-number')
-        };
-        var formData = getFormData(data);
-        fetch('/WorkItem/UnassignMe', {
-            method: 'post',
-            body: formData
-        }).then(function (response) {
-            return response.json();
-        }).then(function (result) {
-            $(loading).hide();
-            $(ev.target).hide();
-            if (result.success) {
-                $(ev.target).nextAll('.success').show();
-            } else {
-                $(ev.target).next('.error').show();
-            }
-        });
+        AssignActionEventHandler(ev, '/WorkItem/UnassignMe');
     });
 });
+
+var workOnNextLinks = document.querySelectorAll('.work-on-next');
+workOnNextLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        AssignActionEventHandler(ev, '/WorkItem/WorkOnNext');
+    });
+});
+
+var removePriorityLinks = document.querySelectorAll('.remove-priority');
+removePriorityLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        AssignActionEventHandler(ev, '/WorkItem/RemovePriority');
+    });
+});
+
+function AssignActionEventHandler(ev, postUrl) {
+    ev.preventDefault();
+    var loading = $(ev.target).find('img');
+    $(loading).show();
+
+    var data = {
+        id: ev.target.getAttribute('data-number')
+    };
+    var formData = getFormData(data);
+    fetch(postUrl, {
+        method: 'post',
+        body: formData
+    }).then(function (response) {
+        return response.json();
+    }).then(function (result) {
+        $(loading).hide();
+        $(ev.target).hide();
+        if (result.success) {
+            $(ev.target).nextAll('.success').show();
+        } else {
+            $(ev.target).next('.error').show();
+        }
+    });
+}
 
 $(document)
 .on('click', '.add-comment-submit', function(ev) {
@@ -572,3 +549,33 @@ function projectCrosstabWorkItemUpdate(data) {
         return response.json();
     });
 }
+
+$(document).ready(function () {
+    $('.editable').each(function (index, element) {
+        $(element).editable($(this).data('url'), {
+            id: 'elementId',
+            name: 'newName',
+            before: function() {
+                if ($(element).parents('h5').length) {
+                    $(element).width('100%');
+                } else {
+                    $(element).outerWidth($(element).outerWidth());
+                }
+            },
+            onsubmit: function() {
+                $(element).width('auto');
+            },
+            onreset: function() {
+                $(element).width('auto');
+            }
+        });
+    });
+
+    $('.editable')
+    .on('focus', 'input', function() {
+        $(this).parents('.editable').addClass('active');
+    })
+    .on('blur', 'input', function() {
+        $(this).parents('.editable').removeClass('active');
+    });
+});

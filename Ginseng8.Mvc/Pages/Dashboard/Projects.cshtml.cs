@@ -23,7 +23,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 	public class ProjectsModel : DashboardPageModel, IActive
 	{
 		public ProjectsModel(IConfiguration config) : base(config)
-		{			
+		{
+			ShowExcelDownload = false; // because there are too many different options on this page for a single download, IMO
 		}
 
 		protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (ci) => ci.ProjectId ?? 0;
@@ -159,7 +160,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		public async Task<IActionResult> OnPostDelete(int id)
 		{
-			await Data.TryDelete<Project>(id);
+			await Data.TryDeleteAsync<Project>(id);
 			return Redirect("Projects");
 		}
 

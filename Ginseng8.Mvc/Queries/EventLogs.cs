@@ -31,6 +31,11 @@ namespace Ginseng.Mvc.Queries
 		public string ProjectName { get; set; }
 		public string Title { get; set; }
 		public int? ProjectPriority { get; set; }
+
+		public bool IsEditable(string userName)
+		{
+			return false;
+		}
 	}
 
 	public class EventLogs : Query<EventLogsResult>, ITestableQuery
@@ -77,16 +82,16 @@ namespace Ginseng.Mvc.Queries
 		[Where("[el].[EventId] IN @eventIds")]
 		public int[] EventIds { get; set; }
 
-		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
-		{
-			return TestExecuteHelper(connection);
-		}
-
-		public static IEnumerable<ITestableQuery> GetTestCases()
+		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new EventLogs() { OrgId = 0 };
 			yield return new EventLogs() { AppId = 0 };
 			yield return new EventLogs() { EventIds = new int[] { 1, 2, 3 } };
+		}
+
+		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+		{
+			return TestExecuteHelper(connection);
 		}
 	}
 }

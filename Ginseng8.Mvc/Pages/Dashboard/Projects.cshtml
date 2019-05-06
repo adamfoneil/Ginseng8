@@ -22,7 +22,7 @@ else
     {
         @if (Model.SelectedProject != null)
         {
-            <h5><span class="editable" id="project-name-@Model.SelectedProject.Id">@Model.SelectedProject.Name</span></h5>        
+            <h5><span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span></h5>        
             <partial name="Items/_ProjectInfo" model="Model.SelectedProjectInfo"/>
 
             <div class="ml-3">
@@ -69,12 +69,4 @@ else
 
 @section Scripts {
     <script src="~/js/Projects.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('.editable').editable('/Update/ProjectName', {
-                id: 'elementId',
-                name: 'newName'
-            });
-        })
-    </script>
 }

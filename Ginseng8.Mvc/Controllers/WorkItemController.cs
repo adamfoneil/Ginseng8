@@ -155,6 +155,66 @@ namespace Ginseng.Mvc.Controllers
 		}
 
 		[HttpPost]
+		public async Task<JsonResult> WorkOnNext([FromForm]int id)
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+
+					// work item can have just one priority, so we look to see if there's one existing
+					if (!(await cn.ExistsWhereAsync<WorkItemPriority>(new { WorkItemId = workItem.Id })))
+					{
+						var nextPriority = await new NextPriority() { OrgId = _data.CurrentOrg.Id, AppId = workItem.ApplicationId }.ExecuteSingleAsync(cn);
+						var wip = new WorkItemPriority()
+						{
+							WorkItemId = workItem.Id,
+							MilestoneId = 0,
+							UserId = 0,
+							Value = nextPriority.NextValue
+						};
+						if (await _data.TrySaveAsync(wip))
+						{
+							return Json(new { success = true });
+						}
+						else
+						{
+							return Json(new { success = false, message = TempData[AlertCss.Error] });
+						}
+					}					
+				}
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> RemovePriority([FromForm]int id)
+		{
+			try
+			{
+				using (var cn = _data.GetConnection())
+				{
+					var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+					var wip = await _data.FindWhereAsync<WorkItemPriority>(cn, new { WorkItemId = workItem.Id });
+					if (wip != null)
+					{
+						await _data.TryDeleteAsync<WorkItemPriority>(wip.Id);
+					}
+				}
+				return Json(new { success = true });
+			}
+			catch (Exception exc)
+			{
+				return Json(new { success = false, message = exc.Message });
+			}
+		}
+
+		[HttpPost]
 		public async Task<JsonResult> SetPriorities()
 		{
 			try
@@ -210,6 +270,9 @@ namespace Ginseng.Mvc.Controllers
 
 		private async Task UpdateAssignedUserAsync(SqlConnection cn, WorkItem workItem, int userId)
 		{
+			// can't use a zero as userId because the OrgUser FindWhere fails ("sequence contains more than one element")
+			if (userId == 0) userId = -1;
+
 			// get the responsibility from the work item activity (if set)
 			// or fall back to the user profile
 			int responsibilityId = (workItem.ActivityId.HasValue) ?
@@ -219,7 +282,7 @@ namespace Ginseng.Mvc.Controllers
 			// if user has both biz and dev responsibility, assume dev
 			if (responsibilityId == 3 || responsibilityId == 0) responsibilityId = 2;
 						
-			if (userId != 0)
+			if (userId > 0)
 			{
 				Responsibility.SetWorkItemUserActions[responsibilityId].Invoke(workItem, userId);
 			}
@@ -300,5 +363,7 @@ namespace Ginseng.Mvc.Controllers
 		{
 			throw new NotImplementedException();
 		}
-	}
+
+		public IActionResult View(int id) => RedirectToPage("/WorkItem/View", new { id });
+    }
 }

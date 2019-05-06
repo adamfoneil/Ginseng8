@@ -1,9 +1,13 @@
-﻿using Ginseng.Models;
+﻿using ClosedXML.Extensions;
+using Ginseng.Models;
+using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Services;
 using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Postulate.Base;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -20,13 +24,14 @@ namespace Ginseng.Mvc
 		}
 
 		public bool ShowLabelFilter { get; set; } = true;
+		public bool ShowExcelDownload { get; set; } = true;
 		public IEnumerable<OpenWorkItemsResult> WorkItems { get; set; }
 		public ILookup<int, Label> SelectedLabels { get; set; }
 		public IEnumerable<IGrouping<int, Label>> LabelFilter { get; set; }
 		public CommonDropdowns Dropdowns { get; set; }
 		public ILookup<int, Comment> Comments { get; set; }
 		public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
-		public IEnumerable<WorkDaysResult> WorkDays { get; set; }
+		public IEnumerable<WorkDaysResult> WorkDays { get; set; }		
 
 		/// <summary>
 		/// triggers display of partial to offer to move items to soonest upcoming or new milestone
@@ -137,6 +142,26 @@ namespace Ginseng.Mvc
 					EstimateHours = estimateHours
 				};
 			}			
+		}
+
+		public FileResult OnGetExcelDownload()
+		{
+			// get the query this dashboard uses
+			var qry = GetQuery();
+
+			// get the query's underlying SQL, resolving conditional criteria and parameters
+			var sql = QueryUtil.ResolveSql(qry.Sql, qry);
+
+			using (var cn = Data.GetConnection())
+			{
+				// query the data and return a data table
+				var data = cn.QueryTableWithParams(sql, qry);
+				data.TableName = "Open Work Items";
+
+				var wb = new ClosedXML.Excel.XLWorkbook();
+				var ws = wb.AddWorksheet(data);
+				return wb.Deliver("OpenWorkItems.xlsx");
+			}						
 		}
 	}
 }

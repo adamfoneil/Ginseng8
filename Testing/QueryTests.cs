@@ -2,6 +2,7 @@ using Ginseng.Models.Queries;
 using Ginseng.Mvc.Queries;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Postulate.Base.Interfaces;
 using System.Data.SqlClient;
 
 namespace Testing
@@ -26,121 +27,77 @@ namespace Testing
 			return new SqlConnection(connectionStr);
 		}
 
-		[TestMethod]
-		public void WorkItemsQuery()
+		private void TestQuery<TQuery>() where TQuery : ITestableQuery, new()
 		{
-			var qry = new OpenWorkItems();
+			var qry = new TQuery();
 			using (var cn = GetConnection())
 			{
-				foreach (var testCase in OpenWorkItems.GetTestCases())
+				foreach (var testCase in qry.GetTestCases())
 				{
 					testCase.TestExecute(cn);
 				}
 			}
+		}
+
+		[TestMethod]
+		public void WorkItemsQuery()
+		{
+			TestQuery<OpenWorkItems>();			
 		}
 
 		[TestMethod]
 		public void EventLogsQuery()
 		{
-			var qry = new EventLogs();
-			using (var cn = GetConnection())
-			{
-				foreach (var testCase in EventLogs.GetTestCases())
-				{
-					testCase.TestExecute(cn);
-				}
-			}
+			TestQuery<EventLogs>();
 		}
 
 		[TestMethod]
 		public void EventSubscriptionEmailNotifications()
 		{
-			var qry = new InsertEventSubscriptionEmailNotifications();
-			using (var cn = GetConnection())
-			{
-				foreach (var testCase in InsertEventSubscriptionEmailNotifications.GetTestCases())
-				{
-					testCase.TestExecute(cn);
-				}
-			}
+			TestQuery<InsertEventSubscriptionEmailNotifications>();
 		}
 
 		[TestMethod]
 		public void EventSubscriptionTextNotifications()
 		{
-			var qry = new InsertEventSubscriptionTextNotifications();
-			using (var cn = GetConnection())
-			{
-				foreach (var testCase in InsertEventSubscriptionTextNotifications.GetTestCases())
-				{
-					testCase.TestExecute(cn);
-				}
-			}
+			TestQuery<InsertEventSubscriptionTextNotifications>();
 		}
 
 		[TestMethod]
 		public void ActivitySubscriptionEmailNotifications()
 		{
-			var qry = new InsertActivitySubscriptionEmailNotifications();
-			using (var cn = GetConnection())
-			{
-				foreach (var testCase in InsertActivitySubscriptionEmailNotifications.GetTestCases())
-				{
-					testCase.TestExecute(cn);
-				}
-			}
+			TestQuery<InsertActivitySubscriptionEmailNotifications>();
 		}
 
 		[TestMethod]
 		public void ActivitySubscriptionTextNotifications()
 		{
-			var qry = new InsertActivitySubscriptionTextNotifications();
-			using (var cn = GetConnection())
-			{
-				foreach (var testCase in InsertActivitySubscriptionTextNotifications.GetTestCases())
-				{
-					testCase.TestExecute(cn);
-				}
-			}
+			TestQuery<InsertActivitySubscriptionTextNotifications>();
 		}
 
 		[TestMethod]
 		public void ProjectInfoQuery()
 		{
-			var qry = new ProjectInfo();
-			using (var cn = GetConnection())
-			{
-				foreach (var testCase in ProjectInfo.GetTestCases())
-				{
-					testCase.TestExecute(cn);
-				}
-			}
+			TestQuery<ProjectInfo>();
 		}
 
 		[TestMethod]
 		public void PendingNotificationsQuery()
 		{
-			var qry = new PendingNotifications(10);
-			using (var cn = GetConnection())
-			{
-				foreach (var testCase in PendingNotifications.GetTestCases())
-				{
-					testCase.TestExecute(cn);
-				}
-			}
+			TestQuery<PendingNotifications>();
 		}
 
 		[TestMethod]
-		public void PendingWorkLogsQuery()
+		public void OrgUserByNameQuery()
 		{
-			var qry = new PendingWorkLogs();
-			using (var cn = GetConnection())
-			{
-				foreach (var testCase in PendingWorkLogs.GetTestCases())
-				{
-					testCase.TestExecute(cn);
-				}
-			}
+			TestQuery<OrgUserByName>();
 		}
+
+		[TestMethod]
+		public void NextPriorityQuery()
+		{
+			TestQuery<NextPriority>();
+		}
+
 	}
 }

@@ -32,7 +32,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await Data.TryDelete<Milestone>(id);
+			await Data.TryDeleteAsync<Milestone>(id);
 			return RedirectToPage("/Setup/Milestones");
 		}
 	}

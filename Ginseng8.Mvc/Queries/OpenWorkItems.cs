@@ -10,6 +10,16 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
+	/// <summary>
+	/// see <see cref="PriorityGroup"/>
+	/// </summary>
+	public enum PriorityGroupOptions
+	{
+		WorkOnNext = 1,
+		Backlog = 2,
+		Assigned = 3
+	}
+
 	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
 	{
 		public const string ImpedimentIcon = Comment.ImpedimentIcon;
@@ -63,6 +73,13 @@ namespace Ginseng.Mvc.Queries
 		public DateTime? HandOffDate { get; set; }
 		public string CreatedByName { get; set; }
 		public DateTime DateCreated { get; set; }
+		public PriorityGroupOptions PriorityGroup { get; set; }
+		public string CreatedBy { get; set; }
+
+		public bool IsEditable(string userName)
+		{
+			return CreatedBy.Equals(userName);
+		}
 
 		public IEnumerable<Modifier> GetModifiers()
 		{
@@ -97,11 +114,15 @@ namespace Ginseng.Mvc.Queries
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
-		private const string AssignedUserExpression = "(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
+		private const string AssignedUserExpression = 
+			"(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
+
+		private const string PriorityGroupExpression = 
+			"(CASE WHEN [pri].[Id] IS NOT NULL AND " + AssignedUserExpression + " IS NULL AND [wi].[ActivityId] IS NULL THEN 1 WHEN [pri].[Id] IS NULL AND " + AssignedUserExpression + " IS NULL THEN 2 ELSE 3 END)";
 
 		private readonly List<QueryTrace> _traces;
 
-		public OpenWorkItems(List<QueryTrace> traces = null) : base(
+		public OpenWorkItems() : base(
 			$@"SELECT
 				[wi].[Id],
 				[wi].[Number],
@@ -141,7 +162,9 @@ namespace Ginseng.Mvc.Queries
 				[ho].[IsForward],
 				[from_act].[Name] AS [FromActivityName],
 				[ho].[HtmlBody] AS [HandOffBody],
-				[ho].[DateCreated] AS [HandOffDate]
+				[ho].[DateCreated] AS [HandOffDate],
+				{PriorityGroupExpression} AS [PriorityGroup],
+				[wi].[CreatedBy]
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
@@ -185,6 +208,10 @@ namespace Ginseng.Mvc.Queries
 				[wi].[Number]
 			{{offset}}")
 		{
+		}
+
+		public OpenWorkItems(List<QueryTrace> traces = null) : this()
+		{
 			_traces = traces;
 		}
 
@@ -217,6 +244,9 @@ namespace Ginseng.Mvc.Queries
 		[Case(-1, "[wi].[CloseReasonId] IS NOT NULL")]
 		[Where("[wi].[CloseReasonId]=@closeReasonId")]
 		public int? CloseReasonId { get; set; }
+
+		[Where(PriorityGroupExpression + "=@priorityGroupId")]
+		public int? PriorityGroupId { get; set; }
 
 		[Case(0, AssignedUserExpression + " IS NULL")]
 		[Where(AssignedUserExpression + "=@assignedUserId")]
@@ -269,7 +299,12 @@ namespace Ginseng.Mvc.Queries
 		[Where("[ms].[Date]<getdate()")]
 		public bool? IsPastDue { get; set; }
 
-		public static IEnumerable<ITestableQuery> GetTestCases()
+		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+		{
+			return TestExecuteHelper(connection);
+		}
+
+		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			// ideally here, you return instances of your query with each parameter set to get coverage of all the generated SQL combinations.
 			// we don't care what data is returned, only that the SQL compiles
@@ -293,11 +328,6 @@ namespace Ginseng.Mvc.Queries
 			yield return new OpenWorkItems() { TitleAndBodySearch = "whatever this that" };
 			yield return new OpenWorkItems() { IsPastDue = true };
 			yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
-		}
-
-		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
-		{
-			return TestExecuteHelper(connection);
 		}
 	}
 }

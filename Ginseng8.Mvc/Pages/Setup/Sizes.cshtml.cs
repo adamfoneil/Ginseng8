@@ -34,7 +34,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await Data.TryDelete<WorkItemSize>(id);
+			await Data.TryDeleteAsync<WorkItemSize>(id);
 			return RedirectToPage("/Setup/Sizes");
 		}
 	}

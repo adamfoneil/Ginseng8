@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
+using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
@@ -16,10 +18,14 @@ namespace Ginseng.Mvc.Pages.Work
 	{
 		public AllItemsModel(IConfiguration config) : base(config)
 		{
+			ShowLabelFilter = false;
 		}
 
 		[BindProperty(SupportsGet = true)]
 		public string Query { get; set; }
+
+		[BindProperty(SupportsGet = true)]
+		public int? FilterPriorityGroupId { get; set; }
 
 		[BindProperty(SupportsGet = true)]
 		public int? FilterUserId { get; set; }
@@ -40,6 +46,9 @@ namespace Ginseng.Mvc.Pages.Work
 		public int? FilterCloseReasonId { get; set; } = 0;
 
 		[BindProperty(SupportsGet = true)]
+		public int? FilterLabelId { get; set; }
+
+		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
 
 		[BindProperty(SupportsGet = true)]
@@ -50,9 +59,13 @@ namespace Ginseng.Mvc.Pages.Work
 		/// </summary>
 		public IEnumerable<ProjectInfoResult> Projects { get; set; }
 
+		public Dictionary<PriorityGroupOptions, PriorityGroup> PriorityGroups { get; set; }
+
+		public SelectList PriorityGroupSelect { get; set; }
 		public SelectList UserSelect { get; set; }
 		public SelectList ActivitySelect { get; set; }
 		public SelectList CloseReasonSelect { get; set; }
+		public SelectList LabelSelect { get; set; }
 
 		protected override async Task<RedirectResult> GetRedirectAsync(SqlConnection connection)
 		{
@@ -69,6 +82,11 @@ namespace Ginseng.Mvc.Pages.Work
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
+			var groups = await new PriorityGroups().ExecuteAsync(connection);
+			PriorityGroups = groups.ToDictionary(row => (PriorityGroupOptions)row.Id);
+			var groupItems = groups.Select(row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
+			PriorityGroupSelect = new SelectList(groupItems, "Value", "Text", FilterPriorityGroupId);
+
 			var userList = await new UserSelect() { OrgId = OrgId }.ExecuteItemsAsync(connection);
 			userList.Insert(0, new SelectListItem() { Value = "0", Text = "- no assigned user -" });
 			UserSelect = new SelectList(userList, "Value", "Text", FilterUserId);
@@ -81,6 +99,10 @@ namespace Ginseng.Mvc.Pages.Work
 			closeReasonList.Insert(0, new SelectListItem() { Value = "0", Text = "- open items -" });
 			closeReasonList.Insert(1, new SelectListItem() { Value = "-1", Text = "- closed any reason -" });
 			CloseReasonSelect = new SelectList(closeReasonList, "Value", "Text", FilterCloseReasonId);
+
+			var labelList = await new OpenLabels() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+			var items = labelList.Select(row => new SelectListItem() { Value = row.Id.ToString(), Text = $"{row.Name}: {row.WorkItemCount}" });
+			LabelSelect = new SelectList(items, "Value", "Text", FilterLabelId);
 
 			if (!string.IsNullOrEmpty(Query))
 			{
@@ -97,15 +119,16 @@ namespace Ginseng.Mvc.Pages.Work
 				OrgId = OrgId,
 				AppId = CurrentOrgUser.CurrentAppId,
 				ProjectId = FilterProjectId,
-				LabelId = LabelId,				
+				LabelId = FilterLabelId,				
 				MilestoneId = FilterMilestoneId,
 				SizeId = FilterSizeId,
 				TitleAndBodySearch = Query,
 				IsPastDue = PastDue,
 				AssignedUserId = FilterUserId,
 				ActivityId = FilterActivityId,				
-				CloseReasonId = FilterCloseReasonId,
-				Page = PageNumber
+				CloseReasonId = FilterCloseReasonId,				
+				PriorityGroupId = FilterPriorityGroupId,
+				Page = PageNumber,				
 			};
 		}
 	}

@@ -156,7 +156,7 @@ namespace Ginseng.Mvc.Services
 			}
 		}
 
-		public async Task<bool> TryDelete<T>(int id, string successMessage = null)
+		public async Task<bool> TryDeleteAsync<T>(int id, string successMessage = null)
 		{
 			try
 			{

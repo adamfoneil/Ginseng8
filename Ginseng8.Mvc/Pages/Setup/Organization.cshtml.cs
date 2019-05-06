@@ -113,7 +113,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await Data.TryDelete<Organization>(id);
+			await Data.TryDeleteAsync<Organization>(id);
 			return RedirectToPage("/Setup/Organization");
 		}
 	}

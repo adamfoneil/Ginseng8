@@ -32,7 +32,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
-			await Data.TryDelete<PriorityTier>(id);
+			await Data.TryDeleteAsync<PriorityTier>(id);
 			return RedirectToPage("/Setup/PriorityTiers");
 		}
 

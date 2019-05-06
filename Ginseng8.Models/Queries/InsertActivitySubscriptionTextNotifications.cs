@@ -31,7 +31,7 @@ namespace Ginseng.Models.Queries
 
 		public int Id { get; set; }
 
-		public static IEnumerable<ITestableQuery> GetTestCases()
+		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new InsertActivitySubscriptionTextNotifications() { Id = 0 };
 		}

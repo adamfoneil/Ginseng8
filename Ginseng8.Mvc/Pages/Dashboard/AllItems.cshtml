@@ -19,7 +19,10 @@
 
 <form method="get">
     <input type="hidden" asp-for="@Model.Query"/>
-    <div class="form-row mb-3 justify-content-center">       
+    <div class="form-row mb-3 justify-content-center">
+        <select name="FilterPriorityGroupId" asp-items="Model.PriorityGroupSelect" class="form-control-sm mr-2" onchange="this.form.submit();">
+            <option value="">(all groups)</option>
+        </select>
         <select name="FilterUserId" asp-items="Model.UserSelect" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all users)</option>
         </select>
@@ -31,6 +34,9 @@
         </select>
     </div>
     <div class="form-row mb-3 justify-content-center">
+        <select name="FilterLabelId" asp-items="@Model.LabelSelect" class="form-control-sm mr-2" onchange="this.form.submit()">
+            <option value="">(all labels)</option>
+        </select>
         <select name="FilterSizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.FilterSizeId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all sizes)</option>
         </select>
@@ -50,9 +56,22 @@
     {
         { "applicationId", appGrp.Key }                        
     }))
-    foreach (var item in appGrp)
+    foreach (var priorityGrp in appGrp.OrderBy(row => row.PriorityGroup).GroupBy(row => row.PriorityGroup))
     {
-        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
+        var pg = Model.PriorityGroups[priorityGrp.Key];
+        <h5 class="mt-5">
+            <i class="@pg.IconClass"></i>
+            @pg.Name
+            <span class="small text-muted">@pg.Description</span>
+        </h5>
+
+        string sortableClass = (pg.IsSortable()) ? "sortable" : string.Empty;
+        <div class="ml-3 @sortableClass">
+        @foreach (var item in priorityGrp)
+        {
+            <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
+        }        
+        </div>
     }
 }
 </div>

@@ -37,8 +37,9 @@ namespace Ginseng.Mvc.Queries
 
 	public class PendingNotifications : Query<PendingNotificationResult>, ITestableQuery
 	{
-		public PendingNotifications(int count) : base(
-			$@"SELECT TOP ({count})
+		private static string BaseSql(int count = 10)
+		{
+			return $@"SELECT TOP ({count})
 				[n].*, 
 				[el].[IconClass], [el].[IconColor],
 				[wi].[Number] AS [WorkItemNumber],
@@ -48,30 +49,37 @@ namespace Ginseng.Mvc.Queries
 				[e].[Name] AS [EventName]
 			FROM 
 				[dbo].[Notification] [n]
-				INNER JOIN [dbo].[EventLog] [el] ON [n].[EventLogId]=[el].[Id]
-				INNER JOIN [app].[Event] [e] ON [el].[EventId]=[e].[Id]
+				LEFT JOIN [dbo].[EventLog] [el] ON [n].[EventLogId]=[el].[Id]
+				LEFT JOIN [app].[Event] [e] ON [el].[EventId]=[e].[Id]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [el].[WorkItemId]=[wi].[Id]
 				INNER JOIN [dbo].[Application] [app] ON [el].[ApplicationId]=[app].[Id]
 				INNER JOIN [dbo].[Organization] [org] ON [el].[OrganizationId]=[org].[Id]
 			WHERE
 				[DateDelivered] IS NULL {{andWhere}} 
 			ORDER BY 
-				[n].[DateCreated] ASC")
+				[n].[DateCreated] ASC";
+		}
+
+		public PendingNotifications() : base(BaseSql(10))
+		{
+		}
+
+		public PendingNotifications(int count) : base(BaseSql(count))
 		{
 		}
 
 		[Where("[Method]=@method")]
 		public DeliveryMethod? Method { get; set; }
 
-		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
-		{
-			return TestExecuteHelper(connection);
-		}
-
-		public static IEnumerable<ITestableQuery> GetTestCases()
+		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new PendingNotifications(10);
 			yield return new PendingNotifications(10) { Method = DeliveryMethod.Email };
+		}
+
+		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+		{
+			return TestExecuteHelper(connection);
 		}
 	}
 }
