@@ -35,6 +35,9 @@ namespace Ginseng.Models
 		[References(typeof(WorkItem))]
 		public int? WorkItemId { get; set; }		
 
+        [References(typeof(Application))]
+        public int ApplicationId { get; set; }
+
 		[References(typeof(UserProfile))]
 		public int UserId { get; set; }
 
@@ -58,6 +61,12 @@ namespace Ginseng.Models
 		/// </summary>
 		public int? SourceId { get; set; }
 
+        [NotMapped]
+        public int? WorkItemNumber { get; set; }
+
+        [NotMapped]
+        public string WorkItemTitle { get; set; }
+
 		public override bool Validate(IDbConnection connection, out string message)
 		{
 			if (!ProjectId.HasValue && !WorkItemId.HasValue)
@@ -74,7 +83,7 @@ namespace Ginseng.Models
 		{
 			if (comment.ObjectType != ObjectType.WorkItem && comment.ObjectType != ObjectType.Project) return;
 			var currentUser = user as UserProfile;
-			if (currentUser == null) throw new Exception("Couldn't determine the current user profile.");
+			if (currentUser == null) throw new Exception("Couldn't determine the current user profile when creating work log.");
 
 			if (ParseHoursFromText(comment.TextBody, out decimal hours))
 			{
@@ -83,6 +92,7 @@ namespace Ginseng.Models
 				var workLog = new PendingWorkLog()
 				{
 					OrganizationId = link.OrganizationId,
+                    ApplicationId = link.ApplicationId,
 					ProjectId = link.ProjectId,
 					WorkItemId = link.WorkItemId,
 					UserId = currentUser.UserId,
@@ -107,6 +117,7 @@ namespace Ginseng.Models
 					return new PendingHoursLink()
 					{
 						OrganizationId = prj.Application.OrganizationId,
+                        ApplicationId = prj.ApplicationId,
 						ProjectId = comment.ObjectId,
 						WorkItemId = null
 					};										
@@ -116,6 +127,7 @@ namespace Ginseng.Models
 					return new PendingHoursLink()
 					{
 						OrganizationId = workItem.OrganizationId,
+                        ApplicationId = workItem.ApplicationId,
 						ProjectId = workItem.ProjectId,
 						WorkItemId = workItem.Id
 					};
@@ -142,6 +154,7 @@ namespace Ginseng.Models
 	internal class PendingHoursLink
 	{
 		public int OrganizationId { get; set; }
+        public int ApplicationId { get; set; }
 		public int? ProjectId { get; set; }
 		public int? WorkItemId { get; set; }
 	}

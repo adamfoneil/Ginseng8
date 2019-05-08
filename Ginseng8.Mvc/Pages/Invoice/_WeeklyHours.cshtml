@@ -1,0 +1,76 @@
+﻿@model WeeklyHoursView
+
+@{ 
+    var weekInfo = Model.WeekInfo;
+}
+
+@foreach (var weekGrp in Model.WorkLogs.OrderBy(row => row.Date).GroupBy(row => row.ToWeek()))
+{
+    var days = weekGrp.GroupBy(row => row.Date);        
+    <table class="table">
+        <tr>
+            <th>
+                <span>
+                    @Html.FormatValue(weekInfo[weekGrp.Key].StartDate, "{0:M/d/yy}") - @Html.FormatValue(weekInfo[weekGrp.Key].EndDate, "{0:M/d/yy}")
+                    <span class="small text-muted">week @weekInfo[weekGrp.Key].WeekNumber</span>
+                </span>
+            </th>
+            @foreach (var dayGrp in days)
+            {
+                <th>@Html.FormatValue(dayGrp.Key, "{0:ddd M/d}")</th>
+            }
+            <th></th>
+        </tr>
+        @foreach (var itemGrp in weekGrp.GroupBy(row => row.ItemId))
+        {
+            var workLogs = itemGrp.ToLookup(row => row.Date);
+            <tr>
+                <td>
+                    @if (itemGrp.First().IsProject)
+                    {
+                        <span>@itemGrp.First().ProjectName</span>
+                    }
+                    else
+                    {
+                        <partial name="~/Pages/Dashboard/Items/_ItemNumber.cshtml" model="itemGrp.First()"/>                                             
+                        <partial name="~/Pages/Dashboard/Items/_Title.cshtml" model="itemGrp.First()"/>                                             
+                    }                    
+                </td>
+                @foreach (var dayGrp in days)
+                {
+                    <td>
+                        @if (workLogs[dayGrp.Key].Any())
+                        {
+                            @workLogs[dayGrp.Key].Sum(row => row.Hours)<span> hrs - </span>@Html.FormatValue(workLogs[dayGrp.Key].Sum(row => row.Amount), "{0:c2}")
+                        }
+                    </td>
+                }
+                <td>
+                    @itemGrp.Sum(row => row.Hours)<span> hrs - </span>
+                    @Html.FormatValue(itemGrp.Sum(row => row.Amount), "{0:c2}")
+                </td>
+            </tr>
+        }
+         @{  
+             var dailyAmount = days.ToDictionary(grp => grp.Key, grp => grp.Sum(row => row.Amount));
+             var dailyHours = days.ToDictionary(grp => grp.Key, grp => grp.Sum(row => row.Hours));
+        }
+        <tr>
+            <td></td>
+            @foreach (var keyPair in dailyAmount)
+            {
+                <td>
+                    @dailyHours[keyPair.Key] hrs
+                    <span> - </span>
+                    @Html.FormatValue(dailyAmount[keyPair.Key], "{0:c2}")
+                </td>
+            }
+            <td>
+                <strong>
+                @weekGrp.Sum(row => row.Hours)<span> hrs - </span>
+                @Html.FormatValue(weekGrp.Sum(row => row.Amount), "{0:c2}")
+                </strong>
+            </td>
+        </tr>
+    </table>
+}
