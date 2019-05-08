@@ -56,7 +56,14 @@ namespace Ginseng.Mvc.Services
 			return await GetOrgContainerAsync(client, orgName);
 		}
 
-		public string GetUrl(string orgName, string blobName)
+        public async Task<CloudBlobContainer> GetContainerAsync(string name)
+        {
+            var container = GetClient().GetContainerReference(name);
+            await container.CreateIfNotExistsAsync();
+            return container;
+        }
+
+        public string GetUrl(string orgName, string blobName)
 		{
 			return $"https://{AccountName}.blob.core.windows.net:443/{orgName}/{blobName}";
 		}

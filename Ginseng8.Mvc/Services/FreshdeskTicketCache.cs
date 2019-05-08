@@ -1,35 +1,36 @@
-﻿using Ginseng.Integration.Services;
-using Ginseng.Models;
-using Ginseng.Models.Freshdesk;
+﻿using Ginseng.Mvc.Models.Freshdesk.Dto;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Newtonsoft.Json;
-using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Ginseng.Mvc.Interfaces;
 
 namespace Ginseng.Mvc.Services
 {
 	public class FreshdeskTicketCache : IntegrationCache<Ticket>
 	{		
 		private readonly DataAccess _data;
+        private readonly IFreshdeskClientFactory _clientFactory;
 
-		public FreshdeskTicketCache(IConfiguration config) : base(config, "Tickets")
+		public FreshdeskTicketCache(
+            IConfiguration config,
+            IFreshdeskClientFactory clientFactory) 
+            : base(config, "Tickets")
 		{			
 			_data = new DataAccess(config);
-		}
+            _clientFactory = clientFactory;
+        }
 
 		public override TimeSpan CallInterval => TimeSpan.FromMinutes(5);		
 
 		protected override async Task<IEnumerable<Ticket>> CallApiAsync(string orgName)
-		{
-			using (var cn = _data.GetConnection())
-			{
-				var org = await cn.FindWhereAsync<Organization>(new { name = orgName });
-				var client = new FreshdeskClient(org.FreshdeskUrl, org.FreshdeskApiKey);
-				return client.ListTickets();
-			}
+        {
+            var client = await _clientFactory.CreateClientForOrganizationAsync(orgName);
+            var tickets = await client.ListTicketsAsync();
+
+            return tickets;
 		}
 
 		protected override async Task<Ticket> ConvertFromBlobAsync(CloudBlockBlob blob)
