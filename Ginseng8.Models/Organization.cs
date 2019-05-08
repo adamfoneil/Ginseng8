@@ -52,6 +52,12 @@ namespace Ginseng.Models
 		[MaxLength(255)]
 		public string FreshdeskApiKey { get; set; }
 
+        [MaxLength(500)]
+        public string InvoiceHeader { get; set; }
+
+        [MaxLength(255)]
+        public string PaymentLink { get; set; }
+
 		public WorkDay MilestoneWorkDay { get; set; }
 		public UserProfile OwnerUser { get; set; }
 
