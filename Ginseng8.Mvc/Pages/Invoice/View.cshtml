@@ -1,0 +1,26 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Invoice.ViewModel
+@{
+    ViewData["Title"] = "View";
+}
+
+<h2>Invoice @Model.Header.Number</h2>
+
+<div class="row">
+    <div class="col-lg-4">
+        <span>From:</span>
+        @Html.Raw(Model.Header.Organization.InvoiceHeader)
+    </div>
+
+    <div class="col-lg-4">
+        <span>To:</span>
+        @Model.Header.Application.InvoiceEmail
+    </div>
+    
+    <div class="col-lg-4">
+        <p>Date: @Html.FormatValue(Model.Header.DateCreated, "{0:ddd M/d/yy}")</p>
+        <p>Amount: @Html.FormatValue(Model.Header.Amount, "{0:c2}")</p>
+        <p>Status: @Model.Header.Status.Name</p>
+    </div>    
+</div>
+
