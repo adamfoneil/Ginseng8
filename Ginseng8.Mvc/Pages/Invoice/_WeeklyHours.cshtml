@@ -6,14 +6,15 @@
 
 @foreach (var weekGrp in Model.WorkLogs.OrderBy(row => row.Date).GroupBy(row => row.ToWeek()))
 {
-    var days = weekGrp.GroupBy(row => row.Date);    
-    <h5 class="mt-3">
-        @Html.FormatValue(weekInfo[weekGrp.Key].StartDate, "{0:M/d/yy}") - @Html.FormatValue(weekInfo[weekGrp.Key].EndDate, "{0:M/d/yy}")
-        <span class="small text-muted">week @weekInfo[weekGrp.Key].WeekNumber</span>
-    </h5>
+    var days = weekGrp.GroupBy(row => row.Date);        
     <table class="table">
         <tr>
-            <th>Work Item</th>
+            <th>
+                <span>
+                    @Html.FormatValue(weekInfo[weekGrp.Key].StartDate, "{0:M/d/yy}") - @Html.FormatValue(weekInfo[weekGrp.Key].EndDate, "{0:M/d/yy}")
+                    <span class="small text-muted">week @weekInfo[weekGrp.Key].WeekNumber</span>
+                </span>
+            </th>
             @foreach (var dayGrp in days)
             {
                 <th>@Html.FormatValue(dayGrp.Key, "{0:ddd M/d}")</th>
