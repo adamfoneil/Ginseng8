@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Ginseng.Mvc.Pages.Hours
+namespace Ginseng.Mvc.Pages.Invoice
 {
     public class InvoiceModel : AppPageModel
     {

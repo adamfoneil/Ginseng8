@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace Ginseng.Mvc.Pages.Hours
+namespace Ginseng.Mvc.Pages.Invoice
 {
     public class PostInvoiceModel : AppPageModel
     {

@@ -6,7 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Ginseng.Mvc.Pages.Hours
+namespace Ginseng.Mvc.Pages.Invoice
 {
     public class WeeklyModel : AppPageModel
     {
