@@ -4,10 +4,13 @@
     var weekInfo = Model.WeekInfo;
 }
 
-@foreach (var weekGrp in Model.WorkLogs.GroupBy(row => row.ToWeek()))
+@foreach (var weekGrp in Model.WorkLogs.OrderBy(row => row.Date).GroupBy(row => row.ToWeek()))
 {
     var days = weekGrp.GroupBy(row => row.Date);    
-    <h3 class="mt-3">@Html.FormatValue(weekInfo[weekGrp.Key].StartDate, "{0:M/d/yy}") - @Html.FormatValue(weekInfo[weekGrp.Key].EndDate, "{0:M/d/yy}")</h3>
+    <h5 class="mt-3">
+        @Html.FormatValue(weekInfo[weekGrp.Key].StartDate, "{0:M/d/yy}") - @Html.FormatValue(weekInfo[weekGrp.Key].EndDate, "{0:M/d/yy}")
+        <span class="small text-muted">week @weekInfo[weekGrp.Key].WeekNumber</span>
+    </h5>
     <table class="table">
         <tr>
             <th>Work Item</th>
