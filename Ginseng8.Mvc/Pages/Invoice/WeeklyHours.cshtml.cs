@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Invoice
 {
-    public class WeeklyModel : AppPageModel
+    public class WeeklyHoursModel : AppPageModel
     {
-        public WeeklyModel(IConfiguration config) : base(config)
+        public WeeklyHoursModel(IConfiguration config) : base(config)
         {
         }
 

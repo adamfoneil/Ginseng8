@@ -2,9 +2,9 @@
 
 namespace Ginseng.Mvc.Pages.Invoice
 {
-    public class PostInvoiceModel : AppPageModel
+    public class PostModel : AppPageModel
     {
-        public PostInvoiceModel(IConfiguration config) : base(config)
+        public PostModel(IConfiguration config) : base(config)
         {
         }
 

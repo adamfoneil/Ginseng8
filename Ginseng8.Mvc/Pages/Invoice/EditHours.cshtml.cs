@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Invoice
 {
-    public class InvoiceModel : AppPageModel
+    public class EditHoursModel : AppPageModel
     {
-        public InvoiceModel(IConfiguration config) : base(config)
+        public EditHoursModel(IConfiguration config) : base(config)
         {
         }
 
