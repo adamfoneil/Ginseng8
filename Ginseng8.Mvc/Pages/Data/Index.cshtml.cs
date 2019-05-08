@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Data
 {
+    [Authorize]
 	public class IndexModel : AppPageModel
 	{
 		public IndexModel(IConfiguration config) : base(config)
