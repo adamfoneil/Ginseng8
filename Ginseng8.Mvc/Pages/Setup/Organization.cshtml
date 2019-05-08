@@ -81,6 +81,18 @@
         </div>
     </div>
 
+    <div class="form-row">
+        <div class="form-group col-6">
+            <label>Invoice Header:</label>
+            <textarea asp-for="Organization.InvoiceHeader" class="form-control htmlEditor"></textarea>
+        </div>
+
+        <div class="form-group col-6">
+            <label>Payment Link Template:</label>
+            <input type="text" asp-for="Organization.PaymentLink" class="form-control"/>
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-dark">Save</button>
 </form>
 </div>
