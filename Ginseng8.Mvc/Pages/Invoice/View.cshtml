@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{Id}"
 @model Ginseng.Mvc.Pages.Invoice.ViewModel
 @{
     ViewData["Title"] = "View";
@@ -24,3 +24,4 @@
     </div>    
 </div>
 
+<partial name="_WeeklyHours" model="@(new WeeklyHoursView() { Weeks = Model.Weeks, WorkLogs = Model.Details })"/>

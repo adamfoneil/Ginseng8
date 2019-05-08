@@ -27,7 +27,7 @@ namespace Ginseng.Mvc.Queries
 					CONVERT(date, DATEADD(ww, [Value]*-1, @seed)) AS [Date],
 					((DATEPART(dw, DATEADD(ww, [Value]*-1, @seed))-1)*-1) AS [Offset]
 				FROM
-				dbo.FnIntRange(0, @weeks)
+				dbo.FnIntRange(0, @weeksBack)
 			) SELECT
 				ABS([WeekIndex]) AS [WeekIndex],
 				DATEADD(d, [Offset], [Date]) AS [StartDate],
@@ -40,6 +40,6 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public DateTime Seed { get; set; }
-		public int Weeks { get; set; }
+		public int WeeksBack { get; set; }
 	}
 }

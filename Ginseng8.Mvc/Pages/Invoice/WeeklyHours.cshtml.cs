@@ -24,7 +24,7 @@ namespace Ginseng.Mvc.Pages.Invoice
             using (var cn = Data.GetConnection())
             {
                 // populate week selection dropdown going 3 weeks prior to the selected week
-                Results.Weeks = await new CalendarWeeks() { Seed = DateTime.Today, Weeks = weeksBack + 3 }.ExecuteAsync(cn);
+                Results.Weeks = await new CalendarWeeks() { Seed = DateTime.Today, WeeksBack = weeksBack + 3 }.ExecuteAsync(cn);
 
                 WeekSelect = new SelectList(Results.Weeks.Select(wk => new SelectListItem() { Value = wk.WeekIndex.ToString(), Text = $"{wk.WeekNumber}: {wk.StartDate:M/d/yy} - {wk.EndDate:M/d/yy}" }), "Value", "Text", weeksBack);
 
