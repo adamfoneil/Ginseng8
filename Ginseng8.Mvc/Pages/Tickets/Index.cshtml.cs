@@ -2,6 +2,7 @@
 using Ginseng.Models;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
+using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Mapping;
 using Ginseng.Mvc.Models.Freshdesk.Dto;
 using Ginseng.Mvc.Queries;
@@ -29,14 +30,12 @@ namespace Ginseng.Mvc.Pages.Tickets
     public class IndexModel : AppPageModel
     {
         private readonly FreshdeskTicketCache _cache;
-        private readonly FreshdeskClientFactory _freshdeskClientFactory;
-
-        private FreshdeskClient _freshdeskClient;
+        private readonly IFreshdeskClientFactory _freshdeskClientFactory;
 
         public IndexModel(
             IConfiguration config,
             FreshdeskTicketCache cache,
-            FreshdeskClientFactory freshdeskClientFactory)
+            IFreshdeskClientFactory freshdeskClientFactory)
             : base(config)
         {
             _cache = cache;

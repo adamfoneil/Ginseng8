@@ -26,10 +26,8 @@
             <td>                
                 <form method="post" asp-page-handler="DoAction" class="form-inline">
                     <input type="hidden" name="ticketId" value="@item.Id"/>         
-                    <input type="hidden" name="statusId" value="@item.Status"/>
-                    <input type="hidden" name="typeName" value="@item.Type"/>
                     <div class="form-row">
-                        <select id="ActionId" asp-items="Model.ActionSelect" class="form-control mr-2">
+                        <select name="action" id="action" asp-items="Model.ActionSelect" class="form-control mr-2" required="required">
                             <option value="">(select)</option>
                         </select>
                         <button type="submit" class="btn btn-sm btn-primary">Go</button>                    

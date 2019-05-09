@@ -6,6 +6,7 @@
         Question,
         Incident,
         Problem,
-        FeatureRequest
+        FeatureRequest,
+        Issue
     }
 }
