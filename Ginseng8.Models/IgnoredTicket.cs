@@ -1,5 +1,4 @@
 ﻿using Ginseng.Models.Conventions;
-using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 
 namespace Ginseng.Models
