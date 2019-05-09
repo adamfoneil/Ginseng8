@@ -1,4 +1,4 @@
-﻿namespace Ginseng.Mvc.Enums.Freshdesk
+﻿namespace Ginseng.Models.Enums.Freshdesk
 {
     public enum TicketType
     {

@@ -207,9 +207,9 @@ namespace Ginseng.Mvc.Services
                 // update statuses if changed
                 foreach (var workItemTicket in workItemTickets)
                 {
-                    if (workItemTicket.TicketStatus == (int) ticket.Status) continue;
+                    if (workItemTicket.TicketStatus == ticket.Status) continue;
 
-                    workItemTicket.TicketStatus = (int) ticket.Status;
+                    workItemTicket.TicketStatus = ticket.Status;
                     workItemTicket.TicketStatusDateModified = webhookReceived.UtcDateTime;
 
                     await cn.UpdateAsync(workItemTicket);

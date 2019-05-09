@@ -1,4 +1,4 @@
-﻿using Ginseng.Mvc.Enums.Freshdesk;
+﻿using Ginseng.Models.Enums.Freshdesk;
 
 namespace Ginseng.Mvc.Models.Freshdesk
 {

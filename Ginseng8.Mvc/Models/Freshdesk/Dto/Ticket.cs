@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Ginseng.Models.Enums.Freshdesk;
+using Newtonsoft.Json;
 using System;
 
 namespace Ginseng.Mvc.Models.Freshdesk.Dto
@@ -46,7 +47,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         */
 
         [JsonProperty("status")]
-        public int Status { get; set; }
+        public TicketStatus Status { get; set; }
 
         [JsonProperty("subject")]
         public string Subject { get; set; }

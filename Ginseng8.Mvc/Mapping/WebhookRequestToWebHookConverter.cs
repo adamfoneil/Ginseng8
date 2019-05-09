@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoMapper;
+using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Mvc.Enums.Freshdesk;
 using Ginseng.Mvc.Models.Freshdesk;
 using Ginseng.Mvc.Models.Freshdesk.Dto;

@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Enums.Freshdesk;
 using Postulate.Base.Attributes;
 using System;
 
@@ -18,10 +19,12 @@ namespace Ginseng.Models
 		[PrimaryKey]
 		public long TicketId { get; set; }
 
+        public TicketType TicketType { get; set; }
+
 		/// <summary>
 		/// Maps to Ginseng.Mvc.Models.Freshdesk.Ticket.Status
 		/// </summary>
-		public int TicketStatus { get; set; }
+		public TicketStatus TicketStatus { get; set; }
 
 		public DateTime? TicketStatusDateModified { get; set; }
 
@@ -30,6 +33,7 @@ namespace Ginseng.Models
 
 		/// <summary>
 		/// This should reflect in Freshdesk ticket custom field.
+        /// Use zero to mean ticket is ignored (test ticket, or not actionable by dev team)
 		/// </summary>
 		public int WorkItemNumber { get; set; }
 	}
