@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Dapper;
 using Ginseng.Models;
+using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Mvc.Enums.Freshdesk;
 using Ginseng.Mvc.Exceptions;
 using Ginseng.Mvc.Extensions;
@@ -95,7 +96,7 @@ namespace Ginseng.Mvc.Services
                     {
                         TicketId = ticketId,
                         OrganizationId = workItem.OrganizationId,
-                        TicketStatus = 0,
+                        TicketStatus = TicketStatus.Unknown,
                         WorkItemNumber = workItem.Number,
                         CreatedBy = "system",
                         DateCreated = DateTime.UtcNow,
