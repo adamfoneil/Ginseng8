@@ -3,10 +3,6 @@ using System;
 
 namespace Ginseng.Mvc.Models.Freshdesk.Dto
 {
-    /// <summary>
-    /// Generated at https://app.quicktype.io/#l=cs&r=json2csharp
-    /// Note this is persisted in blob storage as json, not in database
-    /// </summary>
     public class Ticket
     {   /*
 		[JsonProperty("cc_emails")]

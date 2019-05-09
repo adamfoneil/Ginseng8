@@ -13,6 +13,7 @@
         <th>Id</th>
         <th>Subject</th>
         <th>Date</th>
+        <th>Actions</th>
     </tr>
     @foreach (var item in Model.Tickets)
     {
@@ -20,8 +21,19 @@
             <td>@item.Id</td>
             <td><a href="@Model.FreshdeskUrl/a/tickets/@item.Id" target="_blank">@item.Subject</a></td>
             <td>@item.CreatedAt.DateTime</td>
+            <td>                
+                <form method="post" asp-page-handler="DoAction" class="form-inline">
+                    <input type="hidden" name="TicketId" value="@item.Id"/>         
+                    <div class="form-row">
+                        <select id="ActionId" asp-items="Model.ActionSelect" class="form-control mr-2">
+                            <option value="">(select)</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-primary">Go</button>                    
+                    </div>
+                </form>                
+            </td>
         </tr>
     }
 </table>
 
-<p>loaded from: @Model.LoadedFrom as of @Model.DateQueried</p>
+<p>loaded from: @Model.LoadedFrom as of @Model.DateQueried UTC</p>
