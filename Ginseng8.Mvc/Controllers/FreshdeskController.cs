@@ -1,7 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Linq;
@@ -9,6 +8,15 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading.Tasks;
+using AutoMapper;
+using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Models.Freshdesk;
+using Ginseng.Mvc.Models.Freshdesk.Dto;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Net.Http.Headers;
+using Microsoft.AspNetCore.Http;
+using Octokit;
 
 namespace Ginseng.Mvc.Controllers
 {
@@ -18,13 +26,20 @@ namespace Ginseng.Mvc.Controllers
 	public class FreshdeskController : Controller
 	{
 		private readonly IConfiguration _config;
-		private readonly DataAccess _data;
+        private readonly IMapper _mapper;
+        private readonly DataAccess _data;
+        private readonly IFreshdeskService _freshdeskService;
 
-		public FreshdeskController(IConfiguration config)
+        public FreshdeskController(
+            IConfiguration config, 
+            IMapper mapper,
+            IFreshdeskService freshdeskService)
 		{
 			_config = config;
+            _mapper = mapper;
 			_data = new DataAccess(_config);
-		}
+            _freshdeskService = freshdeskService;
+        }
 
 		public IActionResult Login(string host_url = null)
 		{
@@ -80,5 +95,58 @@ namespace Ginseng.Mvc.Controllers
 								  (current, next) => current.Append(next),
 								  current => current.ToString());
 		}
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Webhook([FromBody] WebhookRequest request)
+        {
+            // check request payload parsed correctly
+            if (request == null)
+            {
+                return BadRequest("Wrong request format");
+            }
+
+            // check authentication header
+            if (!Request.Headers.TryGetValue(HeaderNames.Authorization, out var authHeader))
+            {
+                return Unauthorized("Authentication header is not provided with the request");
+            }
+
+            // validate authentication api key
+            var requestApiKey = authHeader.ToString().Replace("Bearer ", "");
+            if (!_freshdeskService.ValidateWebhookApiKey(requestApiKey))
+            {
+                return Unauthorized("Wrong authentication key");
+            }
+
+            try
+            {
+                await _freshdeskService.StoreWebhookPayloadAsync(Request.Body);
+            }
+            catch
+            {
+                // ignore, because it's for debug reasons only
+            }
+
+            try
+            {
+                var webhook = _mapper.Map<Webhook>(request);
+                await _freshdeskService.OnWebhookAsync(webhook);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+
+            return Ok();
+        }
 	}
 }

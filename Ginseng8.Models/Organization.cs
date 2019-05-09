@@ -43,7 +43,7 @@ namespace Ginseng.Models
 		[UniqueKey]
 		public string TenantName { get; set; }
 
-		[MaxLength(255)]
+        [MaxLength(255)]
 		public string FreshdeskUrl { get; set; }
 
 		[MaxLength(255)]

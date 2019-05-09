@@ -22,6 +22,8 @@
 
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="8.1.0" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.0" />
     <PackageReference Include="ClosedXML" Version="0.94.2" />
     <PackageReference Include="ClosedXML.Extensions.Mvc" Version="0.2.2" />
     <PackageReference Include="Html2Markdown" Version="3.2.1.341" />

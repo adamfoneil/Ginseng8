@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Postulate.SqlServer.IntKey;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Testing
 {
@@ -25,13 +26,13 @@ namespace Testing
 		}
 
 		[TestMethod]
-		public void ListTickets()
+		public async Task ListTickets()
 		{
 			using (var cn = GetConnection())
 			{
 				var org = cn.FindWhere<Organization>(new { name = "aerie" });
 				var client = new FreshdeskClient(org.FreshdeskUrl, org.FreshdeskApiKey);
-				var tickets = client.ListTickets();
+				var tickets = await client.ListTicketsAsync();
 				Assert.IsTrue(tickets.Any());
 			}			
 		}

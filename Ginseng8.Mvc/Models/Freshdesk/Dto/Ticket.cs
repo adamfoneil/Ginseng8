@@ -1,16 +1,14 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
-using System.Globalization;
 
-namespace Ginseng.Models.Freshdesk
+namespace Ginseng.Mvc.Models.Freshdesk.Dto
 {
 	/// <summary>
 	/// Generated at https://app.quicktype.io/#l=cs&r=json2csharp
 	/// Note this is persisted in blob storage as json, not in database
 	/// </summary>
-	public partial class Ticket
-	{
+	public class Ticket
+	{   /*
 		[JsonProperty("cc_emails")]
 		public string[] CcEmails { get; set; }
 
@@ -33,7 +31,7 @@ namespace Ginseng.Models.Freshdesk
 		public long? EmailConfigId { get; set; }
 
 		[JsonProperty("group_id")]
-		public int? GroupId { get; set; }
+		public long? GroupId { get; set; }
 
 		[JsonProperty("priority")]
 		public int Priority { get; set; }
@@ -49,27 +47,27 @@ namespace Ginseng.Models.Freshdesk
 
 		[JsonProperty("company_id")]
 		public long? CompanyId { get; set; }
-
+        */
 		[JsonProperty("status")]
 		public int Status { get; set; }
-
+        
 		[JsonProperty("subject")]
 		public string Subject { get; set; }
-
+        /*
 		[JsonProperty("association_type")]
-		public object AssociationType { get; set; }
+		public string AssociationType { get; set; }
 
 		[JsonProperty("to_emails")]
 		public string[] ToEmails { get; set; }
 
 		[JsonProperty("product_id")]
-		public object ProductId { get; set; }
-
-		[JsonProperty("id")]
+		public long ProductId { get; set; }
+        */
+        [JsonProperty("id")]
 		public long Id { get; set; }
-
+        /*
 		[JsonProperty("type")]
-		public object Type { get; set; }
+		public string Type { get; set; }
 
 		[JsonProperty("due_by")]
 		public DateTimeOffset DueBy { get; set; }
@@ -79,13 +77,13 @@ namespace Ginseng.Models.Freshdesk
 
 		[JsonProperty("is_escalated")]
 		public bool IsEscalated { get; set; }
-
+        */
 		[JsonProperty("custom_fields")]
 		public CustomFields CustomFields { get; set; }
-
+        
 		[JsonProperty("created_at")]
 		public DateTimeOffset CreatedAt { get; set; }
-
+       /*
 		[JsonProperty("updated_at")]
 		public DateTimeOffset UpdatedAt { get; set; }
 
@@ -94,32 +92,7 @@ namespace Ginseng.Models.Freshdesk
 
 		[JsonProperty("tags")]
 		public string[] Tags { get; set; }
-	}
-
-	public partial class CustomFields
-	{
-	}
-
-	public partial class Ticket
-	{
-		public static Ticket FromJson(string json) => JsonConvert.DeserializeObject<Ticket>(json, Converter.Settings);
-	}
-
-	public static class Serialize
-	{
-		public static string ToJson(this Ticket self) => JsonConvert.SerializeObject(self, Converter.Settings);
-	}
-
-	internal static class Converter
-	{
-		public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
-		{
-			MetadataPropertyHandling = MetadataPropertyHandling.Ignore,
-			DateParseHandling = DateParseHandling.None,
-			Converters =
-			{
-				new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
-			},
-		};
-	}
+        */
+        public static Ticket FromJson(string json) => JsonConvert.DeserializeObject<Ticket>(json);
+    }
 }
