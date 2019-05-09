@@ -18,7 +18,7 @@
     {
         <tr>
             <td>@item.Id</td>
-            <td>@item.Subject</td>
+            <td><a href="@Model.FreshdeskUrl/a/tickets/@item.Id" target="_blank">@item.Subject</a></td>
             <td>@item.CreatedAt.DateTime</td>
         </tr>
     }
