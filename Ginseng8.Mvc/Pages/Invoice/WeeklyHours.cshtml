@@ -1,0 +1,16 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Invoice.WeeklyHoursModel
+@{
+    ViewData["Title"] = "Weekly";
+}
+
+<h1>Weekly</h1>
+
+<form method="get" class="form-inline">
+    <div class="form-group">
+        <label class="mr-2">Week #:</label>
+        <select name="weeksBack" asp-items="Model.WeekSelect" onchange="this.form.submit();" class="form-control"></select>
+    </div>        
+</form>
+
+<partial name="_WeeklyHours" model="Model.Results"/>

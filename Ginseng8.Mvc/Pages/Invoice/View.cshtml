@@ -1,0 +1,35 @@
+﻿@page "{Id}"
+@model Ginseng.Mvc.Pages.Invoice.ViewModel
+@{
+    Layout = "~/Pages/Shared/_PrintLayout.cshtml";
+    ViewData["Title"] = "View";
+}
+
+<h2>Invoice @Model.Header.Number</h2>
+
+<div class="row">
+    <div class="col-lg-4">
+        <span>From:</span>
+        @Html.Raw(Model.Header.Organization.InvoiceHeader)
+    </div>
+
+
+    <div class="col-lg-4">
+        <p>To: @Model.Header.Application.InvoiceEmail</p>
+        <p>Date: @Html.FormatValue(Model.Header.DateCreated, "{0:ddd M/d/yy}")</p>
+        <p>Amount: @Html.FormatValue(Model.Header.Amount, "{0:c2}")</p>
+        <p>Status: @Model.Header.Status.Name</p>
+    </div>    
+
+    <div class="col-lg-4">        
+        <span>Hours breakdown:</span>
+        <ul>
+        @foreach (var devGrp in Model.Details.GroupBy(row => row.UserId))
+        {
+            <li>@devGrp.First().DeveloperName: @devGrp.Sum(row => row.Hours) hrs @@ @Html.FormatValue(devGrp.First().InvoiceRate, "{0:c2}") = @Html.FormatValue(devGrp.Sum(row => row.Amount), "{0:c2}")</li>
+        }
+        </ul>
+    </div>    
+</div>
+
+<partial name="_WeeklyHours" model="@(new WeeklyHoursView() { Weeks = Model.Weeks, WorkLogs = Model.Details })"/>

@@ -19,6 +19,7 @@
         <th>App Name</th>
         <th>Description</th>
         <th>URL</th>
+        <th>Invoice Email</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Applications)
@@ -27,6 +28,7 @@
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Url, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.InvoiceEmail, new { @class = "form-control" })</td>
             <td>@grid.Controls()</td>
         </tr>
     }
@@ -34,6 +36,7 @@
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Url, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.InvoiceEmail, new { @class = "form-control" })</td>
         <td>@grid.Controls()</td>
     </tr>
 </table>

@@ -23,6 +23,9 @@ namespace Ginseng.Models
 		[DefaultExpression("1000")]
 		public int NextWorkItemNumber { get; set; } = 1000;
 
+        [DefaultExpression("1000")]
+        public int NextInvoiceNumber { get; set; } = 1000;
+
 		[DefaultExpression("3")]
 		public int IterationWeeks { get; set; } = 3;
 
@@ -48,6 +51,12 @@ namespace Ginseng.Models
 
 		[MaxLength(255)]
 		public string FreshdeskApiKey { get; set; }
+
+        [MaxLength(500)]
+        public string InvoiceHeader { get; set; }
+
+        [MaxLength(255)]
+        public string PaymentLink { get; set; }
 
 		public WorkDay MilestoneWorkDay { get; set; }
 		public UserProfile OwnerUser { get; set; }

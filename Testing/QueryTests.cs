@@ -99,5 +99,16 @@ namespace Testing
 			TestQuery<NextPriority>();
 		}
 
+        [TestMethod]
+        public void AllPendingWorkLogsQuery()
+        {
+            TestQuery<AllPendingWorkLogs>();
+        }
+
+        [TestMethod]
+        public void AllInvoiceWorkItemsQuery()
+        {
+            TestQuery<AllInvoiceWorkLogs>();
+        }
 	}
 }

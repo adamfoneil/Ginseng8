@@ -26,6 +26,12 @@ namespace Ginseng.Models
 		[MaxLength(255)]
 		public string Url { get; set; }
 
+        /// <summary>
+        /// Where do we email invoices?
+        /// </summary>
+        [MaxLength(100)]
+        public string InvoiceEmail { get; set; }            
+
 		public bool IsActive { get; set; } = true;
 	}
 }
