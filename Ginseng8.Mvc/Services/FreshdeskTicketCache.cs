@@ -25,7 +25,7 @@ namespace Ginseng.Mvc.Services
 
 		public override TimeSpan CallInterval => TimeSpan.FromMinutes(5);		
 
-		protected override async Task<IEnumerable<Ticket>> CallApiAsync(string orgName)
+		protected override async Task<IEnumerable<Ticket>> ApiQueryAll(string orgName)
         {
             var client = await _clientFactory.CreateClientForOrganizationAsync(orgName);
             var tickets = await client.ListTicketsAsync();
@@ -43,5 +43,5 @@ namespace Ginseng.Mvc.Services
 		{
 			return @object.Id.ToString() + ".json";
 		}
-	}
+    }
 }

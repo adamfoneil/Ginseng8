@@ -66,10 +66,10 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         [JsonProperty("id")]
         public long Id { get; set; }
 
-        /*
-		[JsonProperty("type")]
-		public string Type { get; set; }
-
+        [JsonProperty("type")]
+        public string Type { get; set; }
+        
+        /*		
 		[JsonProperty("due_by")]
 		public DateTimeOffset DueBy { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Postulate.Base;
+using Postulate.Base.Attributes;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -10,5 +11,8 @@ namespace Ginseng.Mvc.Queries
         }
        
         public int OrgId { get; set; }
+
+        [Case(true, "[WorkItemNumber]<=0")]
+        public bool? IsIgnored { get; set; }
     }
 }

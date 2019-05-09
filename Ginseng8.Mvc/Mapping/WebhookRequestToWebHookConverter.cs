@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using AutoMapper;
 using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Mvc.Enums.Freshdesk;
@@ -47,73 +48,60 @@ namespace Ginseng.Mvc.Mapping
             {
                 Id = request.Ticket.Id,
                 Subject = request.Ticket.Subject,
-                Url = request.Ticket.Url
+                Url = request.Ticket.Url,
+                Type = TicketTypeFromString(request.Ticket.Type),
+                Status = TicketStatusFromString(request.Ticket.Status)
             };
-
-            switch (request.Ticket.Type)
-            {
-                case "Question":
-                    webhook.Ticket.Type = TicketType.Question;
-                    break;
-
-                case "Incident":
-                    webhook.Ticket.Type = TicketType.Incident;
-                    break;
-
-                case "Problem":
-                    webhook.Ticket.Type = TicketType.Problem;
-                    break;
-
-                case "Feature source":
-                    webhook.Ticket.Type = TicketType.FeatureRequest;
-                    break;
-
-                default:
-                    webhook.Ticket.Type = TicketType.None;
-                    break;
-            }
-
-            switch (request.Ticket.Status)
-            {
-                case "New":
-                    webhook.Ticket.Status = TicketStatus.New;
-                    break;
-
-                case "Open":
-                    webhook.Ticket.Status = TicketStatus.Open;
-                    break;
-
-                case "Pending":
-                    webhook.Ticket.Status = TicketStatus.Pending;
-                    break;
-
-                case "Resolved":
-                    webhook.Ticket.Status = TicketStatus.Resolved;
-                    break;
-
-                case "Closed":
-                    webhook.Ticket.Status = TicketStatus.Closed;
-                    break;
-
-                case "Waiting on Customer":
-                    webhook.Ticket.Status = TicketStatus.WaitingOnCustomer;
-                    break;
-
-                case "Waiting on Third Party":
-                    webhook.Ticket.Status = TicketStatus.WaitingOnThirdParty;
-                    break;
-
-                default:
-                    webhook.Ticket.Status = TicketStatus.Unknown;
-                    break;
-            }
-
+            
             if (webhook.Event == WebhookEvent.TicketDeleted)
             {
                 webhook.Ticket.Status = TicketStatus.Deleted;
             }
 
             return webhook;
+        }
+
+        public static TicketStatus TicketStatusFromString(string status)
+        {
+            var map = new Dictionary<string, TicketStatus>()
+            {
+                { "New", TicketStatus.New },
+                { "Open", TicketStatus.Open },
+                { "Pending", TicketStatus.Pending },
+                { "Resolved", TicketStatus.Resolved },
+                { "Closed", TicketStatus.Closed },
+                { "Waiting on Customer", TicketStatus.WaitingOnCustomer },
+                { "Waiting on Third Party", TicketStatus.WaitingOnThirdParty }
+            };
+
+            try
+            {
+                return map[status];
+            }
+            catch 
+            {
+                return TicketStatus.Unknown;
+            }            
+        }
+
+        public static TicketType TicketTypeFromString(string type)
+        {
+            var map = new Dictionary<string, TicketType>()
+            {
+                { "Question", TicketType.Question },
+                { "Incident", TicketType.Incident },
+                { "Problem", TicketType.Problem },
+                { "Feature source", TicketType.FeatureRequest },                
+            };
+
+            try
+            {
+                return map[type];
+            }
+            catch 
+            {
+                return TicketType.None;
+            }
         }
     }
 }

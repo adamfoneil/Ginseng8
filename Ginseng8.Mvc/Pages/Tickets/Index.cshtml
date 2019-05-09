@@ -8,6 +8,8 @@
 <h3>Freshdesk Ticket Triage</h3>
 <p>Use this to generate work items, or route elsewhere as needed.</p>
 
+@Html.ActionAlert(TempData)
+
 <table class="table">
     <tr>
         <th>Id</th>
@@ -23,7 +25,9 @@
             <td>@item.CreatedAt.DateTime</td>
             <td>                
                 <form method="post" asp-page-handler="DoAction" class="form-inline">
-                    <input type="hidden" name="TicketId" value="@item.Id"/>         
+                    <input type="hidden" name="ticketId" value="@item.Id"/>         
+                    <input type="hidden" name="statusId" value="@item.Status"/>
+                    <input type="hidden" name="typeName" value="@item.Type"/>
                     <div class="form-row">
                         <select id="ActionId" asp-items="Model.ActionSelect" class="form-control mr-2">
                             <option value="">(select)</option>

@@ -43,7 +43,7 @@ namespace Ginseng.Mvc.Services
 		/// <summary>
 		/// Implement this to return the T items from the API
 		/// </summary>		
-		protected abstract Task<IEnumerable<T>> CallApiAsync(string orgName);		
+		protected abstract Task<IEnumerable<T>> ApiQueryAll(string orgName);
 
 		/// <summary>
 		/// How much time passes before we allow API to called again
@@ -75,7 +75,7 @@ namespace Ginseng.Mvc.Services
 			if (await AllowApiCallAsync(orgName))
 			{
 				// enough time has passed since last API call
-				results = await CallApiAsync(orgName);
+				results = await ApiQueryAll(orgName);
 
 				// save results in blob storage so I can get them again without hitting the API
 				var container = await _blobStorage.GetOrgContainerAsync(orgName);
@@ -101,6 +101,14 @@ namespace Ginseng.Mvc.Services
 
 			return results;
 		}
+
+        public async Task<T> GetBlobAsync(string orgName, T criteria)
+        {
+            string blobName = GetBlobName(criteria);
+            var container = await _blobStorage.GetOrgContainerAsync(orgName);
+            var blob = container.GetBlockBlobReference(_folderName + "/" + blobName);
+            return await ConvertFromBlobAsync(blob);
+        }
 
 		private async Task<bool> AllowApiCallAsync(string orgName)
 		{
