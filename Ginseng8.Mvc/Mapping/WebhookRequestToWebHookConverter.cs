@@ -92,7 +92,8 @@ namespace Ginseng.Mvc.Mapping
                 { "Incident", TicketType.Incident },
                 { "Problem", TicketType.Problem },
                 { "Feature source", TicketType.FeatureRequest },
-                { "Issue", TicketType.Issue }
+                { "Issue", TicketType.Issue },
+                { "Request", TicketType.Request }
             };
 
             try
