@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	public class Organization : BaseTable, IFindRelated<int>
+	public class Organization : BaseTable, IFindRelated<int>, IOrgSpecific
 	{
 		[PrimaryKey]
 		[MaxLength(50)]
@@ -126,5 +127,10 @@ namespace Ginseng.Models
 			MilestoneWorkDay = await commandProvider.FindAsync<WorkDay>(connection, MilestoneWorkDayValue);
 			OwnerUser = await commandProvider.FindAsync<UserProfile>(connection, OwnerUserId);
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(Id);
+        }
+    }
 }

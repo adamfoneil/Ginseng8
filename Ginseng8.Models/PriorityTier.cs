@@ -1,13 +1,16 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
 	/// <summary>
 	/// Groups projects into levels of priority for easy comprehension of priorities on Dashboard/Projects
 	/// </summary>
-	public class PriorityTier : BaseTable
+	public class PriorityTier : BaseTable, IOrgSpecific
 	{
 		[PrimaryKey]
 		[References(typeof(Organization))]
@@ -26,5 +29,10 @@ namespace Ginseng.Models
 		/// Tier's sorted position
 		/// </summary>
 		public int Rank { get; set; }
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

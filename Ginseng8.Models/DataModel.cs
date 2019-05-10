@@ -16,7 +16,7 @@ namespace Ginseng.Models
 	/// Collection of model classes (database tables) grouped under a name
 	/// </summary>
 	[TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
-	public class DataModel : BaseTable, IBody
+	public class DataModel : BaseTable, IBody, IOrgSpecific
 	{
 		[References(typeof(Application))]
 		[PrimaryKey]
@@ -48,5 +48,11 @@ namespace Ginseng.Models
 				"float", "money", "bigint", "byte", "binary", "boolean"
 			}.Select(s => new ModelClass() { DataModelId = dataModelId, Name = s, IsScalarType = true });
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            var app = await connection.FindAsync<Application>(ApplicationId);
+            return app.OrganizationId;
+        }
+    }
 }

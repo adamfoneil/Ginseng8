@@ -1,14 +1,17 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
 	/// <summary>
 	/// A descriptor such as Bug or Feature or some other wording that helps categorize work items
 	/// </summary>
-	public class Label : BaseTable
+	public class Label : BaseTable, IOrgSpecific
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -51,5 +54,10 @@ namespace Ginseng.Models
 		{
 			return Id.GetHashCode();
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

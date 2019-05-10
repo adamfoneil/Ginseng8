@@ -17,7 +17,7 @@ namespace Ginseng.Models
 		CommitMessage = 2
 	}
 
-	public class PendingWorkLog : BaseTable, IBody
+	public class PendingWorkLog : BaseTable, IBody, IOrgSpecific
 	{
 		[References(typeof(Organization))]
 		public int OrganizationId { get; set; }
@@ -149,7 +149,12 @@ namespace Ginseng.Models
 			hours = 0;
 			return false;
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 
 	internal class PendingHoursLink
 	{
