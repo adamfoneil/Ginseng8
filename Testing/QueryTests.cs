@@ -116,5 +116,11 @@ namespace Testing
         {
             TestQuery<CalendarWeeks>();
         }
+
+        [TestMethod]
+        public void LabelsQuery()
+        {
+            TestQuery<Labels>();
+        }
 	}
 }
