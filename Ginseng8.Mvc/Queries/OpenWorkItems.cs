@@ -290,9 +290,6 @@ namespace Ginseng.Mvc.Queries
 		[Case(true, "[wi].[MilestoneId] IS NOT NULL AND [wi].[ActivityId] IS NULL")]
 		public bool? IsStopped { get; set; }
 
-		[Case(true, "")]
-		public bool? IsHung { get; set; }
-
 		[Phrase("wi].[Title", "wi].[TextBody")]
 		public string TitleAndBodySearch { get; set; }
 
