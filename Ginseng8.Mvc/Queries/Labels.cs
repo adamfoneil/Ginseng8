@@ -5,7 +5,10 @@ namespace Ginseng.Mvc.Queries
 {
 	public class Labels : Query<Label>
 	{
-		public Labels() : base("SELECT * FROM [dbo].[Label] WHERE [OrganizationId]=@orgId AND [IsActive]=@isActive ORDER BY [Name]")
+		public Labels() : base(
+            @"SELECT * FROM [dbo].[Label] 
+            WHERE [OrganizationId]=@orgId AND [IsActive]=@isActive 
+            ORDER BY [Name]")
 		{
 		}
 
