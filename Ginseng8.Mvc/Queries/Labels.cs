@@ -9,7 +9,8 @@ namespace Ginseng.Mvc.Queries
 	public class Labels : Query<Label>, ITestableQuery
 	{
 		public Labels() : base(
-            @"SELECT * FROM [dbo].[Label] 
+            @"SELECT *
+            FROM [dbo].[Label] 
             WHERE
                 [OrganizationId]=@orgId AND 
                 [IsActive]=@isActive 
