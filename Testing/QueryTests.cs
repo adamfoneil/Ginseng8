@@ -110,5 +110,11 @@ namespace Testing
         {
             TestQuery<AllInvoiceWorkLogs>();
         }
+
+        [TestMethod]
+        public void CalendarWeeksQuery()
+        {
+            TestQuery<CalendarWeeks>();
+        }
 	}
 }
