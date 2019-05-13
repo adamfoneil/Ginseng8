@@ -50,7 +50,7 @@ namespace Ginseng.Integration.Services
 
             var response = await client.ExecuteTaskAsync<T>(request);
 
-            if (!response.IsSuccessful) throw response.ErrorException;
+            if (!response.IsSuccessful) throw new Exception(response.StatusDescription);
 
             try
             {
