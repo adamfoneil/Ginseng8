@@ -1,38 +1,46 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using Ginseng.Models;
-using Postulate.Base;
+﻿using Postulate.Base;
+using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Ginseng.Models.Queries
 {
-	public class OrgUserByName : Query<OrganizationUser>, ITestableQuery
-	{
-		public OrgUserByName() : base(
-			@"SELECT [ou].*, [u].[UserName], [u].[Email], [u].[PhoneNumber]
+    public class OrgUserByName : Query<OrganizationUser>, ITestableQuery
+    {
+        public OrgUserByName() : base(
+            @"SELECT [ou].*, [u].[UserName], [u].[Email], [u].[PhoneNumber]
 			FROM [dbo].[OrganizationUser] [ou]
 			INNER JOIN [dbo].[AspNetUsers] [u] ON [ou].[UserId]=[u].[UserId]
-			WHERE
-				[ou].[OrganizationId]=@orgId AND
-				[ou].[IsEnabled]=1 AND (
-					[u].[Email] LIKE '%' + @name + '%' OR
-					[u].[UserName] LIKE '%' + @name + '%' OR
-					[ou].[DisplayName] LIKE '%' + @name + '%'
-				)")
-		{
-		}
+			{where}")
+        {
+        }
 
-		public int OrgId { get; set; }
-		public string Name { get; set; }
+        [Where("[ou].[OrganizationId]=@orgId")]
+        public int? OrgId { get; set; }
 
-		public IEnumerable<ITestableQuery> GetTestCases()
-		{
-			yield return new OrgUserByName() { OrgId = 0, Name = "anyone" };
-		}
+        [Where("[u].[UserName]=@userName")]
+        public string UserName { get; set; }
 
-		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
-		{
-			return TestExecuteHelper(connection);
-		}
-	}
+        [Where(@"(
+            [u].[Email] LIKE '%' + @searchName + '%' OR
+            [u].[UserName] LIKE '%' + @searchName + '%' OR
+            [ou].[DisplayName] LIKE '%' + @searchName + '%'
+        )")]
+        public string SearchName { get; set; }
+
+        [Where("[ou].[IsEnabled]=@isEnabled")]
+        public bool? IsEnabled { get; set; } = true;
+
+        public IEnumerable<ITestableQuery> GetTestCases()
+        {
+            yield return new OrgUserByName() { OrgId = 0, SearchName = "anyone" };
+            yield return new OrgUserByName() { OrgId = 0, UserName = "anyone" };
+        }
+
+        public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+        {
+            return TestExecuteHelper(connection);
+        }
+    }
 }

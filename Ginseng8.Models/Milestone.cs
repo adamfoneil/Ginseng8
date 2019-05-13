@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Ginseng.Models.Conventions;
 using Ginseng.Models.Extensions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using Postulate.SqlServer.IntKey;
 using System;
@@ -16,7 +17,7 @@ namespace Ginseng.Models
 	/// A due date of some kind, such as a sprint end date or some other event with a known date
 	/// </summary>
 	[DereferenceId("SELECT [Name] + ' ' + FORMAT([Date], 'ddd M/d') AS [Name] FROM [dbo].[Milestone] WHERE [Id]=@id")]
-	public class Milestone : BaseTable
+	public class Milestone : BaseTable, IOrgSpecific
 	{
 		[PrimaryKey]
 		[References(typeof(Organization))]
@@ -88,5 +89,10 @@ namespace Ginseng.Models
 				Name = $"week {weekNumber}"
 			};
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

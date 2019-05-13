@@ -4,6 +4,7 @@ using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
+using Postulate.SqlServer.IntKey;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// A collection of work items centered around a single goal, feature, or some other unifying idea
 	/// </summary>
-	public class Project : BaseTable, IBody, IFindRelated<int>
+	public class Project : BaseTable, IBody, IFindRelated<int>, IOrgSpecific
 	{
 		[References(typeof(Application))]
 		[PrimaryKey]
@@ -63,7 +64,13 @@ namespace Ginseng.Models
 			Application = await commandProvider.FindAsync<Application>(connection, ApplicationId);
 		}
 
-		public async Task SyncWorkItemsToProjectAsync(IDbConnection connection)
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            var app = await connection.FindAsync<Application>(ApplicationId);
+            return app.OrganizationId;
+        }
+
+        public async Task SyncWorkItemsToProjectAsync(IDbConnection connection)
 		{
 			await connection.ExecuteAsync(
 				@"UPDATE [dbo].[WorkItem] SET [ApplicationId]=@appId WHERE [ProjectId]=@projectId",

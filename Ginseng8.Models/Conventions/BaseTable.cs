@@ -1,9 +1,13 @@
-﻿using Postulate.Base;
+﻿using Ginseng.Models.Interfaces;
+using Ginseng.Models.Queries;
+using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models.Conventions
 {
@@ -46,5 +50,34 @@ namespace Ginseng.Models.Conventions
 					break;
 			}
 		}
-	}
+
+        public override async Task<bool> CheckSavePermissionAsync(IDbConnection connection, IUser user)
+        {
+            return await CheckOrgPermissionAsync(connection, user);
+        }
+
+        public override async Task<bool> CheckFindPermissionAsync(IDbConnection connection, IUser user)
+        {
+            return await CheckOrgPermissionAsync(connection, user);
+        }
+
+        private async Task<bool> CheckOrgPermissionAsync(IDbConnection connection, IUser user)
+        {
+            var orgSpecific = this as IOrgSpecific;
+            if (orgSpecific != null)
+            {
+                var userOrgIds = await GetUserOrgIdsAsync(connection, user);
+                int thisOrgId = await orgSpecific.GetOrgIdAsync(connection);
+                return userOrgIds.Contains(thisOrgId);
+            }
+
+            return await base.CheckFindPermissionAsync(connection, user);
+        }
+
+        private async Task<int[]> GetUserOrgIdsAsync(IDbConnection connection, IUser user)
+        {
+            var result = await new OrgUserByName() { UserName = user.UserName }.ExecuteAsync(connection);
+            return result.Select(row => row.OrganizationId).ToArray();
+        }
+    }
 }

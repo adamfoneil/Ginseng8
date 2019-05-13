@@ -1,16 +1,19 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
 	/// <summary>
 	/// Blob attachment to an object
 	/// </summary>
-	public class Attachment : BaseTable
+	public class Attachment : BaseTable, IOrgSpecific
 	{
 		public Attachment()
 		{
@@ -64,5 +67,10 @@ namespace Ginseng.Models
 				throw new Exception($"Couldn't find object type for folder name '{folderName}'.", exc);
 			}
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

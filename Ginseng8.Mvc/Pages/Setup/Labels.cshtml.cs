@@ -15,11 +15,11 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public IEnumerable<Label> Labels { get; set; }
 
-		public void OnGet(bool isActive = true)
+		public async Task OnGetAsync(bool isActive = true)
 		{
 			using (var cn = Data.GetConnection())
 			{
-				Labels = new Labels() { OrgId = OrgId, IsActive = isActive }.Execute(cn);
+				Labels = await new Labels() { OrgId = OrgId, IsActive = isActive }.ExecuteAsync(cn);
 			}
 		}
 

@@ -1,6 +1,9 @@
 ﻿using Ginseng.Mvc.Queries.Models;
 using Postulate.Base;
+using Postulate.Base.Interfaces;
 using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -18,7 +21,7 @@ namespace Ginseng.Mvc.Queries
 	/// <summary>
 	/// Gives you start/end dates of weeks counting backwards from the current week
 	/// </summary>
-	public class CalendarWeeks : Query<CalendarWeeksResult>
+	public class CalendarWeeks : Query<CalendarWeeksResult>, ITestableQuery
 	{
 		public CalendarWeeks() : base(
 			@"WITH [source] AS (
@@ -41,5 +44,15 @@ namespace Ginseng.Mvc.Queries
 
 		public DateTime Seed { get; set; }
 		public int WeeksBack { get; set; }
-	}
+
+        public IEnumerable<ITestableQuery> GetTestCases()
+        {
+            yield return new CalendarWeeks() { Seed = DateTime.Today, WeeksBack = 1 };
+        }
+
+        public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+        {
+            return TestExecuteHelper(connection);
+        }
+    }
 }

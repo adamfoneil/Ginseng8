@@ -1,13 +1,16 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
 	/// <summary>
 	/// A software product managed by an organization
 	/// </summary>
-	public class Application : BaseTable
+	public class Application : BaseTable, IOrgSpecific
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -33,5 +36,10 @@ namespace Ginseng.Models
         public string InvoiceEmail { get; set; }            
 
 		public bool IsActive { get; set; } = true;
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

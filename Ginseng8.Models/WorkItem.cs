@@ -22,7 +22,7 @@ namespace Ginseng.Models
 	/// User story, development task, bug, or feature request
 	/// </summary>
 	[TrackChanges(IgnoreProperties = "ModifiedBy;DateModified")]
-	public class WorkItem : BaseTable, IBody, ITrackedRecord
+	public class WorkItem : BaseTable, IBody, ITrackedRecord, IOrgSpecific
 	{
 		public const string IconCreated = "far fa-plus-hexagon";
 		public const string IconClosed = "far fa-clipboard-check";
@@ -236,5 +236,10 @@ namespace Ginseng.Models
 		{
 			return await connection.QuerySingleAsync<OrgAndApp>("SELECT [OrganizationId], [ApplicationId] FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

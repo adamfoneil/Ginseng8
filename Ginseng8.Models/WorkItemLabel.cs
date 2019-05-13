@@ -3,6 +3,9 @@ using Postulate.Base.Attributes;
 
 namespace Ginseng.Models
 {
+    /// <summary>
+    /// Associates a work item and a label
+    /// </summary>
 	public class WorkItemLabel : BaseTable
 	{
 		[References(typeof(WorkItem))]
