@@ -25,5 +25,9 @@ namespace Ginseng.Models
         public string Resource { get; set; }
 
         public string Content { get; set; }
+
+        public bool IsSuccessful { get; set; }
+
+        public string StatusDescription { get; set; }
     }
 }
