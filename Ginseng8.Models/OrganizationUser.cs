@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	public class OrganizationUser : BaseTable, IFindRelated<int>, INotifyOptions
+	public class OrganizationUser : BaseTable, IFindRelated<int>, INotifyOptions, IOrgSpecific
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -143,5 +143,10 @@ namespace Ginseng.Models
 			if (IsEnabled && IsRequest) IsRequest = false;
 			base.BeforeSave(connection, action, user);
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

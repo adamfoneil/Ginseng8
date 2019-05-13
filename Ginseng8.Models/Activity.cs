@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
@@ -12,7 +13,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// Defines some type of work that someone can do on a work item
 	/// </summary>
-	public class Activity : BaseTable, IFindRelated<int>
+	public class Activity : BaseTable, IFindRelated<int>, IOrgSpecific
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -52,5 +53,10 @@ namespace Ginseng.Models
 		{
 			Responsibility = await commandProvider.FindAsync<Responsibility>(connection, ResponsibilityId);
 		}
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

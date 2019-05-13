@@ -27,7 +27,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// Info added to a work item
 	/// </summary>
-	public class Comment : BaseTable, IBody
+	public class Comment : BaseTable, IBody, IOrgSpecific
 	{
 		public const string CommentIcon = "far fa-comment";
 		public const string ImpedimentIcon = "fas fa-comment-times";
@@ -100,7 +100,7 @@ namespace Ginseng.Models
 
 			foreach (var name in names)
 			{
-				var users = await new OrgUserByName() { OrgId = comment.OrganizationId, Name = name.Value.Substring(1) }.ExecuteAsync(connection);
+				var users = await new OrgUserByName() { OrgId = comment.OrganizationId, SearchName = name.Value.Substring(1) }.ExecuteAsync(connection);
 				if (users.Any())
 				{
 					var mentionedUser = users.First();
@@ -139,6 +139,11 @@ namespace Ginseng.Models
 			comment.HtmlBody = result;
 			comment.TextBody = new Converter().Convert(comment.HtmlBody);
 			await connection.SaveAsync(comment);
-		}		
-	}
+		}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            return await Task.FromResult(OrganizationId);
+        }
+    }
 }

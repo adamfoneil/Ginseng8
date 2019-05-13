@@ -1,8 +1,11 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
+using Postulate.SqlServer.IntKey;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
@@ -10,7 +13,7 @@ namespace Ginseng.Models
 	/// Describes a model property (database column)
 	/// </summary>
 	[TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
-	public class ModelProperty : BaseTable
+	public class ModelProperty : BaseTable, IOrgSpecific
 	{
 		[References(typeof(ModelClass))]
 		[PrimaryKey]
@@ -33,5 +36,11 @@ namespace Ginseng.Models
 
 		[NotMapped]
 		public bool IsScalarType { get; set; }
-	}
+
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            var mc = await connection.FindAsync<ModelClass>(ModelClassId);
+            return await mc.GetOrgIdAsync(connection);
+        }
+    }
 }

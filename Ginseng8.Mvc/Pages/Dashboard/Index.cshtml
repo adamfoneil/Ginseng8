@@ -31,23 +31,22 @@
 }
 
 <div id="accordion">
-@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+@foreach (var milestoneGrp in Model.WorkItems.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
 {
-    <h4>@appGrp.First().ApplicationName</h4>
+    var milestoneItem = milestoneGrp.First();
+    <partial name="Items/_MilestoneHeader" model="milestoneItem" />
+   
+    <div class="ml-3">
+        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp, (wd) => wd.UserId == Model.UserId)"/>
+    </div>
 
-    @foreach (var milestoneGrp in appGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
+    @foreach (var appGrp in milestoneGrp.GroupBy(row => row.ApplicationId))
     {
-        var milestoneItem = milestoneGrp.First();
-
-        <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-
-        <div class="ml-3">
-            <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp, (wd) => wd.UserId == Model.UserId)"/>
-        </div>
-
+        <h5 class="ml-3">@appGrp.First().ApplicationName</h5>
+        
         <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">            
             <div class="ml-3 sortable" data-user-id="@Model.UserId">
-                @foreach (var item in milestoneGrp)
+                @foreach (var item in appGrp)
                 {
                     <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
                 }
