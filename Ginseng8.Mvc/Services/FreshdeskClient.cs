@@ -1,27 +1,32 @@
-﻿using Newtonsoft.Json;
+﻿using Ginseng.Models;
+using Ginseng.Mvc.Extensions;
+using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Models.Freshdesk.Dto;
+using Ginseng.Mvc.Services;
+using Newtonsoft.Json;
+using Postulate.SqlServer.IntKey;
 using RestSharp;
 using RestSharp.Authenticators;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Ginseng.Mvc.Extensions;
-using Ginseng.Mvc.Interfaces;
-using Ginseng.Mvc.Models.Freshdesk.Dto;
 
 namespace Ginseng.Integration.Services
 {
-	public class FreshdeskClient : IFreshdeskClient
+    public class FreshdeskClient : IFreshdeskClient
     {
-		private readonly string _hostUrl;
-		private readonly string _apiKey;
-		private readonly string _endpointPrefix;
+        private readonly string _hostUrl;
+        private readonly string _apiKey;
+        private readonly string _endpointPrefix;
+        private readonly DataAccess _data;
 
-		public FreshdeskClient(string hostUrl, string apiKey, string endpointPrefix = "/api/v2")
-		{
-			_hostUrl = hostUrl;
-			_apiKey = apiKey;
-			_endpointPrefix = endpointPrefix;
-		}
+        public FreshdeskClient(DataAccess dataAccess, string hostUrl, string apiKey, string endpointPrefix = "/api/v2")
+        {
+            _hostUrl = hostUrl;
+            _apiKey = apiKey;
+            _endpointPrefix = endpointPrefix;
+            _data = dataAccess;
+        }
 
         /// <inheritdoc />
         public async Task<IEnumerable<Ticket>> ListTicketsAsync()
@@ -48,7 +53,11 @@ namespace Ginseng.Integration.Services
                 request.AddParameter("application/json", content, ParameterType.RequestBody);
             }
 
-            var response = await client.ExecuteTaskAsync<T>(request);
+            var log = await LogAPICallAsync(method, resource, content);
+
+            var response = await client.ExecuteTaskAsync<T>(request);            
+
+            await CompleteLogEntryAsync(log, response);
 
             if (!response.IsSuccessful) throw new Exception(response.StatusDescription);
 
@@ -63,19 +72,47 @@ namespace Ginseng.Integration.Services
             }
         }
 
+        private async Task CompleteLogEntryAsync<T>(APICall log, IRestResponse<T> response)
+        {
+            log.IsSuccessful = response.IsSuccessful;
+            if (!response.IsSuccessful) log.StatusDescription = response.StatusDescription;
+            using (var cn = _data.GetConnection())
+            {
+                await cn.SaveAsync(log);
+            }
+        }
+
+        private async Task<APICall> LogAPICallAsync(Method method, string resource, string content)
+        {
+            var log = new APICall()
+            {
+                BaseUrl = _hostUrl,
+                Method = method.ToString(),
+                Resource = resource,
+                Content = content
+            };
+
+            using (var cn = _data.GetConnection())
+            {
+                await cn.InsertAsync(log);
+            }
+
+            return log;
+        }
+
         private RestClient GetClient()
-		{
-			var client = new RestClient(_hostUrl)
-			{
-				Authenticator = new HttpBasicAuthenticator(_apiKey, "X")
-			};
+        {
+            var client = new RestClient(_hostUrl)
+            {
+                Authenticator = new HttpBasicAuthenticator(_apiKey, "X")
+            };
 
-			return client;
-		}
+            return client;
+        }
 
-		private RestRequest GetRequest(string resource, Method method)
-		{
-			return new RestRequest(_endpointPrefix + resource, method);
-		}
-	}
+        private RestRequest GetRequest(string resource, Method method)
+        {
+            return new RestRequest(_endpointPrefix + resource, method);
+        }
+    }
 }

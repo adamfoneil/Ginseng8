@@ -1,5 +1,6 @@
 ﻿using Ginseng.Integration.Services;
 using Ginseng.Models;
+using Ginseng.Mvc.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Postulate.SqlServer.IntKey;
@@ -31,7 +32,7 @@ namespace Testing
 			using (var cn = GetConnection())
 			{
 				var org = cn.FindWhere<Organization>(new { name = "aerie" });
-				var client = new FreshdeskClient(org.FreshdeskUrl, org.FreshdeskApiKey);
+				var client = new FreshdeskClient(new DataAccess(_config), org.FreshdeskUrl, org.FreshdeskApiKey);
 				var tickets = await client.ListTicketsAsync();
 				Assert.IsTrue(tickets.Any());
 			}			

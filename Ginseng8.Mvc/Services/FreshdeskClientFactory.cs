@@ -11,7 +11,7 @@ namespace Ginseng.Mvc.Services
 {
     public class FreshdeskClientFactory : IFreshdeskClientFactory
     {
-        private readonly DataAccess _data;
+        private readonly DataAccess _data;        
 
         public FreshdeskClientFactory(IConfiguration config)
         {
@@ -24,7 +24,7 @@ namespace Ginseng.Mvc.Services
             if (url.IsNullOrEmpty()) throw new ArgumentNullException(nameof(url));
             if (key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(key));
 
-            return new FreshdeskClient(url, key);
+            return new FreshdeskClient(_data, url, key);
         } 
 
         /// <inheritdoc />
