@@ -46,7 +46,7 @@
         
         <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">            
             <div class="ml-3 sortable" data-user-id="@Model.UserId">
-                @foreach (var item in milestoneGrp)
+                @foreach (var item in appGrp)
                 {
                     <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
                 }
