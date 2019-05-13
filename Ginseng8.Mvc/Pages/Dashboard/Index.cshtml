@@ -42,7 +42,7 @@
 
     @foreach (var appGrp in milestoneGrp.GroupBy(row => row.ApplicationId))
     {
-        <h5 class="ml-3">@milestoneGrp.First().ApplicationName</h5>
+        <h5 class="ml-3">@appGrp.First().ApplicationName</h5>
         
         <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">            
             <div class="ml-3 sortable" data-user-id="@Model.UserId">
