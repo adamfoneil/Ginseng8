@@ -1,25 +1,25 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using Ginseng.Models;
+﻿using Ginseng.Models;
 using Postulate.Base;
 using Postulate.Base.Interfaces;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
-	public class Labels : Query<Label>, ITestableQuery
-	{
-		public Labels() : base(
+    public class Labels : Query<Label>, ITestableQuery
+    {
+        public Labels() : base(
             @"SELECT *
-            FROM [dbo].[Label] 
+            FROM [dbo].[Label]
             WHERE
-                [OrganizationId]=@orgId AND 
-                [IsActive]=@isActive 
+                [OrganizationId]=@orgId AND
+                [IsActive]=@isActive
             ORDER BY [Name]")
-		{
-		}
+        {
+        }
 
-		public int OrgId { get; set; }
-		public bool IsActive { get; set; }
+        public int OrgId { get; set; }
+        public bool IsActive { get; set; }
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {
