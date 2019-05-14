@@ -7,13 +7,13 @@ namespace Ginseng.Models
     /// Associates a work item and a label
     /// </summary>
 	public class WorkItemLabel : BaseTable
-	{
-		[References(typeof(WorkItem))]
-		[PrimaryKey]
-		public int WorkItemId { get; set; }
+    {
+        [References(typeof(WorkItem))]
+        [PrimaryKey]
+        public int WorkItemId { get; set; }
 
-		[References(typeof(Label))]
-		[PrimaryKey]
-		public int LabelId { get; set; }
-	}
+        [References(typeof(Label))]
+        [PrimaryKey]
+        public int LabelId { get; set; }
+    }
 }
