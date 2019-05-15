@@ -1,6 +1,4 @@
-﻿using Ginseng.Integration.Services;
-using Ginseng.Models;
-using Ginseng.Mvc.Extensions;
+﻿using Ginseng.Models;
 using Ginseng.Mvc.Helpers;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Mapping;
@@ -40,6 +38,24 @@ namespace Ginseng.Mvc.Pages.Tickets
             _freshdeskClientFactory = freshdeskClientFactory;
         }
 
+        public Dictionary<string, string> TypeBadges
+        {
+            get
+            {
+                return new Dictionary<string, string>()
+                {
+                    { "Issue", "badge-danger" },
+                    { "Feature Request", "badge-info" },
+                    { "Request", "badge-warning" }
+                };
+            }
+        }
+
+        public string GetTypeBadge(string type)
+        {
+            return (TypeBadges.ContainsKey(type)) ? TypeBadges[type] : "badge-light";
+        }
+
         public IEnumerable<WorkItemTicket> IgnoredTickets { get; set; }
         public Dictionary<long, Group> Groups { get; set; }
         public IEnumerable<Ticket> Tickets { get; set; }
@@ -50,7 +66,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         public SelectList ActionSelect { get; set; }
 
         public async Task OnGetAsync()
-        {            
+        {
             using (var cn = Data.GetConnection())
             {
                 var appItems = await new AppSelect() { OrgId = OrgId }.ExecuteItemsAsync(cn);
@@ -58,7 +74,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 ActionSelect = new SelectList(appItems, "Value", "Text");
 
                 IgnoredTickets = await new AllWorkItemTickets() { OrgId = OrgId, IsIgnored = true }.ExecuteAsync(cn);
-            }            
+            }
 
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
             var tickets = await _ticketCache.QueryAsync(Data.CurrentOrg.Name);
@@ -119,7 +135,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             await Data.TrySaveAsync(workItem);
 
             // this will make it "work on next" if it has no priority already
-            var wip = 
+            var wip =
                 await cn.FindWhereAsync<WorkItemPriority>(new { WorkItemId = workItem.Id }) ??
                 new WorkItemPriority() { WorkItemId = workItem.Id, Value = 1 };
 

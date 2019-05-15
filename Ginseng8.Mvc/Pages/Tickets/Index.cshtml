@@ -23,7 +23,11 @@
             <td>@item.Id</td>
             <td>
                 <a href="@Model.FreshdeskUrl/a/tickets/@item.Id" target="_blank">
-                    @item.Type: @item.Subject
+                    @if (item.Type != null)
+                    {
+                        <span class="badge @Model.GetTypeBadge(item.Type)">@item.Type</span>
+                    }
+                    <span>@item.Subject</span>
                     @if (item.GroupId.HasValue)
                     {
                         <strong>@Model.Groups[item.GroupId.Value].Name</strong>
