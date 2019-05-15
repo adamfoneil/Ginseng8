@@ -29,20 +29,24 @@ namespace Ginseng.Mvc.Pages.Tickets
     [Authorize]
     public class IndexModel : AppPageModel
     {
-        private readonly FreshdeskTicketCache _cache;
+        private readonly FreshdeskTicketCache _ticketCache;
+        private readonly FreshdeskGroupCache _groupCache;
         private readonly IFreshdeskClientFactory _freshdeskClientFactory;
 
         public IndexModel(
             IConfiguration config,
-            FreshdeskTicketCache cache,
+            FreshdeskTicketCache ticketCache,
+            FreshdeskGroupCache groupCache,
             IFreshdeskClientFactory freshdeskClientFactory)
             : base(config)
         {
-            _cache = cache;
+            _ticketCache = ticketCache;
+            _groupCache = groupCache;
             _freshdeskClientFactory = freshdeskClientFactory;
         }
 
         public IEnumerable<WorkItemTicket> IgnoredTickets { get; set; }
+        public Dictionary<long, Group> Groups { get; set; }
         public IEnumerable<Ticket> Tickets { get; set; }
         public LoadedFrom LoadedFrom { get; set; }
         public DateTime DateQueried { get; set; }
@@ -57,13 +61,17 @@ namespace Ginseng.Mvc.Pages.Tickets
             using (var cn = Data.GetConnection())
             {
                 IgnoredTickets = await new AllWorkItemTickets() { OrgId = OrgId, IsIgnored = true }.ExecuteAsync(cn);
-            }
+            }            
 
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
-            var tickets = await _cache.QueryAsync(Data.CurrentOrg.Name);
+            var tickets = await _ticketCache.QueryAsync(Data.CurrentOrg.Name);
             Tickets = tickets.Where(t => !IgnoredTickets.Any(it => it.TicketId == t.Id));
-            LoadedFrom = _cache.LoadedFrom;
-            DateQueried = _cache.LastApiCallDateTime;
+
+            var groups = await _groupCache.QueryAsync(Data.CurrentOrg.Name);
+            Groups = groups.ToDictionary(row => row.Id);
+
+            LoadedFrom = _ticketCache.LoadedFrom;
+            DateQueried = _ticketCache.LastApiCallDateTime;
         }
 
         public async Task<IActionResult> OnPostDoActionAsync(int ticketId, TicketAction action)

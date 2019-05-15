@@ -21,7 +21,15 @@
     {
         <tr>
             <td>@item.Id</td>
-            <td><a href="@Model.FreshdeskUrl/a/tickets/@item.Id" target="_blank">@item.Subject</a></td>
+            <td>
+                <a href="@Model.FreshdeskUrl/a/tickets/@item.Id" target="_blank">
+                    @item.Type: @item.Subject
+                    @if (item.GroupId.HasValue)
+                    {
+                        <strong>@Model.Groups[item.GroupId.Value].Name</strong>
+                    }                    
+                </a>
+            </td>
             <td>@item.CreatedAt.DateTime</td>
             <td>                
                 <form method="post" asp-page-handler="DoAction" class="form-inline">

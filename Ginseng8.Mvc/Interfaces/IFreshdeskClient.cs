@@ -7,6 +7,12 @@ namespace Ginseng.Mvc.Interfaces
     public interface IFreshdeskClient
     {
         /// <summary>
+        /// Retrieves all groups
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<Group>> ListGroupsAsync();
+
+        /// <summary>
         /// Retrieves all tickets
         /// </summary>
         /// <returns>Tickets list</returns>

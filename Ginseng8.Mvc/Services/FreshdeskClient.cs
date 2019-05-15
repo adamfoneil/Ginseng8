@@ -30,6 +30,9 @@ namespace Ginseng.Integration.Services
             _orgId = orgId;
         }
 
+        public async Task<IEnumerable<Group>> ListGroupsAsync() 
+            => await ExecuteAsync<List<Group>>("/groups", Method.GET);
+        
         /// <inheritdoc />
         public async Task<IEnumerable<Ticket>> ListTicketsAsync()
             => await ExecuteAsync<List<Ticket>>("/tickets", Method.GET);

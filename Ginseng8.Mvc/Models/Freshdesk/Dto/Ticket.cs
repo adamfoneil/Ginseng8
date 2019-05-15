@@ -26,10 +26,12 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
 
 		[JsonProperty("email_config_id")]
 		public long? EmailConfigId { get; set; }
+        */
 
 		[JsonProperty("group_id")]
 		public long? GroupId { get; set; }
 
+        /*
 		[JsonProperty("priority")]
 		public int Priority { get; set; }
 

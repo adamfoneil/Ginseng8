@@ -60,6 +60,7 @@ namespace Ginseng.Mvc
                 .AddOptions()
                 .AddAutoMapper(typeof(Startup).Assembly)
                 .AddSingleton<FreshdeskTicketCache>()
+                .AddSingleton<FreshdeskGroupCache>()
                 .AddSingleton<IFreshdeskClientFactory, FreshdeskClientFactory>()
                 .AddSingleton<IFreshdeskService, FreshdeskService>()
                 .Configure<FreshdeskServiceOptions>(Configuration.GetSection("Freshdesk"))
