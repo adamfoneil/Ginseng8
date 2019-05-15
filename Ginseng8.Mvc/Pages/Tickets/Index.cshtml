@@ -32,6 +32,10 @@
                     {
                         <strong>@Model.Groups[item.GroupId.Value].Name</strong>
                     }                    
+                    @if (item.Spam)
+                    {
+                        <span class="badge badge-dark">Spam</span>
+                    }
                 </a>
             </td>
             <td>@item.CreatedAt.DateTime</td>

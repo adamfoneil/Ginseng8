@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Ginseng.Mvc.Interfaces;
+using System.Linq;
 
 namespace Ginseng.Mvc.Services
 {
@@ -29,8 +30,7 @@ namespace Ginseng.Mvc.Services
         {
             var client = await _clientFactory.CreateClientForOrganizationAsync(orgName);
             var tickets = await client.ListTicketsAsync();
-
-            return tickets;
+            return tickets.OrderBy(row => row.CreatedAt);
 		}
 
 		protected override async Task<Ticket> ConvertFromBlobAsync(CloudBlockBlob blob)

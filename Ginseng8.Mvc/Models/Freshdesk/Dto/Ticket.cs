@@ -20,10 +20,10 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
 
 		[JsonProperty("fr_escalated")]
 		public bool FrEscalated { get; set; }
-
+        */
 		[JsonProperty("spam")]
 		public bool Spam { get; set; }
-
+        /*
 		[JsonProperty("email_config_id")]
 		public long? EmailConfigId { get; set; }
         */
