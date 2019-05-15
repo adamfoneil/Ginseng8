@@ -6,6 +6,7 @@ using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Mapping;
 using Ginseng.Mvc.Models.Freshdesk.Dto;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,12 +21,6 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Tickets
 {
-    public enum TicketAction
-    {
-        Ignore,
-        CreateWorkItem
-    }
-
     [Authorize]
     public class IndexModel : AppPageModel
     {
@@ -55,11 +50,13 @@ namespace Ginseng.Mvc.Pages.Tickets
         public SelectList ActionSelect { get; set; }
 
         public async Task OnGetAsync()
-        {
-            ActionSelect = SelectListHelper.FromEnum<TicketAction>();
-
+        {            
             using (var cn = Data.GetConnection())
             {
+                var appItems = await new AppSelect() { OrgId = OrgId }.ExecuteItemsAsync(cn);
+                appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+                ActionSelect = new SelectList(appItems, "Value", "Text");
+
                 IgnoredTickets = await new AllWorkItemTickets() { OrgId = OrgId, IsIgnored = true }.ExecuteAsync(cn);
             }            
 
@@ -74,7 +71,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             DateQueried = _ticketCache.LastApiCallDateTime;
         }
 
-        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, TicketAction action)
+        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int appId)
         {
             var client = await _freshdeskClientFactory.CreateClientForOrganizationAsync(OrgId);
             var ticket = await client.GetTicketAsync(ticketId);
@@ -91,17 +88,15 @@ namespace Ginseng.Mvc.Pages.Tickets
                         TicketType = WebhookRequestToWebhookConverter.TicketTypeFromString(ticket.Type)
                     };
 
-                switch (action)
+                if (appId == 0)
                 {
-                    case TicketAction.CreateWorkItem:
-                        int number = await CreateTicketWorkItemAsync(cn, ticket);
-                        wit.WorkItemNumber = number;
-                        await client.UpdateTicketWorkItemAsync(ticketId, number.ToString());
-                        break;
-
-                    case TicketAction.Ignore:
-                        wit.WorkItemNumber = 0;
-                        break;
+                    wit.WorkItemNumber = 0;
+                }
+                else
+                {
+                    int number = await CreateTicketWorkItemAsync(cn, ticket);
+                    wit.WorkItemNumber = number;
+                    await client.UpdateTicketWorkItemAsync(ticketId, number.ToString());
                 }
 
                 await Data.TrySaveAsync(cn, wit);
