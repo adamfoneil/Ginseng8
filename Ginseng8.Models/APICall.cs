@@ -9,6 +9,9 @@ namespace Ginseng.Models
     public class APICall
     {
         public int Id { get; set; }
+        
+        [References(typeof(Organization))]
+        public int OrganizationId { get; set; }
 
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 

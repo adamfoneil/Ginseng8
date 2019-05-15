@@ -14,7 +14,7 @@ namespace Ginseng.Mvc.Interfaces
         /// <param name="url">Freshdesk URL</param>
         /// <param name="key">Freshdesk authentication key</param>
         /// <returns>Freshdesk client instance</returns>
-        IFreshdeskClient CreateClient(string url, string key);
+        IFreshdeskClient CreateClient(int orgId, string url, string key);
 
         /// <summary>
         /// Creates a Freshdesk client instance for the specified organization

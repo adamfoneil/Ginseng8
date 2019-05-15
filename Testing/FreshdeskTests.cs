@@ -32,7 +32,7 @@ namespace Testing
 			using (var cn = GetConnection())
 			{
 				var org = cn.FindWhere<Organization>(new { name = "aerie" });
-				var client = new FreshdeskClient(new DataAccess(_config), org.FreshdeskUrl, org.FreshdeskApiKey);
+				var client = new FreshdeskClient(new DataAccess(_config), org.Id, org.FreshdeskUrl, org.FreshdeskApiKey);
 				var tickets = await client.ListTicketsAsync();
 				Assert.IsTrue(tickets.Any());
 			}			

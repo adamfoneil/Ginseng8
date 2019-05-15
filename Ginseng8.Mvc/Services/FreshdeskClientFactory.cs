@@ -19,12 +19,12 @@ namespace Ginseng.Mvc.Services
         }
 
         /// <inheritdoc />
-        public IFreshdeskClient CreateClient(string url, string key)
+        public IFreshdeskClient CreateClient(int orgId, string url, string key)
         {
             if (url.IsNullOrEmpty()) throw new ArgumentNullException(nameof(url));
             if (key.IsNullOrEmpty()) throw new ArgumentNullException(nameof(key));
 
-            return new FreshdeskClient(_data, url, key);
+            return new FreshdeskClient(_data, orgId, url, key);
         } 
 
         /// <inheritdoc />
@@ -33,7 +33,7 @@ namespace Ginseng.Mvc.Services
             if (organization.FreshdeskUrl.IsNullOrEmpty() || organization.FreshdeskApiKey.IsNullOrEmpty())
                 throw new ArgumentException("Organization configuration is incorrect, FreshdeskUrl and FreshdeskApiKey fields must be specified");
 
-            return CreateClient(organization.FreshdeskUrl, organization.FreshdeskApiKey);
+            return CreateClient(organization.Id, organization.FreshdeskUrl, organization.FreshdeskApiKey);
         }
 
         /// <inheritdoc />

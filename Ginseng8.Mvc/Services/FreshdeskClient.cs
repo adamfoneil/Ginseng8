@@ -19,13 +19,15 @@ namespace Ginseng.Integration.Services
         private readonly string _apiKey;
         private readonly string _endpointPrefix;
         private readonly DataAccess _data;
+        private readonly int _orgId;
 
-        public FreshdeskClient(DataAccess dataAccess, string hostUrl, string apiKey, string endpointPrefix = "/api/v2")
+        public FreshdeskClient(DataAccess dataAccess, int orgId, string hostUrl, string apiKey, string endpointPrefix = "/api/v2")
         {
             _hostUrl = hostUrl;
             _apiKey = apiKey;
             _endpointPrefix = endpointPrefix;
             _data = dataAccess;
+            _orgId = orgId;
         }
 
         /// <inheritdoc />
@@ -86,6 +88,7 @@ namespace Ginseng.Integration.Services
         {
             var log = new APICall()
             {
+                OrganizationId = _orgId,
                 BaseUrl = _hostUrl,
                 Method = method.ToString(),
                 Resource = resource,
