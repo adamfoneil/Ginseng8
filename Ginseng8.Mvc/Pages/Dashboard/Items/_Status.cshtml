@@ -10,58 +10,67 @@
                 <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            @foreach (var act in Model.GetActivityOptions())
-            {
-                <partial name="Dashboard/Items/_Activities" model="act"/>
-            }
-            @if (Model.WorkItem.IsPaused())
-            {
-                <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">
-                    I'll take this
-                    <img src="~/img/loading.gif" style="display:none" />
-                </a>
-                <a href="#" class="dropdown-item no-propagation cancel-activity" data-number="@Model.WorkItem.Number">
-                    Work canceled
-                    <img src="~/img/loading.gif" style="display:none" />
-                </a>
-                <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                <span class="success small pr-2" style="display:none">Updated successfully</span>
-                <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
-            }
-            <div class="dropdown-divider"></div>
-            @if (Model.WorkItem.AssignedUserId.HasValue)
-            {                
-                <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">
-                    Remove Me
-                    <img src="~/img/loading.gif" style="display:none" />
-                </a>
-                <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                <span class="success small pr-2" style="display:none">Item removed</span>
-                <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
-            }
-            else
-            {
-                if (Model.WorkItem.PriorityGroup == PriorityGroupOptions.Backlog)
+                @foreach (var act in Model.GetActivityOptions())
                 {
-                    <a href="#" class="dropdown-item no-propagation work-on-next" data-number="@Model.WorkItem.Number">
-                        Work on Next
+                    <partial name="Dashboard/Items/_Activities" model="act"/>
+                }
+                @if (Model.WorkItem.IsPaused())
+                {
+                    <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">
+                        I'll take this
+                        <img src="~/img/loading.gif" style="display:none" />
+                    </a>
+                    <a href="#" class="dropdown-item no-propagation cancel-activity" data-number="@Model.WorkItem.Number">
+                        Work canceled
                         <img src="~/img/loading.gif" style="display:none" />
                     </a>
                     <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
                     <span class="success small pr-2" style="display:none">Updated successfully</span>
                     <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                 }
-                else if (Model.WorkItem.PriorityGroup == PriorityGroupOptions.WorkOnNext)
-                {
-                    <a href="#" class="dropdown-item no-propagation remove-priority" data-number="@Model.WorkItem.Number">
-                        Send to Backlog
+                <div class="dropdown-divider"></div>
+                @if (Model.WorkItem.AssignedUserId.HasValue)
+                {                
+                    <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">
+                        Remove Me
                         <img src="~/img/loading.gif" style="display:none" />
                     </a>
                     <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                    <span class="success small pr-2" style="display:none">Updated successfully</span>
+                    <span class="success small pr-2" style="display:none">Item removed</span>
                     <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                 }
-            }
+                else
+                {
+                    if (Model.WorkItem.PriorityGroup == PriorityGroupOptions.Backlog)
+                    {
+                        <a href="#" class="dropdown-item no-propagation work-on-next" data-number="@Model.WorkItem.Number">
+                            Work on Next
+                            <img src="~/img/loading.gif" style="display:none" />
+                        </a>
+                        <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
+                        <span class="success small pr-2" style="display:none">Updated successfully</span>
+                        <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
+                    }
+                    else if (Model.WorkItem.PriorityGroup == PriorityGroupOptions.WorkOnNext)
+                    {
+                        <a href="#" class="dropdown-item no-propagation remove-priority" data-number="@Model.WorkItem.Number">
+                            Send to Backlog
+                            <img src="~/img/loading.gif" style="display:none" />
+                        </a>
+                        <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
+                        <span class="success small pr-2" style="display:none">Updated successfully</span>
+                        <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
+                    }
+                }
+                @if (Model?.AssignToUsers?.Any() ?? false)
+                {
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item disabled no-propagation">assign to:</a>
+                    foreach  (var userItem in Model.AssignToUsers)
+                    {
+                        <a class="dropdown-item no-propagation assign-to ml-3" data-number="@Model.WorkItem.Number" data-user-id="@userItem.Value">@userItem.Text</a>
+                    }
+                }                                
             </div>
         </div>
     }
