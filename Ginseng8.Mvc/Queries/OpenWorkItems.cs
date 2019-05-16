@@ -307,6 +307,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("[ms].[Date]<getdate()")]
 		public bool? IsPastDue { get; set; }
 
+        [Case(true, "[wit].[Id] IS NOT NULL")]
+        public bool? IsFreshdeskTicket { get; set; }
+
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
 		{
 			return TestExecuteHelper(connection);
@@ -336,6 +339,7 @@ namespace Ginseng.Mvc.Queries
 			yield return new OpenWorkItems() { TitleAndBodySearch = "whatever this that" };
 			yield return new OpenWorkItems() { IsPastDue = true };
 			yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
+            yield return new OpenWorkItems() { IsFreshdeskTicket = true };
 		}
 	}
 }
