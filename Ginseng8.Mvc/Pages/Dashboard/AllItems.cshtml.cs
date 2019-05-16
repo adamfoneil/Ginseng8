@@ -48,6 +48,9 @@ namespace Ginseng.Mvc.Pages.Work
 		[BindProperty(SupportsGet = true)]
 		public int? FilterLabelId { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int? FilterTicketStatus { get; set; }
+
 		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
 

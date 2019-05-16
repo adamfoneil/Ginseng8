@@ -28,8 +28,10 @@ namespace Ginseng.Mvc.Queries
 		public const string UnestimatedColor = "mediumpurple";
 		public const string StoppedIcon = "fas fa-stop-circle";
 		public const string StoppedColor = "orangered";
+        public const string TicketIcon = "fas fa-ticket-alt";
+        public const string TicketColor = "#1a7172";
 
-		public int Id { get; set; }
+        public int Id { get; set; }
 		public int Number { get; set; }
 		public string Title { get; set; }
 		public int? Priority { get; set; }
@@ -75,6 +77,7 @@ namespace Ginseng.Mvc.Queries
 		public DateTime DateCreated { get; set; }
 		public PriorityGroupOptions PriorityGroup { get; set; }
 		public string CreatedBy { get; set; }
+        public bool IsHelpdeskTicket { get; set; }
 
 		public bool IsEditable(string userName)
 		{
@@ -85,7 +88,8 @@ namespace Ginseng.Mvc.Queries
 		{
 			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
 			if (EstimateHours == 0) yield return new Modifier() { Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
-			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };			
+			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };
+            if (IsHelpdeskTicket) yield return new Modifier() { Icon = TicketIcon, Color = TicketColor, Description = "Item was generated from a Freshdesk ticket" };
 		}
 
 		public string ActivityStatus()
@@ -164,7 +168,11 @@ namespace Ginseng.Mvc.Queries
 				[ho].[HtmlBody] AS [HandOffBody],
 				[ho].[DateCreated] AS [HandOffDate],
 				{PriorityGroupExpression} AS [PriorityGroup],
-				[wi].[CreatedBy]
+				[wi].[CreatedBy],
+                CONVERT(bit, CASE
+                    WHEN [wit].[Id] IS NOT NULL THEN 1
+                    ELSE 0
+                END) AS [IsHelpdeskTicket]
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
@@ -200,6 +208,9 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[FnPriorityTierRanges](@orgId) [ptr] ON
 					[p].[Priority] >= [ptr].[MinPriority] AND
 					[p].[Priority] <= [ptr].[MaxPriority]
+                LEFT JOIN [dbo].[WorkItemTicket] [wit] ON 
+                    [wit].[OrganizationId]=[wi].[OrganizationId] AND
+                    [wit].[WorkItemNumber]=[wi].[Number]   
 				{{join}}
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
