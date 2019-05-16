@@ -9,7 +9,7 @@ namespace Ginseng.Mvc.Queries
         public WorkItemTickets() : base(
             @"SELECT *
 			FROM [dbo].[WorkItemTicket]			
-			WHERE [OrganizationId] = @organizationId")
+			WHERE [OrganizationId] = @organizationId {andWhere}")
         {
         }
 
