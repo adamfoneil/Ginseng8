@@ -37,6 +37,9 @@ namespace Ginseng.Integration.Services
         public async Task<IEnumerable<Ticket>> ListTicketsAsync()
             => await ExecuteAsync<List<Ticket>>("/tickets", Method.GET);
 
+        public Task AddNoteAsync(long id, Comment comment, string userName)
+            => ExecuteAsync<dynamic>($"/tickets/{id}", Method.POST, new AddNoteRequest(comment, userName).ToJson());
+
         /// <inheritdoc />
         public Task<Ticket> GetTicketAsync(long id)
             => ExecuteAsync<Ticket>($"/tickets/{id}", Method.GET);

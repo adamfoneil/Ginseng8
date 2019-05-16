@@ -32,5 +32,7 @@ namespace Ginseng.Mvc.Interfaces
         /// <param name="value">Ginseng work item field raw value</param>
         /// <returns>Task</returns>
         Task UpdateTicketWorkItemAsync(long id, string value);
+
+        Task AddNoteAsync(long id, Ginseng.Models.Comment comment, string userName);
     }
 }
