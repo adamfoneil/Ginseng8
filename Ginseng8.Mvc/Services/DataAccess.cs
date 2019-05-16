@@ -85,24 +85,29 @@ namespace Ginseng.Mvc.Services
 			}
 		}
 
-		public async Task<bool> TrySaveAsync<T>(T record, string[] propertyNames, string successMessage = null) where T : BaseTable
-		{
-			try
+        public async Task<bool> TrySaveAsync<T>(SqlConnection connection, T record, string[] propertyNames, string successMessage = null) where T : BaseTable
+        {
+            try
+            {
+                var update = AuditProperties(record, propertyNames);
+                await connection.SaveAsync(update.Item1, update.Item2);
+                SetSuccessMessage(successMessage);
+                return true;
+            }
+            catch (Exception exc)
+            {
+                SetErrorMessage(exc);
+                return false;
+            }
+        }
+
+        public async Task<bool> TrySaveAsync<T>(T record, string[] propertyNames, string successMessage = null) where T : BaseTable
+		{			
+			using (var cn = GetConnection())
 			{
-				using (var cn = GetConnection())
-				{
-					cn.Open();
-					var update = AuditProperties(record, propertyNames);
-					await cn.SaveAsync(update.Item1, update.Item2);
-					SetSuccessMessage(successMessage);
-					return true;
-				}
-			}
-			catch (Exception exc)
-			{
-				SetErrorMessage(exc);
-				return false;
-			}
+				cn.Open();					
+				return await TrySaveAsync(cn, record, propertyNames, successMessage);
+			}			
 		}
 
 		public async Task<bool> TrySaveAsync<T>(SqlConnection connection, T record, Action<SqlConnection, T> beforeSave = null, string successMessage = null)

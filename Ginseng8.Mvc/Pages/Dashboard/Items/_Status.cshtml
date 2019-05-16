@@ -68,7 +68,13 @@
                     <a class="dropdown-item disabled no-propagation">assign to:</a>
                     foreach  (var userItem in Model.AssignToUsers)
                     {
-                        <a class="dropdown-item no-propagation assign-to ml-3" data-number="@Model.WorkItem.Number" data-user-id="@userItem.Value">@userItem.Text</a>
+                        <a class="dropdown-item no-propagation assign-to ml-3" data-number="@Model.WorkItem.Number" data-user-id="@userItem.Value">
+                            @userItem.Text
+                            <img src="~/img/loading.gif" style="display:none" />
+                        </a>
+                        <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
+                        <span class="success small pr-2" style="display:none">Assigned successfully</span>
+                        <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                     }
                 }                                
             </div>
