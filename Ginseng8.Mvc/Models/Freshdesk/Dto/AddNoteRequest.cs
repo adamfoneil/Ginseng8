@@ -16,11 +16,17 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
             _userName = userName;
         }
 
+        /// <summary>
+        /// This came from inspecting sample note payload when creating online
+        /// </summary>
+        [JsonIgnore]
+        public string Style { get; set; } = "font-family:-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, Arial, sans-serif; font-size:14px;";
+
         [JsonProperty("body")]
-        public string Body => $"{_comment.HtmlBody}<br/>from {_userName}";
+        public string Body => $"<div style=\"{Style}\">{_comment.HtmlBody}<br/>from {_userName}</div>";
 
         [JsonProperty("private")]
-        public bool Private { get; set; } = true;
+        public bool Private { get; set; } = true;        
 
         public string ToJson() => JsonConvert.SerializeObject(this);
     }

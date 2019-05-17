@@ -312,10 +312,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 comment.OrganizationId = _data.CurrentOrg.Id;
                 await comment.SaveHtmlAsync(_data, cn);
-                if (await _data.TrySaveAsync(comment))
-                {
-                    await AddFreshdeskNoteAsync(comment, cn);                    
-                }
+                if (await _data.TrySaveAsync(comment)) await AddFreshdeskNoteAsync(comment, cn);
 
                 var vm = new CommentView();
                 vm.ObjectId = comment.ObjectId;
@@ -326,8 +323,6 @@ namespace Ginseng.Mvc.Controllers
 
         private async Task AddFreshdeskNoteAsync(Comment comment, SqlConnection cn)
         {
-            return; // this doesn't work, so I'm commenting out for now
-
             if (comment.ObjectType == ObjectType.WorkItem)
             {
                 var workItem = await cn.FindAsync<WorkItem>(comment.ObjectId);
