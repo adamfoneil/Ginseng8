@@ -1,8 +1,7 @@
-﻿using Ginseng.Models;
-using Ginseng.Models.Conventions;
+﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
 
-namespace Ginseng.Mvc
+namespace Ginseng.Models
 {
     /// <summary>
     /// Indicates a responsibility ruling out action on a given Freshdesk ticket
