@@ -105,13 +105,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             {                
                 if (appId == 0)
                 {
-                    var ignoreTicket = new IgnoredTicket()
-                    {
-                        TicketId = ticketId,
-                        OrganizationId = OrgId,
-                        ResponsibilityId = responsibilityId
-                    };
-                    await Data.TrySaveAsync(cn, ignoreTicket);
+                    await IgnoreTicketInner(ticketId, responsibilityId, cn);
                 }
                 else
                 {
@@ -131,6 +125,17 @@ namespace Ginseng.Mvc.Pages.Tickets
             }
 
             return Redirect($"Tickets/Index?responsibilityId={responsibilityId}");
+        }
+
+        private async Task IgnoreTicketInner(int ticketId, int responsibilityId, SqlConnection cn)
+        {
+            var ignoreTicket = new IgnoredTicket()
+            {
+                TicketId = ticketId,
+                OrganizationId = OrgId,
+                ResponsibilityId = responsibilityId
+            };
+            await Data.TrySaveAsync(cn, ignoreTicket);
         }
 
         private async Task<int> CreateTicketWorkItemAsync(SqlConnection cn, Ticket ticket)
@@ -154,6 +159,16 @@ namespace Ginseng.Mvc.Pages.Tickets
             await Data.TrySaveAsync(wip);
 
             return workItem.Number;
+        }
+
+        public async Task<RedirectResult> OnPostIgnoreSelectedAsync(string ticketIds, int responsibilityId)
+        {
+            int[] tickets = ticketIds.Split(',').Select(s => int.Parse(s)).ToArray();
+            using (var cn = Data.GetConnection())
+            {
+                foreach (int ticketId in tickets) await IgnoreTicketInner(ticketId, responsibilityId, cn);
+            }
+            return Redirect($"Tickets/Index?responsibilityId={responsibilityId}");
         }
     }
 }

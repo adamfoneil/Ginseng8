@@ -24,8 +24,14 @@
     </div>
 </form>
 
+@{ int index = 0; }
+
 <table class="table">
     <tr>
+        @if (Model.ResponsibilityId != 0)
+        {
+            <th></th>
+        }        
         <th>Id</th>
         <th>Subject</th>
         <th>Date</th>
@@ -34,6 +40,10 @@
     @foreach (var item in Model.Tickets)
     {
         <tr>
+            @if (Model.ResponsibilityId != 0)
+            {
+                <td><input type="checkbox" name="ticketId[@index]" value="@item.Id" class="selectTicket"/></td>
+            }            
             <td>@item.Id</td>
             <td>
                 <a href="@Model.FreshdeskUrl/a/tickets/@item.Id" target="_blank">
@@ -66,7 +76,31 @@
                 </form>                
             </td>
         </tr>
+        index++;
     }
 </table>
 
+@if (Model.ResponsibilityId != 0)
+{
+    <form method="post" asp-page-handler="IgnoreSelected">
+        <input type="hidden" name="ticketIds" id="ticketIds"/>
+        <input type="hidden" name="responsibilityId" value="@Model.ResponsibilityId"/>
+        <button class="btn btn-primary">Ignore Selected</button>
+    </form>
+}
+
 <p>loaded from: @Model.LoadedFrom as of @Model.DateQueried UTC</p>
+
+@section Scripts {
+    <script type="text/javascript">        
+        $('.selectTicket').on('change', function () {
+            var selected = [];
+            $('.selectTicket').each(function () {
+                if ($(this).prop('checked')) {
+                    selected.push($(this).val());
+                }
+            });
+            $('#ticketIds').val(selected.join(','));            
+        });        
+    </script>
+}
