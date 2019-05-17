@@ -55,8 +55,10 @@ namespace Ginseng.Mvc.Pages.Tickets
         {
             return (TypeBadges.ContainsKey(type)) ? TypeBadges[type] : "badge-light";
         }
+        
+        [BindProperty(SupportsGet = true)]
+        public int ResponsibilityId { get; set; }
 
-        public IEnumerable<WorkItemTicket> IgnoredTickets { get; set; }
         public Dictionary<long, Group> Groups { get; set; }
         public IEnumerable<Ticket> Tickets { get; set; }
         public LoadedFrom LoadedFrom { get; set; }
@@ -64,22 +66,29 @@ namespace Ginseng.Mvc.Pages.Tickets
         public string FreshdeskUrl { get; set; }
 
         public SelectList ActionSelect { get; set; }
+        public SelectList ResponsibilitySelect { get; set; }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(int responsibilityId = 0)
         {
+            FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
+            var tickets = await _ticketCache.QueryAsync(Data.CurrentOrg.Name);
+
             using (var cn = Data.GetConnection())
             {
                 var appItems = await new AppSelect() { OrgId = OrgId }.ExecuteItemsAsync(cn);
-                appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+
+                // you can ignore tickets only if a responsibility is selected
+                if (responsibilityId != 0) appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+                
                 ActionSelect = new SelectList(appItems, "Value", "Text");
 
-                IgnoredTickets = await new AllWorkItemTickets() { OrgId = OrgId, IsIgnored = true }.ExecuteAsync(cn);
+                ResponsibilitySelect = await new ResponsibilitySelect().ExecuteSelectListAsync(cn, responsibilityId);
+
+                var ignoredTickets = await new IgnoredTickets() { ResponsibilityId = responsibilityId, OrgId = OrgId }.ExecuteAsync(cn);
+                var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);
+                Tickets = tickets.Where(t => !ignoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id));
             }
-
-            FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
-            var tickets = await _ticketCache.QueryAsync(Data.CurrentOrg.Name);
-            Tickets = tickets.Where(t => !IgnoredTickets.Any(it => it.TicketId == t.Id));
-
+                        
             var groups = await _groupCache.QueryAsync(Data.CurrentOrg.Name);
             Groups = groups.ToDictionary(row => row.Id);
 
@@ -87,38 +96,41 @@ namespace Ginseng.Mvc.Pages.Tickets
             DateQueried = _ticketCache.LastApiCallDateTime;
         }
 
-        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int appId)
+        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int appId, int responsibilityId)
         {
             var client = await _freshdeskClientFactory.CreateClientForOrganizationAsync(OrgId);
             var ticket = await client.GetTicketAsync(ticketId);
 
             using (var cn = Data.GetConnection())
-            {
-                var wit =
-                    await cn.FindWhereAsync<WorkItemTicket>(new { TicketId = ticketId }) ??
-                    new WorkItemTicket()
+            {                
+                if (appId == 0)
+                {
+                    var ignoreTicket = new IgnoredTicket()
                     {
                         TicketId = ticketId,
                         OrganizationId = OrgId,
-                        TicketStatus = ticket.Status,
-                        TicketType = WebhookRequestToWebhookConverter.TicketTypeFromString(ticket.Type)
+                        ResponsibilityId = responsibilityId
                     };
-
-                if (appId == 0)
-                {
-                    wit.WorkItemNumber = 0;
+                    await Data.TrySaveAsync(cn, ignoreTicket);
                 }
                 else
                 {
                     int number = await CreateTicketWorkItemAsync(cn, ticket);
-                    wit.WorkItemNumber = number;
+                    var wit = new WorkItemTicket()
+                    {
+                        TicketId = ticketId,
+                        WorkItemNumber = number,
+                        OrganizationId = OrgId,
+                        TicketStatus = ticket.Status,
+                        TicketType = WebhookRequestToWebhookConverter.TicketTypeFromString(ticket.Type)
+                    };
+                    
                     await client.UpdateTicketWorkItemAsync(ticketId, number.ToString());
-                }
-
-                await Data.TrySaveAsync(cn, wit);
+                    await Data.TrySaveAsync(cn, wit);
+                }                
             }
 
-            return Redirect("Tickets/Index");
+            return Redirect($"Tickets/Index?responsibilityId={responsibilityId}");
         }
 
         private async Task<int> CreateTicketWorkItemAsync(SqlConnection cn, Ticket ticket)
