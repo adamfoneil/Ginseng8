@@ -83,7 +83,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         */
 
         [JsonProperty("custom_fields")]
-        public CustomFields CustomFields { get; set; }
+        public ContactCustomFields CustomFields { get; set; }
 
         [JsonProperty("created_at")]
         public DateTimeOffset CreatedAt { get; set; }
