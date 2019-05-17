@@ -16,6 +16,10 @@ namespace Ginseng.Mvc.Interfaces
 
         Task<Contact> GetContactAsync(long id);
 
+        Task<IEnumerable<Company>> ListCompaniesAsync();
+
+        Task<Company> GetCompanyAsync(long id);
+
         /// <summary>
         /// Retrieves all tickets
         /// </summary>

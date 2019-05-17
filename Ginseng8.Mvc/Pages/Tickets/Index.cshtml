@@ -33,6 +33,7 @@
             <th></th>
         }        
         <th>Id</th>
+        <th>From</th>
         <th>Subject</th>
         <th>Date</th>
         <th>New Work Item</th>
@@ -45,6 +46,14 @@
                 <td><input type="checkbox" name="ticketId[@index]" value="@item.Id" class="selectTicket"/></td>
             }            
             <td>@item.Id</td>
+            <td>                
+                <a href="@Model.FreshdeskUrl/a/contacts/@item.RequesterId" target="_blank">@Model.GetContactName(item.RequesterId)</a>
+                @if (item.CompanyId.HasValue)
+                {
+                    <br/>
+                    <a href="@Model.FreshdeskUrl/a/companies/@item.CompanyId.Value">@Model.GetCompanyName(item.CompanyId.Value)</a>
+                }                
+            </td>
             <td>
                 <a href="@Model.FreshdeskUrl/a/tickets/@item.Id" target="_blank">
                     @if (item.Type != null)

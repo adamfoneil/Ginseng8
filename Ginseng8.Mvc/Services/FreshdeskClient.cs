@@ -39,6 +39,12 @@ namespace Ginseng.Integration.Services
         public async Task<Contact> GetContactAsync(long id)
             => await ExecuteAsync<Contact>($"/contacts/{id}", Method.GET);
 
+        public async Task<IEnumerable<Company>> ListCompaniesAsync()
+            => await ExecuteAsync<List<Company>>("/companies", Method.GET);
+
+        public async Task<Company> GetCompanyAsync(long id)
+            => await ExecuteAsync<Company>($"/companies/{id}", Method.GET);
+
         /// <inheritdoc />
         public async Task<IEnumerable<Ticket>> ListTicketsAsync()
             => await ExecuteAsync<List<Ticket>>("/tickets", Method.GET);

@@ -24,17 +24,24 @@ namespace Ginseng.Mvc.Pages.Tickets
     {
         private readonly FreshdeskTicketCache _ticketCache;
         private readonly FreshdeskGroupCache _groupCache;
+        private readonly FreshdeskContactCache _contactCache;
+        private readonly FreshdeskCompanyCache _companyCache;
         private readonly IFreshdeskClientFactory _freshdeskClientFactory;
 
         public IndexModel(
             IConfiguration config,
             FreshdeskTicketCache ticketCache,
             FreshdeskGroupCache groupCache,
+            FreshdeskCompanyCache companyCache,
+            FreshdeskContactCache contactCache,
             IFreshdeskClientFactory freshdeskClientFactory)
             : base(config)
         {
             _ticketCache = ticketCache;
             _groupCache = groupCache;
+            _contactCache = contactCache;
+            _companyCache = companyCache;
+            
             _freshdeskClientFactory = freshdeskClientFactory;
         }
 
@@ -60,6 +67,8 @@ namespace Ginseng.Mvc.Pages.Tickets
         public int ResponsibilityId { get; set; }
 
         public Dictionary<long, Group> Groups { get; set; }
+        public Dictionary<long, Contact> Contacts { get; set; }
+        public Dictionary<long, Company> Companies { get; set; }
         public IEnumerable<Ticket> Tickets { get; set; }
         public LoadedFrom LoadedFrom { get; set; }
         public DateTime DateQueried { get; set; }
@@ -68,10 +77,26 @@ namespace Ginseng.Mvc.Pages.Tickets
         public SelectList ActionSelect { get; set; }
         public SelectList ResponsibilitySelect { get; set; }
 
+        public string GetContactName(long requesterId)
+        {
+            return (Contacts.ContainsKey(requesterId)) ? Contacts[requesterId].Name : $"requester id {requesterId}";
+        }
+
+        public string GetCompanyName(long companyId)
+        {
+            return (Companies.ContainsKey(companyId)) ? Companies[companyId].Name : $"company id {companyId}";
+        }
+
         public async Task OnGetAsync(int responsibilityId = 0)
         {
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
             var tickets = await _ticketCache.QueryAsync(Data.CurrentOrg.Name);
+
+            var contacts = await _contactCache.QueryAsync(Data.CurrentOrg.Name);
+            Contacts = contacts.ToDictionary(row => row.Id);
+
+            var companies = await _companyCache.QueryAsync(Data.CurrentOrg.Name);
+            Companies = companies.ToDictionary(row => row.Id);
 
             using (var cn = Data.GetConnection())
             {

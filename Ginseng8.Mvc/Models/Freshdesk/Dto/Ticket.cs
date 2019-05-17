@@ -34,7 +34,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         /*
 		[JsonProperty("priority")]
 		public int Priority { get; set; }
-
+        */
 		[JsonProperty("requester_id")]
 		public long RequesterId { get; set; }
 
@@ -45,8 +45,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
 		public long Source { get; set; }
 
 		[JsonProperty("company_id")]
-		public long? CompanyId { get; set; }
-        */
+		public long? CompanyId { get; set; }        
 
         [JsonProperty("status")]
         public TicketStatus Status { get; set; }

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 namespace Ginseng.Mvc.Models.Freshdesk.Dto
@@ -18,13 +19,13 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         public string Name { get; set; }
 
         [JsonProperty("description")]
-        public object Description { get; set; }
+        public string Description { get; set; }
 
         [JsonProperty("note")]
-        public object Note { get; set; }
+        public string Note { get; set; }
 
         [JsonProperty("domains")]
-        public string[] Domains { get; set; }
+        public List<string> Domains { get; set; }
 
         [JsonProperty("created_at")]
         public DateTimeOffset CreatedAt { get; set; }
@@ -36,10 +37,9 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         public CompanyCustomFields CustomFields { get; set; }
 
         [JsonProperty("health_score")]
-        public HealthScore HealthScore { get; set; }
+        public string HealthScore { get; set; }
 
-        [JsonProperty("account_tier")]
-        [JsonConverter(typeof(ParseStringConverter))]
+        [JsonProperty("account_tier")]        
         public long AccountTier { get; set; }
 
         [JsonProperty("renewal_date")]
@@ -55,7 +55,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         public long? LibraryId { get; set; }
 
         [JsonProperty("library_manager")]
-        public LibraryManager? LibraryManager { get; set; }
+        public string LibraryManager { get; set; }
 
         [JsonProperty("documents_module")]
         public bool DocumentsModule { get; set; }

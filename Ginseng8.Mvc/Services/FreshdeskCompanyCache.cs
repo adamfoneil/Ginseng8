@@ -9,33 +9,33 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Services
 {
-    public class FreshdeskContactCache : IntegrationCache<Contact>
+    public class FreshdeskCompanyCache : IntegrationCache<Company>
     {
         private readonly IFreshdeskClientFactory _clientFactory;
 
-        public FreshdeskContactCache(
+        public FreshdeskCompanyCache(
             IConfiguration config,
-            IFreshdeskClientFactory factory) : base(config, "Contacts")
+            IFreshdeskClientFactory factory) : base(config, "Companies")
         {
             _clientFactory = factory;
         }
 
         public override TimeSpan CallInterval => TimeSpan.FromMinutes(15);
 
-        protected override async Task<IEnumerable<Contact>> ApiQueryAll(string orgName)
+        protected override async Task<IEnumerable<Company>> ApiQueryAll(string orgName)
         {
             var client = await _clientFactory.CreateClientForOrganizationAsync(orgName);
-            var results = await client.ListContactsAsync();
+            var results = await client.ListCompaniesAsync();
             return results;
         }
 
-        protected override async Task<Contact> ConvertFromBlobAsync(CloudBlockBlob blob)
+        protected override async Task<Company> ConvertFromBlobAsync(CloudBlockBlob blob)
         {
             string json = await blob.DownloadTextAsync();
-            return JsonConvert.DeserializeObject<Contact>(json);
+            return JsonConvert.DeserializeObject<Company>(json);
         }
 
-        protected override string GetBlobName(Contact @object)
+        protected override string GetBlobName(Company @object)
         {
             return $"{@object.Id}.json";
         }
