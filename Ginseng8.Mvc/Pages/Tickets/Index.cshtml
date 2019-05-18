@@ -13,6 +13,11 @@
     <p><strong>Tip</strong> To ignore tickets, please select a Responsibility below.</p>
 }
 
+@if (!Model.CurrentOrgUser.CurrentAppId.HasValue)
+{
+    <p><strong>Tip</strong> Select an application above to create work items in select projects.</p>
+}
+
 @Html.ActionAlert(TempData)
 
 <form method="get" class="form-inline">
@@ -51,7 +56,7 @@
                 @if (item.CompanyId.HasValue)
                 {
                     <br/>
-                    <a href="@Model.FreshdeskUrl/a/companies/@item.CompanyId.Value">@Model.GetCompanyName(item.CompanyId.Value)</a>
+                    <a href="@Model.FreshdeskUrl/a/companies/@item.CompanyId.Value" target="_blank">@Model.GetCompanyName(item.CompanyId.Value)</a>
                 }                
             </td>
             <td>
@@ -76,8 +81,9 @@
                 <form method="post" asp-page-handler="DoAction" class="form-inline">
                     <input type="hidden" name="ticketId" value="@item.Id"/>         
                     <input type="hidden" name="responsibilityId" value="@Model.ResponsibilityId"/>
+                    <input type="hidden" name="objectType" value="@Model.ActionObjectType"/>
                     <div class="input-group">
-                        <select name="appId" id="appId" asp-items="Model.ActionSelect" class="form-control mr-2" required="required">
+                        <select name="objectId" id="objectId" asp-items="Model.GetActionSelect(item.CompanyId ?? 0)" class="form-control mr-2" required="required">
                             <option value="">(select)</option>
                         </select>
                         <button type="submit" class="btn btn-sm btn-primary">Go</button>                    

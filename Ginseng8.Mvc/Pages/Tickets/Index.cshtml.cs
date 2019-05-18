@@ -19,6 +19,12 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Tickets
 {
+    public enum ActionObjectType
+    {
+        Project,
+        Application
+    }
+
     [Authorize]
     public class IndexModel : AppPageModel
     {
@@ -41,7 +47,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             _groupCache = groupCache;
             _contactCache = contactCache;
             _companyCache = companyCache;
-            
+
             _freshdeskClientFactory = freshdeskClientFactory;
         }
 
@@ -62,7 +68,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         {
             return (TypeBadges.ContainsKey(type)) ? TypeBadges[type] : "badge-light";
         }
-        
+
         [BindProperty(SupportsGet = true)]
         public int ResponsibilityId { get; set; }
 
@@ -73,9 +79,16 @@ namespace Ginseng.Mvc.Pages.Tickets
         public LoadedFrom LoadedFrom { get; set; }
         public DateTime DateQueried { get; set; }
         public string FreshdeskUrl { get; set; }
-
-        public SelectList ActionSelect { get; set; }
+       
+        public ActionObjectType ActionObjectType { get; set; } // tells us whether the work item action Id is an app or a project
+        public SelectList AppSelect { get; set; } // available when no current app selected
+        public Dictionary<long, SelectList> ProjectByCompanySelect { get; set; } // available when app is current        
         public SelectList ResponsibilitySelect { get; set; }
+
+        public SelectList GetActionSelect(long companyId)
+        {
+            return (CurrentOrgUser.CurrentAppId.HasValue && ProjectByCompanySelect.ContainsKey(companyId)) ? ProjectByCompanySelect[companyId] : AppSelect;
+        }
 
         public string GetContactName(long requesterId)
         {
@@ -100,18 +113,21 @@ namespace Ginseng.Mvc.Pages.Tickets
 
             using (var cn = Data.GetConnection())
             {
-                var appItems = await new AppSelect() { OrgId = OrgId }.ExecuteItemsAsync(cn);
-
-                // you can ignore tickets only if a responsibility is selected
-                if (responsibilityId != 0) appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
-                
-                ActionSelect = new SelectList(appItems, "Value", "Text");
-
                 ResponsibilitySelect = await new ResponsibilitySelect().ExecuteSelectListAsync(cn, responsibilityId);
-
                 var ignoredTickets = await new IgnoredTickets() { ResponsibilityId = responsibilityId, OrgId = OrgId }.ExecuteAsync(cn);
                 var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);
-                Tickets = tickets.Where(t => !ignoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id));
+                Tickets = tickets.Where(t => !ignoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id)).ToArray();
+
+                if (CurrentOrgUser.CurrentAppId.HasValue)
+                {
+                    ActionObjectType = ActionObjectType.Project;
+                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, responsibilityId, CurrentOrgUser.CurrentAppId.Value, Tickets);
+                }
+                else
+                {
+                    ActionObjectType = ActionObjectType.Application;
+                    AppSelect = await BuildAppSelectAsync(cn, responsibilityId);
+                }                
             }
                         
             var groups = await _groupCache.QueryAsync(Data.CurrentOrg.Name);
@@ -121,20 +137,64 @@ namespace Ginseng.Mvc.Pages.Tickets
             DateQueried = _ticketCache.LastApiCallDateTime;
         }
 
-        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int appId, int responsibilityId)
+        private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int responsibilityId, int appId, IEnumerable<Ticket> tickets)
+        {
+            var projects = await new ProjectSelectEx() { OrgId = OrgId, AppId = appId }.ExecuteAsync(cn);
+            var projectsByCompany = projects.GroupBy(row => row.FreshdeskCompanyId ?? 0);
+
+            Dictionary<long, SelectList> results = new Dictionary<long, SelectList>();
+
+            foreach (var companyGrp in projectsByCompany)
+            {
+                var items = companyGrp.ToList();
+                if (responsibilityId != 0) items.Insert(0, new ProjectSelectResult() { Value = 0, Text = "Ignore Ticket" });
+                items.Insert(1, new ProjectSelectResult() { Value = -1, Text = "[ new project ]" });
+                var selectItems = items.Select(item => new SelectListItem() { Value = item.Value.ToString(), Text = item.Text });
+                results.Add(companyGrp.Key, new SelectList(selectItems, "Value", "Text"));
+            }
+
+            var ticketsByCompany = tickets.GroupBy(row => row.CompanyId ?? 0);
+            foreach (var companyGrp in ticketsByCompany)
+            {
+                if (!results.ContainsKey(companyGrp.Key))
+                {
+                    var items = new List<SelectListItem>();
+                    if (responsibilityId != 0) items.Add(new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+                    items.Add(new SelectListItem() { Value = "-1", Text = "[ new project ]" });
+                    results.Add(companyGrp.Key, new SelectList(items, "Value", "Text"));
+                }
+            }
+
+            return results;
+        }
+
+        private async Task<SelectList> BuildAppSelectAsync(SqlConnection cn, int responsibilityId)
+        {
+            var appItems = await new AppSelect() { OrgId = OrgId }.ExecuteItemsAsync(cn);
+            // you can ignore tickets only if a responsibility is selected
+            if (responsibilityId != 0) appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+            return new SelectList(appItems, "Value", "Text");
+        }
+
+        private Task<List<SelectListItem>> GetProjectSelectItems(SqlConnection cn)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int objectId, int responsibilityId, ActionObjectType objectType)
         {
             var client = await _freshdeskClientFactory.CreateClientForOrganizationAsync(OrgId);
             var ticket = await client.GetTicketAsync(ticketId);
 
             using (var cn = Data.GetConnection())
             {                
-                if (appId == 0)
+                if (objectId == 0)
                 {
                     await IgnoreTicketInner(ticketId, responsibilityId, cn);
                 }
                 else
                 {
-                    int number = await CreateTicketWorkItemAsync(cn, ticket, appId);
+                    int number = await CreateWorkItemFromTicketAsync(cn, client, ticket, objectId, objectType);
                     var wit = new WorkItemTicket()
                     {
                         TicketId = ticketId,
@@ -163,12 +223,27 @@ namespace Ginseng.Mvc.Pages.Tickets
             await Data.TrySaveAsync(cn, ignoreTicket);
         }
 
-        private async Task<int> CreateTicketWorkItemAsync(SqlConnection cn, Ticket ticket, int appId)
+        private async Task<int> CreateWorkItemFromTicketAsync(SqlConnection cn, IFreshdeskClient client, Ticket ticket, int objectId, ActionObjectType objectType)
         {
+            int appId = (objectType == ActionObjectType.Application) ? 
+                objectId : 
+                (objectId == -1) ?
+                    CurrentOrgUser.CurrentAppId.Value :
+                    await GetAppFromProjectIdAsync(cn, objectId);
+
+            int? projectId = (objectType == ActionObjectType.Project) ? objectId : default(int?);
+
+            if (projectId == -1 && ticket.CompanyId.HasValue)
+            {                
+                var company = await client.GetCompanyAsync(ticket.CompanyId.Value);
+                projectId = await CreateNewProjectAsync(cn, CurrentOrgUser.CurrentAppId.Value, company);
+            }
+
             var workItem = new Ginseng.Models.WorkItem()
             {
                 OrganizationId = OrgId,
                 ApplicationId = appId,
+                ProjectId = projectId,
                 Title = $"FD: {ticket.Subject} (ticket # {ticket.Id})",
                 HtmlBody = $"<p>Created from Freshdesk <a href=\"{CurrentOrg.FreshdeskUrl}/a/tickets/{ticket.Id}\">ticket {ticket.Id}</a></p>"
             };
@@ -184,6 +259,34 @@ namespace Ginseng.Mvc.Pages.Tickets
             await Data.TrySaveAsync(wip);
 
             return workItem.Number;
+        }
+
+        private async Task<int> CreateNewProjectAsync(SqlConnection cn, int appId, Company company)
+        {
+            string projectName = company.Name;
+            int increment = 0;
+            while (await cn.ExistsWhereAsync<Project>(new { ApplicationId = appId, Name = projectName }))
+            {
+                increment++;
+                projectName = company.Name + increment.ToString();
+            }
+
+            var prj = new Project()
+            {
+                ApplicationId = appId,
+                Name = projectName,
+                FreshdeskCompanyId = company.Id
+            };
+
+            await Data.TrySaveAsync(prj);
+
+            return prj.Id;
+        }
+
+        private async Task<int> GetAppFromProjectIdAsync(SqlConnection cn, int projectId)
+        {
+            var prj = await cn.FindAsync<Project>(projectId);
+            return prj.ApplicationId;
         }
 
         public async Task<RedirectResult> OnPostIgnoreSelectedAsync(string ticketIds, int responsibilityId)
