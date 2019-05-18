@@ -12,7 +12,7 @@
             <div class="ml-3">
                 @foreach (var item in activityGrp)
                 {
-                    <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Page.Dropdowns, SelectedLabels = Model.Page.SelectedLabels[item.Id], UserId = Model.Page.UserId, Comments = Model.Comments[item.Id] }" />
+                    <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Page.Dropdowns, SelectedLabels = Model.Page.SelectedLabels[item.Id], UserId = Model.Page.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers }" />
                 }
             </div>
         </div>

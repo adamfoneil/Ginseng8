@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace Ginseng.Mvc.ViewModels
 		public CommonDropdowns Dropdowns { get; set; }
 		public IEnumerable<Comment> Comments { get; set; }
 		public bool ShowDetailsButton { get; set; } = true;
+        public IEnumerable<SelectListItem> AssignToUsers { get; set; }
 
 		public string HandOffButtonText()
 		{
