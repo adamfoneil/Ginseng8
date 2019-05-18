@@ -134,7 +134,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 }
                 else
                 {
-                    int number = await CreateTicketWorkItemAsync(cn, ticket);
+                    int number = await CreateTicketWorkItemAsync(cn, ticket, appId);
                     var wit = new WorkItemTicket()
                     {
                         TicketId = ticketId,
@@ -163,12 +163,12 @@ namespace Ginseng.Mvc.Pages.Tickets
             await Data.TrySaveAsync(cn, ignoreTicket);
         }
 
-        private async Task<int> CreateTicketWorkItemAsync(SqlConnection cn, Ticket ticket)
+        private async Task<int> CreateTicketWorkItemAsync(SqlConnection cn, Ticket ticket, int appId)
         {
             var workItem = new Ginseng.Models.WorkItem()
             {
                 OrganizationId = OrgId,
-                ApplicationId = CurrentOrgUser.CurrentAppId.Value,
+                ApplicationId = appId,
                 Title = $"FD: {ticket.Subject} (ticket # {ticket.Id})",
                 HtmlBody = $"<p>Created from Freshdesk <a href=\"{CurrentOrg.FreshdeskUrl}/a/tickets/{ticket.Id}\">ticket {ticket.Id}</a></p>"
             };
