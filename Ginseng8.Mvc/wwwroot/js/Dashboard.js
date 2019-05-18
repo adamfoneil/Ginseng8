@@ -282,14 +282,32 @@ removePriorityLinks.forEach(function (ele) {
     });
 });
 
-function AssignActionEventHandler(ev, postUrl) {
+var assignToLinks = document.querySelectorAll('.assign-to');
+assignToLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        AssignActionEventHandler(ev, '/WorkItem/AssignTo', function (e) {
+            return {
+                id: e.getAttribute('data-number'),
+                userId: e.getAttribute('data-user-id')
+            };
+        });
+    });
+});
+
+function AssignActionEventHandler(ev, postUrl, dataFunction) {
     ev.preventDefault();
     var loading = $(ev.target).find('img');
     $(loading).show();
 
-    var data = {
-        id: ev.target.getAttribute('data-number')
-    };
+    // when assign again but to another person then hide previous success message
+    $(ev.target).siblings('.assign-to + .success').hide();
+
+    var data = (typeof dataFunction == 'function')
+                ? dataFunction(ev.target)
+                : {
+                    id: ev.target.getAttribute('data-number')
+                };
+
     var formData = getFormData(data);
     fetch(postUrl, {
         method: 'post',
@@ -300,7 +318,8 @@ function AssignActionEventHandler(ev, postUrl) {
         $(loading).hide();
         $(ev.target).hide();
         if (result.success) {
-            $(ev.target).nextAll('.success').show();
+            // show success message
+            $(ev.target).next('.success').show();
         } else {
             $(ev.target).next('.error').show();
         }

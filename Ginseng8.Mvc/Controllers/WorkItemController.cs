@@ -216,6 +216,35 @@ namespace Ginseng.Mvc.Controllers
             }
         }
 
+        public async Task<JsonResult> AssignTo(int id, int userId)
+        {
+            try
+            {
+                using (var cn = _data.GetConnection())
+                {
+                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var orgUser = await _data.FindWhereAsync<OrganizationUser>(cn, new { OrganizationId = _data.CurrentOrg.Id, UserId = userId });
+
+                    workItem.DeveloperUserId = userId;
+                    workItem.ActivityId = orgUser.DefaultActivityId ?? _data.CurrentOrg.DeveloperActivityId.Value;
+
+                    if (await _data.TrySaveAsync(cn, workItem, new string[] 
+                    {
+                        nameof(WorkItem.DeveloperUserId),
+                        nameof(WorkItem.ActivityId)
+                    }))
+                    {
+                        // send email
+                    }
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
+        }
+
         [HttpPost]
         public async Task<JsonResult> SetPriorities()
         {
