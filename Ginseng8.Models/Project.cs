@@ -45,6 +45,8 @@ namespace Ginseng.Models
 
 		public string HtmlBody { get; set; }
 
+        public long? FreshdeskCompanyId { get; set; }
+
 		public bool IsActive { get; set; } = true;
 
 		public Application Application { get; set; }
