@@ -299,10 +299,14 @@ function AssignActionEventHandler(ev, postUrl, dataFunction) {
     var loading = $(ev.target).find('img');
     $(loading).show();
 
-    var data = (typeof dataFunction === undefined) ?
-        {
-            id: ev.target.getAttribute('data-number')
-        } : dataFunction(ev.target);
+    // when assign again but to another person then hide previous success message
+    $(ev.target).siblings('.assign-to + .success').hide();
+
+    var data = (typeof dataFunction == 'function')
+                ? dataFunction(ev.target)
+                : {
+                    id: ev.target.getAttribute('data-number')
+                };
 
     var formData = getFormData(data);
     fetch(postUrl, {
@@ -314,7 +318,8 @@ function AssignActionEventHandler(ev, postUrl, dataFunction) {
         $(loading).hide();
         $(ev.target).hide();
         if (result.success) {
-            $(ev.target).nextAll('.success').show();
+            // show success message
+            $(ev.target).next('.success').show();
         } else {
             $(ev.target).next('.error').show();
         }

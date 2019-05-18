@@ -24,8 +24,10 @@
                         Work canceled
                         <img src="~/img/loading.gif" style="display:none" />
                     </a>
-                    <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                    <span class="success small pr-2" style="display:none">Updated successfully</span>
+                    <div class="success" style="display:none">
+                        <i class="fas fa-check-circle ml-3" style="color:green"></i>
+                        <span class="small pr-2">Updated successfully</span>
+                    </div>
                     <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                 }
                 <div class="dropdown-divider"></div>
@@ -35,8 +37,10 @@
                         Remove Me
                         <img src="~/img/loading.gif" style="display:none" />
                     </a>
-                    <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                    <span class="success small pr-2" style="display:none">Item removed</span>
+                    <div class="success" style="display:none">
+                        <i class="fas fa-check-circle ml-3" style="color:green"></i>
+                        <span class="small pr-2">Item removed</span>
+                    </div>
                     <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                 }
                 else
@@ -47,8 +51,10 @@
                             Work on Next
                             <img src="~/img/loading.gif" style="display:none" />
                         </a>
-                        <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                        <span class="success small pr-2" style="display:none">Updated successfully</span>
+                        <div class="success" style="display:none">
+                            <i class="fas fa-check-circle ml-3" style="color:green"></i>
+                            <span class="small pr-2">Updated successfully</span>
+                        </div>
                         <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                     }
                     else if (Model.WorkItem.PriorityGroup == PriorityGroupOptions.WorkOnNext)
@@ -57,8 +63,10 @@
                             Send to Backlog
                             <img src="~/img/loading.gif" style="display:none" />
                         </a>
-                        <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                        <span class="success small pr-2" style="display:none">Updated successfully</span>
+                        <div class="success" style="display:none">
+                            <i class="fas fa-check-circle ml-3" style="color:green"></i>
+                            <span class="small pr-2">Updated successfully</span>
+                        </div>
                         <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                     }
                 }
@@ -72,8 +80,10 @@
                             @userItem.Text
                             <img src="~/img/loading.gif" style="display:none" />
                         </a>
-                        <i class="success fas fa-check-circle ml-3" style="color:green;display:none"></i>
-                        <span class="success small pr-2" style="display:none">Assigned successfully</span>
+                        <div class="success" style="display:none">
+                            <i class="fas fa-check-circle ml-3" style="color:green"></i>
+                            <span class="small pr-2">Assigned successfully</span>
+                        </div>
                         <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                     }
                 }                                
