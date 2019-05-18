@@ -2,8 +2,10 @@
 using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -21,10 +23,15 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 	[Authorize]
 	public class ProjectsModel : DashboardPageModel, IActive
-	{
-		public ProjectsModel(IConfiguration config) : base(config)
+	{        
+        private readonly FreshdeskCompanyCache _companyCache;
+
+		public ProjectsModel(
+            IConfiguration config,            
+            FreshdeskCompanyCache companyCache) : base(config)
 		{
-			ShowExcelDownload = false; // because there are too many different options on this page for a single download, IMO
+			ShowExcelDownload = false; // because there are too many different options on this page for a single download, IMO            
+            _companyCache = companyCache;
 		}
 
 		protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (ci) => ci.ProjectId ?? 0;
@@ -63,6 +70,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		// used when single project is displayed, contains all the calculations/metadata not present in the base record
 		public ProjectInfoResult SelectedProjectInfo { get; set; }
+
+        public SelectList FreshdeskCompanySelect { get; set; }
 
 		public int CrosstabRowHeadingGridCols()
 		{
@@ -112,14 +121,17 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
 			CurrentAppId = CurrentOrgUser.CurrentAppId;
-
+            
 			if (Id.HasValue)
 			{
 				SelectedProject = await Data.FindAsync<Project>(Id.Value);
 				SelectedProjectInfo = await new ProjectInfo() { Id = Id, OrgId = OrgId }.ExecuteSingleAsync(connection);
 				ProjectComments = await new Comments() { OrgId = OrgId, ObjectType = ObjectType.Project, ObjectIds = new[] { SelectedProject.Id } }.ExecuteAsync(connection);
-			}
-			else
+
+                var companies = await _companyCache.QueryAsync(CurrentOrg.Name);
+                FreshdeskCompanySelect = new SelectList(companies.Select(c => new SelectListItem() { Value = c.Id.ToString(), Text = c.Name }), "Value", "Text", SelectedProject.FreshdeskCompanyId);
+            }
+            else
 			{
 				// crosstab rows (or card view)
 				ProjectInfo = await new ProjectInfo(Sort) { OrgId = OrgId, IsActive = IsActive, AppId = CurrentOrgUser.CurrentAppId, Show = Show }.ExecuteAsync(connection);
