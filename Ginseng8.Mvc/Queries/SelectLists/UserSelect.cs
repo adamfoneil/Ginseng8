@@ -1,4 +1,5 @@
 ﻿using Ginseng.Mvc.Classes;
+using Postulate.Base.Attributes;
 
 namespace Ginseng.Mvc.Queries.SelectLists
 {
@@ -8,11 +9,14 @@ namespace Ginseng.Mvc.Queries.SelectLists
 			@"SELECT [u].[UserId] AS [Value], COALESCE([ou].[DisplayName], [u].[UserName]) AS [Text]
 			FROM [dbo].[AspNetUsers] [u]
 			INNER JOIN [dbo].[OrganizationUser] [ou] ON [u].[UserId]=[ou].[UserId]
-			WHERE [ou].[OrganizationId]=@orgId			
+			WHERE [ou].[OrganizationId]=@orgId {andWhere}
 			ORDER BY COALESCE([ou].[DisplayName], [u].[UserName]) ASC")
 		{
 		}
 
 		public int OrgId { get; set; }
+
+        [Where("[ou].[IsEnabled]=@isEnabled")]
+        public bool? IsEnabled { get; set; }
 	}
 }
