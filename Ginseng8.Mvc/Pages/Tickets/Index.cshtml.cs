@@ -100,6 +100,13 @@ namespace Ginseng.Mvc.Pages.Tickets
             return (Companies.ContainsKey(companyId)) ? Companies[companyId].Name : $"company id {companyId}";
         }
 
+        public string GetWorkItemCreateMessage()
+        {
+            return (CurrentOrgUser.CurrentAppId.HasValue) ?
+                $"Select project in {CurrentOrgUser.CurrentApp.Name}" :
+                "Select app";
+        }
+
         public async Task OnGetAsync(int responsibilityId = 0)
         {
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;

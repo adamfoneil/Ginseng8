@@ -41,7 +41,13 @@
         <th>From</th>
         <th>Subject</th>
         <th>Date</th>
-        <th>New Work Item</th>
+        <th>
+            New Work Item
+            <br/>
+            <span class="text-muted small">
+                @Model.GetWorkItemCreateMessage()
+            </span>
+        </th>
     </tr>
     @foreach (var item in Model.Tickets)
     {
