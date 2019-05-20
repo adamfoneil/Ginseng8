@@ -28,26 +28,15 @@ namespace Ginseng.Mvc.Pages.Tickets
     [Authorize]
     public class IndexModel : AppPageModel
     {
-        private readonly FreshdeskTicketCache _ticketCache;
-        private readonly FreshdeskGroupCache _groupCache;
-        private readonly FreshdeskContactCache _contactCache;
-        private readonly FreshdeskCompanyCache _companyCache;
+        private readonly FreshdeskCache _cache;
         private readonly IFreshdeskClientFactory _freshdeskClientFactory;
 
         public IndexModel(
-            IConfiguration config,
-            FreshdeskTicketCache ticketCache,
-            FreshdeskGroupCache groupCache,
-            FreshdeskCompanyCache companyCache,
-            FreshdeskContactCache contactCache,
+            IConfiguration config,            
             IFreshdeskClientFactory freshdeskClientFactory)
             : base(config)
         {
-            _ticketCache = ticketCache;
-            _groupCache = groupCache;
-            _contactCache = contactCache;
-            _companyCache = companyCache;
-
+            _cache = new FreshdeskCache(config, freshdeskClientFactory);
             _freshdeskClientFactory = freshdeskClientFactory;
         }
 
@@ -72,9 +61,6 @@ namespace Ginseng.Mvc.Pages.Tickets
         [BindProperty(SupportsGet = true)]
         public int ResponsibilityId { get; set; }
 
-        public Dictionary<long, Group> Groups { get; set; }
-        public Dictionary<long, Contact> Contacts { get; set; }
-        public Dictionary<long, Company> Companies { get; set; }
         public IEnumerable<Ticket> Tickets { get; set; }
         public LoadedFrom LoadedFrom { get; set; }
         public DateTime DateQueried { get; set; }
@@ -84,6 +70,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         public SelectList AppSelect { get; set; } // available when no current app selected
         public Dictionary<long, SelectList> ProjectByCompanySelect { get; set; } // available when app is current        
         public SelectList ResponsibilitySelect { get; set; }
+        public Dictionary<long, Group> Groups { get { return _cache.GroupDictionary; } }
 
         public SelectList GetActionSelect(long companyId)
         {
@@ -92,12 +79,12 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         public string GetContactName(long requesterId)
         {
-            return (Contacts.ContainsKey(requesterId)) ? Contacts[requesterId].Name : $"requester id {requesterId}";
+            return (_cache.ContactDictionary.ContainsKey(requesterId)) ? _cache.ContactDictionary[requesterId].Name : $"requester id {requesterId}";
         }
 
         public string GetCompanyName(long companyId)
         {
-            return (Companies.ContainsKey(companyId)) ? Companies[companyId].Name : $"company id {companyId}";
+            return (_cache.CompanyDictionary.ContainsKey(companyId)) ? _cache.CompanyDictionary[companyId].Name : $"company id {companyId}";
         }
 
         public string GetWorkItemCreateMessage()
@@ -110,20 +97,14 @@ namespace Ginseng.Mvc.Pages.Tickets
         public async Task OnGetAsync(int responsibilityId = 0)
         {
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
-            var tickets = await _ticketCache.QueryAsync(Data.CurrentOrg.Name);
-
-            var contacts = await _contactCache.QueryAsync(Data.CurrentOrg.Name);
-            Contacts = contacts.ToDictionary(row => row.Id);
-
-            var companies = await _companyCache.QueryAsync(Data.CurrentOrg.Name);
-            Companies = companies.ToDictionary(row => row.Id);
+            await _cache.InitializeAsync(Data.CurrentOrg.Name);
 
             using (var cn = Data.GetConnection())
             {
                 ResponsibilitySelect = await new ResponsibilitySelect().ExecuteSelectListAsync(cn, responsibilityId);
                 var ignoredTickets = await new IgnoredTickets() { ResponsibilityId = responsibilityId, OrgId = OrgId }.ExecuteAsync(cn);
-                var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);
-                Tickets = tickets.Where(t => !ignoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id)).ToArray();
+                var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);                
+                Tickets = _cache.Tickets.Where(t => !ignoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id)).ToArray();
 
                 if (CurrentOrgUser.CurrentAppId.HasValue)
                 {
@@ -135,13 +116,10 @@ namespace Ginseng.Mvc.Pages.Tickets
                     ActionObjectType = ActionObjectType.Application;
                     AppSelect = await BuildAppSelectAsync(cn, responsibilityId);
                 }                
-            }
-                        
-            var groups = await _groupCache.QueryAsync(Data.CurrentOrg.Name);
-            Groups = groups.ToDictionary(row => row.Id);
+            }            
 
-            LoadedFrom = _ticketCache.LoadedFrom;
-            DateQueried = _ticketCache.LastApiCallDateTime;
+            LoadedFrom = _cache.TicketCache.LoadedFrom;
+            DateQueried = _cache.TicketCache.LastApiCallDateTime;
         }
 
         private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int responsibilityId, int appId, IEnumerable<Ticket> tickets)

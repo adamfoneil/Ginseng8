@@ -74,6 +74,8 @@ namespace Ginseng.Mvc.Services
 
 			if (await AllowApiCallAsync(orgName))
 			{
+                await ClearCacheAsync(orgName);
+
 				// enough time has passed since last API call
 				results = await ApiQueryAll(orgName);
 
@@ -101,6 +103,12 @@ namespace Ginseng.Mvc.Services
 
 			return results;
 		}
+
+        private async Task ClearCacheAsync(string orgName)
+        {
+            var blobs = await _blobStorage.ListBlobsAsync(orgName, _folderName, (blob) => !blob.Name.Equals(_folderName + "/" + markerBlobName));
+            foreach (var blob in blobs) await _blobStorage.DeleteAsync(orgName, _folderName + "/" + blob.Filename);
+        }
 
         public async Task<T> GetBlobAsync(string orgName, T criteria)
         {

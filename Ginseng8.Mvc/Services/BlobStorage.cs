@@ -144,7 +144,7 @@ namespace Ginseng.Mvc.Services
 			return results;
 		}
 
-		public async Task<IEnumerable<BlobInfo>> ListBlobsAsync(string orgName, string prefix)
+		public async Task<IEnumerable<BlobInfo>> ListBlobsAsync(string orgName, string prefix, Func<CloudBlockBlob, bool> filter = null)
 		{
 			return await ListBlobsAsync(orgName, prefix, async (blob) =>
 			{
@@ -155,7 +155,7 @@ namespace Ginseng.Mvc.Services
 					Length = blob.Properties.Length,
 					LastModified = blob.Properties.LastModified
 				});
-			});
+			}, filter);
 		}
 
 		public async Task DeleteAsync(string orgName, string name)

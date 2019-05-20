@@ -26,6 +26,10 @@
         <select name="responsibilityId" asp-items="Model.ResponsibilitySelect" class="form-control" onchange="this.form.submit()" required="required">
             <option value="">all unassigned tickets</option>
         </select>
+        @if (Model.ResponsibilityId != 0)
+        {
+            <a asp-page="Ignored" class="ml-2 btn btn-sm btn-light">Ignored Tickets</a>
+        }
     </div>
 </form>
 
