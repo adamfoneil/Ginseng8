@@ -146,7 +146,11 @@ namespace Ginseng.Mvc.Pages.Tickets
                         WorkItemNumber = number,
                         OrganizationId = OrgId,
                         TicketStatus = ticket.Status,
-                        TicketType = WebhookRequestToWebhookConverter.TicketTypeFromString(ticket.Type)
+                        TicketType = WebhookRequestToWebhookConverter.TicketTypeFromString(ticket.Type),
+                        CompanyId = ticket.CompanyId,
+                        CompanyName = GetCompanyName(ticket.CompanyId ?? 0),
+                        ContactId = ticket.RequesterId,
+                        ContactName = GetContactName(ticket.RequesterId)
                     };
                     
                     await client.UpdateTicketWorkItemAsync(ticketId, number.ToString());
