@@ -1,14 +1,9 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Interfaces;
-using Ginseng.Mvc.Models.Freshdesk.Dto;
-using Ginseng.Mvc.Queries;
-using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +14,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         public IgnoredModel(
             IConfiguration config,
             IFreshdeskClientFactory freshdeskClientFactory) : base(config, freshdeskClientFactory)
-        {            
+        {
         }
 
         public async Task OnGetAsync(int responsibilityId = 0)
