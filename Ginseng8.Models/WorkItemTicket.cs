@@ -2,6 +2,7 @@
 using Ginseng.Models.Enums.Freshdesk;
 using Postulate.Base.Attributes;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ginseng.Models
 {
@@ -32,10 +33,19 @@ namespace Ginseng.Models
 		public int OrganizationId { get; set; }
 
 		/// <summary>
-		/// This should reflect in Freshdesk ticket custom field.
-        /// Use zero to mean ticket is ignored (test ticket, or not actionable by dev team)
+		/// This should reflect in Freshdesk ticket custom field.        
 		/// </summary>
 		public int WorkItemNumber { get; set; }
+
+        public long? CompanyId { get; set; }
+
+        [MaxLength(100)]
+        public string CompanyName { get; set; }
+
+        public long? ContactId { get; set; }
+
+        [MaxLength(100)]
+        public string ContactName { get; set; }
 	}
 
 	/*
