@@ -2,36 +2,11 @@
 @model Ginseng.Mvc.Pages.Tickets.IndexModel
 
 @{ 
-    ViewData["Title"] = "Freskdesk Ticket Triage";
+    ViewData["Title"] = "New Tickets";
 }
 
-<h3>Freshdesk Ticket Triage</h3>
 <p>Use this to generate work items, or route elsewhere as needed. Select a responsibility below to see what's waiting for action for that responsibility.</p>
 
-@if (Model.ResponsibilityId == 0)
-{
-    <p><strong>Tip</strong> To ignore tickets, please select a Responsibility below.</p>
-}
-
-@if (!Model.CurrentOrgUser.CurrentAppId.HasValue)
-{
-    <p><strong>Tip</strong> Select an application above to create work items in select projects.</p>
-}
-
-@Html.ActionAlert(TempData)
-
-<form method="get" class="form-inline">
-    <div class="input-group mb-3">
-        <label class="mr-2">Responsibility:</label>
-        <select name="responsibilityId" asp-items="Model.ResponsibilitySelect" class="form-control" onchange="this.form.submit()" required="required">
-            <option value="">all unassigned tickets</option>
-        </select>
-        @if (Model.ResponsibilityId != 0)
-        {
-            <a asp-page="Ignored" class="ml-2 btn btn-sm btn-light">Ignored Tickets</a>
-        }
-    </div>
-</form>
 
 @{ int index = 0; }
 
@@ -56,37 +31,7 @@
     @foreach (var item in Model.Tickets)
     {
         <tr>
-            @if (Model.ResponsibilityId != 0)
-            {
-                <td><input type="checkbox" name="ticketId[@index]" value="@item.Id" class="selectTicket"/></td>
-            }            
-            <td>@item.Id</td>
-            <td>                
-                <a href="@Model.FreshdeskUrl/a/contacts/@item.RequesterId" target="_blank">@Model.GetContactName(item.RequesterId)</a>
-                @if (item.CompanyId.HasValue)
-                {
-                    <br/>
-                    <a href="@Model.FreshdeskUrl/a/companies/@item.CompanyId.Value" target="_blank">@Model.GetCompanyName(item.CompanyId.Value)</a>
-                }                
-            </td>
-            <td>
-                <a href="@Model.FreshdeskUrl/a/tickets/@item.Id" target="_blank">
-                    @if (item.Type != null)
-                    {
-                        <span class="badge @Model.GetTypeBadge(item.Type)">@item.Type</span>
-                    }
-                    <span>@item.Subject</span>
-                    @if (item.GroupId.HasValue)
-                    {
-                        <strong>@Model.Groups[item.GroupId.Value].Name</strong>
-                    }                    
-                    @if (item.Spam)
-                    {
-                        <span class="badge badge-dark">Spam</span>
-                    }
-                </a>
-            </td>
-            <td>@item.CreatedAt.DateTime</td>
+            <partial name="_TicketRow" model="@(new TicketRowView() { PageModel = Model, Ticket = item, RowIndex = index, FreshdeskUrl = Model.FreshdeskUrl })"/>
             <td>                
                 <form method="post" asp-page-handler="DoAction" class="form-inline">
                     <input type="hidden" name="ticketId" value="@item.Id"/>         
