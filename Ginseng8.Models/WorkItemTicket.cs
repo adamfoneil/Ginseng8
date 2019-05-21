@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ginseng.Models
 {
@@ -32,6 +33,16 @@ namespace Ginseng.Models
 		/// This should reflect in Freshdesk ticket custom field.
 		/// </summary>
 		public int WorkItemNumber { get; set; }
+
+        public long? CompanyId { get; set; }
+
+        [MaxLength(100)]
+        public string CompanyName { get; set; }
+
+        public long? ContactId { get; set; }
+
+        [MaxLength(100)]
+        public string ContactName { get; set; }
 	}
 
 	/*
