@@ -21,7 +21,13 @@
     {
         <tr>
             <partial name="_TicketRow" model="@(new TicketRowView() { PageModel = Model, Ticket = item, RowIndex = index, FreshdeskUrl = Model.FreshdeskUrl })"/>
-            <td></td>
+            <td>
+                <form asp-page-handler="Restore">
+                    <input type="hidden" name="TicketId" value="@item.Id"/>
+                    <input type="hidden" name="ResponsibilityId" value="@Model.ResponsibilityId"/>
+                    <button type="submit" class="btn btn-primary">Restore</button>
+                </form>
+            </td>
         </tr>
         index++;
     }
