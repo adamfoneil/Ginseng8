@@ -87,18 +87,25 @@ namespace Ginseng.Mvc.Pages.Tickets
         /// </summary>
         private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int responsibilityId, int appId, IEnumerable<Ticket> tickets)
         {
-            var projects = await new ProjectSelectEx() { OrgId = OrgId, AppId = appId }.ExecuteAsync(cn);
-            var projectsByCompany = projects.GroupBy(row => row.FreshdeskCompanyId ?? 0);
-
             Dictionary<long, SelectList> results = new Dictionary<long, SelectList>();
 
-            foreach (var companyGrp in projectsByCompany)
-            {
-                var items = companyGrp.ToList();
-                if (responsibilityId != 0) items.Insert(0, new ProjectSelectResult() { Value = 0, Text = "Ignore Ticket" });
-                items.Insert(1, new ProjectSelectResult() { Value = -1, Text = "[ new project ]" });
-                var selectItems = items.Select(item => new SelectListItem() { Value = item.Value.ToString(), Text = item.Text });
-                results.Add(companyGrp.Key, new SelectList(selectItems, "Value", "Text"));
+            var projects = await new ProjectSelectEx() { OrgId = OrgId, AppId = appId }.ExecuteAsync(cn);
+
+            var resp = await cn.FindAsync<Responsibility>(responsibilityId);
+            bool companySpecific = resp?.CompanySpecificProjects ?? false;
+
+            if (companySpecific)
+            {                
+                var projectsByCompany = projects.GroupBy(row => row.FreshdeskCompanyId ?? 0);
+                foreach (var companyGrp in projectsByCompany)
+                {
+                    var items = companyGrp.ToList();
+                    if (responsibilityId != 0) items.Insert(0, new ProjectSelectResult() { Value = 0, Text = "Ignore Ticket" });
+                    items.Insert(1, new ProjectSelectResult() { Value = -1, Text = "[ new project ]" });
+                    var selectItems = items.Select(item => new SelectListItem() { Value = item.Value.ToString(), Text = item.Text });
+                    var firstProject = items.FirstOrDefault(p => p.FreshdeskCompanyId == companyGrp.Key);
+                    results.Add(companyGrp.Key, new SelectList(selectItems, "Value", "Text", firstProject?.Value));
+                }
             }
 
             var ticketsByCompany = tickets.GroupBy(row => row.CompanyId ?? 0);
@@ -109,10 +116,13 @@ namespace Ginseng.Mvc.Pages.Tickets
                     var items = new List<SelectListItem>();
                     if (responsibilityId != 0) items.Add(new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
                     items.Add(new SelectListItem() { Value = "-1", Text = "[ new project ]" });
+                    if (!companySpecific)
+                    {
+                        items.AddRange(projects.Where(p => (p.FreshdeskCompanyId ?? 0) == 0).Select(p => new SelectListItem() { Value = p.Value.ToString(), Text = p.Text }));
+                    }
                     results.Add(companyGrp.Key, new SelectList(items, "Value", "Text"));
                 }
             }
-
             return results;
         }
 
@@ -133,6 +143,8 @@ namespace Ginseng.Mvc.Pages.Tickets
         {
             var client = await _freshdeskClientFactory.CreateClientForOrganizationAsync(OrgId);
             var ticket = await client.GetTicketAsync(ticketId);
+
+            await FreshdeskCache.InitializeAsync(OrgName);
 
             using (var cn = Data.GetConnection())
             {                
