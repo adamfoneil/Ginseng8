@@ -78,6 +78,13 @@ namespace Ginseng.Mvc.Queries
 		public PriorityGroupOptions PriorityGroup { get; set; }
 		public string CreatedBy { get; set; }
         public bool IsHelpdeskTicket { get; set; }
+        public string FreshdeskUrl { get; set; }
+        public long FDTicketId { get; set; }
+        public string FDTicketSubject { get; set; }
+        public long FDCompanyId { get; set; }
+        public string FDCompanyName { get; set; }
+        public long FDContactId { get; set; }
+        public string FDContactName { get; set; }
 
 		public bool IsEditable(string userName)
 		{
@@ -172,10 +179,18 @@ namespace Ginseng.Mvc.Queries
                 CONVERT(bit, CASE
                     WHEN [wit].[Id] IS NOT NULL THEN 1
                     ELSE 0
-                END) AS [IsHelpdeskTicket]
+                END) AS [IsHelpdeskTicket],
+                [wit].[TicketId] AS [FDTicketId],
+                [wit].[CompanyId] AS [FDCompanyId],
+                [wit].[CompanyName] AS [FDCompanyName],
+                [wit].[ContactId] AS [FDContactId],
+                [wit].[ContactName] AS [FDContactName],
+                [wit].[Subject] AS [FDTicketSubject],
+                [org].[FreshdeskUrl]
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
+                INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
 				LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]

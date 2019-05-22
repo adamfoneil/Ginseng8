@@ -165,7 +165,8 @@ namespace Ginseng.Mvc.Pages.Tickets
                         CompanyId = ticket.CompanyId,
                         CompanyName = GetCompanyName(ticket.CompanyId ?? 0),
                         ContactId = ticket.RequesterId,
-                        ContactName = GetContactName(ticket.RequesterId)
+                        ContactName = GetContactName(ticket.RequesterId),
+                        Subject = ticket.Subject
                     };
                     
                     await client.UpdateTicketWorkItemAsync(ticketId, number.ToString());

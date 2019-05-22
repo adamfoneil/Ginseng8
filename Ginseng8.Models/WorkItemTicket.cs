@@ -37,6 +37,9 @@ namespace Ginseng.Models
 		/// </summary>
 		public int WorkItemNumber { get; set; }
 
+        [MaxLength(255)]
+        public string Subject { get; set; }
+
         public long? CompanyId { get; set; }
 
         [MaxLength(100)]
