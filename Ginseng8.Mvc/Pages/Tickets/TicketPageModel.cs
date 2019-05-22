@@ -28,7 +28,8 @@ namespace Ginseng.Mvc.Pages.Tickets
                 {
                     { "Issue", "badge-danger" },
                     { "Feature Request", "badge-info" },
-                    { "Request", "badge-warning" }
+                    { "Request", "badge-warning" },
+                    { "Bug", "badge-danger" }
                 };
             }
         }

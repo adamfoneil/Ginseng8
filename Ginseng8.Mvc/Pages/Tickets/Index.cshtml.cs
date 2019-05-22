@@ -82,6 +82,9 @@ namespace Ginseng.Mvc.Pages.Tickets
             DateQueried = FreshdeskCache.TicketCache.LastApiCallDateTime;
         }
 
+        /// <summary>
+        /// Returns a dictionary of SeletLists keyed to Freshdesk Company Ids
+        /// </summary>
         private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int responsibilityId, int appId, IEnumerable<Ticket> tickets)
         {
             var projects = await new ProjectSelectEx() { OrgId = OrgId, AppId = appId }.ExecuteAsync(cn);
