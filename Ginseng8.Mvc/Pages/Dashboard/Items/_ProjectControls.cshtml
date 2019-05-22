@@ -20,10 +20,13 @@
         </a>
     }
 
-    <select name="FreshdeskCompanyId" asp-items="Model.FreshdeskCompanySelect" class="form-control-sm projectUpdate mr-2">
-        <option value="">(none)</option>
-    </select>
-
+    @if (Model.FreshdeskCompanySelect != null)
+    {
+        <select name="FreshdeskCompanyId" asp-items="Model.FreshdeskCompanySelect" class="form-control-sm projectUpdate mr-2">
+            <option value="">(none)</option>
+        </select>
+    }
+    
     <label>
         @Html.CheckBox("IsActive", Model.SelectedProject.IsActive, new { @class = "projectUpdate mr-1" })
         Active

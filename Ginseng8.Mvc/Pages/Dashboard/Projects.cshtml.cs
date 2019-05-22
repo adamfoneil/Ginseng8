@@ -128,8 +128,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
 				SelectedProjectInfo = await new ProjectInfo() { Id = Id, OrgId = OrgId }.ExecuteSingleAsync(connection);
 				ProjectComments = await new Comments() { OrgId = OrgId, ObjectType = ObjectType.Project, ObjectIds = new[] { SelectedProject.Id } }.ExecuteAsync(connection);
 
-                var companies = await _companyCache.QueryAsync(CurrentOrg.Name);
-                FreshdeskCompanySelect = new SelectList(companies.Select(c => new SelectListItem() { Value = c.Id.ToString(), Text = c.Name }), "Value", "Text", SelectedProject.FreshdeskCompanyId);
+                if (CurrentOrg.UseFreshdesk())
+                {
+                    var companies = await _companyCache.QueryAsync(CurrentOrg.Name);
+                    FreshdeskCompanySelect = new SelectList(companies.Select(c => new SelectListItem() { Value = c.Id.ToString(), Text = c.Name }), "Value", "Text", SelectedProject.FreshdeskCompanyId);
+                }                
             }
             else
 			{

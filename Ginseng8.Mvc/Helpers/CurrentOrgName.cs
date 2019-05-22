@@ -15,6 +15,18 @@ namespace Ginseng.Mvc.Helpers
 			return new HtmlString(CurrentOrgNameString(html));
 		}
 
+        public static int CurrentOrgId(this IHtmlHelper<dynamic> html)
+        {
+            AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+            return (model != null) ? model.OrgId : 0;
+        }
+
+        public static bool CurrentOrgUsesFreshdesk(this IHtmlHelper<dynamic> html)
+        {
+            AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+            return (model != null) ? model.CurrentOrg.UseFreshdesk() : false;
+        }
+
 		public static string CurrentOrgNameString(this IHtmlHelper<dynamic> html)
 		{
 			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
