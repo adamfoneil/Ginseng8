@@ -10,7 +10,7 @@ using System.Data;
 namespace Ginseng.Models
 {
 	/// <summary>
-	/// Defines the distinction between Business and Development work item responsibility.
+	/// Defines the distinction between Business (Operations) and Development work item responsibility.
 	/// As work items change activity, the responsibility changes, which forms the bases of a CASE statement
 	/// in the AllWorkItems query that shows the assigned person
 	/// </summary>
@@ -36,6 +36,13 @@ namespace Ginseng.Models
 
 		[DefaultExpression("0")]
 		public int Flag { get; set; }
+
+        /// <summary>
+        /// Indicates whether projects typically align with Freshdesk companies or not    .
+        /// The Ops responsibility typically aligns projects with Freshdesk companies, but Dev doesn't
+        /// </summary>
+        [DefaultExpression("0")]
+        public bool CompanySpecificProjects { get; set; }
 
 		/// <summary>
 		/// Indicates what WorkItem property to set according to the Responsibility.Id in effect (which comes from the activity that was selected).
@@ -85,7 +92,7 @@ namespace Ginseng.Models
 		{
 			return new Responsibility[]
 			{
-				new Responsibility() { Name = "Business", SourceExpression = "OwnerName", Flag = 1 },
+				new Responsibility() { Name = "Operations", SourceExpression = "OwnerName", Flag = 1 },
 				new Responsibility() { Name = "Development", SourceExpression = "DeveloperName", Flag = 2 }
 			}.ToDataTable(new SqlServerIntegrator(), excludeIdentity: true);
 		}
