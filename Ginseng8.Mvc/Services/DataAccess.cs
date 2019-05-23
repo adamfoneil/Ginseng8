@@ -24,6 +24,11 @@ namespace Ginseng.Mvc.Services
 		public Organization CurrentOrg { get; private set; }
 		public OrganizationUser CurrentOrgUser { get; private set; }
 
+        public string UserDisplayName
+        {
+            get { return CurrentOrgUser?.DisplayName ?? CurrentUser.UserName; }
+        }
+
 		public DataAccess(IConfiguration config)
 		{
 			_config = config;

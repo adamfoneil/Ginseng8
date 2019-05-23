@@ -1,0 +1,45 @@
+﻿@page
+@{
+    ViewData["Title"] = "Freshdesk";
+}
+
+<h3>Using Freshdesk with Ginseng</h3>
+
+<p>You can use Ginseng with <a href="https://freshdesk.com/" target="_blank">Freshdesk</a> to link tickets and work items.</p>
+
+<h2>Setup</h2>
+<p>To configure this for the first time, follow these steps:</p>
+<ol>
+    <li>In Freshdesk, go to your profile settings page, and get copy your API key.</li>
+    <li>Go to <a asp-page="/Setup/Organization">Setup Organization</a> and enter and save your Freshdesk URL and API key.</li>
+    <li>In your Freshdesk admin section, go to <strong>Ticket Fields</strong> and create a custom field called <strong>Work Item #</strong>.</li>
+</ol>
+<p>Note that API access is not supported in their free tier. You have to be using the <strong>Blossom</strong> plan or above.</p>
+
+<h3>Generate Work Items from Tickets</h3>
+
+<p>You can generate Ginseng Work Items from Freshdesk Tickets. When you do this, the work item is linked to the </p>
+
+<ol>
+    <li>Expand the Home menu (upper left) in Ginseng and click <strong>Freshdesk Tickets</strong>. This will show you tickets
+    that you haven't assigned or ignored yet.</li>
+    <li>(Optional) From the <strong>app filter</strong> menu at the top, select the application you want assign work items in. This is
+    not required, but the advantage of doing so is that you can associate Freshdesk companies with Ginseng projects. This is
+    handy if you want to keep work for different customers separate by company.</li>
+    <li>In the <strong>Responsibility</strong> dropdown, choose your responsibility: Development or Operations.
+    <br/>Tip: To set your default, go to <a asp-page="/Setup/OrgUser">Org Settings</a> and select your typical responsibility there.</li>
+    <li>Go through the list of tickets. For each one that applies to your responsibility, use the dropdown on the far right and select <em>Ignore Ticket</em> or 
+    <em>[ new project ]</em> or any of the project options shown. Then click <strong>Go</strong>. This will generate a new work item and record
+    the number in the Freshdesk Work Item # custom field.</li>
+</ol>
+
+<p>If you ignore a ticket in error, or you just change your mind, click on <strong>Ignored</strong>, find the ticket, and click <strong>Restore</strong>.</p>
+
+<p>To see what work items have been generated that are currently open, click <strong>Assigned Items</strong>. This is identical to clicking <strong>All Items</strong>
+    from the Home menu and selecting the <em>Freshdesk tickets</em> filter option.</p>
+
+<p>If you need to change the company associated with a Ginseng project, go to <a asp-page="/Dashboard/Projects">Projects</a>, click on a project, and select the 
+    Freshdesk company you want.</p>
+
+<p>You can search for a work item by ticket number in Ginseng by entering <strong>FD</strong> followed by the ticket number in the search box.
+    Case doesn't matter. For example: <strong>FD49</strong> or <strong>fd34</strong> will search for Freshdesk ticket # 49 or 34 respectively.</p>

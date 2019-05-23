@@ -1,5 +1,7 @@
+using AutoMapper;
 using Ginseng.Mvc.Data;
 using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Models.Freshdesk;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -44,19 +46,28 @@ namespace Ginseng.Mvc
 				.AddDefaultUI(UIFramework.Bootstrap4)
 				.AddEntityFrameworkStores<ApplicationDbContext>();
 
-			services.AddAuthentication()
-				.AddGoogle(options =>
-				{
-					options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
-					options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
-				})
-				.AddCookie()
-				.AddAerieHub(Configuration)
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Configuration.GetSection("Google").GetValue<string>("ClientId");
+                    options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
+                })
+                .AddCookie()
+                .AddAerieHub(Configuration)
 				.AddGitHub(Configuration);
 
-			services
-				.AddTransient<IEmailSender, Email>()
-				.AddSingleton<IViewRenderService, ViewRenderService>();
+            services
+                .AddOptions()
+                .AddAutoMapper(typeof(Startup).Assembly)
+                .AddSingleton<FreshdeskTicketCache>()
+                .AddSingleton<FreshdeskGroupCache>()
+                .AddSingleton<FreshdeskCompanyCache>()
+                .AddSingleton<FreshdeskContactCache>()
+                .AddSingleton<IFreshdeskClientFactory, FreshdeskClientFactory>()
+                .AddSingleton<IFreshdeskService, FreshdeskService>()
+                .Configure<FreshdeskServiceOptions>(Configuration.GetSection("Freshdesk"))
+                .AddTransient<IEmailSender, Email>()
+                .AddSingleton<IViewRenderService, ViewRenderService>();
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}

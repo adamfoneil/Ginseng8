@@ -1,7 +1,9 @@
 ﻿using Dapper;
+using Ginseng.Integration.Services;
 using Ginseng.Models;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
+using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Models;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
@@ -24,10 +26,14 @@ namespace Ginseng.Mvc.Controllers
     public class WorkItemController : Controller
     {
         private readonly DataAccess _data;
+        private readonly IFreshdeskClientFactory _clientFactory;
 
-        public WorkItemController(IConfiguration config)
+        public WorkItemController(
+            IConfiguration config,
+            IFreshdeskClientFactory freshdeskClientFactory)
         {
             _data = new DataAccess(config);
+            _clientFactory = freshdeskClientFactory;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -335,12 +341,25 @@ namespace Ginseng.Mvc.Controllers
             {
                 comment.OrganizationId = _data.CurrentOrg.Id;
                 await comment.SaveHtmlAsync(_data, cn);
-                await _data.TrySaveAsync(comment);
+                if (await _data.TrySaveAsync(comment)) await AddFreshdeskNoteAsync(comment, cn);
 
                 var vm = new CommentView();
                 vm.ObjectId = comment.ObjectId;
                 vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, ObjectType = comment.ObjectType, ObjectIds = new int[] { comment.ObjectId } }.ExecuteAsync(cn);
                 return PartialView("/Pages/Dashboard/Items/_Comments.cshtml", vm);
+            }
+        }
+
+        private async Task AddFreshdeskNoteAsync(Comment comment, SqlConnection cn)
+        {
+            if (comment.ObjectType == ObjectType.WorkItem)
+            {
+                var workItem = await cn.FindAsync<WorkItem>(comment.ObjectId);
+                if (workItem.WorkItemTicket?.WorkItemNumber != 0)
+                {
+                    var client = await _clientFactory.CreateClientForOrganizationAsync(workItem.OrganizationId);
+                    await client.AddNoteAsync(workItem.WorkItemTicket.TicketId, comment, _data.UserDisplayName);
+                }
             }
         }
 

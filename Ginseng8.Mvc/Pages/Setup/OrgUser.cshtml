@@ -72,15 +72,15 @@
         <div class="col-3">
             <label>Responsibilities:</label>
             <input type="hidden" asp-for="OrgUser.Responsibilities" />
-            <ul class="list-inline">
+            <ul class="list-inline">                
                 @foreach (var r in Model.Responsibilities)
                 {
                     <li class="list-inline-item">
                         <label>
-                            @r.Name
+                            @r.Name                            
                             <input type="checkbox" name="SelectedResponsibilities" value="@r.Flag" checked="@((r.Flag & Model.OrgUser.Responsibilities) == r.Flag)" />
                         </label>
-                    </li>
+                    </li>                    
                 }
             </ul>
         </div>

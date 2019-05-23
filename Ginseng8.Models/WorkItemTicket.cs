@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Enums.Freshdesk;
 using Postulate.Base.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -19,20 +20,26 @@ namespace Ginseng.Models
 		[PrimaryKey]
 		public long TicketId { get; set; }
 
+        [References(typeof(Organization))]
+        [PrimaryKey]
+        public int OrganizationId { get; set; }
+
+        public TicketType TicketType { get; set; }
+
 		/// <summary>
 		/// Maps to Ginseng.Mvc.Models.Freshdesk.Ticket.Status
 		/// </summary>
-		public int TicketStatus { get; set; }
+		public TicketStatus TicketStatus { get; set; }
 
 		public DateTime? TicketStatusDateModified { get; set; }
 
-		[References(typeof(Organization))]
-		public int OrganizationId { get; set; }
-
 		/// <summary>
-		/// This should reflect in Freshdesk ticket custom field.
+		/// This should reflect in Freshdesk ticket custom field.        
 		/// </summary>
 		public int WorkItemNumber { get; set; }
+
+        [MaxLength(255)]
+        public string Subject { get; set; }
 
         public long? CompanyId { get; set; }
 

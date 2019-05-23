@@ -72,7 +72,8 @@ namespace Ginseng.Mvc.Controllers
 					project.ApplicationId = fields.ApplicationId;
 					project.IsActive = fields.IsActive;
 					project.DataModelId = fields.DataModelId;
-					await cn.UpdateAsync(project, _data.CurrentUser, r => r.ApplicationId, r => r.IsActive, r => r.DataModelId);
+                    project.FreshdeskCompanyId = fields.FreshdeskCompanyId;
+					await cn.UpdateAsync(project, _data.CurrentUser, r => r.ApplicationId, r => r.IsActive, r => r.DataModelId, r => r.FreshdeskCompanyId);
 					await project.SyncWorkItemsToProjectAsync(cn);
 					return Json(new { success = true });
 				}

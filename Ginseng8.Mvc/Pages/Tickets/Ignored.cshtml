@@ -1,0 +1,34 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Tickets.IgnoredModel
+@{
+    ViewData["Title"] = "Ignored";
+    var index = 0;
+}
+
+<table class="table">
+    <tr>
+        @if (Model.ResponsibilityId != 0)
+        {
+            <th></th>
+        }        
+        <th>Id</th>
+        <th>From</th>
+        <th>Subject</th>
+        <th>Date</th>
+        <th>Action</th>
+    </tr>
+    @foreach (var item in Model.Tickets)
+    {
+        <tr>
+            <partial name="_TicketRow" model="@(new TicketRowView() { PageModel = Model, Ticket = item, RowIndex = index, FreshdeskUrl = Model.FreshdeskUrl })"/>
+            <td>
+                <form asp-page-handler="Restore">
+                    <input type="hidden" name="TicketId" value="@item.Id"/>
+                    <input type="hidden" name="ResponsibilityId" value="@Model.ResponsibilityId"/>
+                    <button type="submit" class="btn btn-primary">Restore</button>
+                </form>
+            </td>
+        </tr>
+        index++;
+    }
+</table>

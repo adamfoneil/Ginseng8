@@ -12,6 +12,7 @@
     <select name="DataModelId" asp-items="@Model.Dropdowns.DataModelSelect(Model.SelectedProject.ApplicationId, Model.SelectedProject.DataModelId)" class="form-control-sm mr-2 projectUpdate">
         <option value="">- data model -</option>
     </select>
+    
     @if  (Model.SelectedProject.DataModelId.HasValue)
     {
         <a asp-page="/Data/Index" asp-route-modelId="@Model.SelectedProject.DataModelId" title="Goto data model" class="mr-2">
@@ -19,6 +20,13 @@
         </a>
     }
 
+    @if (Model.FreshdeskCompanySelect != null)
+    {
+        <select name="FreshdeskCompanyId" asp-items="Model.FreshdeskCompanySelect" class="form-control-sm projectUpdate mr-2">
+            <option value="">(none)</option>
+        </select>
+    }
+    
     <label>
         @Html.CheckBox("IsActive", Model.SelectedProject.IsActive, new { @class = "projectUpdate mr-1" })
         Active

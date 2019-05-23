@@ -22,7 +22,7 @@ namespace Ginseng.Models
 	/// User story, development task, bug, or feature request
 	/// </summary>
 	[TrackChanges(IgnoreProperties = "ModifiedBy;DateModified")]
-	public class WorkItem : BaseTable, IBody, ITrackedRecord, IOrgSpecific
+	public class WorkItem : BaseTable, IBody, ITrackedRecord, IOrgSpecific, IFindRelated<int>
 	{
 		public const string IconCreated = "far fa-plus-hexagon";
 		public const string IconClosed = "far fa-clipboard-check";
@@ -84,6 +84,8 @@ namespace Ginseng.Models
 		public int? CloseReasonId { get; set; }
 
 		public bool UseDefaultHistoryTable => true;
+
+        public WorkItemTicket WorkItemTicket { get; set; }
 
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
@@ -240,6 +242,16 @@ namespace Ginseng.Models
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
             return await Task.FromResult(OrganizationId);
+        }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            WorkItemTicket = connection.FindWhere<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            WorkItemTicket = await connection.FindWhereAsync<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
         }
     }
 }
