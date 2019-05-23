@@ -1,4 +1,5 @@
-﻿
+﻿@page
+
 <h3>Dashboard Pages</h3>
 <div class="ml-3">
     <p>The dashboard pages share a common menu across the top of all pages. These make up the bulk of Ginseng's interface.</p>
@@ -7,21 +8,91 @@
 <h4>My Items</h4>
 <div class="ml-3">
     <p>Shows work items assigned to you. This is where you spend most of your time.</p>
-    <p>This is also where you accept hand-offs from other activities that you follow.</p>
+    <p>This is also where you accept hand-offs from other activities <a asp-page="/Setup/AppActivities">that you follow</a>.</p>
     <p>You can drag the priority order of items here as well.</p>
 </div>
 
 <h4>Hung Items</h4>
 <div class="ml-3">
-    <p>This shows work items that are not making progress for various reasons.</p>
+    <p>This shows work items that are not making progress for various reasons. There are three kinds of hung items:</p>
+    <ul>
+        <li>
+            <i class="fas fa-pause-circle"></i>
+            <strong>Paused</strong> items have been started, but are waiting for someone else to resume them. This is either because of a <strong>hand-off</strong>,
+            or because the person was overloaded with other work, and elected to remove him or herself.
+        </li>
+        <li>
+            <i class="fas fa-stop-circle"></i>
+            <strong>Not Started</strong> items have a milestone associated, but no one has started on it.
+        </li>
+        <li>
+            <i class="far fa-comment-times"></i>
+            <strong>Impediments</strong> are items that have some sort of technical problem or some other issue that's preventing progress. Impediments are added
+            as comments with the Impediment option selected.
+        </li>
+    </ul>
 </div>
 
 <h4>Projects</h4>
+<div class="ml-3">
+    <p>Projects group related work items so they can be tracked together. The Projects dashboard has three views:</p>
+    <ul>
+        <li><strong>Card</strong> view is default, and shows each project as a card by <a asp-page="/Setup/PriorityTiers">Priority Tier</a>. You can
+        drag the order of projects to set their priority. Hover the mouse over the project buttons to see the items within them and who's assigned to them.</li>
+        <li><strong>Crosstab</strong> view lists projects vertically, and shows upcoming milestones horizontally. You can drag items between milestones.
+        Hover the mouse over individual items to see the title.</li>
+        <li>Access <strong>Detail</strong> view by clicking a project button. This will show the work items within the project. From here, you can interact
+        with the items as you would on other dashboard pages. You cannot drag the priority order of items here, however.</li>
+    </ul>
+</div>
 
 <h4>Milestones</h4>
+<div class="ml-3">
+    <p>This show items by milestone -- or due date, in other words.</p>
+    <p>Past milestones offer the option to move work items forward to the soonest future milestone, or to generate a new milestone after your latest one.</p>
+</div>
 
 <h4>All Items</h4>
+<div class="ml-3">
+    <p>This lets you search and view all open work items, filering by various fields. This page is filtered to the currently selected application, which yo
+    choose near the top-left of the screen.</p>
+
+    <p>This page also has some tools for managing your backlog. All work items are automatically divided into three <strong>priority groups</strong>:</p>
+    <ul>
+        <li>
+            <p><i class="far fa-flower-tulip"></i>
+            <strong>Work on Next</strong> means someone has clicked the <em>Work on Next</em> option in the <em>I'll take this</em> menu. Use this
+            to flag items your team wants to work on soon, but doesn't have time for at the moment. You can drag and drop the order of items in this category.</p>
+            <p><img src="~/img/work-on-next.png" /></p>
+            <p>To remove an item from this category, click the <em>I'll take this</em> menu and click <em>Send to Backlog</em>.</p>
+            <p><img src="~/img/send-to-backlog.png"/></p>
+        </li>
+        <li>
+            <p>
+                <i class="far fa-flower"></i>
+                <strong>Backlog</strong> items are those you know you don't have time for, and are not planning to work on in the near term. To move an item
+                into the <em>Work on Next</em> category, click the <em>I'll take this</em> menu and click <em>Work on Next</em>. Alternatively, you can
+                also assign yourself right away by selecting the starting activity.
+            </p>                        
+        </li>
+        <li>
+            <p>
+                <i class="far fa-bolt"></i>
+                <strong>In Progress</strong> are currently assigned, and visible on the <a asp-page="/Dashboard/Index">My Items</a> and <a asp-page="/Dashboard/Team">Team</a> pages.
+            </p>                       
+        </li>
+    </ul>
+</div>
 
 <h4>Team</h4>
+<div class="ml-3">
+    <p>This is similar to the <a asp-page="/Dashboard/Index">My Items</a> page, but for all team members. This page supports priority drag and drop.</p>
+    <p>Note also this page filters the selected application.</p>
+</div>
 
 <h4>Feed</h4>
+<div class="ml-3">
+    <p>This shows a continuous feed of events in Ginseng, such as work item creation and closing. You can also use this to subscribe to notifications
+    for various system events.</p>
+    <p>Note that as of this writing, only email notifications work for select events. Text and app notifications are not implemented yet.</p>
+</div>
