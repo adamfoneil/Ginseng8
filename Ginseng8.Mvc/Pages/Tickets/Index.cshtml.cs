@@ -199,10 +199,12 @@ namespace Ginseng.Mvc.Pages.Tickets
             int? projectId = (objectType == ActionObjectType.Project) ? objectId : default(int?);
 
             if (projectId == -1 && ticket.CompanyId.HasValue)
-            {                
+            {                                
                 var company = await client.GetCompanyAsync(ticket.CompanyId.Value);
                 projectId = await CreateNewProjectAsync(cn, CurrentOrgUser.CurrentAppId.Value, company);
             }
+
+            if (projectId == -1) projectId = null;
 
             var workItem = new Ginseng.Models.WorkItem()
             {
