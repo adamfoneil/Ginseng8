@@ -57,9 +57,9 @@ namespace Ginseng.Mvc.Pages.Tickets
                 "Select app";
         }
 
-        public async Task OnGetAsync(int responsibilityId = 0)
+        public async Task OnGetAsync()
         {
-            await InitializeAsync(responsibilityId);
+            await InitializeAsync();
 
             using (var cn = Data.GetConnection())
             {                                
@@ -69,12 +69,12 @@ namespace Ginseng.Mvc.Pages.Tickets
                 if (CurrentOrgUser.CurrentAppId.HasValue)
                 {
                     ActionObjectType = ActionObjectType.Project;
-                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, responsibilityId, CurrentOrgUser.CurrentAppId.Value, Tickets);
+                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, ResponsibilityId, CurrentOrgUser.CurrentAppId.Value, Tickets);
                 }
                 else
                 {
                     ActionObjectType = ActionObjectType.Application;
-                    AppSelect = await BuildAppSelectAsync(cn, responsibilityId);
+                    AppSelect = await BuildAppSelectAsync(cn, ResponsibilityId);
                 }                
             }            
 

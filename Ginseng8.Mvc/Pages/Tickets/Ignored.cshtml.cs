@@ -17,9 +17,9 @@ namespace Ginseng.Mvc.Pages.Tickets
         {
         }
 
-        public async Task OnGetAsync(int responsibilityId = 0)
+        public async Task OnGetAsync()
         {
-            await InitializeAsync(responsibilityId);
+            await InitializeAsync();
             Tickets = FreshdeskCache.Tickets.Where(t => IgnoredTickets.Contains(t.Id));
         }
 

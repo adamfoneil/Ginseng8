@@ -61,15 +61,21 @@ namespace Ginseng.Mvc.Pages.Tickets
             return (FreshdeskCache.CompanyDictionary.ContainsKey(companyId)) ? FreshdeskCache.CompanyDictionary[companyId].Name : $"company id {companyId}";
         }
 
-        protected async Task InitializeAsync(int responsibilityId)
+        protected async Task InitializeAsync()
         {
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
             await FreshdeskCache.InitializeAsync(Data.CurrentOrg.Name);
 
+            object selectedResponsibilityId = (ResponsibilityId != 0) ? 
+                ResponsibilityId : (CurrentOrgUser.Responsibilities < 3) ? CurrentOrgUser.Responsibilities :
+                default(object);
+
+            ResponsibilityId = (int?)selectedResponsibilityId ?? 0;
+
             using (var cn = Data.GetConnection())
             {
-                ResponsibilitySelect = await new ResponsibilitySelect().ExecuteSelectListAsync(cn, responsibilityId);
-                IgnoredTickets = await new IgnoredTickets() { ResponsibilityId = responsibilityId, OrgId = OrgId }.ExecuteAsync(cn);                
+                ResponsibilitySelect = await new ResponsibilitySelect().ExecuteSelectListAsync(cn, selectedResponsibilityId);
+                IgnoredTickets = await new IgnoredTickets() { ResponsibilityId = ResponsibilityId, OrgId = OrgId }.ExecuteAsync(cn);                
             }
         }
     }
