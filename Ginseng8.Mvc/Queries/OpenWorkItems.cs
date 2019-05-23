@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Mvc.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
@@ -85,6 +86,7 @@ namespace Ginseng.Mvc.Queries
         public string FDCompanyName { get; set; }
         public long FDContactId { get; set; }
         public string FDContactName { get; set; }
+        public TicketStatus FDTicketStatus { get; set; }
 
 		public bool IsEditable(string userName)
 		{
@@ -186,6 +188,7 @@ namespace Ginseng.Mvc.Queries
                 [wit].[ContactId] AS [FDContactId],
                 [wit].[ContactName] AS [FDContactName],
                 [wit].[Subject] AS [FDTicketSubject],
+                [wit].[TicketStatus] AS [FDTicketStatus],
                 [org].[FreshdeskUrl]
 			FROM
 				[dbo].[WorkItem] [wi]

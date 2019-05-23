@@ -73,7 +73,9 @@
             {
                 <span> | </span>
                 <a href="@Model.WorkItem.FreshdeskUrl/a/companies/@Model.WorkItem.FDCompanyId" target="_blank">@Model.WorkItem.FDCompanyName</a>
-            }                
+            }
+
+            <span>@Model.WorkItem.FDTicketStatus.ToString()</span>
         </div>
     }
 </div>
