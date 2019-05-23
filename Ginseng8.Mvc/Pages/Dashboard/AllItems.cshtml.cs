@@ -97,6 +97,8 @@ namespace Ginseng.Mvc.Pages.Work
         private bool IsTicket(string query, out int ticketNumber)
         {
             ticketNumber = 0;
+            if (string.IsNullOrEmpty(query)) return false;
+
             if (query.ToLower().StartsWith("fd"))
             {
                 return int.TryParse(query.Substring(2), out ticketNumber);
