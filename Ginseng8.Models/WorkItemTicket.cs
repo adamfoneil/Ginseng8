@@ -20,6 +20,10 @@ namespace Ginseng.Models
 		[PrimaryKey]
 		public long TicketId { get; set; }
 
+        [References(typeof(Organization))]
+        [PrimaryKey]
+        public int OrganizationId { get; set; }
+
         public TicketType TicketType { get; set; }
 
 		/// <summary>
@@ -28,9 +32,6 @@ namespace Ginseng.Models
 		public TicketStatus TicketStatus { get; set; }
 
 		public DateTime? TicketStatusDateModified { get; set; }
-
-		[References(typeof(Organization))]
-		public int OrganizationId { get; set; }
 
 		/// <summary>
 		/// This should reflect in Freshdesk ticket custom field.        

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Postulate.Base.Extensions;
+using Postulate.SqlServer.IntKey;
 
 namespace Ginseng.Mvc.Pages.Work
 {
@@ -80,10 +82,29 @@ namespace Ginseng.Mvc.Pages.Work
 				}
 			}
 
+            if (IsTicket(Query, out int ticket))
+            {
+                var wit = await connection.FindWhereAsync<WorkItemTicket>(new { OrganizationId = OrgId, TicketId = ticket });
+                if (wit != null)
+                {
+                    return new RedirectResult($"/WorkItem/View/{wit.WorkItemNumber}");
+                }
+            }
+
 			return await Task.FromResult<RedirectResult>(null);
 		}
 
-		protected override async Task OnGetInternalAsync(SqlConnection connection)
+        private bool IsTicket(string query, out int ticketNumber)
+        {
+            ticketNumber = 0;
+            if (query.ToLower().StartsWith("fd"))
+            {
+                return int.TryParse(query.Substring(2), out ticketNumber);
+            }
+            return false;
+        }
+
+        protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
 			var groups = await new PriorityGroups().ExecuteAsync(connection);
 			PriorityGroups = groups.ToDictionary(row => (PriorityGroupOptions)row.Id);
