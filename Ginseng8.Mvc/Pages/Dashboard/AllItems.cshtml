@@ -45,6 +45,10 @@
         </select>
         <select name="FilterCloseReasonId" asp-items="Model.CloseReasonSelect" class="form-control-sm" onchange="this.form.submit();">
         </select>
+        <label class="ml-2">
+            @Html.CheckBox("FilterFreshdeskTickets", Model.FilterFreshdeskTickets, new { onclick = "this.form.submit()" })
+            Freshdesk tickets
+        </label>
     </div>
 </form>
 

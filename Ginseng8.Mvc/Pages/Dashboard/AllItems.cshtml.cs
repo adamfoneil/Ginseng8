@@ -48,6 +48,9 @@ namespace Ginseng.Mvc.Pages.Work
 		[BindProperty(SupportsGet = true)]
 		public int? FilterLabelId { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public bool? FilterFreshdeskTickets { get; set; }
+
 		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
 
@@ -128,7 +131,8 @@ namespace Ginseng.Mvc.Pages.Work
 				ActivityId = FilterActivityId,				
 				CloseReasonId = FilterCloseReasonId,				
 				PriorityGroupId = FilterPriorityGroupId,
-				Page = PageNumber,				
+                IsFreshdeskTicket = FilterFreshdeskTickets,
+				Page = PageNumber,
 			};
 		}
 	}

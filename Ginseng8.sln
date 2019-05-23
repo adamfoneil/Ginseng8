@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ginseng.Mvc", "Ginseng8.Mvc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ginseng.Models", "Ginseng8.Models\Ginseng.Models.csproj", "{9CC40F0A-F350-4E82-85C9-3EF815FEC86B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testing", "Testing\Testing.csproj", "{F5B10892-9336-4230-BDEE-9D78E48B0336}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing", "Testing\Testing.csproj", "{F5B10892-9336-4230-BDEE-9D78E48B0336}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

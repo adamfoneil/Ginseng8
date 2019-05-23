@@ -4,6 +4,7 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace Ginseng.Models
 		[UniqueKey]
 		public string TenantName { get; set; }
 
-		[MaxLength(255)]
+        [MaxLength(255)]
 		public string FreshdeskUrl { get; set; }
 
 		[MaxLength(255)]
@@ -131,6 +132,11 @@ namespace Ginseng.Models
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
             return await Task.FromResult(Id);
+        }
+
+        public bool UseFreshdesk()
+        {
+            return !string.IsNullOrEmpty(FreshdeskUrl) && !string.IsNullOrEmpty(FreshdeskApiKey);
         }
     }
 }

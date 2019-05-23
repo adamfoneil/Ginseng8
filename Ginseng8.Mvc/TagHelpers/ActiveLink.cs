@@ -21,14 +21,25 @@ namespace Ginseng.Mvc.TagHelpers
 		[HtmlAttributeName("text")]
 		public string Text { get; set; }
 
+        [HtmlAttributeName("preserve-query-string")]
+        public bool PreserveQueryString { get; set; }
+
 		public override void Process(TagHelperContext context, TagHelperOutput output)
 		{
 			base.Process(context, output);
 
 			output.TagName = "a";
-			output.Attributes.SetAttribute("href", Page);
+
+            string href = Page;
+            if (PreserveQueryString)
+            {
+                string queryString = ViewContext.HttpContext.Request.QueryString.ToString();
+                if (!string.IsNullOrEmpty(queryString)) href += queryString;
+            }            
+
+			output.Attributes.SetAttribute("href", href);
 			output.Content.SetContent(Text);
-			output.AddClass("nav-link", HtmlEncoder.Default);
+			output.AddClass("nav-link", HtmlEncoder.Default);            
 
 			string currentPage = ViewContext.RouteData.Values["page"] as string;
 			if (currentPage.Equals(Page)) output.AddClass("active", HtmlEncoder.Default);

@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Mvc.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
@@ -28,8 +29,10 @@ namespace Ginseng.Mvc.Queries
 		public const string UnestimatedColor = "mediumpurple";
 		public const string StoppedIcon = "fas fa-stop-circle";
 		public const string StoppedColor = "orangered";
+        public const string TicketIcon = "fas fa-ticket-alt";
+        public const string TicketColor = "#1a7172";
 
-		public int Id { get; set; }
+        public int Id { get; set; }
 		public int Number { get; set; }
 		public string Title { get; set; }
 		public int? Priority { get; set; }
@@ -75,6 +78,15 @@ namespace Ginseng.Mvc.Queries
 		public DateTime DateCreated { get; set; }
 		public PriorityGroupOptions PriorityGroup { get; set; }
 		public string CreatedBy { get; set; }
+        public bool IsHelpdeskTicket { get; set; }
+        public string FreshdeskUrl { get; set; }
+        public long FDTicketId { get; set; }
+        public string FDTicketSubject { get; set; }
+        public long FDCompanyId { get; set; }
+        public string FDCompanyName { get; set; }
+        public long FDContactId { get; set; }
+        public string FDContactName { get; set; }
+        public TicketStatus FDTicketStatus { get; set; }
 
 		public bool IsEditable(string userName)
 		{
@@ -85,7 +97,8 @@ namespace Ginseng.Mvc.Queries
 		{
 			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
 			if (EstimateHours == 0) yield return new Modifier() { Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
-			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };			
+			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };
+            if (IsHelpdeskTicket) yield return new Modifier() { Icon = TicketIcon, Color = TicketColor, Description = "Item was generated from a Freshdesk ticket" };
 		}
 
 		public string ActivityStatus()
@@ -164,10 +177,23 @@ namespace Ginseng.Mvc.Queries
 				[ho].[HtmlBody] AS [HandOffBody],
 				[ho].[DateCreated] AS [HandOffDate],
 				{PriorityGroupExpression} AS [PriorityGroup],
-				[wi].[CreatedBy]
+				[wi].[CreatedBy],
+                CONVERT(bit, CASE
+                    WHEN [wit].[Id] IS NOT NULL THEN 1
+                    ELSE 0
+                END) AS [IsHelpdeskTicket],
+                [wit].[TicketId] AS [FDTicketId],
+                [wit].[CompanyId] AS [FDCompanyId],
+                [wit].[CompanyName] AS [FDCompanyName],
+                [wit].[ContactId] AS [FDContactId],
+                [wit].[ContactName] AS [FDContactName],
+                [wit].[Subject] AS [FDTicketSubject],
+                [wit].[TicketStatus] AS [FDTicketStatus],
+                [org].[FreshdeskUrl]
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
+                INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
 				LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
@@ -200,6 +226,9 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[FnPriorityTierRanges](@orgId) [ptr] ON
 					[p].[Priority] >= [ptr].[MinPriority] AND
 					[p].[Priority] <= [ptr].[MaxPriority]
+                LEFT JOIN [dbo].[WorkItemTicket] [wit] ON 
+                    [wit].[OrganizationId]=[wi].[OrganizationId] AND
+                    [wit].[WorkItemNumber]=[wi].[Number]   
 				{{join}}
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
@@ -296,6 +325,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("[ms].[Date]<getdate()")]
 		public bool? IsPastDue { get; set; }
 
+        [Case(true, "[wit].[Id] IS NOT NULL")]
+        public bool? IsFreshdeskTicket { get; set; }
+
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
 		{
 			return TestExecuteHelper(connection);
@@ -325,6 +357,7 @@ namespace Ginseng.Mvc.Queries
 			yield return new OpenWorkItems() { TitleAndBodySearch = "whatever this that" };
 			yield return new OpenWorkItems() { IsPastDue = true };
 			yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
+            yield return new OpenWorkItems() { IsFreshdeskTicket = true };
 		}
 	}
 }
