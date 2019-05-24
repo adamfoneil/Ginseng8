@@ -11,6 +11,7 @@ using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -82,6 +83,12 @@ namespace Ginseng.Models
 
 		[References(typeof(CloseReason))]
 		public int? CloseReasonId { get; set; }
+
+        /// <summary>
+        /// Used with daily planner to set the date you intend to work on this
+        /// </summary>
+        [Column(TypeName = "date")]
+        public DateTime? Date { get; set; }
 
 		public bool UseDefaultHistoryTable => true;
 
