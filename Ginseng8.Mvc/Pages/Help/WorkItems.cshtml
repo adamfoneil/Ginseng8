@@ -46,6 +46,31 @@
     When you save the item, Ginseng creates a link to the item. This works both in comments and work item bodies. (Note that you need to refresh
     the page to see links in item bodies render correctly.)</p>
 
+    <h5>Priority (Rank) Order</h5>
+    <p>Ginseng uses the rank ordering of work items to represent priority. Items near the top of a list have higher priority.
+    Thus, Ginseng doesn't have a field to represent urgency or importance. The urgency of a work item is based solely on its rank position.</p>
+
+    <p>There are three places in Ginseng where you can drag and drop the priority order of work items:
+    <ul>
+        <li>on <a asp-page="/Dashboard/Index">My Items</a></li>
+        <li>the <a asp-page="/Dashboard/Team">Team</a> page</li>
+        <li>and <a asp-page="/Dashboard/AllItems">All Items</a> in the <em>Work on Next</em> group</li>
+    </ul>
+    <p>Note that <a asp-page="/Help/Projects">projects</a> also have priority, but project and work item priority are distinct.</p>
+
+    <p>You can see a work item priority numbers by looking at the right side on the assignment/hand-off menu. The priority numbers
+    appear for items that have a milestone. The numbers <em>don't</em> appear on work items that don't have a milestone, but the dragged order
+    is still honored. Note also that the priority numbers don't change as you complete work. They change only when you drag and drop
+    a new order.</p>
+
+    <p><img src="~/img/work-item-priority.png" /></p>
+
+    <h5>Estimates (Sizes)</h5>
+    <p>You can set a very approximate estimate of time required for a work item using the Size field. You setup your defined sizes under
+    <a asp-page="/Setup/Sizes">Work Item Sizes</a>. Selecting a size for a work item sets the coloring for the item number. Smaller tasks have a bluer
+    badge, while larger tasks have a more red badge. (The color is <a href="https://uigradients.com/#JShine">based on a gradient calculation</a> that you can't modify.)</p>
+
+    <a name="modifiers"></a>
     <h5>Modifiers</h5>
     <p>A few additional icons can appear in relation to work items:</p>
     <ul>
