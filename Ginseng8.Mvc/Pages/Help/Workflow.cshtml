@@ -1,0 +1,44 @@
+﻿@page
+
+@{
+    ViewData["Title"] = "Workflow";
+}
+
+<h4>Workflow</h4>
+<div class="ml-3">
+    <p>Create <a asp-page="/Help/Projects">projects</a> and <a asp-page="/Help/WorkItems">work items</a> as needed. Create work items to describe single tasks that one person can
+    roughly estimate and do. Create a project when the work is open-ended, has many distinct tasks, or requires discussion and design before starting.</p>    
+
+    <p>Optionally, and as needed, create a schedule of milestones in the future, and assign work items to those milestones. Milestones may represent
+    sprint dates or some other kind of deadline. Work items without a milestone may still be prioritized, but only work items 
+    in a milestone show the priority number in the Card.</p>
+
+    <p>Developers assign themselves work items using the <strong>I'll start this</strong> button on the upper right side of a Card or the right
+    side of any of the <a asp-page="/Help/Dashboard">Dashboard pages</a>. This menu changes itself depending on the state of the item.</p>
+
+    <p><img src="~/img/start-this.png"/></p>
+
+    <p>When an item hasn't started, the starting <a asp-page="/Setup/Activities">activities</a> (with the green arrows) are available to choose. In this case,
+    the available starting activities are <em>Grooming</em> and <em>Development</em>. When you complete your activity on an item and the item isn't done, 
+    you typically <strong>hand off</strong> to the next activity. You use the same button for this that you used to start the item initially.</p>
+
+    <p><img src="~/img/next-activity.png" /></p>
+
+    <p>In this example, the available next activities are <em>Code Review</em>, <em>Testing</em>, and <em>Deployment</em>. Ginseng does not enforce
+    the order nor require completion of activities. It does however make a distinction between forward and backward hand-offs based on the order of your activities.
+    In this example, <em>Grooming</em> is available as a backward hand-off activity. You'd use backward hand-offs when an activity ran into problems, for
+    example you might send an item from Testing <em>back</em> to Development if it needed more work.</p>
+
+    <p>Use the Dashboard Pages to monitor ongoing work, accept hand-offs, manage priorities, and enter comments.
+    See <a asp-page="DashboardPages">Dashboard Pages</a></p>
+
+    <p>At any time, you can close a work item by expanding its Card and selecting a close reason: Done, Obsolete, or Duplicate. There's
+    no particular rule on who can do this, so use judgement and consensus as to what works best for your team. If you close a work item
+    as Obsolete or Dupliate, it's a good idea to enter a comment explaining. Typically, a work item would be closed by the person doing the
+    last activity in the workflow.</p>
+
+    <p><img src="~/img/done.png" /></p>
+
+</div>
+
+

@@ -3,6 +3,46 @@
     ViewData["Title"] = "Work Items";
 }
 
-<h3>Work Items</h3>
+<h4>Work Items</h4>
 
-<p>A work item is an individual task owned by one person. You can </p>
+<div class="ml-3">
+    <p>Work items form the basis of everything you do in Ginseng. Use work items to describe a single task that one person can estimate and do.</p>
+
+    <p>You can add work items from all the <a asp-page="/Help/Dashboard">Dashboard Pages</a> except the <a asp-page="/Dashboard/Feed">Feed</a> page.
+    You can add a work item from a single phrase or sentence in the box that looks like this:</p>
+
+    <p><img src="~/img/add-item.png"/></p>    
+
+    <p>Note that you can add labels to an item with hashtags, and you can select a <a asp-page="/Help/Projects">project</a> for a work item automatically by enclosing part of the project
+    name in square brackets. For example, an item entered like this...</p>
+
+    <p><img src="~/img/project-and-label-start.png" /></p>
+
+    <p>...would be created like this. This assumes I have project created called <em>GitHub Integration</em> and a <em>bug</em> label defined.</p>
+
+    <p><img src="~/img/project-and-label-end.png" /></p>
+
+    <p>...would associate the item with a project that contained the word "fresh" and apply the <em>feature</em> label.</p>
+
+    <p>Note that if you're the creator of a work item, you can edit the title by clicking on it and typing a new title. The little pencil icon
+    to the right of the title lets you know you can edit it. This convention is used elsewhere in Ginseng also.</p>
+
+    <p>If you want add more detail to an item, click the <em>Add Detail</em> button to expand the editor to its full size. There you can enter as much
+    detail as needed, including screenshot pastes.</p>
+
+    <p><img src="~/img/add-item-detail.png"/></p>
+
+    <p>Adding an item from the <a asp-page="/Dashboard/Index">My Items</a> page automatically assigns it to yourself. Adding items
+    from the <a asp-page="/Dashboard/AllItems">All Items</a> page, however, leaves the item unassigned.</p>
+
+    <p>Here's an example of a realistic work item, typically referred to as the <strong>Card</strong> view. There are a number of things to 
+    note about it. It has label applied <em>front-end</em>. We can tell no one has started this because the hand-off menu on the right 
+    shows <em>I'll start this</em>. It belongs to a project called <em>Comment Overhaul</em>, it has no milestone assigned, it's been <a asp-page="/Setup/Sizes">estimated</a>
+    as a <em>Medium-size</em> task, and is marked as open.</p>    
+
+    <p><img src="~/img/example-1098.png" /></p>
+
+    <p>Note also it contains a link to another work item 1096. You can create links to items by entering a hash sign followed by a work item number.
+    When you save the item, Ginseng creates a link to the item. This works both in comments and work item bodies. (Note that you need to refresh
+    the page to see links in item bodies render correctly.)</p>
+</div>
