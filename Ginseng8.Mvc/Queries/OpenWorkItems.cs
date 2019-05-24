@@ -18,7 +18,8 @@ namespace Ginseng.Mvc.Queries
 	{
 		WorkOnNext = 1,
 		Backlog = 2,
-		Assigned = 3
+		Assigned = 3,
+        Closed = 4
 	}
 
 	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
@@ -131,7 +132,7 @@ namespace Ginseng.Mvc.Queries
 			"(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
 
 		private const string PriorityGroupExpression = 
-			"(CASE WHEN [pri].[Id] IS NOT NULL AND " + AssignedUserExpression + " IS NULL AND [wi].[ActivityId] IS NULL THEN 1 WHEN [pri].[Id] IS NULL AND " + AssignedUserExpression + " IS NULL THEN 2 ELSE 3 END)";
+			"(CASE WHEN [wi].[CloseReasonId] IS NOT NULL THEN 4 WHEN [pri].[Id] IS NOT NULL AND " + AssignedUserExpression + " IS NULL AND [wi].[ActivityId] IS NULL THEN 1 WHEN [pri].[Id] IS NULL AND " + AssignedUserExpression + " IS NULL THEN 2 ELSE 3 END)";
 
 		private readonly List<QueryTrace> _traces;
 
