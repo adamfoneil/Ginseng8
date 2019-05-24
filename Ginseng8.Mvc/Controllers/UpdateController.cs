@@ -187,7 +187,8 @@ namespace Ginseng.Mvc.Controllers
 		{
 			using (var cn = _data.GetConnection())
 			{
-				//var myOrgs = await new MyOrgs() { UserId = _data.CurrentUser.UserId }.ExecuteAsync(cn);
+                var myOrgs = await new MySwitchOrgs() { CurrentOrgId = _data.CurrentOrg.Id, UserId = _data.CurrentUser.UserId }.ExecuteAsync(cn);
+                if (!myOrgs.Any(o => o.Id == id)) throw new Exception("You don't belong to this org.");
 			}
 				
 			_data.CurrentUser.OrganizationId = id;
