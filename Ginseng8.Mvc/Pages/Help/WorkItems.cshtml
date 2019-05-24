@@ -45,4 +45,35 @@
     <p>Note also it contains a link to another work item 1096. You can create links to items by entering a hash sign followed by a work item number.
     When you save the item, Ginseng creates a link to the item. This works both in comments and work item bodies. (Note that you need to refresh
     the page to see links in item bodies render correctly.)</p>
+
+    <h5>Modifiers</h5>
+    <p>A few additional icons can appear in relation to work items:</p>
+    <ul>
+        <li>
+            <i class="@OpenWorkItemsResult.ImpedimentIcon" style="color:@OpenWorkItemsResult.ImpedimentColor"></i>
+            Impediments indicate there's a technical problem preventing progress, found in comments.
+        </li>
+        <li>
+            <i class="@OpenWorkItemsResult.UnestimatedIcon" style="color:@OpenWorkItemsResult.UnestimatedColor"></i>
+            Indicates that the item has no size estimate.
+        </li>
+        <li>
+            <i class="@OpenWorkItemsResult.StoppedIcon" style="color:@OpenWorkItemsResult.StoppedColor"></i>
+            Indicates that the item has a milestone, but no one is assigned to it.
+        </li>
+        <li>
+            <i class="@OpenWorkItemsResult.TicketIcon" style="color:@OpenWorkItemsResult.TicketColor"></i>
+            Indicates that a <a asp-page="/Help/Freshdesk">Freshdesk</a> ticket is related to the work item.
+        </li>
+    </ul>
+
+    <h5>Comments</h5>
+    <p>You can add comments to work items to ask questions, describe impediments, or supply additional info to a work item.</p>
+    <p>When entering a comment, you can mention another user by entering <strong>@@</strong> followed by some portion of the user's name or email.
+    This will trigger an email to that user so long as they have opted into comment notifications on the <a asp-page="/Setup/OrgUser">Org Settings</a> page.</p>
+    <p>You can also reference another work item by entering <strong>#</strong> followed by a valid work item number. Ginseng will generate a
+    link to that item after the comment is saved.</p>
+    <p><img src="~/img/comments.png"/></p>
+    <p>To enter an impediment, select the <em>Help needed</em> option from this dropdown when adding a comment.</p>
+    <p>Later, if you have a solution for someone's impediment, you can enter a comment with the <em>Issue Resolved</em> option to clear the impediment.</p>
 </div>
