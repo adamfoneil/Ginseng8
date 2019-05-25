@@ -6,21 +6,50 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
-    public class DailyWorkHoursResult
+    public class DailyHoursResult
     {
         public DateTime Date { get; set; }
-        public int Hours { get; set; }
+        public int AvailableHours { get; set; }
+        public int PlannedHours { get; set; }
+        public double PercentFull { get; set; }
     }
 
-    public class DailyWorkHours : Query<DailyWorkHoursResult>, ITestableQuery
+    public class DailyWorkHours : Query<DailyHoursResult>, ITestableQuery
     {
         public DailyWorkHours() : base(
-            @"SELECT
-                [wd].[Date], [wd].[Hours]
+            @"WITH [dates] AS (
+                SELECT
+                    [wd].[Date], [wd].[Hours]
+                FROM
+                    [dbo].[FnWorkingDays](@orgId, @startDate, @endDate) [wd]
+                WHERE
+                    [UserId]=@userId
+            ), [estimates] AS (
+                SELECT      
+                    [wi].[Date],
+                    SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0)) AS [Hours]     
+                FROM
+                    [dbo].[WorkItem] [wi]
+                    LEFT JOIN [dbo].[WorkItemPriority] [wip] ON [wi].[Id]=[wip].[WorkItemId]
+                    LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
+                    LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+                WHERE
+                    [wi].[OrganizationId]=@orgId AND        
+                    [wi].[DeveloperUserId]=@userId AND
+                    [wi].[CloseReasonId] IS NULL
+                GROUP BY
+                    [wi].[Date]
+            ) SELECT
+                [d].[Date],
+                [d].[Hours] AS [AvailableHours],
+                ISNULL([e].[Hours], 0) AS [PlannedHours],
+                CASE
+                    WHEN [d].[Hours] > 0 THEN CONVERT(float, ISNULL([e].[Hours], 0)) / CONVERT(float, [d].[Hours])
+                    ELSE 0
+                END AS [PercentFull]
             FROM
-                [dbo].[FnWorkingDays](@orgId, @startDate, @endDate) [wd]
-            WHERE
-                [UserId]=@userId")
+                [dates] [d]
+                LEFT JOIN [estimates] [e] ON [d].[Date]=[e].[Date]")
         {
         }
 
