@@ -84,12 +84,6 @@ namespace Ginseng.Models
 		[References(typeof(CloseReason))]
 		public int? CloseReasonId { get; set; }
 
-        /// <summary>
-        /// Used with daily planner to set the date you intend to work on this
-        /// </summary>
-        [Column(TypeName = "date")]
-        public DateTime? Date { get; set; }
-
 		public bool UseDefaultHistoryTable => true;
 
         public WorkItemTicket WorkItemTicket { get; set; }
