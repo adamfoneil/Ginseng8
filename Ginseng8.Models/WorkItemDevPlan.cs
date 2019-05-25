@@ -5,6 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
+    /// <summary>
+    /// Indicates a day a developer plans to work on an item and for how long
+    /// </summary>
     public class WorkItemDevPlan : BaseTable
     {
         [References(typeof(WorkItem))]

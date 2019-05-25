@@ -122,5 +122,11 @@ namespace Testing
         {
             TestQuery<Labels>();
         }
+
+        [TestMethod]
+        public void DailyWorkHoursQuery()
+        {
+            TestQuery<DailyWorkHours>();
+        }
     }
 }

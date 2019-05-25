@@ -26,19 +26,17 @@ namespace Ginseng.Mvc.Queries
                     [UserId]=@userId
             ), [estimates] AS (
                 SELECT      
-                    [wi].[Date],
-                    SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0)) AS [Hours]     
+                    [dp].[Date],
+                    SUM([dp].[Hours]) AS [Hours]     
                 FROM
                     [dbo].[WorkItem] [wi]
-                    LEFT JOIN [dbo].[WorkItemPriority] [wip] ON [wi].[Id]=[wip].[WorkItemId]
-                    LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
-                    LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+                    INNER JOIN [dbo].[WorkItemDevPlan] [dp] ON [wi].[Id]=[dp].[WorkItemId]                    
                 WHERE
                     [wi].[OrganizationId]=@orgId AND        
                     [wi].[DeveloperUserId]=@userId AND
                     [wi].[CloseReasonId] IS NULL
                 GROUP BY
-                    [wi].[Date]
+                    [dp].[Date]
             ) SELECT
                 [d].[Date],
                 [d].[Hours] AS [AvailableHours],
