@@ -94,6 +94,8 @@ namespace Ginseng.Models
 
         public WorkItemTicket WorkItemTicket { get; set; }
 
+        public Organization Organization { get; set; }
+
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
 			if (action == SaveAction.Insert)
@@ -254,11 +256,13 @@ namespace Ginseng.Models
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             WorkItemTicket = connection.FindWhere<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
+            Organization = connection.Find<Organization>(OrganizationId);
         }
 
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             WorkItemTicket = await connection.FindWhereAsync<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
+            Organization = await connection.FindAsync<Organization>(OrganizationId);
         }
     }
 }
