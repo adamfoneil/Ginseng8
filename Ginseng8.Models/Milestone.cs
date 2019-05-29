@@ -47,7 +47,7 @@ namespace Ginseng.Models
 					SELECT MAX([Date]) AS [MaxDate]
 					FROM [dbo].[Milestone]
 					WHERE [OrganizationId]=@orgId
-				) SELECT [ms].*
+				) SELECT TOP (1) [ms].*
 				FROM
 					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MaxDate]
 				WHERE
@@ -61,7 +61,7 @@ namespace Ginseng.Models
 					SELECT MIN([Date]) AS [MinDate]
 					FROM [dbo].[Milestone]
 					WHERE [OrganizationId]=@orgId AND [Date]>getdate()
-				) SELECT [ms].*
+				) SELECT TOP (1) [ms].*
 				FROM 
 					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MinDate]
 				WHERE
