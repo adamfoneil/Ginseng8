@@ -18,6 +18,7 @@ namespace Ginseng.Models
 
 		[PrimaryKey]
 		[Column(TypeName = "date")]
+        [DisplayFormat(DataFormatString = "{0:M/d/yy}")]
 		public DateTime Date { get; set; }
 
 		[MaxLength(255)]

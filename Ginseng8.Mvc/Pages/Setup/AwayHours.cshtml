@@ -1,0 +1,52 @@
+﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@model Ginseng.Mvc.Pages.Setup.AwayHoursModel
+@{
+    ViewData["Title"] = "Away Hours";
+}
+
+<h4>Away Hours</h4>
+<p>Use this to indicate when you're not working. Ginseng will update your day planner to reflect
+    your away time.</p>
+
+<p>For a single day, you cannot add away hours greater than your typical daily work hours, currently set to <strong>@Model.CurrentOrgUser.DailyWorkHours</strong>.</p>
+
+@Html.ActionAlert(TempData)
+
+@{
+    var grid = new GridEditor<VacationHours>(this, Xsrf);
+}
+
+<table class="table">
+    <tr>
+        <th>Date</th>
+        <th>Hours Away</th>
+        <th>Description</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.AwayHours)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
+            <td>@grid.TextBox(m => m.Hours, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }
+    <tr id="@grid.NewRowId()">
+        <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
+        <td>@grid.TextBox(m => m.Hours, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+        <td>@grid.Controls()</td>
+    </tr>
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".datepicker").datepicker();
+        });
+    </script>
+}
