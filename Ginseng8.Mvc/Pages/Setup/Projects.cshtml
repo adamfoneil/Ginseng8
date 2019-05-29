@@ -12,7 +12,7 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Project>(this, Xsrf, defaults: new { ApplicationId = Model.AppId });
+    var grid = new GridEditor<Project>(this, Xsrf, defaults: new { ApplicationId = Model.AppId, IsActive = true });
 }
 
 <form method="get" class="form-inline mb-2">
@@ -24,21 +24,27 @@
 
 <table class="table">
     <tr>
-        <th>Project Name</th>        
+        <th>Project Name</th> 
+        <th>Priority</th>
         <th>Active</th>
+        <th>Manage</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Projects)
     {
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
             <td>@grid.CheckBox(m => m.IsActive)</td>
+            <td><a asp-page="/Dashboard/Projects" asp-route-id="@item.Id">Manage</a></td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>                
+        <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
         <td>@grid.CheckBox(m => m.IsActive)</td>
+        <td></td>
         <td>@grid.Controls()</td>
     </tr>
 </table>
