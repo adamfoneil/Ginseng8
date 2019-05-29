@@ -33,7 +33,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public async Task<ActionResult> OnPostSave(Project record)
 		{			
-			await Data.TrySaveAsync(record, new string[] { "Name", "IsActive" });
+			await Data.TrySaveAsync(record, new string[] { "ApplicationId", "Name", "IsActive" });
 			return Redirect($"/Setup/Projects?AppId={record.ApplicationId}");
 		}
 
