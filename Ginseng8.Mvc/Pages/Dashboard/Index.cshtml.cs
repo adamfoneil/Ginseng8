@@ -2,7 +2,9 @@
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Html;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -33,6 +35,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		public IEnumerable<OpenWorkItemsResult> MyHandOffItems { get; set; }
 		public ILookup<int, Label> HandOffLabels { get; set; }
 		public ILookup<int, Comment> HandOffComments { get; set; }        
+        public IEnumerable<MyWorkScheduleResult> MySchedule { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public DateTime? Date { get; set; }
 
 		public HtmlString MyHandOffActivityList()
 		{
@@ -47,13 +53,22 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems(QueryTraces)
+			var result = new OpenWorkItems(QueryTraces)
 			{
 				OrgId = OrgId,
 				AssignedUserId = UserId,
 				AppId = CurrentOrgUser.CurrentAppId,
 				LabelId = LabelId
 			};
+
+            if (Date.HasValue)
+            {
+                result.WithWorkSchedule = true;
+                result.ScheduleUserId = UserId;
+                result.WorkDate = Date;
+            }
+
+            return result;
 		}
 
 		protected override void OnGetInternal(SqlConnection connection)
@@ -74,7 +89,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			HandOffLabels = labelsInUse.ToLookup(row => row.WorkItemId);
 
 			var comments = await new Comments() { OrgId = OrgId, ObjectIds = itemIds, ObjectType = ObjectType.WorkItem }.ExecuteAsync(connection);
-			HandOffComments = comments.ToLookup(row => row.ObjectId);            
+			HandOffComments = comments.ToLookup(row => row.ObjectId);
+
+            MySchedule = await new MyWorkSchedule() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
 		}
 	}
 }
