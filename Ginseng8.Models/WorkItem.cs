@@ -11,6 +11,7 @@ using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -83,9 +84,17 @@ namespace Ginseng.Models
 		[References(typeof(CloseReason))]
 		public int? CloseReasonId { get; set; }
 
-		public bool UseDefaultHistoryTable => true;
+        /// <summary>
+        /// Used with daily planner to set the date you intend to work on this
+        /// </summary>
+        [Column(TypeName = "date")]
+        public DateTime? Date { get; set; }
+
+        public bool UseDefaultHistoryTable => true;
 
         public WorkItemTicket WorkItemTicket { get; set; }
+
+        public Organization Organization { get; set; }
 
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
@@ -247,11 +256,13 @@ namespace Ginseng.Models
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             WorkItemTicket = connection.FindWhere<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
+            Organization = connection.Find<Organization>(OrganizationId);
         }
 
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             WorkItemTicket = await connection.FindWhereAsync<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
+            Organization = await connection.FindAsync<Organization>(OrganizationId);
         }
     }
 }
