@@ -13,7 +13,7 @@
             @{ 
                 var className = (dateGrp.Key.Equals(Model.Date)) ? "btn-dark" : "btn-light";
             }
-            <a asp-route-date="@Html.FormatValue(dateGrp.Key, "{0:M/d/yy}")" class="btn btn-sm @className">@Html.FormatValue(dateGrp.Key, "{0:ddd M/d}")</a>
+            <a asp-route-date="@Html.FormatValue(dateGrp.Key, "{0:M/d/yy}")" class="btn btn-sm @className" data-date="@dateGrp.Key">@Html.FormatValue(dateGrp.Key, "{0:ddd M/d}")</a>
         </li>
     }
     <li class="list-inline-item small">
