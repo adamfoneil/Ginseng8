@@ -263,7 +263,18 @@ namespace Ginseng.Mvc.Queries
 		/// </summary>		
 		public int ActivityUserId { get; set; }
 
-		[Case(true, "[wi].[CloseReasonId] IS NULL")]
+        [Join("LEFT JOIN [dbo].[FnWorkItemSchedule](@orgId, @scheduleUserId) [wis] ON [wi].[Number]=[wis].[Number]")]
+        public bool WithWorkSchedule { get; set; }
+
+        /// <summary>
+        /// Use this when WithWorkSchedule = true
+        /// </summary>
+        public int ScheduleUserId { get; set; }
+
+        [Where("[wis].[Date]=@workDate")]
+        public DateTime? WorkDate { get; set; }
+
+        [Case(true, "[wi].[CloseReasonId] IS NULL")]
 		[Case(false, "[wi].[CloseReasonId] IS NOT NULL")]
 		public bool? IsOpen { get; set; } = true;
 

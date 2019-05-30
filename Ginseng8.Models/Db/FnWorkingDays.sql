@@ -20,9 +20,9 @@ BEGIN
 		[dbo].[FnDateRange](@start, @end) [dr]
 		INNER JOIN [dbo].[OrganizationUser] [ou] ON (([dr].[Flag] & [ou].[WorkDays]) = [dr].[Flag])
 		LEFT JOIN [dbo].[VacationHours] [vh] ON 
-			[ou].[OrganizationId]=[ou].[OrganizationId] AND
-			[ou].[UserId]=[ou].[UserId] AND
-			[dr].[Date]=[dr].[Date]		
+			[vh].[OrganizationId]=[ou].[OrganizationId] AND
+			[vh].[UserId]=[ou].[UserId] AND
+			[vh].[Date]=[dr].[Date]		
 	WHERE
 		[ou].[OrganizationId]=@orgId 
 

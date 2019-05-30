@@ -30,6 +30,11 @@
     </div>
 }
 
+@if (Model.MySchedule?.Any() ?? false)
+{
+    <partial name="Items/_MySchedule" model="Model"/>
+}
+
 <div id="accordion">
 @foreach (var milestoneGrp in Model.WorkItems.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
 {

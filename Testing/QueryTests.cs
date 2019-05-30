@@ -122,5 +122,17 @@ namespace Testing
         {
             TestQuery<Labels>();
         }
+
+        [TestMethod]
+        public void MyWorkScheduleQuery()
+        {
+            TestQuery<MyWorkSchedule>();
+        }
+
+        [TestMethod]
+        public void MilestoneMetricsQuery()
+        {
+            TestQuery<MilestoneMetrics>();
+        }
     }
 }

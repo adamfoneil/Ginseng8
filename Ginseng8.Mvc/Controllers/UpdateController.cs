@@ -91,29 +91,6 @@ namespace Ginseng.Mvc.Controllers
 			return await UpdateInnerAsync(workItem, htmlBody);
 		}
 
-		public async Task<JsonResult> AppMilestoneBody(int appId, int milestoneId, string htmlBody)
-		{
-			try
-			{
-				using (var cn = _data.GetConnection())
-				{
-					var appMs =
-						await cn.FindWhereAsync<AppMilestone>(new { ApplicationId = appId, MilestoneId = milestoneId }) ??
-						new AppMilestone() { ApplicationId = appId, MilestoneId = milestoneId };
-
-					appMs.HtmlBody = htmlBody;
-					await appMs.SaveHtmlAsync(_data, cn);
-
-					await cn.SaveAsync(appMs, _data.CurrentUser);
-				}
-				return Json(new { success = true });
-			}
-			catch (Exception exc)
-			{
-				return Json(new { success = false, message = exc.Message });
-			}				
-		}
-
 		public async Task<JsonResult> ModelClassBody(int id, string htmlBody)
 		{
 			var mc = await _data.FindAsync<ModelClass>(id);

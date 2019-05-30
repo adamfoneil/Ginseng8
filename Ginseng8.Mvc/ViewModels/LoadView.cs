@@ -1,9 +1,12 @@
-﻿namespace Ginseng.Mvc.ViewModels
+﻿using Ginseng.Mvc.Queries;
+
+namespace Ginseng.Mvc.ViewModels
 {
 	public class LoadView
 	{
 		public int EstimateHours { get; set; }
 		public int WorkHours { get; set; }
+        public MilestoneMetricsResult MilestoneMetrics { get; set; }
 
 		public int Overload
 		{

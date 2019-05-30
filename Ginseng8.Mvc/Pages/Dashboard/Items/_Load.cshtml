@@ -6,3 +6,8 @@
 {
     <span class="text-@Model.WorkHoursStyle">, @Model.WorkHours working hrs</span>
 }
+
+@if (Model.MilestoneMetrics != null)
+{
+    <meter value="@Model.MilestoneMetrics.PercentComplete" max="1" title="@Html.FormatValue(Model.MilestoneMetrics.PercentComplete, "{0:p0}") complete"></meter>
+}

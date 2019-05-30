@@ -31,6 +31,7 @@ namespace Ginseng.Mvc
         public ILookup<int, Comment> Comments { get; set; }
         public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
         public IEnumerable<WorkDaysResult> WorkDays { get; set; }
+        public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }
 
         /// <summary>
         /// triggers display of partial to offer to move items to soonest upcoming or new milestone
@@ -109,6 +110,10 @@ namespace Ginseng.Mvc
                         var closedItems = await new ClosedWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(cn);
                         ClosedItems = closedItems.ToLookup(row => ClosedItemGrouping(row));
                     }
+
+                    var milestoneIds = WorkItems.GroupBy(row => row.MilestoneId).Select(grp => grp.Key).ToArray();
+                    var milestoneMetrics = await new MilestoneMetrics() { OrgId = OrgId, MilestoneIds = milestoneIds }.ExecuteAsync(cn);
+                    MilestoneMetrics = milestoneMetrics.ToDictionary(row => row.Id);
                 }
 
                 Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
@@ -125,22 +130,31 @@ namespace Ginseng.Mvc
         {
             int estimateHours = milestoneGrp.Sum(wi => wi.EstimateHours);
 
+            LoadView result = null;
+
             if (milestoneGrp.First().MilestoneDate.HasValue)
             {
                 DateTime milestoneDate = milestoneGrp.First().MilestoneDate.Value;
-                return new LoadView()
+                result = new LoadView()
                 {
                     EstimateHours = estimateHours,
-                    WorkHours = WorkDays.Where(wd => wd.Date <= milestoneDate && (workDayFilter?.Invoke(wd) ?? true)).Sum(wi => wi.Hours)
+                    WorkHours = WorkDays.Where(wd => wd.Date <= milestoneDate && (workDayFilter?.Invoke(wd) ?? true)).Sum(wi => wi.Hours)                    
                 };
             }
             else
             {
-                return new LoadView()
+                result = new LoadView()
                 {
-                    EstimateHours = estimateHours
+                    EstimateHours = estimateHours,                    
                 };
             }
+
+            if (MilestoneMetrics.ContainsKey(milestoneGrp.Key))
+            {
+                result.MilestoneMetrics = MilestoneMetrics[milestoneGrp.Key];
+            }
+
+            return result;
         }
 
         public FileResult OnGetExcelDownload()
