@@ -8,10 +8,6 @@
             <div class="col">
                 <partial name="Dashboard/Items/_ItemNumber" model="Model.WorkItem"/>                
                 <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />    
-                @if (Model.WorkItem.DeveloperUserId == Model.UserId && Model.WorkItem.MilestoneId != 0)
-                {
-                    <partial name="Dashboard/Items/_PlanMenu" model="Model.WorkItem"/>
-                }                
                 <partial name="Dashboard/Items/_LabelControls" model="Model"/>
                 <partial name="Dashboard/Items/_Modifiers" model="Model.WorkItem"/>
             </div>
