@@ -12,9 +12,12 @@ using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Models.Freshdesk;
 using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Microsoft.WindowsAzure.Storage.Blob;
+using Newtonsoft.Json;
 using Postulate.SqlServer.IntKey;
 
 namespace Ginseng.Mvc.Services
@@ -163,11 +166,30 @@ namespace Ginseng.Mvc.Services
         public async Task StoreWebhookPayloadAsync(Stream stream)
         {
             if (!_options.StoreWebhookPayload) return;
+            string payload = await GetStreamPayloadAsync(stream);
+            var blob = await GetPayloadBlobAsync();
+            await blob.UploadTextAsync(payload);
+        }
 
-            if (stream.CanSeek)
-            {
-                stream.Seek(0, SeekOrigin.Begin);
-            }
+        public async Task StoreWebhookPayloadAsync(Stream request, IActionResult result)
+        {
+            string requestPayload = await GetStreamPayloadAsync(request);
+            string resultJson = JsonConvert.SerializeObject(result) ?? string.Empty;
+            string blobText = requestPayload + "\r\n\r\n" + resultJson;
+            var blob = await GetPayloadBlobAsync();
+            await blob.UploadTextAsync(blobText);
+        }
+
+        private async Task<CloudBlockBlob> GetPayloadBlobAsync()
+        {
+            var container = await _blobStorage.GetContainerAsync("freshdesk-webhooks");
+            var blob = container.GetBlockBlobReference(Guid.NewGuid().ToString());
+            return blob;
+        }
+
+        private static async Task<string> GetStreamPayloadAsync(Stream stream)
+        {
+            if (stream.CanSeek) stream.Seek(0, SeekOrigin.Begin);
 
             string payload;
             using (var reader = new StreamReader(stream))
@@ -175,10 +197,7 @@ namespace Ginseng.Mvc.Services
                 payload = await reader.ReadToEndAsync();
             }
 
-            var container = await _blobStorage.GetContainerAsync("freshdesk-webhooks");
-            var blob = container.GetBlockBlobReference(Guid.NewGuid().ToString());
-
-            await blob.UploadTextAsync(payload);
+            return payload;
         }
 
         /// <summary>

@@ -100,6 +100,21 @@ namespace Ginseng.Mvc.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Webhook([FromBody] WebhookRequest request)
         {
+            var result = await WebhookInnerAsync(request);
+
+            if (!result.Equals(Ok()))
+            {
+                await _freshdeskService.StoreWebhookPayloadAsync(Request.Body, result);
+            }
+
+            // must always return Ok to caller, or they create ticket and ask you to investigate, etc,
+            // but they don't give you any useful troubleshooting info. It's better just to say
+            // everything is ok, and to log errors internally
+            return Ok();
+        }
+
+        private async Task<IActionResult> WebhookInnerAsync(WebhookRequest request)
+        {
             // check request payload parsed correctly
             if (request == null)
             {
