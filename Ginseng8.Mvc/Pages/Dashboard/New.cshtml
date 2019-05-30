@@ -9,13 +9,40 @@
 @foreach  (var app in Model.Applications)
 {
     <h2>@app.Name</h2>
+    <div class="ml-3">
+        <p>@app.Description</p>
 
-    @foreach (var label in Model.Labels)
-    {
-        <button class="btn mr-3" style="color:@label.ForeColor;background-color:@label.BackColor">
-            @label.Name
-        </button>
-    }
+        <ul class="nav nav-tabs" role="tablist">
+            @foreach (var label in Model.Labels)
+            {
+                <li class="nav-item">
+                    <a href="#app-@app.Id-label-@label.Id" data-toggle="tab" class="nav-link">
+                        @label.Name
+                        <sup>@Model.GetAppLabelItems(app.Id, label.Id).Count()</sup>
+                    </a>
+                </li>
+            }
+        </ul>
+        <div class="tab-content my-3" id="tabContent">
+            @foreach  (var label in Model.Labels)
+            {
+                <div id="app-@app.Id-label-@label.Id" class="tab-pane fade">
+                    <div class="ml-3">
+                        <p>Add new <span class="badge" style="color:@label.ForeColor;background-color:@label.BackColor">@label.Name</span> item:</p>
+                        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                        {
+                            { "applicationId", app.Id },
+                            { "labelId", label.Id }
+                        }))
 
+                        @foreach (var item in Model.GetAppLabelItems(app.Id, label.Id))
+                        {
+                            <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
     <hr/>
 }
