@@ -24,6 +24,7 @@
         <th>Back Color</th>
         <th>Text Color</th>
         <th>Preview</th>
+        <th>Data Entry</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Labels)
@@ -33,6 +34,7 @@
             <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
             <td><span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></td>
+            <td>@grid.CheckBox(m => m.AllowNewItems)</td>
             <td>@grid.Controls()</td>
         </tr>
     }
@@ -41,6 +43,7 @@
         <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
         <td></td>
+        <td>@grid.CheckBox(m => m.AllowNewItems)</td>
         <td>@grid.Controls()</td>
     </tr>
 </table>

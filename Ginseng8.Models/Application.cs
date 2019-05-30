@@ -35,6 +35,12 @@ namespace Ginseng.Models
         [MaxLength(100)]
         public string InvoiceEmail { get; set; }            
 
+        /// <summary>
+        /// Show this app on the New Items dashbord page
+        /// </summary>
+        [DefaultExpression("1")]
+        public bool AllowNewItems { get; set; }
+
 		public bool IsActive { get; set; } = true;
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)

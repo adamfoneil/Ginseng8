@@ -30,6 +30,12 @@ namespace Ginseng.Models
 		[MaxLength(50)]
 		public string ForeColor { get; set; }
 
+        /// <summary>
+        /// Show this label on Dashboard/New for entering new items
+        /// </summary>
+        [DefaultExpression("0")]
+        public bool AllowNewItems { get; set; }
+
 		public bool IsActive { get; set; } = true;
 
 		/// <summary>

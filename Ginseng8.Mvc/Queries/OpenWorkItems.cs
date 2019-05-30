@@ -299,6 +299,10 @@ namespace Ginseng.Mvc.Queries
 		[Case(true, "[wi].[MilestoneId] IS NOT NULL")]
 		public bool? HasMilestone { get; set; }
 
+        [Case(false, "[wi].[ProjectId] IS NULL")]
+        [Case(true, "[wi].[ProjectId] IS NOT NULL")]
+        public bool? HasProject { get; set; }
+
 		[Case(0, "[wi].[ProjectId] IS NULL")]
 		[Where("[wi].[ProjectId]=@projectId")]
 		public int? ProjectId { get; set; }
@@ -338,7 +342,7 @@ namespace Ginseng.Mvc.Queries
 		public bool? IsPastDue { get; set; }
 
         [Case(true, "[wit].[Id] IS NOT NULL")]
-        public bool? IsFreshdeskTicket { get; set; }
+        public bool? IsFreshdeskTicket { get; set; }        
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
 		{

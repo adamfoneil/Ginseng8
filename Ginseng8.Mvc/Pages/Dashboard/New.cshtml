@@ -1,0 +1,21 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Dashboard.NewModel
+@{
+    ViewData["Title"] = "New";
+}
+
+<p>Use this to create new work items in the appropriate grouping.</p>
+
+@foreach  (var app in Model.Applications)
+{
+    <h2>@app.Name</h2>
+
+    @foreach (var label in Model.Labels)
+    {
+        <button class="btn mr-3" style="color:@label.ForeColor;background-color:@label.BackColor">
+            @label.Name
+        </button>
+    }
+
+    <hr/>
+}
