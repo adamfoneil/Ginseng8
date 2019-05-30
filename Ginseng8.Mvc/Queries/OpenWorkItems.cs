@@ -303,6 +303,9 @@ namespace Ginseng.Mvc.Queries
         [Case(true, "[wi].[ProjectId] IS NOT NULL")]
         public bool? HasProject { get; set; }
 
+        [Where("([app].[AllowNewItems]=@dataEntryApps AND [app].[IsActive]=1)")]
+        public bool? DataEntryApps { get; set; }
+
         [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId] IN @labelIds)")]
         public int[] LabelIds { get; set; }
 

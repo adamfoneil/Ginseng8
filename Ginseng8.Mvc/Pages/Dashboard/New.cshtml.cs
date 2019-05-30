@@ -13,6 +13,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
     {
         public NewModel(IConfiguration config) : base(config)
         {
+            ShowLabelFilter = false;
         }
 
         public IEnumerable<Label> Labels { get; set; }
@@ -28,7 +29,6 @@ namespace Ginseng.Mvc.Pages.Dashboard
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
             Applications = await new Applications() { OrgId = OrgId, IsActive = true, AllowNewItems = true }.ExecuteAsync(connection);
-            Labels = await new Labels() { OrgId = OrgId, IsActive = true, AllowNewItems = true }.ExecuteAsync(connection);
 
             var workItemLabelMap = SelectedLabels
                 .Select(grp => new { WorkItemId = grp.Key, LabelId = grp.First().Id })
@@ -39,9 +39,19 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         protected override OpenWorkItems GetQuery()
         {
+            int[] labelIds = null;
+            using (var cn = Data.GetConnection())
+            {
+                Labels = new Labels() { OrgId = OrgId, IsActive = true, AllowNewItems = true }.Execute(cn);
+                labelIds = Labels.Select(l => l.Id).ToArray();
+            }
+
             return new OpenWorkItems()
             {
-                HasProject = false
+                OrgId = OrgId,
+                HasProject = false,
+                DataEntryApps = true,
+                LabelIds = labelIds
             };
         }
     }

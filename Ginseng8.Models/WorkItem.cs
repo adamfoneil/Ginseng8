@@ -90,10 +90,22 @@ namespace Ginseng.Models
 
         public Organization Organization { get; set; }
 
+        /// <summary>
+        /// Default label to create with item
+        /// </summary>
+        [NotMapped]
+        public int LabelId { get; set; }
+
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
 			if (action == SaveAction.Insert)
 			{
+                if (LabelId != 0)
+                {
+                    var wil = new WorkItemLabel() { WorkItemId = Id, LabelId = LabelId };
+                    await connection.SaveAsync(wil, user);
+                }
+
 				await ParseLabelsAsync(connection);
 				await ParseProjectAsync(connection);
 
