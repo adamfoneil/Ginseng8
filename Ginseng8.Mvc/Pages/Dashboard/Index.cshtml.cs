@@ -36,9 +36,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		public ILookup<int, Label> HandOffLabels { get; set; }
 		public ILookup<int, Comment> HandOffComments { get; set; }        
         public IEnumerable<MyWorkScheduleResult> MySchedule { get; set; }
+        public int UnestimatedItemCount { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public DateTime? Date { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public bool NeedsEstimate { get; set; }
 
 		public HtmlString MyHandOffActivityList()
 		{
@@ -68,6 +72,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 result.WorkDate = Date;
             }
 
+            if (NeedsEstimate) result.SizeId = 0;
+
             return result;
 		}
 
@@ -81,6 +87,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
+            UnestimatedItemCount = WorkItems.Where(wi => wi.EstimateHours == 0).Count();
+
 			MyActivitySubscriptions = await new MyHandOffActivities() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
 			MyHandOffItems = await new OpenWorkItems(QueryTraces) { OrgId = OrgId, InMyActivities = true, ActivityUserId = UserId, IsPaused = true, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 
