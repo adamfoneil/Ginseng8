@@ -357,7 +357,7 @@ namespace Ginseng.Mvc.Controllers
                 var workItem = await cn.FindAsync<WorkItem>(comment.ObjectId);
                 if (!workItem.Organization.UseFreshdesk()) return;
 
-                if (workItem.WorkItemTicket?.WorkItemNumber != 0)
+                if ((workItem.WorkItemTicket?.WorkItemNumber ?? 0) != 0)
                 {
                     var client = await _clientFactory.CreateClientForOrganizationAsync(workItem.OrganizationId);
                     await client.AddNoteAsync(workItem.WorkItemTicket.TicketId, comment, _data.UserDisplayName);
