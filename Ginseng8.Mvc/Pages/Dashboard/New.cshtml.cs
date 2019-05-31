@@ -55,7 +55,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 OrgId = OrgId,
                 HasProject = false,
                 DataEntryApps = true,
-                LabelIds = labelIds
+                LabelIds = labelIds,
+                HasAssignedUserId = false,
+                HasPriority = false
             };
         }
     }

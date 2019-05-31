@@ -311,6 +311,10 @@ namespace Ginseng.Mvc.Queries
         [Where("([app].[AllowNewItems]=@dataEntryApps AND [app].[IsActive]=1)")]
         public bool? DataEntryApps { get; set; }
 
+        [Case(true, "[pri].[Value] IS NOT NULL")]
+        [Case(false, "[pri].[Value] IS NULL")]
+        public bool? HasPriority { get; set; }
+
         [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId] IN @labelIds)")]
         public int[] LabelIds { get; set; }
 
@@ -339,7 +343,7 @@ namespace Ginseng.Mvc.Queries
 		[Case(false, AssignedUserExpression + " IS NULL")]
 		[Case(true, AssignedUserExpression + " IS NOT NULL")]
 		public bool? HasAssignedUserId { get; set; }
-
+       
 		[Case(true, "[wi].[ActivityId] IS NOT NULL AND (" + AssignedUserExpression + ") IS NULL")]
 		public bool? IsPaused { get; set; }
 
