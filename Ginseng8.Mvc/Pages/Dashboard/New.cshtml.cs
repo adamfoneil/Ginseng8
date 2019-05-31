@@ -53,7 +53,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             return new OpenWorkItems()
             {
                 OrgId = OrgId,
-                HasFutureMilestone = false,
+                HasProject = false,
                 DataEntryApps = true,
                 LabelIds = labelIds
             };
