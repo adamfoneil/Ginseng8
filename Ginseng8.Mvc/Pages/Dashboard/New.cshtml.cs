@@ -19,6 +19,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<Label> Labels { get; set; }
         public IEnumerable<Application> Applications { get; set; }        
         public ILookup<AppLabelCell, OpenWorkItemsResult> AppLabelItems { get; set; }
+        public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }
 
         public IEnumerable<OpenWorkItemsResult> GetAppLabelItems(int applicationId, int labelId)
         {
@@ -35,6 +36,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 .ToDictionary(row => row.WorkItemId, row => row.LabelId);
 
             AppLabelItems = WorkItems.ToLookup(row => new AppLabelCell(row.ApplicationId, workItemLabelMap[row.Id]));
+
+            var instructions = await new MyLabelInstructions() { OrgId = OrgId }.ExecuteAsync(connection);
+            LabelInstructions = instructions.ToDictionary(row => row.LabelId);
         }
 
         protected override OpenWorkItems GetQuery()

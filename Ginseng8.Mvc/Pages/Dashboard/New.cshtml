@@ -41,6 +41,17 @@
                             <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
                         }
                     </div>
+
+                    @if (Model.LabelInstructions.ContainsKey(label.Id))
+                    {
+                        <div class="mt-2">
+                            <i class="far fa-info-circle"></i>
+                            <span><a data-toggle="collapse" href="#instructions-@label.Id-@app.Id">Tips on writing a good @label.Name item</a></span>
+                        </div>
+                        <div class="collapse ml-3" id="instructions-@label.Id-@app.Id">
+                            @Html.Raw(Model.LabelInstructions[label.Id].HtmlBody)
+                        </div>
+                    }
                 </div>
             }
         </div>
