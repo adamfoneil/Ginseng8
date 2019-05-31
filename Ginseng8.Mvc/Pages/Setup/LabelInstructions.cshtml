@@ -1,0 +1,40 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Setup.LabelInstructionsModel
+@{
+    ViewData["Title"] = "Label Instructions";
+}
+
+<h4>Label Instructions</h4>
+<p>Use this to enter instructions on how to best enter work items on the <a asp-page="/Dashboard/New">New Items</a> page.</p>
+
+<p>Select a <a asp-page="/Setup/Labels">label</a> below to edit its instructions. Labels are available to select if they are enabled for data entry.</p>
+
+@Html.ActionAlert(TempData)
+
+<form method="get" class="form-inline">
+    <div class="form-row">
+        <label class="mr-2">Label:</label>
+        <select name="LabelId" asp-items="Model.LabelSelect" required="required" class="form-control" onchange="this.form.submit();">
+            <option value="">(select)</option>
+        </select>
+    </div>
+</form>
+
+@if (Model.LabelId != 0)
+{
+    <form method="post" asp-page-handler="Save">
+        <input type="hidden" name="Id" value="@Model.LabelInstructions.Id"/>
+        <input type="hidden" name="LabelId" value="@Model.LabelId"/>
+        <div class="form-row">
+            <div class="col-12 mt-2">
+                <textarea name="HtmlBody" class="htmlEditor">@Model.LabelInstructions.HtmlBody</textarea>
+            </div>
+        </div>
+
+        <button class="btn btn-dark mt-2" type="submit">Save</button>
+    </form>
+}
+else
+{
+    <p class="mt-3">Please select a label above.</p>
+}
