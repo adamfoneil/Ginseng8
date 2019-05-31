@@ -49,7 +49,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             return new OpenWorkItems()
             {
                 OrgId = OrgId,
-                HasProject = false,
+                HasFutureMilestone = false,
                 DataEntryApps = true,
                 LabelIds = labelIds
             };

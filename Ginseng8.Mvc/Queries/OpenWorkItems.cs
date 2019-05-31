@@ -297,7 +297,12 @@ namespace Ginseng.Mvc.Queries
 		public int? AppId { get; set; }
 
 		[Case(true, "[wi].[MilestoneId] IS NOT NULL")]
+        [Case(false, "[wi].[MilestoneId] IS NULL")]
 		public bool? HasMilestone { get; set; }
+
+        [Case(false, "([wi].[MilestoneId] IS NULL OR [ms].[Date]<getdate())")]
+        [Case(true, "[ms].[Date]>getdate()")]
+        public bool? HasFutureMilestone { get; set; }
 
         [Case(false, "[wi].[ProjectId] IS NULL")]
         [Case(true, "[wi].[ProjectId] IS NOT NULL")]
@@ -380,6 +385,9 @@ namespace Ginseng.Mvc.Queries
 			yield return new OpenWorkItems() { IsPastDue = true };
 			yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
             yield return new OpenWorkItems() { IsFreshdeskTicket = true };
-		}
+            yield return new OpenWorkItems() { HasFutureMilestone = false };
+            yield return new OpenWorkItems() { HasFutureMilestone = true };
+            yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };
+        }
 	}
 }
