@@ -3,6 +3,7 @@ using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Setup
@@ -14,12 +15,16 @@ namespace Ginseng.Mvc.Pages.Setup
 		}
 
 		public IEnumerable<Label> Labels { get; set; }
+        public Dictionary<int, LabelSubscription> Subscriptions { get; set; }
 
-		public async Task OnGetAsync(bool isActive = true)
+        public async Task OnGetAsync(bool isActive = true)
 		{
 			using (var cn = Data.GetConnection())
 			{
 				Labels = await new Labels() { OrgId = OrgId, IsActive = isActive }.ExecuteAsync(cn);
+
+                var subscriptions = await new MyLabelSubscriptions() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(cn);
+                Subscriptions = subscriptions.ToDictionary(row => row.LabelId);
 			}
 		}
 

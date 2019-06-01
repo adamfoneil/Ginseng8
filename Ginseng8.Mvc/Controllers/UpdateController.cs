@@ -277,7 +277,8 @@ namespace Ginseng.Mvc.Controllers
 			{
 				{ nameof(Ginseng.Models.EventSubscription), async (cn) => await cn.FindAsync<EventSubscription>(id) },
 				{ nameof(ActivitySubscription), async (cn) => await cn.FindAsync<ActivitySubscription>(id) },
-				{ nameof(OrganizationUser), async (cn) => await cn.FindAsync<OrganizationUser>(id) }
+				{ nameof(OrganizationUser), async (cn) => await cn.FindAsync<OrganizationUser>(id) },
+                { nameof(LabelSubscription), async (cn) => await cn.FindAsync<LabelSubscription>(id) }
 			};
 
 			using (var cn = _data.GetConnection())

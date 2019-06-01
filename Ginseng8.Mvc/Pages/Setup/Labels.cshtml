@@ -25,6 +25,7 @@
         <th>Text Color</th>
         <th>Preview</th>
         <th>Data Entry</th>
+        <th>Notify</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Labels)
@@ -35,6 +36,11 @@
             <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
             <td><span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></td>
             <td>@grid.CheckBox(m => m.AllowNewItems)</td>
+            <td>
+                <div id="notifyOptions-@Model.Subscriptions[item.Id].Id">
+                    <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[item.Id]"/>
+                </div>
+            </td>
             <td>@grid.Controls()</td>
         </tr>
     }
@@ -42,6 +48,7 @@
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
+        <td></td>
         <td></td>
         <td>@grid.CheckBox(m => m.AllowNewItems)</td>
         <td>@grid.Controls()</td>
@@ -51,4 +58,5 @@
 
 @section Scripts {
     <script src="~/js/GridEditor.js"></script>
+    <script src="~/js/Notification.js"></script>
 }
