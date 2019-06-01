@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	public class GithubIntegration : BaseTable, IFindRelated<int>
+	public class GithubRepository : BaseTable, IFindRelated<int>
 	{
 		[PrimaryKey]
 		[References(typeof(Application))]

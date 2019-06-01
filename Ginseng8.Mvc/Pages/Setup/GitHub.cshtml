@@ -1,8 +1,14 @@
 ﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @model Ginseng.Mvc.Pages.Setup.GitHubModel
 @{
-    ViewData["Title"] = "GitHub";
+    ViewData["Title"] = "GitHub Integration";
 }
 
-<h1>GitHub</h1>
+<h4>GitHub Integration</h4>
+<p>Use this to associate <a asp-page="/Setup/Applications">applications</a> with <a href="https://github.com" target="_blank">GitHub</a> repositories.</p>
 
+<p>
+    After you associate an application and a repository, go to your repository settings on GitHub and add a webhook to
+    <strong>@Request.BuildUrl("/api/github/push")</strong> with Content Type = <strong>application/json</strong>. No secret is required.
+</p>
