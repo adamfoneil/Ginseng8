@@ -1,6 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Octokit;
+using System;
 
 namespace Ginseng.Mvc.Services
 {
