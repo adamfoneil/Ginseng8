@@ -12,3 +12,28 @@
     After you associate an application and a repository, go to your repository settings on GitHub and add a webhook to
     <strong>@Request.BuildUrl("/api/github/push")</strong> with Content Type = <strong>application/json</strong>. No secret is required.
 </p>
+
+<p>
+    Then, whenever you commit code, enter the Work Item number you want to link to preceded by a # sign. Ginseng will link the commit to the Work Item when the commit is pushed.
+    In addition, you can link a branch to a Work Item. When you push code to a linked branch, the commit info will link to the Work Item.
+</p>
+
+@Html.ActionAlert(TempData)
+
+<form method="post" asp-page-handler="Save" class="form-inline">
+    <div class="form-row">
+        <div class="col-5">
+            <label>Application:</label>
+            <select name="ApplicationId" asp-items=""
+        </div>
+    </div>
+</form>
+
+@{ var grid = new GridEditor<GithubRepository>(this, Xsrf); }
+
+<table class="table">
+    <tr>
+        <th>Application</th>
+        <th>Repository</th>
+    </tr>
+</table>
