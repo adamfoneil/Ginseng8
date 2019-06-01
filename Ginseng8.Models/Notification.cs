@@ -69,7 +69,13 @@ namespace Ginseng.Models
 			// todo: app notifications
 		}
 
-		public static async Task CreateFromActivitySubscriptions(IDbConnection connection, int eventLogId)
+        internal static async Task CreateFromLabelSubscriptions(IDbConnection connection, int eventLogId)
+        {
+            await new InsertLabelSubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
+            // tod: text and app notifications
+        }
+
+        public static async Task CreateFromActivitySubscriptions(IDbConnection connection, int eventLogId)
 		{
 			await new InsertActivitySubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
 			await new InsertActivitySubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);

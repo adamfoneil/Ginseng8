@@ -72,7 +72,7 @@ namespace Ginseng.Models
 					HtmlBody = text,
 					TextBody = text,
 					SourceId = Id,
-					SourceTable = "HandOff"
+					SourceTable = nameof(HandOff)
 				});
 				
 				await Notification.CreateFromActivitySubscriptions(connection, eventLogId);				

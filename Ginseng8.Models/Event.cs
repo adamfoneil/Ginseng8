@@ -28,7 +28,8 @@ namespace Ginseng.Models
 		WorkItemOpened = 13,
 		CodeCommitted = 14,
 		HandOffBackward = 15,
-		UserMentioned = 16
+		UserMentioned = 16,
+        LabelAdded = 17
 	}
 
 	public class Event : AppTable

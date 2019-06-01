@@ -119,13 +119,20 @@ namespace Ginseng.Models
 			Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
 		}
 
-		internal static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)
+		public static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)
 		{
 			var orgUser = await connection.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });
 			return (orgUser?.DisplayName != null) ? orgUser.DisplayName : user.UserName;
 		}
 
-		public override bool Validate(IDbConnection connection, out string message)
+        public static async Task<string> GetUserDisplayNameAsync(IDbConnection cn, int orgId, string userName)
+        {
+            var user = await cn.FindWhereAsync<UserProfile>(new { userName });
+            var orgUser = await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, user.UserId });
+            return (orgUser?.DisplayName != null) ? orgUser.DisplayName : userName;
+        }
+
+        public override bool Validate(IDbConnection connection, out string message)
 		{
 			message = null;
 			if ((MaxWorkInProgress ?? 1) < 1)

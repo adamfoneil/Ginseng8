@@ -106,11 +106,9 @@ namespace Ginseng.Mvc
 		public async Task<string> GetUserDisplayName(int orgId, string userName)
 		{
 			using (var cn = Data.GetConnection())
-			{
-				var user = await cn.FindWhereAsync<UserProfile>(new { userName });
-				var orgUser = await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, user.UserId });
-				return (orgUser?.DisplayName != null) ? orgUser.DisplayName : userName;
-			}
-		}
-	}
+            {
+                return await OrganizationUser.GetUserDisplayNameAsync(cn, orgId, userName);
+            }
+        }        
+    }
 }
