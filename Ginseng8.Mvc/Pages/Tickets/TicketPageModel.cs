@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Tickets
@@ -61,6 +62,15 @@ namespace Ginseng.Mvc.Pages.Tickets
             return (FreshdeskCache.CompanyDictionary.ContainsKey(companyId)) ? FreshdeskCache.CompanyDictionary[companyId].Name : $"company id {companyId}";
         }
 
+        /// <summary>
+        /// This is virtual because you might want ignored tickets paginated,
+        /// see <see cref="IgnoredModel"/>
+        /// </summary>                
+        protected virtual async Task<IEnumerable<long>> GetIgnoredTicketsAsync(IDbConnection connection)
+        {
+            return await new IgnoredTickets() { ResponsibilityId = ResponsibilityId, OrgId = OrgId }.ExecuteAsync(connection);
+        }
+
         protected async Task InitializeAsync()
         {
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
@@ -75,7 +85,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             using (var cn = Data.GetConnection())
             {
                 ResponsibilitySelect = await new ResponsibilitySelect().ExecuteSelectListAsync(cn, selectedResponsibilityId);
-                IgnoredTickets = await new IgnoredTickets() { ResponsibilityId = ResponsibilityId, OrgId = OrgId }.ExecuteAsync(cn);                
+                IgnoredTickets = await GetIgnoredTicketsAsync(cn);
             }
         }
     }

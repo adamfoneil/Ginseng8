@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Ginseng.Models;
+using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
@@ -16,7 +17,7 @@ using Postulate.SqlServer.IntKey;
 namespace Ginseng.Mvc.Pages.Work
 {
 	[Authorize]
-	public class AllItemsModel : DashboardPageModel
+	public class AllItemsModel : DashboardPageModel, IPaged
 	{
 		public AllItemsModel(IConfiguration config) : base(config)
 		{
