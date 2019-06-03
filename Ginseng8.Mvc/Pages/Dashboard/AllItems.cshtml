@@ -82,7 +82,7 @@
 
 <p class="text-center">@Model.WorkItems.Count() work items shown</p>
 
-<partial name="/Shared/_PageControls" model="Model"/>
+<partial name="Shared/_PageControls" model="Model"/>
 
 @if (Model.Projects?.Any() ?? false)
 {
