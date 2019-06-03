@@ -14,6 +14,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public NewModel(IConfiguration config) : base(config)
         {
             ShowLabelFilter = false;
+            ShowExcelDownload = false;
         }
 
         public IEnumerable<Label> Labels { get; set; }
