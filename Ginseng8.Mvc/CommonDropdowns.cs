@@ -23,8 +23,8 @@ namespace Ginseng.Mvc
 		public IEnumerable<SelectListItem> Applications { get; set; }
 		public ILookup<int, SelectListItem> AllProjects { get; set; }
 		public IEnumerable<SelectListItem> Sizes { get; set; }
-		public IEnumerable<SelectListItem> CloseReasons { get; set; }
-		public IEnumerable<SelectListItem> Milestones { get; set; }			
+		public IEnumerable<SelectListItem> CloseReasons { get; set; }		
+        public ILookup<int, SelectListItem> AllMilestones { get; set; }
 		public ILookup<int, SelectListItem> AllDataModels { get; set; }
 		public IEnumerable<Label> Labels { get; set; }
 
@@ -72,16 +72,16 @@ namespace Ginseng.Mvc
 			return new SelectList(CloseReasons, "Value", "Text", item?.CloseReasonId);
 		}
 
-		public SelectList MilestoneSelect(int? milestoneId, bool withNoneOption = false)
+		public SelectList MilestoneSelect(int appId, int? milestoneId, bool withNoneOption = false)
 		{
-			var items = Milestones.ToList();
+			var items = AllMilestones[appId].ToList();
 			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no milestone -" });
 			return new SelectList(items, "Value", "Text", milestoneId);
 		}
 
 		public SelectList MilestoneSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(Milestones, "Value", "Text", item?.MilestoneId);
+			return new SelectList(AllMilestones[item?.ApplicationId ?? 0], "Value", "Text", item?.MilestoneId);
 		}
 
 		public IEnumerable<Label> LabelItems(IEnumerable<Label> selectedLabels)
@@ -100,17 +100,23 @@ namespace Ginseng.Mvc
 		{
 			var result = new CommonDropdowns();
 
+            // org-scoped items
 			result.Activities = await new Activities() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+            result.Sizes = await new SizeSelect() { OrgId = orgId }.ExecuteAsync(connection);
+            result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);
+            result.Applications = await new AppSelect() { OrgId = orgId }.ExecuteAsync(connection);
+            result.Labels = await new Labels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 
-			result.Applications = await new AppSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			var allProjects = await new AllProjects() { OrgId = orgId }.ExecuteAsync(connection);
+            // app-scoped items
+            var allProjects = await new AllProjects() { OrgId = orgId }.ExecuteAsync(connection);
 			result.AllProjects = allProjects.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
-			result.Sizes = await new SizeSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);
-			result.Milestones = await new MilestoneSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			result.Labels = await new Labels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+
+            var allMilestones = await new AllMilestones() { OrgId = orgId }.ExecuteAsync(connection);
+            result.AllMilestones = allMilestones.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
+                       
 			var allModels = await new DataModels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 			result.AllDataModels = allModels.ToLookup(row => row.ApplicationId, row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
+
 			return result;
 		}
 	}

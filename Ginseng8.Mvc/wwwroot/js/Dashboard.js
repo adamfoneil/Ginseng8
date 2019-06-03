@@ -1,21 +1,37 @@
 ﻿var reloadProjectDropdowns = document.querySelectorAll('.fillProjects');
 reloadProjectDropdowns.forEach(function (ele) {
     ele.addEventListener('change', function (ev) {        
-        var number = ev.target.form.Number.value;
-        fetch('/WorkItem/GetAppProjects?appId=' + $(ev.target).val(), {
-            method: 'get'            
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
-            var select = $('#ProjectId-' + number);
-            select.children().remove();
-            $("<option>").val("").text("- project -").appendTo(select);
-            $(data).each(function () {
-                $("<option>").val(this.value).text(this.text).appendTo(select);
-            });
-        });
+        FillAppDropdown(ev, '/WorkItem/GetAppProjects', '#ProjectId-', '- project -');
     });
 });
+
+var reloadMilestoneDropdowns = document.querySelectorAll('.fillMilestones');
+reloadMilestoneDropdowns.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {
+        FillAppDropdown(ev, '/WorkItem/GetAppMilestones', '#MilestoneId-', '- milestone -');
+    });
+});
+
+function FillAppDropdown(ev, url, selectIdPrefix, blankOption) {
+    var number = ev.target.form.Number.value;
+    var appId = $(ev.target).val();
+    fetch(url + '?appId=' + appId, {
+        method: 'get'
+    }).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        var select = $(selectIdPrefix + number);
+        FillDropdown(data, select, blankOption);
+    });
+}
+
+function FillDropdown(data, select, blankOption) {
+    select.children().remove();
+    $("<option>").val("").text(blankOption).appendTo(select);
+    $(data).each(function () {
+        $("<option>").val(this.value).text(this.text).appendTo(select);
+    });
+}
 
 // jQuery UI tooltips
 $('.tooltips').tooltip({

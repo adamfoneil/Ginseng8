@@ -11,13 +11,13 @@ namespace Ginseng.Mvc.Queries.SelectLists
 			FROM 
 				[dbo].[Milestone]
 			WHERE 
-				[OrganizationId]=@orgId AND
+				[ApplicationId]=@appId AND
 				[Date]>DATEADD(d, -7, getdate())
 			ORDER BY
 				[Date]")
 		{
 		}
 
-		public int OrgId { get; set; }
+		public int AppId { get; set; }
 	}
 }

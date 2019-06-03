@@ -369,8 +369,17 @@ namespace Ginseng.Mvc.Controllers
         {
             using (var cn = _data.GetConnection())
             {
-                var projects = await new ProjectSelect() { AppId = appId }.ExecuteAsync(cn);
-                return Json(projects);
+                var results = await new ProjectSelect() { AppId = appId }.ExecuteAsync(cn);
+                return Json(results);
+            }
+        }
+
+        public async Task<JsonResult> GetAppMilestones(int appId)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var results = await new MilestoneSelect() { AppId = appId }.ExecuteAsync(cn);
+                return Json(results);
             }
         }
 

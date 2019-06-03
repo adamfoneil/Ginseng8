@@ -5,7 +5,7 @@
         <form class="form-inline">
             <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
                     
-            <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects"></select>
+            <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects fillMilestones"></select>
                     
             <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number">
                 <option value="">- project -</option>
@@ -25,7 +25,7 @@
                 }
             }
 
-            <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
+            <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="MilestoneId-@Model.WorkItem.Number">
                 <option value="">- milestone -</option>
             </select>
                  
