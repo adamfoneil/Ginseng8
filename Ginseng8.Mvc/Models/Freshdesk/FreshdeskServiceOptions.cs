@@ -1,9 +1,11 @@
-﻿namespace Ginseng.Mvc.Models.Freshdesk
+﻿using Ginseng.Mvc.Interfaces;
+
+namespace Ginseng.Mvc.Models.Freshdesk
 {
     /// <summary>
     /// Freshdesk service configuration options
     /// </summary>
-    public class FreshdeskServiceOptions
+    public class FreshdeskServiceOptions : IConfigurationOptions
     {
         /// <summary>
         /// Determines that received webhook payload has to be stored (uploaded to Azure blobs)

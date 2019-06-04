@@ -3,16 +3,20 @@ using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using Ginseng.Mvc.Interfaces;
 
 namespace Ginseng.Mvc.Pages.Setup
 {
     public class GitHubModel : AppPageModel
     {
-        private readonly GitHubService _gitHub;
+        private readonly IGitHubService _gitHub;
 
-        public GitHubModel(IConfiguration config) : base(config)
+        public GitHubModel(
+            IConfiguration config,
+            IGitHubService gitHub) 
+            : base(config)
         {
-            _gitHub = new GitHubService(config);
+            _gitHub = gitHub;
         }
 
         public SelectList AppSelect { get; set; }

@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Conventions;
+using Ginseng.Mvc.Interfaces;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
@@ -16,8 +17,8 @@ namespace Ginseng.Mvc.Services
 	/// <summary>
 	/// Low-level CRUD handler that supports Pages and ViewComponents
 	/// </summary>
-	public class DataAccess
-	{
+	public class DataAccess : IDataAccess
+    {
 		private readonly IConfiguration _config;
 
 		public UserProfile CurrentUser { get; private set; }

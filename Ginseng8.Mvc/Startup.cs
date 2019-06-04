@@ -1,7 +1,9 @@
 using AutoMapper;
 using Ginseng.Mvc.Data;
+using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Models.Freshdesk;
+using Ginseng.Mvc.Options;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -62,17 +64,23 @@ namespace Ginseng.Mvc
             services
                 .AddOptions()
                 .AddAutoMapper(typeof(Startup).Assembly)
+                .AddTransient<IDataAccess, DataAccess>()
                 .AddSingleton<FreshdeskTicketCache>()
                 .AddSingleton<FreshdeskGroupCache>()
                 .AddSingleton<FreshdeskCompanyCache>()
                 .AddSingleton<FreshdeskContactCache>()
                 .AddSingleton<IFreshdeskClientFactory, FreshdeskClientFactory>()
                 .AddSingleton<IFreshdeskService, FreshdeskService>()
-                .Configure<FreshdeskServiceOptions>(Configuration.GetSection("Freshdesk"))
                 .AddTransient<IEmailSender, Email>()
-                .AddSingleton<IViewRenderService, ViewRenderService>();
+                .AddSingleton<IViewRenderService, ViewRenderService>()
+                .AddSingleton<IGitHubService, GitHubService>();
 
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services
+                .UseConfiguration(Configuration)
+                .AddConfigurationOptions<FreshdeskServiceOptions>()
+                .AddConfigurationOptions<GitHubServiceOptions>();
+
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
