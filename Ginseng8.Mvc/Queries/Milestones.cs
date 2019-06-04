@@ -23,7 +23,10 @@ namespace Ginseng.Mvc.Queries
                 INNER JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
             WHERE
                 [app].[OrganizationId]=@orgId AND
-                [ms].[Date] > DATEADD(d, -7, getdate())
+                (
+                    [ms].[Date]>getdate() OR 
+                    ([ms].[Date]<getdate() AND EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL))
+                )
                 {andWhere}            
 			ORDER BY 
 				[Date]")
