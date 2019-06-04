@@ -18,6 +18,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 	{
 		public MilestonesModel(IConfiguration config) : base(config)
 		{
+            ShowExcelDownload = Id.HasValue;
 		}
 
         [BindProperty(SupportsGet = true)]
@@ -27,6 +28,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		public bool? PastDue { get; set; }
 
         public IEnumerable<Milestone> Milestones { get; private set; }
+        public Dictionary<int, MilestoneMetricsResult> Metrics { get; private set; }
+
         public Milestone NextSoonest { get; private set; }
 		public Milestone NextGenerated { get; private set; }
 
@@ -42,8 +45,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 return new OpenWorkItems(QueryTraces)
                 {
                     OrgId = OrgId,
-                    MilestoneId = Id.Value,
-                    AppId = CurrentOrgUser.CurrentAppId,
+                    MilestoneId = Id.Value,                    
                     LabelId = LabelId,
                     IsPastDue = PastDue
                 };
@@ -53,17 +55,16 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		}
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
-		{            
-            if (!Id.HasValue)
-            {
-                Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
-            }
-            else
-            {
+		{
+            Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 
-            }
-            
-			var emptyMilestones = await new Milestones() { AppId = CurrentOrgUser.CurrentAppId ?? 0, HasWorkItems = false }.ExecuteAsync(connection);
+            var metrics = (!Id.HasValue) ?
+                await new MilestoneMetrics() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection) :
+                await new MilestoneMetrics() { OrgId = OrgId, Id = Id }.ExecuteAsync(connection);
+
+            Metrics = metrics.ToDictionary(row => row.Id);
+
+            var emptyMilestones = await new Milestones() { AppId = CurrentOrgUser.CurrentAppId ?? 0, HasWorkItems = false }.ExecuteAsync(connection);
 			EmptyMilestones = emptyMilestones.Select(ms => new OpenWorkItemsResult()
 			{
 				MilestoneId = ms.Id,
@@ -74,8 +75,6 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 			NextSoonest = await Milestone.GetSoonestNextAsync(connection, OrgId);
 			NextGenerated = await Milestone.CreateNextAsync(connection, OrgId);
-
-			BacklogItems = await new OpenWorkItems() { OrgId = OrgId, HasMilestone = false }.ExecuteAsync(connection);
 		}
 
 		public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)

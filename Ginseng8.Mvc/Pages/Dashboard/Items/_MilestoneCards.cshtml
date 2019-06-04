@@ -1,6 +1,6 @@
-﻿@model IEnumerable<Milestone>
+﻿@model Ginseng.Mvc.Pages.Dashboard.MilestonesModel
 
-@foreach (var appGrp in Model.GroupBy(row => row.ApplicationId))
+@foreach (var appGrp in Model.Milestones.GroupBy(row => row.ApplicationId))
 {
     <h4>@appGrp.First().ApplicationName</h4>
     <hr/>
@@ -8,8 +8,14 @@
         <div class="row ml-3">
             @foreach (var ms in appGrp)
             {
+                var metrics = Model.Metrics[ms.Id];
                 <div class="col-3 p-2" data-milestone-id="@ms.Id">
-
+                    <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-dark" : "btn-light")" asp-page="Milestones">
+                        @ms.Name
+                        <sup>@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
+                    </a>
+                    <br/>
+                    <partial name="Items/_MilestoneInfo" model="metrics"/>
                 </div>
             }
         </div>

@@ -22,7 +22,9 @@ namespace Ginseng.Mvc.Queries
 				[dbo].[Milestone] [ms]
                 INNER JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
             WHERE
-                [app].[OrganizationId]=@orgId {andWhere}
+                [app].[OrganizationId]=@orgId AND
+                [ms].[Date] > DATEADD(d, -7, getdate())
+                {andWhere}            
 			ORDER BY 
 				[Date]")
 		{

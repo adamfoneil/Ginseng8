@@ -1,11 +1,10 @@
-﻿@model ProjectInfoResult
+﻿@model MilestoneMetricsResult
 
 <span class="text-muted small mr-2">
-    @Model.OpenWorkItems work items
-    @if (Model.EstimateHours.HasValue)
-    {
-        <span> | @Model.EstimateHours est hrs</span>
-    }
+    @Model.OpenWorkItems work items    
+
+    <span> | @Model.EstimateHours est hrs</span>
+    
     @if (Model.OpenWorkItems > 0)
     {
         <span> | </span>

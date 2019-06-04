@@ -1,4 +1,5 @@
-﻿using Ginseng.Mvc.ViewModels;
+﻿using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.ViewModels;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
@@ -9,7 +10,7 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
-	public class ProjectInfoResult
+	public class ProjectInfoResult : IItemMetrics
 	{
 		public int Id { get; set; }
 		public int ApplicationId { get; set; }
