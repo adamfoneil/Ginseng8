@@ -140,5 +140,11 @@ namespace Testing
         {
             TestQuery<InsertDefaultLabelSubscriptions>();
         }
+
+        [TestMethod]
+        public void MilestonesQuery()
+        {
+            TestQuery<Milestones>();
+        }
     }
 }

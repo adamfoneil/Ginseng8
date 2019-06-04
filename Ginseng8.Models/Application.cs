@@ -1,6 +1,9 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
+using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
+using Postulate.SqlServer.IntKey;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Threading.Tasks;
@@ -10,7 +13,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// A software product managed by an organization
 	/// </summary>
-	public class Application : BaseTable, IOrgSpecific
+	public class Application : BaseTable, IOrgSpecific, IFindRelated<int>
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -43,9 +46,22 @@ namespace Ginseng.Models
 
 		public bool IsActive { get; set; } = true;
 
+        public Organization Organization { get; set; }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            Organization = commandProvider.Find<Organization>(connection, OrganizationId);
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
+        }
+
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
-            return await Task.FromResult(OrganizationId);
+            var org = await connection.FindAsync<Organization>(OrganizationId);
+            return org.Id;
         }
     }
 }

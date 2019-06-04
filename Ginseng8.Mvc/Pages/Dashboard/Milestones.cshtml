@@ -95,7 +95,10 @@
     </div>
 }
 
-<partial name="Dashboard/Items/_CreateMilestone"/>
+@if (Model.CurrentOrgUser.CurrentAppId.HasValue)
+{
+    <partial name="Dashboard/Items/_CreateMilestone"/>
+}
 
 @section Scripts {
     <script>

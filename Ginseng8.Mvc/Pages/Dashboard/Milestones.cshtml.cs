@@ -48,7 +48,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
-			var emptyMilestones = await new Milestones() { OrgId = OrgId, HasWorkItems = false }.ExecuteAsync(connection);
+			var emptyMilestones = await new Milestones() { AppId = CurrentOrgUser.CurrentAppId ?? 0, HasWorkItems = false }.ExecuteAsync(connection);
 			EmptyMilestones = emptyMilestones.Select(ms => new OpenWorkItemsResult()
 			{
 				MilestoneId = ms.Id,
@@ -65,7 +65,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)
 		{
-			record.OrganizationId = OrgId;
+            record.ApplicationId = CurrentOrgUser.CurrentAppId ?? 0;
 			await Data.TrySaveAsync(record);
 			return Redirect(returnUrl);
 		}
@@ -79,7 +79,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		{
 			var newMs = new Milestone()
 			{
-				OrganizationId = OrgId,
+				ApplicationId = OrgId,
 				Name = toName,
 				Date = toDate
 			};

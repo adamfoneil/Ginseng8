@@ -11,13 +11,27 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Milestone>(this, Xsrf);
+    var grid = new GridEditor<Milestone>(this, Xsrf, defaults: new { ApplicationId = Model.AppId });
+}
+
+<form method="get" class="form-inline mb-2">
+    <label class="mr-2">Application:</label>
+    <select name="AppId" class="form-control" asp-items="Model.AppSelect" onchange="this.form.submit();">
+        <option>(select)</option>
+    </select>
+</form>
+
+@if (Model.AppId == 0)
+{
+    <p>Please select an app above.</p>
+    return;
 }
 
 <table class="table">
     <tr>
         <th>Milestone Name</th>
         <th>Date</th>
+        <th>Work Items</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Milestones)
@@ -25,12 +39,28 @@
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
+            <td>
+                @if ((item.OpenWorkItems ?? 0) > 0)
+                {
+                    <a asp-page="/Dashboard/AllItems" asp-route-filterMilestoneId="@item.Id">@item.OpenWorkItems open item</a>
+                    if ((item.ClosedWorkItems ?? 0) > 0)
+                    {
+                        <span> | </span>
+                    }
+                }
+
+                @if ((item.ClosedWorkItems ?? 0) > 0)
+                {
+                    <a asp-page="/Dashboard/AllItems" asp-route-filterMilestoneId="@item.Id" asp-route-filterCloseReasonId="-1">@item.ClosedWorkItems closed items</a>
+                }
+            </td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
+        <td></td>
         <td>@grid.Controls()</td>
     </tr>
 </table>

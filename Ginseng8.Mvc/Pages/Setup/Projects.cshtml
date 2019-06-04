@@ -22,6 +22,12 @@
     </select>
 </form>
 
+@if (Model.AppId == 0)
+{
+    <p>Please select an app above.</p>
+    return;
+}
+
 <table class="table">
     <tr>
         <th>Project Name</th> 

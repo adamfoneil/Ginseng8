@@ -1,6 +1,8 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -13,27 +15,33 @@ namespace Ginseng.Mvc.Pages.Setup
 		{
 		}
 
-		public IEnumerable<Milestone> Milestones { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int AppId { get; set; }
 
-		public void OnGet()
+        public SelectList AppSelect { get; set; }
+
+        public IEnumerable<Milestone> Milestones { get; set; }
+
+		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
 			{
-				Milestones = new Milestones() { OrgId = CurrentOrg.Id }.Execute(cn);
+                AppSelect = await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, AppId);
+                Milestones = await new Milestones() { AppId = AppId }.ExecuteAsync(cn);
 			}
 		}
 
 		public async Task<ActionResult> OnPostSave(Milestone record)
-		{
-			record.OrganizationId = CurrentOrg.Id;
+		{			
 			await Data.TrySaveAsync(record);
-			return RedirectToPage("/Setup/Milestones");
+			return Redirect($"/Setup/Milestones?appId={record.ApplicationId}");
 		}
 
 		public async Task<ActionResult> OnPostDelete(int id)
 		{
+            var ms = await Data.FindAsync<Milestone>(id);
 			await Data.TryDeleteAsync<Milestone>(id);
-			return RedirectToPage("/Setup/Milestones");
+			return Redirect($"/Setup/Milestones?appId={ms.ApplicationId}");
 		}
 	}
 }

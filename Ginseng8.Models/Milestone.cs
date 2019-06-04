@@ -19,11 +19,11 @@ namespace Ginseng.Models
 	[DereferenceId("SELECT [Name] + ' ' + FORMAT([Date], 'ddd M/d') AS [Name] FROM [dbo].[Milestone] WHERE [Id]=@id")]
 	public class Milestone : BaseTable, IOrgSpecific
 	{
-		[PrimaryKey]
-		[References(typeof(Organization))]
-		public int OrganizationId { get; set; }
+        [PrimaryKey]
+        [References(typeof(Application))]
+        public int ApplicationId { get; set; }
 
-		[MaxLength(50)]
+        [MaxLength(50)]
 		[PrimaryKey]
 		public string Name { get; set; }
 
@@ -31,8 +31,6 @@ namespace Ginseng.Models
 		[DisplayFormat(DataFormatString = "{0:M/d/yy}")]
 		public DateTime Date { get; set; }
 
-        [References(typeof(Application))]
-        public int? ApplicationId { get; set; }
 
 		[NotMapped]
 		public int? DaysAway { get; set; }
@@ -42,6 +40,15 @@ namespace Ginseng.Models
 		/// </summary>
 		[NotMapped]
 		public bool ShowDate { get; set; } = true;
+
+        [NotMapped]
+        public int? TotalWorkItems { get; set; }
+
+        [NotMapped]
+        public int? OpenWorkItems { get; set; }
+
+        [NotMapped]
+        public int? ClosedWorkItems { get; set; }
 
 		public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int orgId)
 		{
@@ -71,15 +78,15 @@ namespace Ginseng.Models
 					[OrganizationId]=@orgId", new { orgId });
 		}
 
-		public static async Task<Milestone> CreateNextAsync(IDbConnection connection, int orgId)
+		public static async Task<Milestone> CreateNextAsync(IDbConnection connection, int appId)
 		{
-			var org = await connection.FindAsync<Organization>(orgId);
-			var latest = await GetLatestAsync(connection, orgId);
+            var app = await connection.FindAsync<Application>(appId);
+			var latest = await GetLatestAsync(connection, appId);
 			
-			DayOfWeek nextDayOfWeek = org.MilestoneWorkDay.ToDayOfWeek();
+			DayOfWeek nextDayOfWeek = app.Organization.MilestoneWorkDay.ToDayOfWeek();
 			DateTime nextDate = 
-				latest?.Date.NextDayOfWeek(nextDayOfWeek, org.IterationWeeks) ?? 
-				DateTime.Today.NextDayOfWeek(nextDayOfWeek, org.IterationWeeks);
+				latest?.Date.NextDayOfWeek(nextDayOfWeek, app.Organization.IterationWeeks) ?? 
+				DateTime.Today.NextDayOfWeek(nextDayOfWeek, app.Organization.IterationWeeks);
 
 			DateTimeFormatInfo dtfi = DateTimeFormatInfo.CurrentInfo;
 			var cal = dtfi.Calendar;
@@ -87,7 +94,7 @@ namespace Ginseng.Models
 
 			return new Milestone()
 			{
-				OrganizationId = orgId,
+				ApplicationId = appId,
 				Date = nextDate,
 				Name = $"week {weekNumber}"
 			};
@@ -95,7 +102,8 @@ namespace Ginseng.Models
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
-            return await Task.FromResult(OrganizationId);
+            var app = await connection.FindAsync<Application>(ApplicationId);
+            return app.OrganizationId;
         }
     }
 }
