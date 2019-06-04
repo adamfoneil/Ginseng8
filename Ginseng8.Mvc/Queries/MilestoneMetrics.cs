@@ -27,7 +27,7 @@ namespace Ginseng.Mvc.Queries
                 FROM
                     [dbo].[Milestone] [ms]
                 WHERE
-                    [ms].[OrganizationId]=@orgId AND
+                    [ms].[ApplicationId]=@appId AND
                     [ms].[Id] IN @milestoneIds
             ) SELECT
                 [src].*,
@@ -40,13 +40,13 @@ namespace Ginseng.Mvc.Queries
         {
         }
 
-        public int OrgId { get; set; }
+        public int AppId { get; set; }
         
         public int[] MilestoneIds { get; set; }
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {
-            yield return new MilestoneMetrics() { OrgId = 0, MilestoneIds = new int[] { 1, 2, 3 } };
+            yield return new MilestoneMetrics() { AppId = 0, MilestoneIds = new int[] { 1, 2, 3 } };
         }
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)

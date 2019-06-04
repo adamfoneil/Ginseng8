@@ -50,32 +50,32 @@ namespace Ginseng.Models
         [NotMapped]
         public int? ClosedWorkItems { get; set; }
 
-		public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int orgId)
+		public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int appId)
 		{
 			return await connection.QuerySingleOrDefaultAsync<Milestone>(
 				@"WITH [source] AS (
 					SELECT MAX([Date]) AS [MaxDate]
 					FROM [dbo].[Milestone]
-					WHERE [OrganizationId]=@orgId
+					WHERE [ApplicationId]=@appId
 				) SELECT TOP (1) [ms].*
 				FROM
 					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MaxDate]
 				WHERE
-					[OrganizationId]=@orgId", new { orgId });
+					[ApplicationId]=@appId", new { appId });
 		}
 
-		public static async Task<Milestone> GetSoonestNextAsync(IDbConnection connection, int orgId)
+		public static async Task<Milestone> GetSoonestNextAsync(IDbConnection connection, int appId)
 		{
 			return await connection.QuerySingleOrDefaultAsync<Milestone>(
 				@"WITH [source] AS (
 					SELECT MIN([Date]) AS [MinDate]
 					FROM [dbo].[Milestone]
-					WHERE [OrganizationId]=@orgId AND [Date]>getdate()
+					WHERE [ApplicationId]=@appId AND [Date]>getdate()
 				) SELECT TOP (1) [ms].*
 				FROM 
 					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MinDate]
 				WHERE
-					[OrganizationId]=@orgId", new { orgId });
+					[ApplicationId]=@appId", new { appId });
 		}
 
 		public static async Task<Milestone> CreateNextAsync(IDbConnection connection, int appId)
