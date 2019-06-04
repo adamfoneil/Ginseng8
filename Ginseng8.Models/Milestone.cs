@@ -50,6 +50,9 @@ namespace Ginseng.Models
         [NotMapped]
         public int? ClosedWorkItems { get; set; }
 
+        [NotMapped]
+        public string ApplicationName { get; set; }
+
 		public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int appId)
 		{
 			return await connection.QuerySingleOrDefaultAsync<Milestone>(

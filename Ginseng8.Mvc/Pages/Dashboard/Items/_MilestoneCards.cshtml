@@ -1,0 +1,17 @@
+﻿@model IEnumerable<Milestone>
+
+@foreach (var appGrp in Model.GroupBy(row => row.ApplicationId))
+{
+    <h4>@appGrp.First().ApplicationName</h4>
+    <hr/>
+    <div class="app-container">
+        <div class="row ml-3">
+            @foreach (var ms in appGrp)
+            {
+                <div class="col-3 p-2" data-milestone-id="@ms.Id">
+
+                </div>
+            }
+        </div>
+    </div>
+}

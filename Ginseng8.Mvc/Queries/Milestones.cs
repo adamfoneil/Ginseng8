@@ -13,21 +13,25 @@ namespace Ginseng.Mvc.Queries
 		public Milestones() : base(
             @"SELECT 
 				[ms].*,
+                [app].[Name] AS [ApplicationName],
 				DATEDIFF(d, getdate(), [ms].[Date]) AS [DaysAway],
                 (SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id]) AS [TotalWorkItems],
                 (SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
                 (SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems]
 			FROM 
 				[dbo].[Milestone] [ms]
-			WHERE 
-				[ApplicationId]=@appId
-				{andWhere}
+                INNER JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
+            WHERE
+                [app].[OrganizationId]=@orgId {andWhere}
 			ORDER BY 
 				[Date]")
 		{
 		}
+        
+        public int OrgId { get; set; }
 
-		public int AppId { get; set; }
+        [Where("[ms].[ApplicationId]=@appId")]
+		public int? AppId { get; set; }
 
 		[Where("[ms].[Date]>=@minDate")]
 		public DateTime? MinDate { get; set; } = DateTime.Today.AddDays(-5);
@@ -43,6 +47,7 @@ namespace Ginseng.Mvc.Queries
         public IEnumerable<ITestableQuery> GetTestCases()
         {
             yield return new Milestones() { AppId = 0 };
+            yield return new Milestones() { OrgId = 0 };
         }
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)

@@ -1,7 +1,16 @@
-﻿@page
+﻿@page "/Dashboard/Milestones/{id?}"
 @model Ginseng.Mvc.Pages.Dashboard.MilestonesModel
 @{
     ViewData["Title"] = "Milestones";
+}
+
+@if (Model.Id.HasValue)
+{
+
+}
+else
+{
+
 }
 
 <div id="accordion">

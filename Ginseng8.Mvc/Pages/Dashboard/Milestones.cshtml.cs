@@ -20,13 +20,14 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		{
 		}
 
-		[BindProperty(SupportsGet = true)]
-		public int? MilestoneId { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public int? Id { get; set; }
 
 		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
 
-		public Milestone NextSoonest { get; private set; }
+        public IEnumerable<Milestone> Milestones { get; private set; }
+        public Milestone NextSoonest { get; private set; }
 		public Milestone NextGenerated { get; private set; }
 
 		public IEnumerable<OpenWorkItemsResult> EmptyMilestones { get; set; }
@@ -36,18 +37,32 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override OpenWorkItems GetQuery()
 		{
-			return new OpenWorkItems(QueryTraces)
-			{
-				OrgId = OrgId,
-				HasMilestone = true,
-				AppId = CurrentOrgUser.CurrentAppId,
-				LabelId = LabelId,
-				IsPastDue = PastDue
-			};
+            if (Id.HasValue)
+            {
+                return new OpenWorkItems(QueryTraces)
+                {
+                    OrgId = OrgId,
+                    MilestoneId = Id.Value,
+                    AppId = CurrentOrgUser.CurrentAppId,
+                    LabelId = LabelId,
+                    IsPastDue = PastDue
+                };
+            }
+
+            return null;
 		}
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
-		{
+		{            
+            if (!Id.HasValue)
+            {
+                Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+            }
+            else
+            {
+
+            }
+            
 			var emptyMilestones = await new Milestones() { AppId = CurrentOrgUser.CurrentAppId ?? 0, HasWorkItems = false }.ExecuteAsync(connection);
 			EmptyMilestones = emptyMilestones.Select(ms => new OpenWorkItemsResult()
 			{
