@@ -102,7 +102,7 @@ $('.project-work-items').tooltip({
 
         var projectId = $(ui.tooltip).find('[data-project-id]').data('project-id');
 
-        fetch('/Project/WorkItems/' + projectId, {
+        fetch('/WorkItem/ListInProject/' + projectId, {
             method: 'get'
         }).then(function (response) {
             return response.text();

@@ -18,6 +18,7 @@ using Postulate.SqlServer.IntKey;
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Controllers
@@ -420,5 +421,42 @@ namespace Ginseng.Mvc.Controllers
         }
 
         public IActionResult View(int id) => RedirectToPage("/WorkItem/View", new { id });
+
+        private async Task<WorkItemListView> ListInnerAsync(OpenWorkItems query)
+        {
+            var vm = new WorkItemListView();
+
+            using (var cn = _data.GetConnection())
+            {
+                vm.WorkItems = await query.ExecuteAsync(cn);
+                var itemIds = vm.WorkItems.Select(wi => wi.Id).ToArray();
+                var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = _data.CurrentOrg.Id }.ExecuteAsync(cn);
+                vm.SelectedLabels = labelsInUse.ToLookup(row => row.WorkItemId);
+            }
+
+            return vm;
+        }
+
+        public async Task<PartialViewResult> ListInMilestone(int id)
+        {
+            var vm = await ListInnerAsync(new OpenWorkItems()
+            {
+                OrgId = _data.CurrentOrg.Id,
+                MilestoneId = id
+            });
+
+            return PartialView("List", vm);
+        }
+
+        public async Task<PartialViewResult> ListInProject(int id)
+        {
+            var vm = await ListInnerAsync(new OpenWorkItems()
+            {
+                OrgId = _data.CurrentOrg.Id,
+                ProjectId = id
+            });            
+
+            return PartialView("List", vm);
+        }
     }
 }
