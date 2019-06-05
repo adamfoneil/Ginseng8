@@ -59,6 +59,8 @@ namespace Ginseng.Models
 
 		public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int appId)
 		{
+            if (appId == 0) return null;
+
 			return await connection.QuerySingleOrDefaultAsync<Milestone>(
 				@"WITH [source] AS (
 					SELECT MAX([Date]) AS [MaxDate]
@@ -73,6 +75,8 @@ namespace Ginseng.Models
 
 		public static async Task<Milestone> GetSoonestNextAsync(IDbConnection connection, int appId)
 		{
+            if (appId == 0) return null;
+
 			return await connection.QuerySingleOrDefaultAsync<Milestone>(
 				@"WITH [source] AS (
 					SELECT MIN([Date]) AS [MinDate]

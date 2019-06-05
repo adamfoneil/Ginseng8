@@ -93,7 +93,10 @@ namespace Ginseng.Mvc
                     if (ItemsInPastMilestone.Any())
                     {
                         var appId = CurrentOrgUser.CurrentAppId ?? 0;
-                        NextSoonestMilestone = await Milestone.GetSoonestNextAsync(cn, appId) ?? await Milestone.CreateNextAsync(cn, appId);
+                        if (appId != 0)
+                        {
+                            NextSoonestMilestone = await Milestone.GetSoonestNextAsync(cn, appId) ?? await Milestone.CreateNextAsync(cn, appId);
+                        }                        
                     }
 
                     int[] itemIds = WorkItems.Select(wi => wi.Id).ToArray();
