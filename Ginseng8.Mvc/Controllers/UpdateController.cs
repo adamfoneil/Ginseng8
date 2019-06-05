@@ -2,6 +2,7 @@
 using Ginseng.Models;
 using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
+using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
 using Ginseng.Mvc.Models;
@@ -217,10 +218,27 @@ namespace Ginseng.Mvc.Controllers
 			return Convert.ToInt32(result.Value);
 		}
 
-		/// <summary>
-		/// Sets model class property order after drag-drop operation in Pages/Data/Index
-		/// </summary>		
-		[HttpPost]
+        [HttpPost]
+        public async Task<ContentResult> MilestoneDate()
+        {
+            string body = await Request.ReadStringAsync();
+            var data = JsonConvert.DeserializeObject<MilestoneDateChange>(body);
+            DateTime date = DateTime.Parse(data.DateText);
+
+            using (var cn = _data.GetConnection())
+            {
+                var ms = await cn.FindAsync<Milestone>(data.MilestoneId);
+                ms.Date = date;
+                await cn.UpdateAsync(ms, _data.CurrentUser, r => r.Date);
+            }
+
+            return Content(date.ToString("ddd M/d"));
+        }
+
+        /// <summary>
+        /// Sets model class property order after drag-drop operation in Pages/Data/Index
+        /// </summary>		
+        [HttpPost]
 		public async Task<JsonResult> PropertyOrder()
 		{
 			try

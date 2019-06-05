@@ -612,5 +612,45 @@ $(document).ready(function () {
     })
     .on('blur', 'input', function() {
         $(this).parents('.editable').removeClass('active');
+        });
+
+    $('.ms-datepicker-input').datepicker({
+        onSelect: function (dateText, inst) {
+            var msId = $(this).data('milestone-id');
+            SetMilestoneDate(msId, dateText);
+        },
+        beforeShow: function (ele, ui) {
+            var link = $(ele);
+            ui.dpDiv.offset({
+                top: link.offset().top + 10,
+                left: link.offset().left + 10
+            });
+        }
+    });
+
+    $('.ms-datepicker').click(function () {
+        $(this).next('.ms-datepicker-input').datepicker('show');
     });
 });
+
+function SetMilestoneDate(milestoneId, dateText) {
+
+    let data = {
+        milestoneId: milestoneId,
+        dateText: dateText
+    };
+
+    fetch('/Update/MilestoneDate', {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": getAntiForgeryToken()
+        },
+        body: JSON.stringify(data)
+    }).then(function (response) {
+        // success fail info?
+        return response.text();
+    }).then(function (text) {
+        $(".ms-datepicker[data-milestone-id='" + milestoneId + "']").html(text);
+    });
+}
