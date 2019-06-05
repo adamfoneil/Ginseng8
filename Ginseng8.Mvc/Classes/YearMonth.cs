@@ -54,7 +54,16 @@ namespace Ginseng.Mvc.Classes
         public static YearMonth operator -(YearMonth value, int months)
         {
             return new YearMonth(value.EndDate().AddMonths(months * -1));
+        }
 
+        public static bool operator <(YearMonth value1, YearMonth value2)
+        {
+            return value1.EndDate() < value2.EndDate();
+        }
+
+        public static bool operator >(YearMonth value1, YearMonth value2)
+        {
+            return value1.EndDate() > value2.EndDate();
         }
 
         public override bool Equals(object obj)

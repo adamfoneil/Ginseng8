@@ -126,15 +126,15 @@ namespace Ginseng.Mvc.Pages.Dashboard
         /// <summary>
         /// Projects the milestone list into a grid of months and years with optional number of empty future months added
         /// </summary>        
-        public ILookup<YearMonth, Milestone> GetCalendar(int emptyFutureMonths = 3)
-        {            
-            List<Milestone> results = new List<Milestone>();
+        public ILookup<YearMonth, Milestone> GetCalendar(int appId, int emptyFutureMonths = 3)
+        {
+            List<Milestone> results = new List<Milestone>();            
 
             // existing milestones in database
-            results.AddRange(Milestones);
+            results.AddRange(Milestones.Where(row => row.ApplicationId == appId));
 
             // fill in any month gaps in the sequence with placeholders
-            var gaps = FindMonthYearGaps(results);
+            var gaps = FindYearMonthGaps(results);
             results.AddRange(gaps.Select(g => new Milestone() { Date = g.EndDate(), Name = "placeholder", ShowDate = false }));
 
             // add optional future months
@@ -152,20 +152,26 @@ namespace Ginseng.Mvc.Pages.Dashboard
             return results.ToLookup(item => new YearMonth(item.Date));
         }
 
-        private IEnumerable<YearMonth> FindMonthYearGaps(List<Milestone> input)
+        private IEnumerable<YearMonth> FindYearMonthGaps(List<Milestone> milestones)
         {
-            var yearsMonths = input
+            var yearsMonths = milestones
                 .GroupBy(row => new YearMonth(row.Date))
                 .Select(grp => grp.Key)
-                .OrderBy(row => row);
+                .OrderBy(row => row)
+                .ToHashSet();
 
             var min = yearsMonths.Min(row => row);
             var max = yearsMonths.Max(row => row);
-            //var spanMonths = max - min;
-            //var allYearMonths = Enumerable.Range(0, )
 
-            throw new NotImplementedException();
-            
+            List<YearMonth> results = new List<YearMonth>();
+            YearMonth test = min;
+            while (test < max)
+            {
+                test += 1;
+                if (!yearsMonths.Contains(test)) results.Add(test);
+            }
+
+            return results;
         }
     }
 }
