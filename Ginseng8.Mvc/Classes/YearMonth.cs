@@ -2,7 +2,7 @@
 
 namespace Ginseng.Mvc.Classes
 {    
-    public class YearMonth
+    public class YearMonth : IComparable<YearMonth>
     {
         public int Year { get; set; }
         public int Month { get; set; }
@@ -48,10 +48,29 @@ namespace Ginseng.Mvc.Classes
 
         public static YearMonth operator +(YearMonth value, int months)
         {
-            int totalMonths = months + value.Month;
-            int years = totalMonths / 12;
-            int leftover = totalMonths % 12;
-            return new YearMonth(value.Year + years, leftover);
+            return new YearMonth(value.EndDate().AddMonths(months));
+        }
+
+        public static YearMonth operator -(YearMonth value, int months)
+        {
+            return new YearMonth(value.EndDate().AddMonths(months * -1));
+
+        }
+
+        public override bool Equals(object obj)
+        {
+            var test = obj as YearMonth;
+            return (test != null) ? test.Year == Year && test.Month == Month : false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (Year + Month).GetHashCode();
+        }
+
+        public int CompareTo(YearMonth other)
+        {
+            return EndDate().CompareTo(other);
         }
     }
 }

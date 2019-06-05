@@ -124,23 +124,48 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		}
 
         /// <summary>
-        /// Projects the milestone list into a grid of months and years with optional number of empty months added
+        /// Projects the milestone list into a grid of months and years with optional number of empty future months added
         /// </summary>        
         public ILookup<YearMonth, Milestone> GetCalendar(int emptyFutureMonths = 3)
         {            
             List<Milestone> results = new List<Milestone>();
+
+            // existing milestones in database
             results.AddRange(Milestones);
-                     
+
+            // fill in any month gaps in the sequence with placeholders
+            var gaps = FindMonthYearGaps(results);
+            results.AddRange(gaps.Select(g => new Milestone() { Date = g.EndDate(), Name = "placeholder", ShowDate = false }));
+
+            // add optional future months
             if (emptyFutureMonths > 0)
             {
-                var lastMs = (Milestones.Any()) ? Milestones.Last() : new Milestone() { Date = DateTime.Today };
+                var lastMs = Milestones.Any() ? Milestones.Last() : new Milestone() { Date = DateTime.Today };
                 var lastMonth = new YearMonth(lastMs.Date);
-
-                //results.AddRange(Enumerable.Range(0, emptyFutureMonths).Select())
-
+                results.AddRange(Enumerable.Range(1, emptyFutureMonths).Select(i =>
+                {
+                    var yearMonth = lastMonth + i;
+                    return new Milestone() { Date = yearMonth.EndDate(), Name = "placeholder", ShowDate = false };
+                }));
             }
 
-            throw new NotImplementedException();
+            return results.ToLookup(item => new YearMonth(item.Date));
         }
-	}
+
+        private IEnumerable<YearMonth> FindMonthYearGaps(List<Milestone> input)
+        {
+            var yearsMonths = input
+                .GroupBy(row => new YearMonth(row.Date))
+                .Select(grp => grp.Key)
+                .OrderBy(row => row);
+
+            var min = yearsMonths.Min(row => row);
+            var max = yearsMonths.Max(row => row);
+            //var spanMonths = max - min;
+            //var allYearMonths = Enumerable.Range(0, )
+
+            throw new NotImplementedException();
+            
+        }
+    }
 }

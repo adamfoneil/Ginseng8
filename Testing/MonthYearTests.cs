@@ -26,8 +26,40 @@ namespace Testing
         public void AddYearsManyMonths()
         {
             var current = new YearMonth(2019, 6);
-            var future = current += 17;
+            var future = current + 17;
             Assert.IsTrue(future.Year == 2020 && future.Month == 11);
+        }
+
+        [TestMethod]
+        public void AddJuneToJanurary()
+        {
+            var current = new YearMonth(2019, 6);
+            var future = current + 7;
+            Assert.IsTrue(future.Year == 2020 && future.Month == 1);
+        }
+
+        [TestMethod]
+        public void SubtractMonthsThisYear()
+        {
+            var current = new YearMonth(2019, 6);
+            var past = current - 3;
+            Assert.IsTrue(past.Year == 2019 && past.Month == 3);
+        }
+
+        [TestMethod]
+        public void SubtractMonthsPastYear()
+        {
+            var current = new YearMonth(2019, 6);
+            var past = current - 6;
+            Assert.IsTrue(past.Year == 2018 && past.Month == 12);
+        }
+
+        [TestMethod]
+        public void SubtractManyMonths()
+        {
+            var current = new YearMonth(2019, 6);
+            var past = current - 17;
+            Assert.IsTrue(past.Year == 2018 && past.Month == 1);
         }
     }
 }
