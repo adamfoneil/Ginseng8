@@ -47,7 +47,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                     OrgId = OrgId,
                     MilestoneId = Id.Value,                    
                     LabelId = LabelId,
-                    IsPastDue = PastDue
+                    IsPastDue = PastDue,
+                    AppId = CurrentOrgUser.CurrentAppId
                 };
             }
 

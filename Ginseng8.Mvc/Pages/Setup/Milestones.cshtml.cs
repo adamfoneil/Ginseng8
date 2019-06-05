@@ -27,7 +27,7 @@ namespace Ginseng.Mvc.Pages.Setup
 			using (var cn = Data.GetConnection())
 			{
                 AppSelect = await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, AppId);
-                Milestones = await new Milestones() { AppId = AppId }.ExecuteAsync(cn);
+                Milestones = await new Milestones() { OrgId = OrgId, AppId = AppId }.ExecuteAsync(cn);
 			}
 		}
 
