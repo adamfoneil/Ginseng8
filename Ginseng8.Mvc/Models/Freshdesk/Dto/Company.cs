@@ -40,7 +40,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         public string HealthScore { get; set; }
 
         [JsonProperty("account_tier")]        
-        public long AccountTier { get; set; }
+        public long? AccountTier { get; set; }
 
         [JsonProperty("renewal_date")]
         public DateTimeOffset? RenewalDate { get; set; }
@@ -58,7 +58,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         public string LibraryManager { get; set; }
 
         [JsonProperty("documents_module")]
-        public bool DocumentsModule { get; set; }
+        public bool? DocumentsModule { get; set; }
 
         [JsonProperty("compliance_module")]
         public bool? ComplianceModule { get; set; }
