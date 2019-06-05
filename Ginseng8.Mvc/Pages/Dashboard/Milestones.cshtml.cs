@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Ginseng.Models;
+using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
-
+        
         public IEnumerable<Milestone> Milestones { get; private set; }
         public Dictionary<int, MilestoneMetricsResult> Metrics { get; private set; }
 
@@ -121,5 +122,25 @@ namespace Ginseng.Mvc.Pages.Dashboard
 				return RedirectToPage("Milestones");
 			}
 		}
+
+        /// <summary>
+        /// Projects the milestone list into a grid of months and years with optional number of empty months added
+        /// </summary>        
+        public ILookup<YearMonth, Milestone> GetCalendar(int emptyFutureMonths = 3)
+        {            
+            List<Milestone> results = new List<Milestone>();
+            results.AddRange(Milestones);
+                     
+            if (emptyFutureMonths > 0)
+            {
+                var lastMs = (Milestones.Any()) ? Milestones.Last() : new Milestone() { Date = DateTime.Today };
+                var lastMonth = new YearMonth(lastMs.Date);
+
+                //results.AddRange(Enumerable.Range(0, emptyFutureMonths).Select())
+
+            }
+
+            throw new NotImplementedException();
+        }
 	}
 }
