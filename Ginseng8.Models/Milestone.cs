@@ -2,7 +2,9 @@
 using Ginseng.Models.Conventions;
 using Ginseng.Models.Extensions;
 using Ginseng.Models.Interfaces;
+using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
@@ -17,7 +19,7 @@ namespace Ginseng.Models
 	/// A due date of some kind, such as a sprint end date or some other event with a known date
 	/// </summary>
 	[DereferenceId("SELECT [Name] + ' ' + FORMAT([Date], 'ddd M/d') AS [Name] FROM [dbo].[Milestone] WHERE [Id]=@id")]
-	public class Milestone : BaseTable, IOrgSpecific
+	public class Milestone : BaseTable, IOrgSpecific, IFindRelated<int>
 	{
         [PrimaryKey]
         [References(typeof(Application))]
@@ -52,6 +54,8 @@ namespace Ginseng.Models
 
         [NotMapped]
         public string ApplicationName { get; set; }
+
+        public Application Application { get; set; }
 
 		public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int appId)
 		{
@@ -107,6 +111,16 @@ namespace Ginseng.Models
         {
             var app = await connection.FindAsync<Application>(ApplicationId);
             return app.OrganizationId;
+        }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            Application = commandProvider.Find<Application>(connection, ApplicationId);
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            Application = await commandProvider.FindAsync<Application>(connection, ApplicationId);
         }
     }
 }

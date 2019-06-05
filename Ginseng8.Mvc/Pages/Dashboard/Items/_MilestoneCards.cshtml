@@ -11,6 +11,7 @@
                 var metrics = Model.Metrics[ms.Id];
                 <div class="col-3 p-2" data-milestone-id="@ms.Id">
                     <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-secondary" : "btn-light") milestone-work-items" asp-page="Milestones" data-milestone-id="@ms.Id">
+                        <i class="fas fa-flag-checkered"></i>
                         @ms.Name
                         <sup>@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
                     </a>
