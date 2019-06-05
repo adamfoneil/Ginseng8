@@ -4,7 +4,7 @@
     <input type="hidden" name="Id" value="@Model.SelectedProject.Id"/>
     <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject.ApplicationId)" class="form-control-sm mr-2 projectUpdate"></select>
     
-    @if  (Model.SelectedProject.DataModelId.HasValue)
+    @if (Model.SelectedProject.DataModelId.HasValue)
     {
         <i class="far fa-database mr-2"></i>
     }
@@ -13,7 +13,7 @@
         <option value="">- data model -</option>
     </select>
     
-    @if  (Model.SelectedProject.DataModelId.HasValue)
+    @if (Model.SelectedProject.DataModelId.HasValue)
     {
         <a asp-page="/Data/Index" asp-route-modelId="@Model.SelectedProject.DataModelId" title="Goto data model" class="mr-2">
             <i class="fas fa-chevron-double-right small"></i>

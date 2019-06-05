@@ -29,6 +29,7 @@
 
 <table class="table">
     <tr>
+        <th>Application</th>
         <th>Milestone Name</th>
         <th>Date</th>
         <th>Work Items</th>
@@ -37,6 +38,7 @@
     @foreach (var item in Model.Milestones)
     {
         <tr id="@grid.RowId(item)">
+            <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
             <td>
@@ -58,6 +60,7 @@
         </tr>
     }
     <tr id="@grid.NewRowId()">
+        <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
         <td></td>
