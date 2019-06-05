@@ -66,6 +66,16 @@ namespace Ginseng.Mvc.Classes
             return value1.EndDate() > value2.EndDate();
         }
 
+        public static bool operator <=(YearMonth value1, YearMonth value2)
+        {
+            return value1 < value2 || value1.Equals(value2);
+        }
+
+        public static bool operator >=(YearMonth value1, YearMonth value2)
+        {
+            return value1 > value2 || value1.Equals(value2);
+        }
+
         public override bool Equals(object obj)
         {
             var test = obj as YearMonth;

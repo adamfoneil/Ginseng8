@@ -123,55 +123,33 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			}
 		}
 
-        /// <summary>
-        /// Projects the milestone list into a grid of months and years with optional number of empty future months added
-        /// </summary>        
-        public ILookup<YearMonth, Milestone> GetCalendar(int appId, int emptyFutureMonths = 3)
+        public IEnumerable<YearMonth> GetYearMonthRange(int futureMonths = 0)
         {
-            List<Milestone> results = new List<Milestone>();            
-
-            // existing milestones in database
-            results.AddRange(Milestones.Where(row => row.ApplicationId == appId));
-
-            // fill in any month gaps in the sequence with placeholders
-            var gaps = FindYearMonthGaps(results);
-            results.AddRange(gaps.Select(g => new Milestone() { Date = g.EndDate(), Name = "placeholder", ShowDate = false }));
-
-            // add optional future months
-            if (emptyFutureMonths > 0)
+            if (Milestones?.Any() ?? false)
             {
-                var lastMs = Milestones.Any() ? Milestones.Last() : new Milestone() { Date = DateTime.Today };
-                var lastMonth = new YearMonth(lastMs.Date);
-                results.AddRange(Enumerable.Range(1, emptyFutureMonths).Select(i =>
-                {
-                    var yearMonth = lastMonth + i;
-                    return new Milestone() { Date = yearMonth.EndDate(), Name = "placeholder", ShowDate = false };
-                }));
+                var start = Milestones.First().Date;
+                var end = Milestones.Last().Date.AddMonths(futureMonths);
+                return GetYearMonthRange(new YearMonth(start), new YearMonth(end));
             }
 
-            return results.ToLookup(item => new YearMonth(item.Date));
+            return Enumerable.Empty<YearMonth>();
         }
 
-        private IEnumerable<YearMonth> FindYearMonthGaps(List<Milestone> milestones)
+        private IEnumerable<YearMonth> GetYearMonthRange(YearMonth start, YearMonth end)
         {
-            var yearsMonths = milestones
-                .GroupBy(row => new YearMonth(row.Date))
-                .Select(grp => grp.Key)
-                .OrderBy(row => row)
-                .ToHashSet();
-
-            var min = yearsMonths.Min(row => row);
-            var max = yearsMonths.Max(row => row);
-
             List<YearMonth> results = new List<YearMonth>();
-            YearMonth test = min;
-            while (test < max)
+            YearMonth add = start;
+            while (add <= end)
             {
-                test += 1;
-                if (!yearsMonths.Contains(test)) results.Add(test);
+                results.Add(add);
+                add += 1;
             }
-
             return results;
+        }
+
+        public ILookup<YearMonth, Milestone> GetCalendar()
+        {
+            return Milestones.ToLookup(row => new YearMonth(row.Date));
         }
     }
 }
