@@ -66,7 +66,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             Metrics = metrics.ToDictionary(row => row.Id);
 
-            var emptyMilestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, HasWorkItems = false }.ExecuteAsync(connection);
+            var emptyMilestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, HasOpenWorkItems = false, Id = Id }.ExecuteAsync(connection);
 			EmptyMilestones = emptyMilestones.Select(ms => new OpenWorkItemsResult()
 			{
 				MilestoneId = ms.Id,
