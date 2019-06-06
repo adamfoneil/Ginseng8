@@ -3,7 +3,7 @@
 @{ 
     var dates = Model.MySchedule.GroupBy(row => row.Date);
 }
-<ul class="list-inline text-center">
+<ul class="list-inline text-center" id="js-my-schedule">
     <li class="list-inline-item small">
         My schedule:
     </li>
@@ -12,9 +12,9 @@
     {
         <li class="list-inline-item">
             @{ 
-                var className = (dateGrp.Key.Equals(Model.Date)) ? "btn-dark" : "btn-light";
+                var className = (dateGrp.Key.Equals(Model.Date)) ? "btn-dark active" : "btn-light";
             }
-            <a asp-route-date="@Html.FormatValue(dateGrp.Key, "{0:M/d/yy}")" class="btn btn-sm @className" data-date="@dateGrp.Key">@Html.FormatValue(dateGrp.Key, "{0:ddd M/d}")</a>
+            <a asp-route-date="@Html.FormatValue(dateGrp.Key, "{0:M/d/yy}")" class="btn btn-sm @className js-btn-day sortable" data-date="@dateGrp.Key">@Html.FormatValue(dateGrp.Key, "{0:ddd M/d}")</a>
         </li>
     }
 

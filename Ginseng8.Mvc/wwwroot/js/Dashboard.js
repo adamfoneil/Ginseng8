@@ -441,7 +441,7 @@ function tableBodySortableRowsReorder(rows) {
 function InitWorkItemSortable() {
     $('.sortable').sortable({
         placeholder: "ui-state-highlight",
-        connectWith: '.milestone-items .sortable, #assignedUserTab .nav-link:not(.active)',
+        connectWith: '.milestone-items .sortable, #assignedUserTab .nav-link:not(.active), #js-my-schedule .js-btn-day:not(.active)',
         cancel: ':input, button, [contenteditable="true"]',
         start: sortableStart,
         stop: sortableStop,
@@ -488,6 +488,29 @@ function updateSortableList(list, taskObject) {
             // success fail info?
             return response.json();
         });
+
+        return;
+    }
+
+    if (list.parents('#js-my-schedule').length) {
+        console.group('work item set date');
+
+        if (task.data('number') == null) {
+            // validation
+            console.log('task number is undefined', task.data('number'));
+            console.log('there is dropped not work item element or item-number is not set');
+            return;
+        }
+
+        console.log('task number', task.data('number'));
+        console.log('date', list.data('date'));
+        console.groupEnd();
+
+        var data = {
+            number: task.data('number')
+        };
+
+        // fetch...
 
         return;
     }

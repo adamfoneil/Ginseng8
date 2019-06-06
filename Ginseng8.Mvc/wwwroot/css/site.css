@@ -81,6 +81,7 @@ body {
   border: 1px dashed #007bff;
 }
 
+#js-my-schedule .js-btn-day .ui-sortable-handle,
 .nav-link.sortable .ui-sortable-handle {
   display: none;
 }
