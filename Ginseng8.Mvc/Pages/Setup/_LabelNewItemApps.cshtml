@@ -1,0 +1,27 @@
+﻿@model AppSelector
+
+<div style="display:inline-block">
+    <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Apps:
+    </button>
+    <div class="dropdown-menu">
+        @foreach (var app in Model.Applications)
+        {
+            <form method="post">
+                <input type="hidden" name="ApplicationId" value="@app.Id"/>
+                <input type="hidden" name="LabelId" value="@Model.RelatedId"/>
+                <a class="dropdown-item labelCheckboxLink">
+                    @Html.CheckBox("selected", app.Selected, new { @class = "appCheckbox" })
+                    @app.Name
+                </a>
+            </form>                            
+        }
+    </div>
+</div>
+
+<div id="apps-@Model.RelatedId" style="display:inline-block">
+    @foreach (var item in Model)
+    {
+        <span>@item.ApplicationName</span>
+    }
+</div>

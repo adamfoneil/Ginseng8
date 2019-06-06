@@ -5,6 +5,7 @@ using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
@@ -47,6 +48,12 @@ namespace Ginseng.Models
 		public bool IsActive { get; set; } = true;
 
         public Organization Organization { get; set; }
+
+        [NotMapped]
+        public bool Selected { get; set; }
+
+        [NotMapped]
+        public bool LabelId { get; set; }
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {

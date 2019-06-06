@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
@@ -15,5 +16,8 @@ namespace Ginseng.Models
         [References(typeof(Label))]
         [PrimaryKey]
         public int LabelId { get; set; }
+
+        [NotMapped]
+        public string ApplicationName { get; set; }
     }
 }

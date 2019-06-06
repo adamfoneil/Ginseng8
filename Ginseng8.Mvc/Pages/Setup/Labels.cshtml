@@ -24,7 +24,7 @@
         <th>Back Color</th>
         <th>Text Color</th>
         <th>Preview</th>
-        <th>Data Entry</th>
+        <th>New Items</th>
         <th>Notify Me</th>
         <th></th>
     </tr>
@@ -35,7 +35,7 @@
             <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
             <td><span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></td>
-            <td>@grid.CheckBox(m => m.AllowNewItems)</td>
+            <td><partial name="_LabelNewItemApps" model="Model.GetAppSelector(Model.NewItemApps[item.Id])"/></td>
             <td>                
                 <div id="notifyOptions-@Model.Subscriptions[item.Id].Id">
                     <partial name="Shared/_NotifyOptions" model="@Model.Subscriptions[item.Id]"/>
@@ -50,7 +50,7 @@
         <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
         <td></td>
         <td></td>
-        <td>@grid.CheckBox(m => m.AllowNewItems)</td>
+        <td></td>
         <td>@grid.Controls()</td>
     </tr>
 </table>
