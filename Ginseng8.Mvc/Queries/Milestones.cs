@@ -49,6 +49,9 @@ namespace Ginseng.Mvc.Queries
 		[Case(true, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL)")]
 		public bool? HasOpenWorkItems { get; set; }
 
+        [Where("[ms].[Id]=@id")]
+        public int? Id { get; set; }
+
         public IEnumerable<ITestableQuery> GetTestCases()
         {
             yield return new Milestones() { AppId = 0 };

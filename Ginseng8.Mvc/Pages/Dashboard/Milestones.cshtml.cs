@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Ginseng.Models;
+using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +27,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
-
+        
         public IEnumerable<Milestone> Milestones { get; private set; }
         public Dictionary<int, MilestoneMetricsResult> Metrics { get; private set; }
 
@@ -65,7 +66,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             Metrics = metrics.ToDictionary(row => row.Id);
 
-            var emptyMilestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, HasWorkItems = false }.ExecuteAsync(connection);
+            var emptyMilestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, HasOpenWorkItems = false, Id = Id }.ExecuteAsync(connection);
 			EmptyMilestones = emptyMilestones.Select(ms => new OpenWorkItemsResult()
 			{
 				MilestoneId = ms.Id,
@@ -83,7 +84,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             record.ApplicationId = CurrentOrgUser.CurrentAppId ?? 0;
 			await Data.TrySaveAsync(record);
 			return Redirect(returnUrl);
-		}
+		}        
 
 		public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
 		{
@@ -121,5 +122,43 @@ namespace Ginseng.Mvc.Pages.Dashboard
 				return RedirectToPage("Milestones");
 			}
 		}
-	}
+
+        /// <summary>
+        /// returns the row number for a given yearMonth
+        /// </summary>
+        public int RowNumber(YearMonth yearMonth, int countPerRow = 4)
+        {
+            int result = yearMonth.Index / countPerRow;
+            return result;
+        }
+
+        public IEnumerable<YearMonth> GetYearMonthRange(int futureMonths = 0)
+        {
+            if (Milestones?.Any() ?? false)
+            {
+                var start = Milestones.First().Date;
+                var end = Milestones.Last().Date.AddMonths(futureMonths);
+                return GetYearMonthRange(new YearMonth(start), new YearMonth(end));
+            }
+
+            return Enumerable.Empty<YearMonth>();
+        }
+
+        private IEnumerable<YearMonth> GetYearMonthRange(YearMonth start, YearMonth end)
+        {
+            List<YearMonth> results = new List<YearMonth>();
+            YearMonth add = start;                        
+            while (add <= end)
+            {
+                results.Add(add);
+                add += 1;                                               
+            }
+            return results;
+        }
+
+        public ILookup<YearMonth, Milestone> GetCalendar()
+        {
+            return Milestones.ToLookup(row => new YearMonth(row.Date));
+        }
+    }
 }
