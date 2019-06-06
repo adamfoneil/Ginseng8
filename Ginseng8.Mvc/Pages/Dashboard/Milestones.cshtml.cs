@@ -84,7 +84,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             record.ApplicationId = CurrentOrgUser.CurrentAppId ?? 0;
 			await Data.TrySaveAsync(record);
 			return Redirect(returnUrl);
-		}
+		}        
 
 		public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
 		{
@@ -123,6 +123,15 @@ namespace Ginseng.Mvc.Pages.Dashboard
 			}
 		}
 
+        /// <summary>
+        /// returns the row number for a given yearMonth
+        /// </summary>
+        public int RowNumber(YearMonth yearMonth, int countPerRow = 4)
+        {
+            int result = yearMonth.Index / countPerRow;
+            return result;
+        }
+
         public IEnumerable<YearMonth> GetYearMonthRange(int futureMonths = 0)
         {
             if (Milestones?.Any() ?? false)
@@ -138,11 +147,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
         private IEnumerable<YearMonth> GetYearMonthRange(YearMonth start, YearMonth end)
         {
             List<YearMonth> results = new List<YearMonth>();
-            YearMonth add = start;
+            YearMonth add = start;                        
             while (add <= end)
             {
                 results.Add(add);
-                add += 1;
+                add += 1;                                               
             }
             return results;
         }

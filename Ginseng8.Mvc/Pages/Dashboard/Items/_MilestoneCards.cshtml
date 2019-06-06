@@ -1,34 +1,37 @@
 ﻿@model Ginseng.Mvc.Pages.Dashboard.MilestonesModel
 
 @{ 
-    var months = Model.GetYearMonthRange(4);
+    var months = Model.GetYearMonthRange();
     var milestones = Model.GetCalendar();
 }
 
 @foreach (var yearGrp in months.GroupBy(row => row.Year))
 {
-    <h4>@yearGrp.Key</h4>    
-    <div class="row">
-        @foreach (var month in yearGrp)
-        {
-            <div class="col-sm-3 card p-1 m-1">
-                <h6 class="card-title text-right text-muted">@month.ToString()</h6>                
-                <div class="card-body">
-                @foreach (var ms in milestones[month])
-                {
-                    var metrics = Model.Metrics[ms.Id];
-                    <p data-milestone-id="@ms.Id">
-                        <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-secondary" : "btn-light") milestone-work-items" asp-page="Milestones" data-milestone-id="@ms.Id">
-                            <i class="fas fa-flag-checkered"></i>
-                            @ms.Name
-                            <sup>@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
-                        </a>
-                        <br/>
-                        <partial name="Items/_MilestoneInfo" model="metrics"/>
-                    </p>
-                }
+    <h4>@yearGrp.Key</h4>        
+    @foreach  (var qtrGrp in yearGrp.GroupBy(row => Model.RowNumber(row)))
+    {
+        <div class="card-deck">
+            @foreach (var month in qtrGrp)
+            {
+                <div class="card p-1 m-1">
+                    <h6 class="card-title text-right text-muted">@month.ToString()</h6>
+                    <div class="card-body">
+                    @foreach (var ms in milestones[month])
+                    {
+                        var metrics = Model.Metrics[ms.Id];
+                        <p data-milestone-id="@ms.Id">
+                            <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-secondary" : "btn-light") milestone-work-items" asp-page="Milestones" data-milestone-id="@ms.Id">
+                                <i class="fas fa-flag-checkered"></i>
+                                @ms.Name
+                                <sup>@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
+                            </a>
+                            <br/>
+                            <partial name="Items/_MilestoneInfo" model="metrics"/>                            
+                        </p>
+                    }
+                    </div>                    
                 </div>
-            </div>
-        }
-    </div>
+            }
+        </div>
+    }            
 }

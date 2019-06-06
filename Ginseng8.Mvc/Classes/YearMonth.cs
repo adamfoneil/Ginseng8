@@ -5,7 +5,8 @@ namespace Ginseng.Mvc.Classes
     public class YearMonth : IComparable<YearMonth>
     {
         public int Year { get; set; }
-        public int Month { get; set; }
+        public int Month { get; set; }        
+        public int Index { get; set; }
 
         public YearMonth()
         {
@@ -48,7 +49,10 @@ namespace Ginseng.Mvc.Classes
 
         public static YearMonth operator +(YearMonth value, int months)
         {
-            return new YearMonth(value.EndDate().AddMonths(months));
+            int year = value.Year;
+            var result = new YearMonth(value.EndDate().AddMonths(months)) { Index = value.Index + 1 };
+            if (result.Year > year) result.Index = 0;
+            return result;
         }
 
         public static YearMonth operator -(YearMonth value, int months)
