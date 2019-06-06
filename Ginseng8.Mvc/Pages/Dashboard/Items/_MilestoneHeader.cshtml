@@ -2,7 +2,7 @@
 
 <h5 data-milestone-id="@Model.MilestoneId">    
     <i class="fas fa-flag-checkered"></i>
-    <span class="editable" id="milestone-name-@Model.MilestoneId" data-url="/Update/MilestoneName">@Model.MilestoneName</span>        
+    <span class="@((Model.MilestoneId != 0) ? "editable" : string.Empty)" id="milestone-name-@Model.MilestoneId" data-url="/Update/MilestoneName">@Model.MilestoneName</span>        
     @if (Model.MilestoneId != 0)
     {
         <a href="#" class="ms-datepicker" data-milestone-id="@Model.MilestoneId">@Html.FormatValue(Model.MilestoneDate, "{0:ddd M/d}")</a>        
