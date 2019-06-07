@@ -19,16 +19,14 @@ namespace Ginseng.Mvc.Pages.Setup
         [BindProperty(SupportsGet = true)]
         public int AppId { get; set; }
 
-        public SelectList AppSelect { get; set; }
-        public SelectList ProjectSelect { get; set; }
+        public SelectList AppSelect { get; set; }        
         public IEnumerable<Milestone> Milestones { get; set; }
 
 		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
 			{
-                AppSelect = await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, AppId);
-                ProjectSelect = await new ProjectSelect() { AppId = AppId }.ExecuteSelectListAsync(cn);                
+                AppSelect = await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, AppId);                
                 Milestones = await new Milestones() { OrgId = OrgId, AppId = AppId }.ExecuteAsync(cn);
 			}
 		}
