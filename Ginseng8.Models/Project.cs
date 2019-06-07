@@ -32,6 +32,12 @@ namespace Ginseng.Models
 		/// </summary>
 		public int? Priority { get; set; }
 
+        /// <summary>
+        /// Shown on milestone dashboard
+        /// </summary>
+        [MaxLength(5)]
+        public string Nickname { get; set; }
+
 		/// <summary>
 		/// Source code location
 		/// </summary>
