@@ -33,9 +33,6 @@ namespace Ginseng.Models
 		[DisplayFormat(DataFormatString = "{0:M/d/yy}")]
 		public DateTime Date { get; set; }
 
-        [References(typeof(Project))]
-        public int? ProjectId { get; set; }
-
 		[NotMapped]
 		public int? DaysAway { get; set; }
 
