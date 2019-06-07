@@ -150,7 +150,27 @@ namespace Ginseng.Mvc.Controllers
 			throw new Exception($"Work item number {workItemNumber} not found.");
 		}
 
-		[Route("/Update/CurrentApp/{id}")]
+        public async Task<ContentResult> NewItemAppLabel(int applicationId, int labelId, bool selected)
+        {
+            using (var cn = _data.GetConnection())
+            {               
+                if (selected)
+                {
+                    var nal = new NewItemAppLabel() { ApplicationId = applicationId, LabelId = labelId };
+                    await cn.MergeAsync(nal, _data.CurrentUser);
+                }
+                else
+                {
+                    var nal = await cn.FindWhereAsync<NewItemAppLabel>(new { ApplicationId = applicationId, LabelId = labelId });
+                    if (nal != null) await cn.DeleteAsync<NewItemAppLabel>(nal.Id);
+                }
+
+                var apps = await new NewItemAppLabelsInUse() { OrgId = _data.CurrentOrg.Id, LabelId = labelId }.ExecuteAsync(cn);
+                return Content(string.Join(", ", apps.Select(a => a.Name)));
+            }
+        }
+
+        [Route("/Update/CurrentApp/{id}")]
 		public async Task<RedirectResult> CurrentApp(int id, string returnUrl)
 		{
 			if (_data.CurrentOrgUser == null) return Redirect(returnUrl);

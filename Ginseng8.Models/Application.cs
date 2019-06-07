@@ -14,7 +14,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// A software product managed by an organization
 	/// </summary>
-	public class Application : BaseTable, IOrgSpecific, IFindRelated<int>
+	public class Application : BaseTable, IOrgSpecific, IFindRelated<int>, ISelectable
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
@@ -53,7 +53,18 @@ namespace Ginseng.Models
         public bool Selected { get; set; }
 
         [NotMapped]
-        public bool LabelId { get; set; }
+        public int LabelId { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var test = obj as Application;
+            return (test != null) ? test.Id == Id : false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {

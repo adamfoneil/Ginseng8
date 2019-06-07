@@ -70,7 +70,7 @@ namespace Ginseng.Mvc
         }
 
         /// <summary>
-        /// Override this if you need to redirect from the dashboard page for reason
+        /// Override this if you need to redirect from the dashboard page for some reason (e.g. if a search was done whose results can't display on this page)
         /// </summary>
         protected virtual async Task<RedirectResult> GetRedirectAsync(SqlConnection connection)
         {

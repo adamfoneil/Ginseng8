@@ -20,7 +20,7 @@ namespace Ginseng.Mvc.Pages.Setup
         public IEnumerable<Label> Labels { get; set; }
         public Dictionary<int, LabelSubscription> Subscriptions { get; set; }
         public IEnumerable<Application> AllApps { get; set; }
-        public ILookup<int, NewItemAppLabel> NewItemApps { get; set; }
+        public ILookup<int, Application> NewItemApps { get; set; }
 
         public async Task OnGetAsync(bool isActive = true)
         {
@@ -33,22 +33,24 @@ namespace Ginseng.Mvc.Pages.Setup
                 var subscriptions = await new MyLabelSubscriptions() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(cn);
                 Subscriptions = subscriptions.ToDictionary(row => row.LabelId);
 
-                AllApps = await new Applications() { OrgId = OrgId }.ExecuteAsync(cn);
+                AllApps = await new Applications() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
 
-                var newItemAppLabels = await new NewItemAppLabels() { OrgId = OrgId }.ExecuteAsync(cn);
+                var newItemAppLabels = await new NewItemAppLabelsInUse() { OrgId = OrgId }.ExecuteAsync(cn);
                 NewItemApps = newItemAppLabels.ToLookup(row => row.LabelId);                
             }
         }
         
-        public AppSelector GetAppSelector(IEnumerable<NewItemAppLabel> apps)
+        public MultiSelector<Application> GetAppSelector(int labelId)
         {
-            return new AppSelector()
+            var apps = NewItemApps[labelId];
+            return new MultiSelector<Application>()
             {
-                Applications = AllApps.Select(app => new Application()
+                RelatedId = labelId,
+                Items = AllApps.Select(app => new Application()
                 {
                     Id = app.Id,
                     Name = app.Name,
-                    Selected = apps.Contains()
+                    Selected = apps.Contains(app)
                 })
             };
         }

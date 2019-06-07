@@ -203,22 +203,9 @@ labelCheckboxes.forEach(function (e) {
     });
 });
 
-function LabelCheckboxLinkOnClick(ev) {
-    ev.stopPropagation();
-    var checkbox = null;
-    if (ev.target.tagName == 'A') {
-        checkbox = ev.target.getElementsByTagName('input')[0];
-    } else if (ev.target.tagName == 'SPAN') {
-        checkbox = ev.target.parentElement.getElementsByTagName('input')[0];
-    }
-    checkbox.checked = !checkbox.checked;
-    var event = new Event('click');
-    checkbox.dispatchEvent(event);
-}
-
 var labelCheckboxes = document.querySelectorAll('.labelCheckboxLink');
 labelCheckboxes.forEach(function (e) {
-    e.addEventListener('click', LabelCheckboxLinkOnClick);
+    e.addEventListener('click', MultiSelectCheckboxLinkOnClick);
 });
 
 var itemDetailButtons = document.querySelectorAll('.btn-item-detail');

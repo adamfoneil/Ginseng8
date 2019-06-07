@@ -11,7 +11,7 @@ namespace Ginseng.Models
 	/// <summary>
 	/// A descriptor such as Bug or Feature or some other wording that helps categorize work items
 	/// </summary>
-	public class Label : BaseTable, IOrgSpecific
+	public class Label : BaseTable, IOrgSpecific, ISelectable
 	{
 		[References(typeof(Organization))]
 		[PrimaryKey]
