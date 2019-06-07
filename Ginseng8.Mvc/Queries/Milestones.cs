@@ -41,6 +41,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("[ms].[Date]>=@minDate")]
 		public DateTime? MinDate { get; set; } = DateTime.Today.AddDays(-5);
 
+        [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] [wi] INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id] WHERE [ProjectId]=@projectId AND [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL AND [app].[IsActive]=1)")]
+        public int? ProjectId { get; set; }
+
 		[Case(false, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id])")]
 		[Case(true, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id])")]
 		public bool? HasWorkItems { get; set; }

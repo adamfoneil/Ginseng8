@@ -5,6 +5,28 @@
     var milestones = Model.GetCalendar();
 }
 
+@if (Model.FilterProjects != null)
+{
+    <ul class="list-inline text-center">
+        <li class="list-inline-item small">
+            Projects:
+        </li>
+
+        @foreach (var prj in Model.FilterProjects)
+        {            
+            <li class="list-inline-item">
+                <a asp-page="/Dashboard/Milestones" asp-route-projectId="@prj.Id" class="btn btn-sm btn-light" title="@prj.Name">@(prj.Nickname ?? prj.Name)</a>
+            </li>
+        }
+        @if (Model.ProjectId.HasValue)
+        {
+            <li class="list-inline-item">
+                <a asp-page="/Dashboard/Milestones" class="btn btn-sm btn-light">show all</a>
+            </li>
+        }        
+    </ul>
+}
+
 @foreach (var yearGrp in months.GroupBy(row => row.Year))
 {
     <h4>@yearGrp.Key</h4>        

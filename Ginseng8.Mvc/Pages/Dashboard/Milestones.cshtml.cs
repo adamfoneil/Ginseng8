@@ -28,8 +28,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
         
+        [BindProperty(SupportsGet = true)]
+        public int? ProjectId { get; set; }
+
+        public IEnumerable<Project> FilterProjects { get; set; } // projects with milestones
         public IEnumerable<Milestone> Milestones { get; private set; }
         public Dictionary<int, MilestoneMetricsResult> Metrics { get; private set; }
+        public ILookup<int, string> ProjectNicknames { get; set; }
 
         public Milestone NextSoonest { get; private set; }
 		public Milestone NextGenerated { get; private set; }
@@ -58,7 +63,12 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
-            Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+            Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, ProjectId = ProjectId }.ExecuteAsync(connection);
+
+            if (!Id.HasValue && CurrentOrgUser.CurrentAppId.HasValue)
+            {
+                FilterProjects = await new Projects() { AppId = CurrentOrgUser.CurrentAppId, HasMilestones = true, IsActive = true }.ExecuteAsync(connection);
+            }            
 
             var metrics = (!Id.HasValue) ?
                 await new MilestoneMetrics() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection) :
