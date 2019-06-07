@@ -44,6 +44,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public int WorkItemId { get; set; }
 
+        [NotMapped]
+        public int ApplicationId { get; set; }
+
 		/// <summary>
 		/// For queries only
 		/// </summary>

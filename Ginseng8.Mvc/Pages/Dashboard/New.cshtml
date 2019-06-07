@@ -4,7 +4,7 @@
     ViewData["Title"] = "New";
 }
 
-<p>Use this to create new work items in the appropriate grouping. Items shown here have no future milestone selected.</p>
+<p>Use this to create new work items in the appropriate grouping. Items shown here have no <a asp-page="/Dashboard/Projects">project</a> selected.</p>
 
 <div id="accordion">
 @foreach  (var app in Model.Applications)
@@ -14,7 +14,7 @@
         <p>@app.Description</p>
 
         <ul class="nav nav-tabs" role="tablist">
-            @foreach (var label in Model.Labels)
+            @foreach (var label in Model.Labels[app.Id])
             {
                 <li class="nav-item">
                     <a href="#app-@app.Id-label-@label.Id" data-toggle="tab" class="nav-link" id="tab-app-@app.Id-label-@label.Id">
@@ -25,7 +25,7 @@
             }
         </ul>
         <div class="tab-content my-3" id="tabContent">
-            @foreach  (var label in Model.Labels)
+            @foreach  (var label in Model.Labels[app.Id])
             {
                 <div id="app-@app.Id-label-@label.Id" class="tab-pane fade" data-tab-id="tab-app-@app.Id-label-@label.Id" role="tabpanel">
                     <div class="ml-3">

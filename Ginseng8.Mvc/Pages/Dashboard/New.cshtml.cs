@@ -16,9 +16,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
             ShowLabelFilter = false;
             ShowExcelDownload = false;
         }
-
-        public IEnumerable<Label> Labels { get; set; }
-        public IEnumerable<Application> Applications { get; set; }        
+        
+        public IEnumerable<Application> Applications { get; set; }
+        public ILookup<int, Label> Labels { get; set; }
         public ILookup<AppLabelCell, OpenWorkItemsResult> AppLabelItems { get; set; }
         public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }
 
@@ -47,8 +47,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
             int[] labelIds = null;
             using (var cn = Data.GetConnection())
             {
-                Labels = new Labels() { OrgId = OrgId, IsActive = true, AllowNewItems = true }.Execute(cn);
-                labelIds = Labels.Select(l => l.Id).ToArray();
+                var labels = new NewItemAppLabels() { OrgId = OrgId }.Execute(cn);
+                Labels = labels.ToLookup(row => row.ApplicationId);
+                labelIds = labels.GroupBy(row => row.Id).Select(grp => grp.Key).ToArray();
             }
 
             return new OpenWorkItems()

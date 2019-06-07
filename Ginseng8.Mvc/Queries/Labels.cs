@@ -10,12 +10,15 @@ namespace Ginseng.Mvc.Queries
     public class Labels : Query<Label>, ITestableQuery
     {
         public Labels() : base(
-            @"SELECT *
-            FROM [dbo].[Label]
+            @"SELECT 
+                [lbl].*
+            FROM 
+                [dbo].[Label] [lbl]
             WHERE
                 [OrganizationId]=@orgId AND
                 [IsActive]=@isActive {andWhere}
-            ORDER BY [Name]")
+            ORDER BY 
+                [Name]")
         {
         }
 
@@ -23,7 +26,7 @@ namespace Ginseng.Mvc.Queries
         public bool IsActive { get; set; }
 
         [Where("[AllowNewItems]=@allowNewItems")]
-        public bool? AllowNewItems { get; set; }
+        public bool? AllowNewItems { get; set; }        
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {
