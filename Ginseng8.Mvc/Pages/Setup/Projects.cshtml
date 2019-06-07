@@ -31,7 +31,8 @@
 <table class="table">
     <tr>
         <th>Application</th>
-        <th>Project Name</th> 
+        <th>Project Name</th>
+        <th>Nickname</th>
         <th>Priority</th>
         <th>Active</th>
         <th>Manage</th>
@@ -42,6 +43,7 @@
         <tr id="@grid.RowId(item)">
             <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>
             <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
             <td>@grid.CheckBox(m => m.IsActive)</td>
             <td><a asp-page="/Dashboard/Projects" asp-route-id="@item.Id">Manage</a></td>
@@ -50,7 +52,8 @@
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>                
+        <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>
         <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
         <td>@grid.CheckBox(m => m.IsActive)</td>
         <td></td>
