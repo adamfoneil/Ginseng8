@@ -31,6 +31,7 @@
     <tr>
         <th>Application</th>
         <th>Milestone Name</th>
+        <th>Project</th>
         <th>Date</th>
         <th>Work Items</th>
         <th></th>
@@ -40,6 +41,7 @@
         <tr id="@grid.RowId(item)">
             <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.DropDownList(m => m.ProjectId, Model.ProjectSelect, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
             <td>
                 @if ((item.OpenWorkItems ?? 0) > 0)
@@ -62,6 +64,7 @@
     <tr id="@grid.NewRowId()">
         <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.DropDownList(m => m.ProjectId, Model.ProjectSelect, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
         <td></td>
         <td>@grid.Controls()</td>
