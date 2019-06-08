@@ -3,7 +3,7 @@
 @if (Model.ItemsInPastMilestone?.Any() ?? false)
 {
     <div class="text-center mb-3">
-        <form method="get" asp-page="Milestones">
+        <form method="get" asp-page="AllItems">
             <input type="hidden" name="pastDue" value="true"/>
             <label>You have @Model.ItemsInPastMilestone.Count() item(s) in past milestones</label>
             <button class="btn btn-info">View</button>
