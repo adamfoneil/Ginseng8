@@ -9,7 +9,7 @@
                 <textarea name="HtmlBody" class="form-control form-control-sm htmlEditor" required="required" placeholder="add comment" id="addComment-@Model.ObjectId-HtmlBody"></textarea>
             </div>
         </div>
-        <div class="form-row mt-2">
+        <div class="form-row mt-3">
             <div class="col-4">
                 <select name="IsImpediment" class="form-control form-control-sm mr-2">
                     <option value="">Info Only</option>
@@ -30,8 +30,8 @@
     <li>
         <i class="@item.IconClass"></i>
         <strong>@item.DisplayName</strong>
-        <span>@Html.Raw(item.HtmlBody)</span>
         <span class="small text-muted">@Html.FormatValue(item.DateCreated, "{0:ddd M/d}")</span>
+        <div>@Html.Raw(item.HtmlBody)</div>        
     </li>
 }
 </ul>

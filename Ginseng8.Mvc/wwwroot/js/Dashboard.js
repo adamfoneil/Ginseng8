@@ -344,6 +344,7 @@ $(document)
         var objectId = frm.ObjectId.value;
         var objectType = frm.ObjectType.value;
         $('#comments-' + objectId + '-' + objectType + '-output').first().html(html);
+        $('#addComment-' + objectId + '-HtmlBody').froalaEditor(GetFroalaSettings());
     });
 })
 .on('click', '.addComment', function(event) {
