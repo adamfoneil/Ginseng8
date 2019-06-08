@@ -130,30 +130,20 @@ namespace Ginseng.Mvc
             return Page();
         }
 
-        public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, Func<WorkDaysResult, bool> workDayFilter = null)
+        public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, Func<WorkDaysResult, bool> workDayFilter = null, MilestoneMetricsResult metrics = null)
         {
             int estimateHours = milestoneGrp.Sum(wi => wi.EstimateHours);
 
-            LoadView result = null;
-
-            if (milestoneGrp.First().MilestoneDate.HasValue)
+            LoadView result = new LoadView()
             {
-                DateTime milestoneDate = milestoneGrp.First().MilestoneDate.Value;
-                result = new LoadView()
-                {
-                    EstimateHours = estimateHours,
-                    WorkHours = WorkDays.Where(wd => wd.Date <= milestoneDate && (workDayFilter?.Invoke(wd) ?? true)).Sum(wi => wi.Hours)                    
-                };
-            }
-            else
-            {
-                result = new LoadView()
-                {
-                    EstimateHours = estimateHours,                    
-                };
-            }
+                EstimateHours = estimateHours
+            }; 
 
-            if (MilestoneMetrics.ContainsKey(milestoneGrp.Key))
+            if (metrics != null)
+            {
+                result.MilestoneMetrics = metrics;
+            }
+            else if (MilestoneMetrics.ContainsKey(milestoneGrp.Key))
             {
                 result.MilestoneMetrics = MilestoneMetrics[milestoneGrp.Key];
             }

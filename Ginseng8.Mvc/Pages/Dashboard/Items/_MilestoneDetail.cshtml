@@ -7,7 +7,7 @@
 
     <partial name="Items/_MilestoneHeader" model="@appGrp.First()"/>
 
-    <partial name="Items/_Load" model="Model.GetLoadView(appGrp)"/>
+    <partial name="Items/_Load" model="@Model.GetLoadView(appGrp, metrics: Model.Metrics.First().Value)"/>
 
     @if (appGrp.First().MilestoneDate < DateTime.Today)
     {
@@ -47,7 +47,7 @@
         { "milestoneId", Model.Id.Value }
     }))
         
-    var recentlyClosed = Model.ClosedItems[appGrp.Key].Take(10);                        
+    var recentlyClosed = Model.ClosedItems[Model.Id.Value].Take(10);                        
     @if (recentlyClosed.Any())
     {
         <partial name="Items/_RecentlyClosed" model="recentlyClosed"/>
@@ -55,7 +55,7 @@
 }
 </div>
 
-@if (Model.CurrentOrgUser.CurrentAppId.HasValue)
+@if (Model.CurrentOrgUser.CurrentAppId.HasValue && Model.EmptyMilestones.Any())
 {
     <div id="emptyMilestones">
         <span>Tip: Milestones with no work items show here. After they get at least one work item, they display like others.</span>
