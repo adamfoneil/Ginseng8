@@ -333,6 +333,12 @@ $(document)
 .on('click', '.add-comment-submit', function(ev) {
     ev.preventDefault();
     var frm = ev.target.form;
+
+    if (frm.HtmlBody.value == '') {
+        alert('Comment may not be empty.');
+        return;
+    }
+
     let formData = new FormData(frm);
 
     fetch('/WorkItem/SaveComment', {
