@@ -13,6 +13,8 @@ namespace Ginseng.Models
 	/// </summary>
 	public class Label : BaseTable, IOrgSpecific, ISelectable
 	{
+        public const string PlaceholderLabel = "placeholder";
+
 		[References(typeof(Organization))]
 		[PrimaryKey]
 		public int OrganizationId { get; set; }

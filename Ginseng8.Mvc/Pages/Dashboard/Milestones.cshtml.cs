@@ -141,11 +141,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         private async Task<int> GetPlaceholderLabelIdAsync(SqlConnection cn)
         {
-            const string name = "placeholder";
-
             var label = 
-                await cn.FindWhereAsync<Label>(new { OrganizationId = OrgId, Name = name }) ?? 
-                new Label() { OrganizationId = OrgId, Name = name, BackColor = "#B8B8B8", ForeColor = "black", IsActive = false };
+                await cn.FindWhereAsync<Label>(new { OrganizationId = OrgId, Name = Label.PlaceholderLabel }) ?? 
+                new Label() { OrganizationId = OrgId, Name = Label.PlaceholderLabel, BackColor = "#B8B8B8", ForeColor = "black", IsActive = false };
 
             if (label.Id == 0) await cn.SaveAsync(label, CurrentUser);
 

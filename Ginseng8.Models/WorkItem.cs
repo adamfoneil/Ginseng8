@@ -120,6 +120,8 @@ namespace Ginseng.Models
 					IconClass = IconCreated
 				}, user);
 			}
+
+            await ClosePlaceholderItemsAsync(connection, OrganizationId, MilestoneId, user);
 		}
 
 		private async Task ParseProjectAsync(IDbConnection connection)
@@ -219,6 +221,8 @@ namespace Ginseng.Models
 					HtmlBody = $"Milestone changed from {milestoneChange.OldValue ?? "<i>null</i>"} to {milestoneChange.NewValue ?? "<i>null</i>"}",
 					TextBody = $"Milestone changed from {milestoneChange.OldValue ?? "<null>"} to {milestoneChange.NewValue ?? "<null>"}"
 				}, user);
+
+                await ClosePlaceholderItemsAsync(connection, OrganizationId, MilestoneId, user);
 			}
 
 			if (changes.Include(nameof(ProjectId)))
@@ -245,11 +249,49 @@ namespace Ginseng.Models
 			}
 		}
 
-		/// <summary>
-		/// For event logging purposes, we need to get the orgId associated with an IFeedItem (unless it's already part of the item itself, e.g. WorkItem).
-		/// This static method provides a standard way to get this when the workItemId is already known
-		/// </summary>
-		internal static async Task<OrgAndApp> GetOrgAndAppIdAsync(IDbConnection connection, int workItemId)
+        /// <summary>
+        /// If there's a placeholder item and any other work item in the milestone, then the placeholder item is closed.
+        /// </summary>
+        private async Task ClosePlaceholderItemsAsync(IDbConnection connection, int orgId, int? milestoneId, IUser user)
+        {
+            if (!milestoneId.HasValue) return;
+
+            int? placeholderLabelId = await connection.QuerySingleAsync<int?>("SELECT [Id] FROM [dbo].[Label] WHERE [OrganizationId]=@orgId AND [Name]=@name", new { orgId, name = Label.PlaceholderLabel });
+            if (!placeholderLabelId.HasValue) return;
+
+            var parameters = new { orgId, msId = milestoneId, labelId = placeholderLabelId };
+
+            var placeholderItemIds = await connection.QueryAsync<int>(
+                "SELECT [wi].[Id] FROM [dbo].[WorkItem] [wi] WHERE [OrganizationId]=@orgId AND [MilestoneId]=@msId AND EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId]=@labelId)",
+                parameters);
+
+            var realItemIds = await connection.QueryAsync<int>(
+                "SELECT [wi].[Id] FROM [dbo].[WorkItem] [wi] WHERE [OrganizationId]=@orgId AND [MilestoneId]=@msId AND NOT EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId]=@labelId)",
+                parameters);
+
+            if (placeholderItemIds.Any() && realItemIds.Any())
+            {
+                foreach (int id in placeholderItemIds)
+                {
+                    var comment = new Comment()
+                    {
+                        OrganizationId = orgId,
+                        ObjectId = id,
+                        ObjectType = ObjectType.WorkItem,
+                        TextBody = "Placeholder item auto-closed",
+                        HtmlBody = "<p>Placeholder item auto-closed</p>"
+                    };
+                    await connection.SaveAsync(comment, user);
+                    await connection.ExecuteAsync("UPDATE [wi] SET [CloseReasonId]=8 FROM [dbo].[WorkItem] [wi] WHERE [Id]=@id", new { id });
+                }
+            }
+        }
+
+        /// <summary>
+        /// For event logging purposes, we need to get the orgId associated with an IFeedItem (unless it's already part of the item itself, e.g. WorkItem).
+        /// This static method provides a standard way to get this when the workItemId is already known
+        /// </summary>
+        internal static async Task<OrgAndApp> GetOrgAndAppIdAsync(IDbConnection connection, int workItemId)
 		{
 			return await connection.QuerySingleAsync<OrgAndApp>("SELECT [OrganizationId], [ApplicationId] FROM [dbo].[WorkItem] WHERE [Id]=@workItemId", new { workItemId });
 		}
