@@ -1,19 +1,41 @@
 ﻿@model Ginseng.Mvc.Pages.Dashboard.MilestonesModel
 
 @{ 
-    var months = Model.GetYearMonthRange();
+    var months = Model.GetYearMonthRange(4);
     var milestones = Model.GetCalendar();
+}
+
+@if (Model.FilterProjects != null)
+{
+    <ul class="list-inline text-center">
+        <li class="list-inline-item small">
+            Projects:
+        </li>
+
+        @foreach (var prj in Model.FilterProjects)
+        {            
+            var buttonClass = (prj.Id.Equals(Model.ProjectId)) ? "btn-dark" : "btn-light";
+            <li class="list-inline-item">
+                <a asp-page="/Dashboard/Milestones" asp-route-projectId="@prj.Id" class="btn btn-sm @buttonClass" title="@prj.Name">@(prj.Nickname ?? prj.Name)</a>
+            </li>
+        }
+        @if (Model.ProjectId.HasValue)
+        {
+            <li class="list-inline-item">
+                <a asp-page="/Dashboard/Milestones" class="btn btn-sm btn-light">show all</a>
+            </li>
+        }        
+    </ul>
 }
 
 @foreach (var yearGrp in months.GroupBy(row => row.Year))
 {
-    <h4>@yearGrp.Key</h4>        
-    @foreach  (var qtrGrp in yearGrp.GroupBy(row => Model.RowNumber(row)))
-    {
-        <div class="card-deck">
-            @foreach (var month in qtrGrp)
-            {
-                <div class="card p-1 m-1">
+    <h4>@yearGrp.Key</h4> 
+    <div class="row">        
+        @foreach (var month in yearGrp)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-4 mb-4">
+                <div class="card p-2">
                     <h6 class="card-title text-right text-muted">@month.ToString()</h6>
                     <div class="card-body">
                     @foreach (var ms in milestones[month])
@@ -31,7 +53,7 @@
                     }
                     </div>                    
                 </div>
-            }
-        </div>
-    }            
+            </div> 
+        }        
+     </div>
 }

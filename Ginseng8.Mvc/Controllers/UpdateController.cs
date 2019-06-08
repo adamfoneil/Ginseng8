@@ -222,6 +222,16 @@ namespace Ginseng.Mvc.Controllers
 			return Content(newName);
 		}
 
+        public async Task<ContentResult> ProjectNickname(string elementId, string newName)
+        {
+            int projectId = IntFromText(elementId);
+            var project = await _data.FindAsync<Project>(projectId);
+            if (project.Application.OrganizationId != _data.CurrentOrg.Id) throw new Exception("Application is in a different organization.");
+            project.Nickname = newName;
+            await _data.TryUpdateAsync(project, r => r.Nickname);
+            return Content(newName);
+        }
+
         public async Task<ContentResult> MilestoneName(string elementId, string newName)
         {
             int milestoneId = IntFromText(elementId);

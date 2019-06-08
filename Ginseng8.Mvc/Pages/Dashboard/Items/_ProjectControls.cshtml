@@ -2,6 +2,7 @@
 
 <form class="form-inline mb-2">
     <input type="hidden" name="Id" value="@Model.SelectedProject.Id"/>
+
     <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject.ApplicationId)" class="form-control-sm mr-2 projectUpdate"></select>
     
     @if (Model.SelectedProject.DataModelId.HasValue)
@@ -26,6 +27,9 @@
             <option value="">(none)</option>
         </select>
     }
+
+    <span class="text-muted small mr-2">Nickname:</span>
+    <span class="editable mr-2 small" id="project-nickname-@Model.SelectedProject.Id" data-url="/Update/ProjectNickname">@(Model.SelectedProject.Nickname ?? "nickame")</span>
     
     <label>
         @Html.CheckBox("IsActive", Model.SelectedProject.IsActive, new { @class = "projectUpdate mr-1" })

@@ -15,7 +15,7 @@ else
 
 @if (Model.CurrentOrgUser.CurrentAppId.HasValue)
 {
-    <partial name="Dashboard/Items/_CreateMilestone"/>
+    <partial name="Dashboard/Items/_CreateMilestone" model="@(new CreateMilestoneView() { ProjectSelect = Model.ProjectSelect })"/>
 }
 
 @section Scripts {

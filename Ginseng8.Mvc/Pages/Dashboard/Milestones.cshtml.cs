@@ -2,8 +2,10 @@
 using Ginseng.Models;
 using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System;
@@ -28,8 +30,15 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		[BindProperty(SupportsGet = true)]
 		public bool? PastDue { get; set; }
         
+        [BindProperty(SupportsGet = true)]
+        public int? ProjectId { get; set; }
+
+        public IEnumerable<Project> FilterProjects { get; set; } // projects with milestones
         public IEnumerable<Milestone> Milestones { get; private set; }
         public Dictionary<int, MilestoneMetricsResult> Metrics { get; private set; }
+        public ILookup<int, string> ProjectNicknames { get; set; }
+
+        public SelectList ProjectSelect { get; set; }
 
         public Milestone NextSoonest { get; private set; }
 		public Milestone NextGenerated { get; private set; }
@@ -58,7 +67,15 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
 		protected override async Task OnGetInternalAsync(SqlConnection connection)
 		{
-            Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+            Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, ProjectId = ProjectId }.ExecuteAsync(connection);
+
+            // for the create milestone partial
+            ProjectSelect = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId }.ExecuteSelectListAsync(connection);
+
+            if (!Id.HasValue && CurrentOrgUser.CurrentAppId.HasValue)
+            {
+                FilterProjects = await new Projects() { AppId = CurrentOrgUser.CurrentAppId, HasMilestones = true, IsActive = true }.ExecuteAsync(connection);
+            }            
 
             var metrics = (!Id.HasValue) ?
                 await new MilestoneMetrics() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection) :
@@ -82,11 +99,58 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)
 		{
             record.ApplicationId = CurrentOrgUser.CurrentAppId ?? 0;
-			await Data.TrySaveAsync(record);
+            using (var cn = Data.GetConnection())
+            {
+                if (await Data.TrySaveAsync(cn, record))
+                {
+                    if (record.ProjectId != 0) await CreatePlaceholderItemAsync(cn, record);
+                }
+            }
+			
 			return Redirect(returnUrl);
-		}        
+		}
 
-		public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
+        private async Task CreatePlaceholderItemAsync(SqlConnection cn, Milestone record)
+        {
+            const string text = @"Placeholder item created with milestone. This enables you to filter for this project on the milestone dashboard. This will automatically close when you add another work item to this milestone.";
+
+            var workItem = new Ginseng.Models.WorkItem()
+            {
+                OrganizationId = OrgId,
+                ApplicationId = record.ApplicationId,
+                MilestoneId = record.Id,
+                ProjectId = record.ProjectId,
+                Title = "Placeholder item created with milestone",
+                HtmlBody = $"<p>{text}</p>",
+                TextBody = text
+            };
+
+            await workItem.SetNumberAsync(cn);
+
+            if (await Data.TrySaveAsync(cn, workItem))
+            {
+                var wil = new WorkItemLabel()
+                {
+                    WorkItemId = workItem.Id,
+                    LabelId = await GetPlaceholderLabelIdAsync(cn)
+                };
+
+                await Data.TrySaveAsync(cn, wil);
+            }
+        }
+
+        private async Task<int> GetPlaceholderLabelIdAsync(SqlConnection cn)
+        {
+            var label = 
+                await cn.FindWhereAsync<Label>(new { OrganizationId = OrgId, Name = Label.PlaceholderLabel }) ?? 
+                new Label() { OrganizationId = OrgId, Name = Label.PlaceholderLabel, BackColor = "#B8B8B8", ForeColor = "black", IsActive = false };
+
+            if (label.Id == 0) await cn.SaveAsync(label, CurrentUser);
+
+            return label.Id;
+        }
+
+        public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
 		{
 			return await UpdateMilestoneInner(appId, fromMilestoneId, toMilestoneId);
 		}
