@@ -14,8 +14,9 @@
 
         @foreach (var prj in Model.FilterProjects)
         {            
+            var buttonClass = (prj.Id.Equals(Model.ProjectId)) ? "btn-dark" : "btn-light";
             <li class="list-inline-item">
-                <a asp-page="/Dashboard/Milestones" asp-route-projectId="@prj.Id" class="btn btn-sm btn-light" title="@prj.Name">@(prj.Nickname ?? prj.Name)</a>
+                <a asp-page="/Dashboard/Milestones" asp-route-projectId="@prj.Id" class="btn btn-sm @buttonClass" title="@prj.Name">@(prj.Nickname ?? prj.Name)</a>
             </li>
         }
         @if (Model.ProjectId.HasValue)

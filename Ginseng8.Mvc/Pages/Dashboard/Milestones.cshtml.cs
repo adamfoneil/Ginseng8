@@ -99,30 +99,57 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)
 		{
             record.ApplicationId = CurrentOrgUser.CurrentAppId ?? 0;
-			if (await Data.TrySaveAsync(record))
+            using (var cn = Data.GetConnection())
             {
-                if (record.ProjectId != 0) await CreatePlaceholderItemAsync(record.ApplicationId, record.Id, record.ProjectId);
+                if (await Data.TrySaveAsync(cn, record))
+                {
+                    if (record.ProjectId != 0) await CreatePlaceholderItemAsync(cn, record);
+                }
             }
+			
 			return Redirect(returnUrl);
 		}
 
-        private async Task CreatePlaceholderItemAsync(int appId, int milestoneId, int projectId)
+        private async Task CreatePlaceholderItemAsync(SqlConnection cn, Milestone record)
         {
+            const string text = @"Placeholder item created with milestone. This enables you to filter for this project on the milestone dashboard. This will automatically close when you add another work item to this milestone.";
+
             var workItem = new Ginseng.Models.WorkItem()
             {
                 OrganizationId = OrgId,
-                ApplicationId = appId,
-                MilestoneId = milestoneId,
-                ProjectId = projectId,
+                ApplicationId = record.ApplicationId,
+                MilestoneId = record.Id,
+                ProjectId = record.ProjectId,
                 Title = "Placeholder item created with milestone",
-                HtmlBody = "<p>Placeholder item created with milestone.</p>",
-                TextBody = "Placeholder item created with milestone."
+                HtmlBody = $"<p>{text}</p>",
+                TextBody = text
             };
 
-            if (await Data.TrySaveAsync(workItem))
-            {
+            await workItem.SetNumberAsync(cn);
 
+            if (await Data.TrySaveAsync(cn, workItem))
+            {
+                var wil = new WorkItemLabel()
+                {
+                    WorkItemId = workItem.Id,
+                    LabelId = await GetPlaceholderLabelIdAsync(cn)
+                };
+
+                await Data.TrySaveAsync(cn, wil);
             }
+        }
+
+        private async Task<int> GetPlaceholderLabelIdAsync(SqlConnection cn)
+        {
+            const string name = "placeholder";
+
+            var label = 
+                await cn.FindWhereAsync<Label>(new { OrganizationId = OrgId, Name = name }) ?? 
+                new Label() { OrganizationId = OrgId, Name = name, BackColor = "#B8B8B8", ForeColor = "black", IsActive = false };
+
+            if (label.Id == 0) await cn.SaveAsync(label, CurrentUser);
+
+            return label.Id;
         }
 
         public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
