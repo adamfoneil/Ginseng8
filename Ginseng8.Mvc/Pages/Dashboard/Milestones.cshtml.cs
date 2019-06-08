@@ -2,8 +2,10 @@
 using Ginseng.Models;
 using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System;
@@ -36,6 +38,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public Dictionary<int, MilestoneMetricsResult> Metrics { get; private set; }
         public ILookup<int, string> ProjectNicknames { get; set; }
 
+        public SelectList ProjectSelect { get; set; }
+
         public Milestone NextSoonest { get; private set; }
 		public Milestone NextGenerated { get; private set; }
 
@@ -65,6 +69,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		{
             Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, ProjectId = ProjectId }.ExecuteAsync(connection);
 
+            // for the create milestone partial
+            ProjectSelect = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId }.ExecuteSelectListAsync(connection);
+
             if (!Id.HasValue && CurrentOrgUser.CurrentAppId.HasValue)
             {
                 FilterProjects = await new Projects() { AppId = CurrentOrgUser.CurrentAppId, HasMilestones = true, IsActive = true }.ExecuteAsync(connection);
@@ -92,11 +99,33 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)
 		{
             record.ApplicationId = CurrentOrgUser.CurrentAppId ?? 0;
-			await Data.TrySaveAsync(record);
+			if (await Data.TrySaveAsync(record))
+            {
+                if (record.ProjectId != 0) await CreatePlaceholderItemAsync(record.ApplicationId, record.Id, record.ProjectId);
+            }
 			return Redirect(returnUrl);
-		}        
+		}
 
-		public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
+        private async Task CreatePlaceholderItemAsync(int appId, int milestoneId, int projectId)
+        {
+            var workItem = new Ginseng.Models.WorkItem()
+            {
+                OrganizationId = OrgId,
+                ApplicationId = appId,
+                MilestoneId = milestoneId,
+                ProjectId = projectId,
+                Title = "Placeholder item created with milestone",
+                HtmlBody = "<p>Placeholder item created with milestone.</p>",
+                TextBody = "Placeholder item created with milestone."
+            };
+
+            if (await Data.TrySaveAsync(workItem))
+            {
+
+            }
+        }
+
+        public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
 		{
 			return await UpdateMilestoneInner(appId, fromMilestoneId, toMilestoneId);
 		}

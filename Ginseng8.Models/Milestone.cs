@@ -54,6 +54,9 @@ namespace Ginseng.Models
         [NotMapped]
         public string ApplicationName { get; set; }
 
+        [NotMapped]
+        public int ProjectId { get; set; }
+
         public Application Application { get; set; }
 
 		public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int appId)
