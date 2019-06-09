@@ -1,10 +1,13 @@
 ﻿using Ginseng.Models.Conventions;
+using Ginseng.Models.Queries;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -30,10 +33,23 @@ namespace Ginseng.Models
         {
             Milestone = commandProvider.Find<Milestone>(connection, MilestoneId);
         }
-
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             Milestone = await commandProvider.FindAsync<Milestone>(connection, MilestoneId);
+        }
+
+        public override async Task<bool> ValidateAsync(IDbConnection connection)
+        {
+            var overlap = await new CheckDevMilestoneOverlap() { UserId = DeveloperId, CheckDate = StartDate }.ExecuteAsync(connection);
+            
+            if (overlap.Any())
+            {
+                var item = overlap.First();
+                ValidateAsyncMessage = $"Can't use this date because it overlaps with another committment: {item.MilestoneName} from {item.StartDate.ToString("M/d/yy")} to {item.EndDate.ToString("M/d/yy")}";
+                return false;
+            }
+
+            return true;
         }
     }
 }

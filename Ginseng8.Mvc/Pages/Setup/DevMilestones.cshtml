@@ -9,6 +9,8 @@
 <p>Use this to associate developers with <a asp-page="/Setup/Milestones">milestones</a>. This makes it possible to calculate their available hours. If you then enter
     sizes of work items in a milestone, you can tell better if the work is feasible or if developers are over-committed.</p>
 
+<p>Note that Ginseng prevents you from adding the same developer to overlapping milestone date ranges.</p>
+
 @Html.ActionAlert(TempData)
 
 @{ 
@@ -33,8 +35,7 @@
         <tr>
             <th>Developer</th>
             <th>Start Date</th>
-            <th>Away Hours</th>
-            <th>Other Milestones</th>
+            <th>Away Hours</th>  
             <th>Available Hours</th>
             <th></th>
         </tr>
@@ -43,9 +44,8 @@
             <tr id="@grid.RowId(dev)">
                 <td>@grid.DropDownList(m => m.DeveloperId, Model.UserSelect, new { @class = "form-control" })</td>
                 <td>@grid.TextBox(m => m.StartDate, new { @class = "datepicker form-control" })</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td>@Model.GetAwayHours(dev.DeveloperId)</td>
+                <td>@Model.GetWorkingHours(dev.DeveloperId)</td>                
                 <td>@grid.Controls()</td>
             </tr>
         }
@@ -53,8 +53,7 @@
             <td>@grid.DropDownList(m => m.DeveloperId, Model.UserSelect, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.StartDate, new { @class = "datepicker form-control" })</td>
             <td></td>
-            <td></td>
-            <td></td>
+            <td></td>            
             <td>@grid.Controls()</td>
         </tr>
     </table>

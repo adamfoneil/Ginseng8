@@ -9,10 +9,12 @@ namespace Ginseng.Mvc.Queries
             @"SELECT [dm].* 
             FROM [dbo].[DeveloperMilestone] [dm] 
             INNER JOIN [dbo].[OrganizationUser] [ou] ON [dm].[DeveloperId]=[ou].[UserId]
-            WHERE [ou].[OrganizationId]=@orgId")
+            WHERE [ou].[OrganizationId]=@orgId AND [dm].[MilestoneId]=@milestoneId")
         {
         }
 
         public int OrgId { get; set; }
+
+        public int MilestoneId { get; set; }
     }
 }

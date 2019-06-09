@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Ginseng.Models;
+﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Setup
 {
@@ -26,10 +25,13 @@ namespace Ginseng.Mvc.Pages.Setup
 
         public SelectList AppSelect { get; set; }
         public SelectList MilestoneSelect { get; set; }
-
         public SelectList UserSelect { get; set; }
 
         public IEnumerable<DeveloperMilestone> Developers { get; set; }
+
+        public Dictionary<int, int> AwayHours { get; set; }
+
+        public Dictionary<int, int> WorkingHours { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -41,9 +43,34 @@ namespace Ginseng.Mvc.Pages.Setup
 
                 if (MilestoneId.HasValue)
                 {
-                    Developers = await new DevMilestones() { OrgId = OrgId }.ExecuteAsync(cn);
+                    var ms = await cn.FindAsync<Milestone>(MilestoneId.Value);
+                    Developers = await new DevMilestones() { OrgId = OrgId, MilestoneId = MilestoneId.Value }.ExecuteAsync(cn);
+
+                    if (Developers.Any())
+                    {
+                        var awayDays = await new UserAwayDays()
+                        {
+                            OrgId = OrgId,
+                            StartDate = Developers.Min(row => row.StartDate),
+                            EndDate = ms.Date
+                        }.ExecuteAsync(cn);
+                        AwayHours = awayDays.ToDictionary(row => row.UserId, row => row.TotalHours);
+
+                        var workingHours = await new DevMilestoneWorkingHours() { OrgId = OrgId, MilestoneId = MilestoneId }.ExecuteAsync(cn);
+                        WorkingHours = workingHours.ToDictionary(row => row.DeveloperId, row => row.TotalHours);
+                    }
                 }
             }
+        }
+
+        public int GetAwayHours(int userId)
+        {
+            return (AwayHours.ContainsKey(userId)) ? AwayHours[userId] : 0;
+        }
+
+        public int GetWorkingHours(int userId)
+        {
+            return (WorkingHours.ContainsKey(userId)) ? WorkingHours[userId] : 0;
         }
 
         public async Task<RedirectResult> OnPostSaveAsync(DeveloperMilestone record)
