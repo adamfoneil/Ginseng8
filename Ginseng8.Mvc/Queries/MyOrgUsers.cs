@@ -63,7 +63,7 @@ namespace Ginseng.Mvc.Queries
 
         protected override async Task OnQueryExecutedAsync(QueryTrace queryTrace)
         {
-            _traces.Add(queryTrace);
+            _traces?.Add(queryTrace);
             await Task.CompletedTask;
         }
 
