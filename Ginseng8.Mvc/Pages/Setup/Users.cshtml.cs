@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Setup
@@ -16,12 +17,17 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public IEnumerable<OrganizationUser> Users { get; set; }
 
+        public ILookup<int, string> WorkDays { get; set; }
+
 		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
 			{
-				Users = await new MyOrgUsers() { OrgId = OrgId, ExcludeUserId = UserId, ExcludeOwner = true }.ExecuteAsync(cn);
-			}
+				Users = await new MyOrgUsers(QueryTraces) { OrgId = OrgId, ExcludeUserId = UserId, ExcludeOwner = true, HoursOrgId = OrgId }.ExecuteAsync(cn);
+
+                var workDays = await new UserWorkDays() { OrgId = OrgId }.ExecuteAsync(cn);
+                WorkDays = workDays.ToLookup(row => row.UserId, row => row.Abbreviation);
+            }
 		}
 
 		public async Task<IActionResult> OnPostSave(OrganizationUser record)

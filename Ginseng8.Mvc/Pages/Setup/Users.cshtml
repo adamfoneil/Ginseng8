@@ -16,6 +16,7 @@
 <table class="table">
     <tr>
         <th>User Name</th>
+        <th>Schedule</th>
         <th>Is Request</th>
         <th>Enabled</th>
         <th></th>
@@ -30,6 +31,18 @@
                     <span class="small text-muted">@user.Email</span>
                 }
             </td>
+            <td>
+                <span class="small">
+                <span class="mr-2">@user.DailyWorkHours hrs/day</span>
+                <br/>
+                @foreach (var day in Model.WorkDays[user.UserId])
+                {
+                    <span>@day</span>
+                }
+                <br/>
+                <span>@user.WeeklyHours hrs/week</span>
+                </span>
+            </td>
             <td>@grid.CheckBox(f => f.IsRequest)</td>
             <td>@grid.CheckBox(f => f.IsEnabled)</td>
             <td>@grid.Controls()</td>
@@ -37,6 +50,8 @@
     }
 </table>
 @grid.HandlerForms("Save", "Delete")
+
+<p>@Model.Users.Count() users listed</p>
 
 @section  Scripts {
     <script src="~/js/GridEditor.js"></script>
