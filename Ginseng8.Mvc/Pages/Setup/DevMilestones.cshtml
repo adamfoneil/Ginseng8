@@ -1,10 +1,75 @@
 ﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 @model Ginseng.Mvc.Pages.Setup.DevMilestonesModel
 @{
     ViewData["Title"] = "Developer Milestones";
 }
 
-<h1>Developer Milestones</h1>
-<p>Use this to associate developers with milestones. This makes it possible to calculate their available hours. If you then enter
+<h4>Developer Milestones</h4>
+<p>Use this to associate developers with <a asp-page="/Setup/Milestones">milestones</a>. This makes it possible to calculate their available hours. If you then enter
     sizes of work items in a milestone, you can tell better if the work is feasible or if developers are over-committed.</p>
 
+@Html.ActionAlert(TempData)
+
+@{ 
+    var grid = new GridEditor<DeveloperMilestone>(this, Xsrf, defaults: new { MilestoneId = Model.MilestoneId });
+}
+
+<form method="get" class="form-inline mb-3">
+    <label class="mr-2">Application:</label>
+    <select name="appId" asp-items="Model.AppSelect" onchange="this.form.submit()" class="form-control mr-2">
+        <option value="">(select)</option>
+    </select>
+
+    <label class="mr-2">Milestone:</label>
+    <select name="milestoneId" asp-items="Model.MilestoneSelect" onchange="this.form.submit()" class="form-control">
+        <option value="">(select)</option>
+    </select>
+</form>
+
+@if (Model.MilestoneId.HasValue)
+{
+    <table class="table">
+        <tr>
+            <th>Developer</th>
+            <th>Start Date</th>
+            <th>Away Hours</th>
+            <th>Other Milestones</th>
+            <th>Available Hours</th>
+            <th></th>
+        </tr>
+        @foreach (var dev in Model.Developers)
+        {
+            <tr id="@grid.RowId(dev)">
+                <td>@grid.DropDownList(m => m.DeveloperId, Model.UserSelect, new { @class = "form-control" })</td>
+                <td>@grid.TextBox(m => m.StartDate, new { @class = "datepicker form-control" })</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>@grid.Controls()</td>
+            </tr>
+        }
+        <tr id="@grid.NewRowId()">
+            <td>@grid.DropDownList(m => m.DeveloperId, Model.UserSelect, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.StartDate, new { @class = "datepicker form-control" })</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>@grid.Controls()</td>
+        </tr>
+    </table>
+    @grid.HandlerForms("Save", "Delete")
+}
+else
+{
+    <p>Please select an app and milestone above.</p>
+}
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+    <script>
+    $(document).ready(function () {
+        $('.datepicker').datepicker();
+    });
+    </script>
+}

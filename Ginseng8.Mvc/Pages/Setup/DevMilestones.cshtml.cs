@@ -22,7 +22,7 @@ namespace Ginseng.Mvc.Pages.Setup
         public int? AppId { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public int? Id { get; set; }
+        public int? MilestoneId { get; set; }
 
         public SelectList AppSelect { get; set; }
         public SelectList MilestoneSelect { get; set; }
@@ -36,14 +36,28 @@ namespace Ginseng.Mvc.Pages.Setup
             using (var cn = Data.GetConnection())
             {
                 AppSelect = await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, AppId);
-                MilestoneSelect = await new MilestoneSelect() { AppId = AppId ?? 0 }.ExecuteSelectListAsync(cn, Id);
+                MilestoneSelect = await new MilestoneSelect() { AppId = AppId ?? 0 }.ExecuteSelectListAsync(cn, MilestoneId);
                 UserSelect = await new UserSelect() { OrgId = OrgId, IsEnabled = true }.ExecuteSelectListAsync(cn);
 
-                if (Id.HasValue)
+                if (MilestoneId.HasValue)
                 {
                     Developers = await new DevMilestones() { OrgId = OrgId }.ExecuteAsync(cn);
                 }
             }
+        }
+
+        public async Task<RedirectResult> OnPostSaveAsync(DeveloperMilestone record)
+        {
+            var ms = await Data.FindAsync<Milestone>(record.MilestoneId);
+            await Data.TrySaveAsync(record);
+            return Redirect($"/Setup/DevMilestones?appId={ms.ApplicationId}&milestoneId={record.MilestoneId}");
+        }
+
+        public async Task<RedirectResult> OnPostDeleteAsync(int id)
+        {
+            var devMs = await Data.FindAsync<DeveloperMilestone>(id);
+            await Data.TryDeleteAsync<DeveloperMilestone>(id);
+            return Redirect($"/Setup/DevMilestones?appId={devMs.Milestone.ApplicationId}&milestoneId={devMs.MilestoneId}");
         }
     }
 }
