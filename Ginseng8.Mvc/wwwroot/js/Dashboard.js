@@ -333,6 +333,12 @@ $(document)
 .on('click', '.add-comment-submit', function(ev) {
     ev.preventDefault();
     var frm = ev.target.form;
+
+    if (frm.HtmlBody.value == '') {
+        alert('Comment may not be empty.');
+        return;
+    }
+
     let formData = new FormData(frm);
 
     fetch('/WorkItem/SaveComment', {
@@ -344,6 +350,7 @@ $(document)
         var objectId = frm.ObjectId.value;
         var objectType = frm.ObjectType.value;
         $('#comments-' + objectId + '-' + objectType + '-output').first().html(html);
+        $('#addComment-' + objectId + '-HtmlBody').froalaEditor(GetFroalaSettings());
     });
 })
 .on('click', '.addComment', function(event) {

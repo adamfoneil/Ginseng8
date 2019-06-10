@@ -15,7 +15,7 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Label>(this, Xsrf);
+    var grid = new GridEditor<Label>(this, Xsrf, defaults: new { IsActive = true });
 }
 
 <table class="table">
@@ -26,6 +26,7 @@
         <th>Preview</th>
         <th>New Items</th>
         <th>Notify Me</th>
+        <th>Active</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Labels)
@@ -41,6 +42,7 @@
                     <partial name="Shared/_NotifyOptions" model="@Model.Subscriptions[item.Id]"/>
                 </div>
             </td>
+            <td>@grid.CheckBox(m => m.IsActive)</td>
             <td>@grid.Controls()</td>
         </tr>
     }
@@ -51,6 +53,7 @@
         <td></td>
         <td></td>
         <td></td>
+        <td>@grid.CheckBox(m => m.IsActive)</td>
         <td>@grid.Controls()</td>
     </tr>
 </table>

@@ -37,22 +37,30 @@
             <div class="col-12 col-sm-6 col-md-4 col-lg-4 mb-4">
                 <div class="card p-2 js-calendar-month-with-milestone-list-droppable" data-month="@month">
                     <h6 class="card-title text-right text-muted">@month.ToString()</h6>
-                    <div class="card-body pt-0 mt-2">
-                        <div class="row">
-                            @foreach (var ms in milestones[month])
+                    <div class="card-body">
+                    @foreach (var ms in milestones[month])
+                    {
+                        var metrics = Model.Metrics[ms.Id];
+                        <p data-milestone-id="@ms.Id">
+                            <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-secondary" : "btn-light") milestone-work-items" asp-page="Milestones" data-milestone-id="@ms.Id">
+                                <i class="fas fa-flag-checkered"></i>
+                                @ms.Name
+                                <sup>@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
+                            </a>
+                            <br/>
+                            <partial name="Items/_MilestoneInfo" model="metrics"/>                            
+                            
+                            @if (Model.DevLoad[ms.Id].Any())
                             {
-                                var metrics = Model.Metrics[ms.Id];
-                                <p data-milestone-id="@ms.Id" class="col-12 mb-0 px-3 py-2 bg-white js-item-draggable">
-                                    <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-secondary" : "btn-light") milestone-work-items" asp-page="Milestones" data-milestone-id="@ms.Id">
-                                        <i class="fas fa-flag-checkered"></i>
-                                        @ms.Name
-                                        <sup>@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
-                                    </a>
-                                    <br/>
-                                    <partial name="Items/_MilestoneInfo" model="metrics"/>                            
-                                </p>
+                                <ul class="small">
+                                    @foreach  (var dev in Model.DevLoad[ms.Id])
+                                    {
+                                        <li><a asp-page="/Setup/DevMilestones" asp-route-milestoneId="@dev.MilestoneId" asp-route-appId="@dev.ApplicationId">@dev.DeveloperName @dev.AvailableHours free hrs</a></li>
+                                    }
+                                </ul>
                             }
-                        </div>
+                        </p>
+                    }
                     </div>                    
                 </div>
             </div> 

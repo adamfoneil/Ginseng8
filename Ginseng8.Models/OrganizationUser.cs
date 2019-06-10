@@ -73,6 +73,9 @@ namespace Ginseng.Models
 		public UserProfile UserProfile { get; set; }
 		public Organization Organization { get; set; }
 
+        [NotMapped]
+        public decimal WeeklyHours { get; set; }
+
 		[NotMapped]
 		public string OrgName { get; set; }
 
