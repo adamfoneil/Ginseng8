@@ -55,7 +55,7 @@
                                 <ul class="small">
                                     @foreach  (var dev in Model.DevLoad[ms.Id])
                                     {
-                                        <li>@dev.DeveloperName @dev.AvailableHours free hrs</li>
+                                        <li><a asp-page="/Setup/DevMilestones" asp-route-milestoneId="@dev.MilestoneId" asp-route-appId="@dev.ApplicationId">@dev.DeveloperName @dev.AvailableHours free hrs</a></li>
                                     }
                                 </ul>
                             }
