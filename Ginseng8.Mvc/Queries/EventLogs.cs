@@ -82,6 +82,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("[el].[EventId] IN @eventIds")]
 		public int[] EventIds { get; set; }
 
+        [Where("[ou].[UserId]=@userId")]
+        public int? UserId { get; set; }
+
 		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new EventLogs() { OrgId = 0 };

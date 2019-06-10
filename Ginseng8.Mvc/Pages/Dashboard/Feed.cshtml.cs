@@ -1,8 +1,10 @@
 ﻿using Dapper;
 using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -23,10 +25,17 @@ namespace Ginseng.Mvc.Pages.Work
 		public Dictionary<int, EventSubscription> Subscriptions { get; set; }
 		public IEnumerable<EventLogsResult> EventLogs { get; set; }
 
+        public SelectList UserSelect { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? FilterUserId { get; set; }
+
 		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
 			{
+                UserSelect = await new UserSelect() { OrgId = OrgId, IsEnabled = true }.ExecuteSelectListAsync(cn, FilterUserId);
+
 				Events = await new Events().ExecuteAsync(cn);
 
 				await CreateDefaultEventSubscriptionsAsync(cn);
@@ -34,7 +43,7 @@ namespace Ginseng.Mvc.Pages.Work
 				var subs = await new MyEventSubscriptions() { OrgId = OrgId, UserId = UserId, AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteAsync(cn);
 				Subscriptions = subs.ToDictionary(row => row.EventId);
 				var eventIds = subs.Where(s => s.Visible).Select(es => es.EventId).ToArray();
-				EventLogs = await new EventLogs() { EventIds = eventIds, OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteAsync(cn);
+				EventLogs = await new EventLogs() { EventIds = eventIds, OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, UserId = FilterUserId }.ExecuteAsync(cn);
 			}
 		}
 
