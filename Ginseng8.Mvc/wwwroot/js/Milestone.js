@@ -74,7 +74,8 @@ function milestoneUpdate(draggableElement, droppableElement) {
 
     var data = {
         milestone_id: draggableElement.data('milestone-id'),
-        month: droppableElement.data('month')
+        month: droppableElement.data('month'),
+        year: droppableElement.data('year')
     };
 
     console.group('milestone update');

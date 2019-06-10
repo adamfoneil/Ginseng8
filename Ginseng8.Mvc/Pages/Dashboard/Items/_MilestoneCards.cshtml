@@ -35,7 +35,7 @@
         @foreach (var month in yearGrp)
         {
             <div class="col-12 col-sm-6 col-md-4 col-lg-4 mb-4">
-                <div class="card p-2 js-calendar-month-with-milestone-list-droppable" data-month="@month">
+                <div class="card p-2 js-calendar-month-with-milestone-list-droppable" data-month="@month.Month" data-year="@month.Year">
                     <h6 class="card-title text-right text-muted">@month.ToString()</h6>
                     <div class="card-body pt-0 mt-2">
                     @foreach (var ms in milestones[month])
