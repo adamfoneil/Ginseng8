@@ -140,3 +140,17 @@ body {
 .editable.active:before {
   display: none;
 }
+
+/*Droppable items*/
+.ui-droppable.ui-state-active:not(.ui-state-highlight) .card-title {
+  color: white !important;
+}
+
+/*Draggable*/
+.ui-draggable-handle.ui-draggable-dragging {
+  z-index: 1001;
+}
+
+.js-calendar-month-with-milestone-list-droppable {
+  min-height: 203px;
+}

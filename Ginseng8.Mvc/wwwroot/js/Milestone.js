@@ -34,3 +34,52 @@
         });
     }
 });
+
+$(document).ready(function() {
+    InitCalendarMonthWithMilestonesListDroppable();
+});
+
+function InitCalendarMonthWithMilestonesListDroppable() {
+    InitDroppable({
+        selector: '.js-calendar-month-with-milestone-list-droppable'
+    }, milestoneUpdate);
+}
+
+function InitDroppable(params, dropCallback) {
+    $(params.selector).droppable({
+        classes: {
+            'ui-droppable-active': 'ui-state-active',
+            'ui-droppable-hover': 'ui-state-highlight'
+        },
+        drop: function(event, ui) {
+            var draggableElement = $(ui.draggable).clone();
+            draggableElement.css({
+                position: 'static',
+                top: 'auto',
+                left: 'auto'
+            });
+            $(ui.draggable).remove();
+            $('.ui-state-active').removeClass('ui-state-active');
+            $('.ui-draggable-dragging').removeClass('ui-draggable-dragging');
+
+            dropCallback && dropCallback(draggableElement, $(this));
+
+            initDraggableItems();
+        }
+    });
+}
+
+function milestoneUpdate(draggableElement, droppableElement) {
+    droppableElement.find('.card-body .row').append(draggableElement);
+
+    var data = {
+        milestone_id: draggableElement.data('milestone-id'),
+        month: droppableElement.data('month')
+    };
+
+    console.group('milestone update');
+    console.log(data);
+    console.groupEnd();
+
+    // fetch...
+}
