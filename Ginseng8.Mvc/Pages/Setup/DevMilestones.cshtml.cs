@@ -57,7 +57,7 @@ namespace Ginseng.Mvc.Pages.Setup
                         AwayHours = awayDays.ToDictionary(row => row.UserId, row => row.TotalHours);
 
                         var workingHours = await new DevMilestoneWorkingHours() { OrgId = OrgId, MilestoneId = MilestoneId }.ExecuteAsync(cn);
-                        WorkingHours = workingHours.ToDictionary(row => row.DeveloperId, row => row.TotalHours);
+                        WorkingHours = workingHours.ToDictionary(row => row.DeveloperId, row => row.WorkingHours);
                     }
                 }
             }

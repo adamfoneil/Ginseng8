@@ -116,7 +116,7 @@ namespace Ginseng.Mvc
                     }
 
                     var milestoneIds = WorkItems.GroupBy(row => row.MilestoneId).Select(grp => grp.Key).ToArray();
-                    var milestoneMetrics = await new MilestoneMetrics() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, MilestoneIds = milestoneIds }.ExecuteAsync(cn);
+                    var milestoneMetrics = await new MilestoneMetrics() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, MilestoneIds = milestoneIds }.ExecuteAsync(cn);
                     MilestoneMetrics = milestoneMetrics.ToDictionary(row => row.Id);
                 }
 
