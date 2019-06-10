@@ -49,6 +49,16 @@
                             </a>
                             <br/>
                             <partial name="Items/_MilestoneInfo" model="metrics"/>                            
+                            
+                            @if (Model.DevLoad[ms.Id].Any())
+                            {
+                                <ul class="small">
+                                    @foreach  (var dev in Model.DevLoad[ms.Id])
+                                    {
+                                        <li>@dev.DeveloperName @dev.AvailableHours free hrs</li>
+                                    }
+                                </ul>
+                            }
                         </p>
                     }
                     </div>                    
