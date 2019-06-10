@@ -152,5 +152,11 @@ namespace Testing
         {
             TestQuery<MyOrgUsers>();
         }
+
+        [TestMethod]
+        public void DevMilestoneWorkingHoursQuery()
+        {
+            TestQuery<DevMilestoneWorkingHours>();
+        }
     }
 }

@@ -11,6 +11,7 @@ namespace Ginseng.Mvc.Queries
         public int ApplicationId { get; set; }
         public int MilestoneId { get; set; }
         public int DeveloperId { get; set; }
+        public string DeveloperName { get; set; }
         public int WorkingHours { get; set; }
         public int EstimateHours { get; set; }
         public int AvailableHours { get; set; }
@@ -42,6 +43,7 @@ namespace Ginseng.Mvc.Queries
                 [ms].[ApplicationId],
                 [dm].[MilestoneId],
                 [dm].[DeveloperId], 
+                COALESCE([ou].[DisplayName], [u].[UserName]) AS [DeveloperName],
                 SUM([wd].[Hours]) AS [WorkingHours],
                 [e].[EstimateHours],
                 SUM([wd].[Hours]) - [e].[EstimateHours] AS [AvailableHours]
@@ -54,6 +56,9 @@ namespace Ginseng.Mvc.Queries
                     [dm].[DeveloperId]=[e].[DeveloperUserId] AND
                     [dm].[MilestoneId]=[e].[MilestoneId] AND
                     [ms].[ApplicationId]=[e].[ApplicationId]
+                INNER JOIN [dbo].[OrganizationUser] [ou] ON
+                    [dm].[DeveloperId]=[ou].[UserId] AND [ou].[OrganizationId]=@orgId                    
+                INNER JOIN [dbo].[AspNetUsers] [u] ON [ou].[UserId]=[u].[UserId]
             WHERE 
                 [wd].[UserId]=[dm].[DeveloperId] AND
                 [app].[OrganizationId]=@orgId {andWhere}
@@ -61,6 +66,7 @@ namespace Ginseng.Mvc.Queries
                 [ms].[ApplicationId],
                 [dm].[MilestoneId],
                 [dm].[DeveloperId],
+                [ou].[DisplayName], [u].[UserName],
                 [e].[EstimateHours]")
         {
         }

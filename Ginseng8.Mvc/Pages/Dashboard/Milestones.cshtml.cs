@@ -37,6 +37,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<Milestone> Milestones { get; private set; }
         public Dictionary<int, MilestoneMetricsResult> Metrics { get; private set; }
         public ILookup<int, string> ProjectNicknames { get; set; }
+        public ILookup<int, DevMilestoneWorkingHoursResult> DevLoad { get; set; }
 
         public SelectList ProjectSelect { get; set; }
 
