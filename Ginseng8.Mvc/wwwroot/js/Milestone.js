@@ -70,7 +70,7 @@ function InitDroppable(params, dropCallback) {
 }
 
 function milestoneUpdate(draggableElement, droppableElement) {
-    droppableElement.find('.card-body .row').append(draggableElement);
+    droppableElement.find('.js-calendar-month-with-milestone-list').append(draggableElement);
 
     var data = {
         milestone_id: draggableElement.data('milestone-id'),
