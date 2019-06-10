@@ -3,9 +3,9 @@ using Ginseng.Models.Queries;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
-using Postulate.SqlServer.IntKey;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
@@ -26,13 +26,16 @@ namespace Ginseng.Models
         public int MilestoneId { get; set; }
 
         [DisplayFormat(DataFormatString = "{0:M/d/yy}")]
+        [Column(TypeName = "date")]
         public DateTime StartDate { get; set; }
 
         public Milestone Milestone { get; set; }
+
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             Milestone = commandProvider.Find<Milestone>(connection, MilestoneId);
         }
+
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             Milestone = await commandProvider.FindAsync<Milestone>(connection, MilestoneId);
@@ -41,7 +44,7 @@ namespace Ginseng.Models
         public override async Task<bool> ValidateAsync(IDbConnection connection)
         {
             var overlap = await new CheckDevMilestoneOverlap() { UserId = DeveloperId, CheckDate = StartDate }.ExecuteAsync(connection);
-            
+
             if (overlap.Any())
             {
                 var item = overlap.First();
