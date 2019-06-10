@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -31,7 +32,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
         public Dictionary<int, int> AwayHours { get; set; }
 
-        public Dictionary<int, int> WorkingHours { get; set; }
+        public Dictionary<int, DevMilestoneWorkingHoursResult> DevLoad { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -56,8 +57,8 @@ namespace Ginseng.Mvc.Pages.Setup
                         }.ExecuteAsync(cn);
                         AwayHours = awayDays.ToDictionary(row => row.UserId, row => row.TotalHours);
 
-                        var workingHours = await new DevMilestoneWorkingHours() { OrgId = OrgId, MilestoneId = MilestoneId }.ExecuteAsync(cn);
-                        WorkingHours = workingHours.ToDictionary(row => row.DeveloperId, row => row.WorkingHours);
+                        var load = await new DevMilestoneWorkingHours() { OrgId = OrgId, MilestoneId = MilestoneId }.ExecuteAsync(cn);
+                        DevLoad = load.ToDictionary(row => row.DeveloperId);
                     }
                 }
             }
@@ -68,9 +69,9 @@ namespace Ginseng.Mvc.Pages.Setup
             return (AwayHours.ContainsKey(userId)) ? AwayHours[userId] : 0;
         }
 
-        public int GetWorkingHours(int userId)
+        public int GetLoadHours(int userId, Func<DevMilestoneWorkingHoursResult, int> getter)
         {
-            return (WorkingHours.ContainsKey(userId)) ? WorkingHours[userId] : 0;
+            return (DevLoad.ContainsKey(userId)) ? getter.Invoke(DevLoad[userId]) : 0;
         }
 
         public async Task<RedirectResult> OnPostSaveAsync(DeveloperMilestone record)

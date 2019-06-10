@@ -32,7 +32,8 @@ namespace Ginseng.Mvc.Queries
                 WHERE
                     [wi].[DeveloperUserId] IS NOT NULL AND
                     [wi].[MilestoneId] IS NOT NULL AND
-                    COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) IS NOT NULL
+                    COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) IS NOT NULL AND
+                    [wi].[CloseReasonId] IS NULL
                 GROUP BY
                     [wi].[ApplicationId],
                     [wi].[DeveloperUserId],
