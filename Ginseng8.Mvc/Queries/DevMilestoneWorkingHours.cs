@@ -76,6 +76,9 @@ namespace Ginseng.Mvc.Queries
         [Where("[dm].[MilestoneId]=@milestoneId")]
         public int? MilestoneId { get; set; }
 
+        [Where("[app].[Id]=@appId")]
+        public int? AppId { get; set; }
+
         [Where("[dm].[DeveloperId]=@userId")]
         public int? UserId { get; set; }
 
