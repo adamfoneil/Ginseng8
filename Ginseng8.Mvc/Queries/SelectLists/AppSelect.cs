@@ -1,4 +1,5 @@
 ﻿using Ginseng.Mvc.Classes;
+using Postulate.Base.Attributes;
 
 namespace Ginseng.Mvc.Queries.SelectLists
 {
@@ -7,11 +8,14 @@ namespace Ginseng.Mvc.Queries.SelectLists
 		public AppSelect() : base(
 			@"SELECT [Id] AS [Value], [Name] AS [Text]
 			FROM [dbo].[Application] [app]
-			WHERE [OrganizationId]=@orgId AND [IsActive]=1
+			WHERE [OrganizationId]=@orgId AND [IsActive]=1 {andWhere}
 			ORDER BY [Name]")
 		{
 		}
 
 		public int OrgId { get; set; }
+
+        [Where("[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 	}
 }
