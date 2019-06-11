@@ -1,6 +1,8 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -15,6 +17,10 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public bool IsActive { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int? FilterTeamId { get; set; }
+
+        public SelectList TeamSelect { get; set; }
 		public IEnumerable<Application> Applications { get; set; }
 
 		public async Task OnGetAsync(bool isActive = true)
@@ -23,13 +29,15 @@ namespace Ginseng.Mvc.Pages.Setup
 
 			using (var cn = Data.GetConnection())
 			{
-				Applications = await new Applications() { OrgId = CurrentOrg.Id, IsActive = isActive }.ExecuteAsync(cn);
+                TeamSelect = await new TeamSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, FilterTeamId);
+				Applications = await new Applications() { OrgId = OrgId , IsActive = isActive, TeamId = FilterTeamId }.ExecuteAsync(cn);
 			}
 		}
 
 		public async Task<ActionResult> OnPostSave(Application app)
 		{
-			app.OrganizationId = CurrentOrg.Id;
+			app.OrganizationId = OrgId;
+            if (app.TeamId == 0) app.TeamId = 0;
 			await Data.TrySaveAsync(app);
 			return RedirectToPage("/Setup/Applications");
 		}
