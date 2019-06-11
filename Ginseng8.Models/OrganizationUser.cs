@@ -52,6 +52,9 @@ namespace Ginseng.Models
 		[References(typeof(Application))]
 		public int? CurrentAppId { get; set; }
 
+        [References(typeof(Team))]
+        public int? CurrentTeamId { get; set; }
+
 		[References(typeof(Activity))]
 		public int? DefaultActivityId { get; set; }
 
