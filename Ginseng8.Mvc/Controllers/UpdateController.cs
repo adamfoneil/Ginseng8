@@ -170,6 +170,16 @@ namespace Ginseng.Mvc.Controllers
             }
         }
 
+        [Route("/Update/CurrentTeam/{id}")]
+        public async Task<RedirectResult> CurrentTeam(int id, string returnUrl)
+        {
+            if (_data.CurrentOrgUser == null) return Redirect(returnUrl);
+
+            _data.CurrentOrgUser.CurrentTeamId = (id != 0) ? id : default(int?);
+            await _data.TryUpdateAsync(_data.CurrentOrgUser, r => r.CurrentTeamId);
+            return Redirect(returnUrl);
+        }
+
         [Route("/Update/CurrentApp/{id}")]
 		public async Task<RedirectResult> CurrentApp(int id, string returnUrl)
 		{

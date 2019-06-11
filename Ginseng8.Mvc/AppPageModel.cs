@@ -52,6 +52,14 @@ namespace Ginseng.Mvc
 			}
 		}
 
+        public async Task<SelectList> CurrentOrgTeamSelectAsync()
+        {
+            using (var cn = Data.GetConnection())
+            {
+                return await new TeamSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, CurrentOrgUser?.CurrentTeamId);
+            }
+        }
+
 		public async Task<WorkItem> FindWorkItemAsync(int number)
 		{
 			return await Data.FindWhereAsync<WorkItem>(new { OrganizationId = OrgId, Number = number });
