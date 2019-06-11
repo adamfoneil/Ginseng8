@@ -2,10 +2,6 @@
 
 <a asp-route-id="@Model.Id" class="btn @((Model.TotalWorkItems > 0) ? "btn-info" : "btn-light") project-work-items" asp-page="Projects" data-project-id="@Model.Id">
     @Model.Name
-    @if (Model.Priority.HasValue)
-    {
-        <sup>@Model.Priority</sup>
-    }
 </a>
 <br/>
 <partial name="Items/_ProjectInfo" model="Model"/>
