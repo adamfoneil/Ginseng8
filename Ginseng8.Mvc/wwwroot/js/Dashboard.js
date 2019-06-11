@@ -379,8 +379,18 @@ $(document).ready(function () {
     if (hash) {
         var workItemNum = hash.substring(1);
         var workItemAnchor = $('a[name=' + workItemNum + ']');
-        var tabId = workItemAnchor.parents('.tab-pane').data('tab-id');
-        $('#' + tabId).tab('show');        
+        if (workItemAnchor.length) {
+            var tabId = workItemAnchor.parents('.tab-pane').data('tab-id');
+            $('#' + tabId).tab('show');
+        } else {
+            fetch('/WorkItem/InfoBanner/' + workItemNum, {
+                method: 'get'
+            }).then(function (response) {
+                return response.text();
+            }).then(function (html) {
+                $('#infoBanner').html(html);
+            });
+        }        
     } else {
         // no current work item, so show first tab by default
         $('.nav-tabs li:first-child a').tab('show');

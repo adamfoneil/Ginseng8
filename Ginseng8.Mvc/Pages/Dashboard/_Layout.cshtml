@@ -31,6 +31,8 @@
 
 @Html.ActionAlert(TempData)
 
+<div id="infoBanner"></div>
+
 @{ 
     var model = Html.ViewContext.ViewData.Model as DashboardPageModel;
     if (model != null && model.LabelFilter != null && model.ShowLabelFilter)

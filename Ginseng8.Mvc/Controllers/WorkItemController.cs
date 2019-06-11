@@ -43,6 +43,16 @@ namespace Ginseng.Mvc.Controllers
             _data.Initialize(User, TempData);
         }
 
+        [HttpGet]
+        public async Task<PartialViewResult> InfoBanner(int id)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                return PartialView(workItem);
+            }
+        }
+
         [HttpPost]
         public async Task<RedirectResult> Create(WorkItem workItem, string returnUrl)
         {
