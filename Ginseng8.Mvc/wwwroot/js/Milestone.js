@@ -34,3 +34,65 @@
         });
     }
 });
+
+$(document).ready(function() {
+    InitCalendarMonthWithMilestonesListDroppable();
+});
+
+function InitCalendarMonthWithMilestonesListDroppable() {
+    InitDroppable({
+        selector: '.js-calendar-month-with-milestone-list-droppable'
+    }, milestoneUpdate);
+}
+
+function InitDroppable(params, dropCallback) {
+    $(params.selector).droppable({
+        classes: {
+            'ui-droppable-active': 'ui-state-active',
+            'ui-droppable-hover': 'ui-state-highlight'
+        },
+        drop: function(event, ui) {
+            var draggableElement = $(ui.draggable).clone();
+            draggableElement.css({
+                position: 'static',
+                top: 'auto',
+                left: 'auto'
+            });
+            $(ui.draggable).remove();
+            $('.ui-state-active').removeClass('ui-state-active');
+            $('.ui-draggable-dragging').removeClass('ui-draggable-dragging');
+
+            dropCallback && dropCallback(draggableElement, $(this));
+
+            initDraggableItems();
+        }
+    });
+}
+
+function milestoneUpdate(draggableElement, droppableElement) {
+    droppableElement.find('.js-calendar-month-with-milestone-list').append(draggableElement);
+
+    var msId = draggableElement.data('milestone-id');
+    var data = {
+        milestoneId: msId,
+        month: droppableElement.data('month'),
+        year: droppableElement.data('year')
+    };
+
+    console.group('milestone update');
+    console.log(data);
+    console.groupEnd();
+
+    var formData = getFormData(data);
+
+    fetch('/Update/MilestoneDrop', {
+        method: 'post',
+        body: formData
+    }).then(function (response) {
+        return response.json();
+    }).then(function (result) {
+        if (result.success) {
+            $('#ms-date-' + msId).html(result.newDate);
+        }
+    });
+}
