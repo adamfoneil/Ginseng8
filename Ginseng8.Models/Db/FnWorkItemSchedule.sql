@@ -5,20 +5,22 @@ ALTER FUNCTION [dbo].[FnWorkItemSchedule](
 	[Number] int NOT NULL,
 	[Date] date NOT NULL,
 	[Hours] int NOT NULL,
-	[Priority] int NOT NULL
+	[Priority] int NOT NULL,
+	[WeekNumber] int NOT NULL
 ) AS
 BEGIN
 
 	DECLARE @workHours TABLE (
 		[Date] date NOT NULL,
 		[DayNumber] int NOT NULL,
-		[Hour] int NOT NULL
+		[Hour] int NOT NULL,
+		[WeekNumber] int NOT NULL
 	);
 
 	INSERT INTO @workHours (
-		[Date], [DayNumber], [Hour]
+		[Date], [DayNumber], [Hour], [WeekNumber]
 	) SELECT
-		[Date], [DayNumber], ROW_NUMBER() OVER (ORDER BY [DayNumber]) AS [Hour]
+		[Date], [DayNumber], ROW_NUMBER() OVER (ORDER BY [DayNumber]) AS [Hour], [whr].[WeekNumber]
 	FROM
 		[dbo].[FnWorkHourRanges](@orgId, @userId) [whr]
 		CROSS APPLY [dbo].[FnIntRange]([whr].[StartHours], [whr].[EndHours])
