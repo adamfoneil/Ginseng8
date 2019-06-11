@@ -20,6 +20,12 @@ namespace Ginseng.Models
         [MaxLength(255)]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Select Freshdesk companies when creating apps (i.e. treat apps as customers)
+        /// </summary>
+        [DefaultExpression("0")]
+        public bool AppsFromCompanies { get; set; }
+
         public bool IsActive { get; set; } = true;
 
         public Task<int> GetOrgIdAsync(IDbConnection connection)
