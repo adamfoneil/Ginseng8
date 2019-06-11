@@ -5,7 +5,8 @@ CREATE FUNCTION [dbo].[FnWorkHourRanges](
 	[Date] date NOT NULL,
 	[DayNumber] int NOT NULL,
 	[StartHours] int NOT NULL,
-	[EndHours] int NOT NULL
+	[EndHours] int NOT NULL,
+	[WeekNumber] int NOT NULL
 ) AS
 BEGIN
 	DECLARE @userName nvarchar(50)
@@ -13,7 +14,7 @@ BEGIN
 
 	DECLARE @startDate date, @endDate date
 	SET @startDate = dbo.LocalTimeNow(@userName)
-	SET @endDate = DATEADD(d, 7, @startDate);
+	SET @endDate = DATEADD(d, 30, @startDate);
 
 	DECLARE @workHours TABLE (
 		[Date] date NOT NULL,
@@ -39,15 +40,14 @@ BEGIN
 		[workDays] [wd];
 
 	INSERT INTO @results (
-		[Date], [DayNumber], [StartHours], [EndHours]
+		[Date], [DayNumber], [StartHours], [EndHours], [WeekNumber]
 	) SELECT
-		[current].[Date], [current].[DayNumber], COALESCE([prev].[RunningHours] + 1, 1), [current].[RunningHours]
+		[current].[Date], [current].[DayNumber], COALESCE([prev].[RunningHours] + 1, 1), [current].[RunningHours],
+		DATEPART(ww, [current].[Date])
 	FROM
 		@workHours [current]
 		LEFT JOIN @workHours [prev] ON [current].[DayNumber]-1 = [prev].[DayNumber]
 
 	RETURN
 END
-GO
 
-SELECT * FROM dbo.FnWorkHourRanges(1, 10)
