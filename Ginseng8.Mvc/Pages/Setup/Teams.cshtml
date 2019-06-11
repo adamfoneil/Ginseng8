@@ -1,0 +1,42 @@
+﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@model Ginseng.Mvc.Pages.Setup.TeamsModel
+@{
+    ViewData["Title"] = "Teams";
+}
+
+<h4>Teams</h4>
+<p>Use teams to define groups of people in your organization who work on the same <a asp-page="/Setup/Applications">Applications</a>.</p>
+
+@Html.ActionAlert(TempData)
+
+@{
+    var grid = new GridEditor<Team>(this, Xsrf, defaults: new { IsActive = true });
+}
+
+<table class="table">
+    <tr>
+        <th>Team Name</th>
+        <th>Description</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Teams)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }
+    <tr id="@grid.NewRowId()">
+        <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+        <td>@grid.Controls()</td>
+    </tr>    
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+
+}
