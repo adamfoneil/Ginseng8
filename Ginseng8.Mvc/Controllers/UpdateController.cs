@@ -380,5 +380,25 @@ namespace Ginseng.Mvc.Controllers
 				return Json(new { success = false, message = exc.Message });
 			}
 		}
+
+        [HttpPost]
+        public async Task<JsonResult> MilestoneDrop(int milestoneId, int year, int month)
+        {
+            try
+            {
+                using (var cn = _data.GetConnection())
+                {
+                    var ms = await _data.FindAsync<Milestone>(cn, milestoneId);
+                    DateTime newDate = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+                    ms.Date = newDate;
+                    await cn.UpdateAsync(ms, _data.CurrentUser, r => r.Date);
+                    return Json(new { success = true, newDate = newDate.ToString("M/d") });
+                }
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
+        }
 	}
 }

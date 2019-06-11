@@ -72,8 +72,9 @@ function InitDroppable(params, dropCallback) {
 function milestoneUpdate(draggableElement, droppableElement) {
     droppableElement.find('.js-calendar-month-with-milestone-list').append(draggableElement);
 
+    var msId = draggableElement.data('milestone-id');
     var data = {
-        milestone_id: draggableElement.data('milestone-id'),
+        milestoneId: msId,
         month: droppableElement.data('month'),
         year: droppableElement.data('year')
     };
@@ -82,5 +83,16 @@ function milestoneUpdate(draggableElement, droppableElement) {
     console.log(data);
     console.groupEnd();
 
-    // fetch...
+    var formData = getFormData(data);
+
+    fetch('/Update/MilestoneDrop', {
+        method: 'post',
+        body: formData
+    }).then(function (response) {
+        return response.json();
+    }).then(function (result) {
+        if (result.success) {
+            $('#ms-date-' + msId).html(result.newDate);
+        }
+    });
 }

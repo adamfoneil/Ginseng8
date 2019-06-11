@@ -46,7 +46,7 @@
                                     <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-secondary" : "btn-light") milestone-work-items" asp-page="Milestones" data-milestone-id="@ms.Id">
                                         <i class="fas fa-flag-checkered"></i>
                                         @ms.Name
-                                        <sup>@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
+                                        <sup id="ms-date-@ms.Id">@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
                                     </a>
                                     <br/>
                                     <partial name="Items/_MilestoneInfo" model="metrics"/>                            
