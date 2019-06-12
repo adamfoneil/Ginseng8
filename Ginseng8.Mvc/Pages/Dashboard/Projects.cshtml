@@ -40,6 +40,7 @@ else
         {
             @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
             {
+                { "teamId", Html.CurrentTeamId() },
                 { "applicationId", Model.CurrentAppId.Value },
                 { "projectId", Model.Id.Value }
             }))

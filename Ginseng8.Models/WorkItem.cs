@@ -63,6 +63,9 @@ namespace Ginseng.Models
 		[References(typeof(Application))]
 		public int ApplicationId { get; set; }
 
+        [References(typeof(Team))]
+        public int? TeamId { get; set; }
+
 		/// <summary>
 		/// Broad estimate of amount of work involved
 		/// </summary>

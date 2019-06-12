@@ -7,8 +7,9 @@
 
 <h4>Teams</h4>
 <p>Use teams to define groups of people in your organization who work on the same <a asp-page="/Setup/Applications">Applications</a>.</p>
-<p>The <strong>Apps are Customers</strong> option lets teams treat applications as Freshdesk companies. This is handy for teams
-    that don't work on software applications directly, but who instead are using Freshdesk for support tickets.</p>
+<p>The <strong>Use Applications</strong> option lets teams indicate whether they have an Applications dashboard.</p>
+<p>The <strong>Use Freshdesk Companies</strong> option causes the Freshdesk company dropdown to appear when editing a project.</p>
+
 
 @Html.ActionAlert(TempData)
 
@@ -20,7 +21,8 @@
     <tr>
         <th>Team Name</th>
         <th>Description</th>
-        <th>Apps are Customers</th>
+        <th>Use Applications</th>
+        <th>Use Freshdesk Companies</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Teams)
@@ -28,14 +30,16 @@
         <tr id="@grid.RowId(item)">
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
-            <td>@grid.CheckBox(m => m.AppsFromCompanies)</td>
+            <td>@grid.CheckBox(m => m.UseApplications)</td>
+            <td>@grid.CheckBox(m => m.CompanySpecificProjects)</td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
-        <td>@grid.CheckBox(m => m.AppsFromCompanies)</td>
+        <td>@grid.CheckBox(m => m.UseApplications)</td>
+        <td>@grid.CheckBox(m => m.CompanySpecificProjects)</td>
         <td>@grid.Controls()</td>
     </tr>    
 </table>

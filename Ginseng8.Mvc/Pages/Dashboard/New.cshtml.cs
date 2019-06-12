@@ -17,12 +17,12 @@ namespace Ginseng.Mvc.Pages.Dashboard
             ShowExcelDownload = false;
         }
         
-        public IEnumerable<Application> Applications { get; set; }
+        public IEnumerable<Team> Teams { get; set; }
         public ILookup<int, Label> Labels { get; set; }
         public ILookup<AppLabelCell, OpenWorkItemsResult> AppLabelItems { get; set; }
         public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }
 
-        public IEnumerable<OpenWorkItemsResult> GetAppLabelItems(int applicationId, int labelId)
+        public IEnumerable<OpenWorkItemsResult> GetTeamLabelItems(int applicationId, int labelId)
         {
             var cell = new AppLabelCell(applicationId, labelId);
             return AppLabelItems[cell];
@@ -30,7 +30,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
-            Applications = await new Applications() { OrgId = OrgId, IsActive = true, AllowNewItems = true }.ExecuteAsync(connection);
+            Teams = await new Teams() { OrgId = OrgId, IsActive = true }.ExecuteAsync(connection);            
 
             var workItemLabelMap = SelectedLabels
                 .Select(grp => new { WorkItemId = grp.Key, LabelId = grp.First().Id })

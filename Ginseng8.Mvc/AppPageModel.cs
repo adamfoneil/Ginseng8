@@ -48,7 +48,7 @@ namespace Ginseng.Mvc
 		{
 			using (var cn = Data.GetConnection())
 			{
-				return await new AppSelect() { OrgId = OrgId, TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteSelectListAsync(cn, CurrentOrgUser?.CurrentAppId);
+				return await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, CurrentOrgUser?.CurrentAppId);
 			}
 		}
 

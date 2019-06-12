@@ -60,6 +60,7 @@
                 {
                     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                     {
+                        { "teamId", Html.CurrentTeamId() },
                         { "applicationId", appGrp.Key },
                         { "milestoneId", milestoneGrp.Key },
                         { Model.UserIdColumnName, Model.UserId },
@@ -82,6 +83,7 @@
     {
         @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
         {
+            { "teamId", Html.CurrentTeamId() },
             { "applicationId", Html.CurrentAppId() },        
             { Model.UserIdColumnName, Model.UserId },
             { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }

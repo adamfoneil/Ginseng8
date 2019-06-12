@@ -21,10 +21,16 @@ namespace Ginseng.Models
         public string Description { get; set; }
 
         /// <summary>
-        /// Select Freshdesk companies when creating apps (i.e. treat apps as customers)
+        /// Indicates whether the Applications dashboard is shown.
+        /// If false, then the team uses one generic hidden application
+        /// to attach their milestones and projects
         /// </summary>
-        [DefaultExpression("0")]
-        public bool AppsFromCompanies { get; set; }
+        public bool UseApplications { get; set; }
+
+        /// <summary>
+        /// Activates the Freshdesk company selector on the project edit page
+        /// </summary>
+        public bool CompanySpecificProjects { get; set; }
 
         public bool IsActive { get; set; } = true;
 
