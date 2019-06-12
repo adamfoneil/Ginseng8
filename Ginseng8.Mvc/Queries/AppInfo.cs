@@ -75,7 +75,7 @@ namespace Ginseng.Mvc.Queries
                     [dbo].[Application] [app]
                     LEFT JOIN [dbo].[Team] [t] ON [app].[TeamId]=[t].[Id]
                 WHERE
-                    [app].[OrganizationId]=@orgId {andWhere}
+                    [app].[OrganizationId]=@orgId AND [t].[UseApplications]=1 {andWhere}
             ) SELECT
                 [source].*,
                 CASE

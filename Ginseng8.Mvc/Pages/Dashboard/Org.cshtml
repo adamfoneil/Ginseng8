@@ -1,0 +1,30 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Dashboard.OrgModel
+@{
+    ViewData["Title"] = "Applications";
+}
+
+
+@if (!Model.AppId.HasValue)
+{
+    foreach (var t in Model.Teams)
+    {
+        <hr/>
+        <h4>@t.Name</h4>
+
+        if (t.UseApplications)
+        {
+            <partial name="Items/_AppCards" model="Model.AppInfo[t.Id]"/>
+        }
+        else
+        {
+            <partial name="Items/_ProjectCardsInner" model="Model.ProjectInfo[t.Id]"/>
+        }
+    }    
+}
+else
+{
+
+}
+
+

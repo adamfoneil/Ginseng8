@@ -14,5 +14,8 @@ namespace Ginseng.Mvc.Queries
 
         [Where("[IsActive]=@isActive")]
         public bool? IsActive { get; set; } = true;
+
+        [Where("[Id]=@id")]
+        public int? Id { get; set; }
     }
 }

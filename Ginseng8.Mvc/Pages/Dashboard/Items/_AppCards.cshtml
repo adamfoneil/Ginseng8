@@ -1,18 +1,10 @@
-﻿@model Ginseng.Mvc.Pages.Dashboard.AppsModel
+﻿@model IEnumerable<AppInfoResult>
 
-@foreach (var teamGrp in Model.AppInfo.GroupBy(row => row.TeamId ?? 0))
-{
-    <hr/>
-    <h4>@teamGrp.First().TeamName</h4>
-
-    <div class="app-container">
-        <div class="row ml-3">
-            @foreach (var app in teamGrp)
-            {
-                <div class="col-3 p-2" data-app-id="@app.Id">
-                    <partial name="Items/_AppLinkButton" model="app"/>
-                </div>
-            }        
+<div class="row ml-3">
+    @foreach (var app in Model)
+    {
+        <div class="col-3 p-2" data-app-id="@app.Id">
+            <partial name="Items/_AppLinkButton" model="app"/>
         </div>
-    </div>       
-}
+    }        
+</div>

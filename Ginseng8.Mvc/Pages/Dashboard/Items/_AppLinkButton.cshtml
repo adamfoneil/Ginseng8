@@ -1,6 +1,6 @@
 ﻿@model AppInfoResult
 
-<a asp-route-id="@Model.Id" class="btn @((Model.TotalWorkItems > 0) ? "appButton" : "btn-light")" asp-page="Apps" data-app-id="@Model.Id">
+<a class="btn @((Model.TotalWorkItems > 0) ? "appButton" : "btn-light")" asp-route-appId="@Model.Id" asp-page="Org" data-app-id="@Model.Id">
     @Model.Name
 </a>
 <br/>

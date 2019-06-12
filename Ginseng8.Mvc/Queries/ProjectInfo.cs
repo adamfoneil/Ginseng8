@@ -24,6 +24,8 @@ namespace Ginseng.Mvc.Queries
         public DateTime DateCreated { get; set; }
         public string ModifiedBy { get; set; }
         public DateTime? DateModified { get; set; }
+        public int? TeamId { get; set; }
+        public string TeamName { get; set; }
         public int? TotalWorkItems { get; set; }
         public int? OpenWorkItems { get; set; }
         public int? ClosedWorkItems { get; set; }
@@ -79,6 +81,7 @@ namespace Ginseng.Mvc.Queries
 				SELECT
 					[p].*,
 					[app].[Name] AS [ApplicationName],
+                    [app].[TeamId], [t].[Name] AS [TeamName],
 					(SELECT
 						SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours]))
 						FROM [dbo].[WorkItem] [wi] LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
@@ -106,6 +109,7 @@ namespace Ginseng.Mvc.Queries
 				FROM
 					[dbo].[Project] [p]
 					INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
+                    LEFT JOIN [dbo].[Team] [t] ON [app].[TeamId]=[t].[Id]
 				WHERE
 					[app].[OrganizationId]=@orgId
 					{{andWhere}}
@@ -138,6 +142,9 @@ namespace Ginseng.Mvc.Queries
 
         [Where("[app].[IsActive]=@isAppActive")]
         public bool? IsAppActive { get; set; }
+
+        [Where("[t].[UseApplications]=@teamUsesApplications")]
+        public bool? TeamUsesApplications { get; set; }
 
         [Case(ProjectInfoShowOptions.HasOpenItems, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
         [Case(ProjectInfoShowOptions.NoOpenItems, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]

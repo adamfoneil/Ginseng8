@@ -1,0 +1,10 @@
+﻿@model IEnumerable<ProjectInfoResult>
+
+<div class="row ml-3">
+    @foreach (var prj in Model)
+    {
+        <div class="col-3 p-2 project-card" data-project-id="@prj.Id">
+            <partial name="Items/_ProjectLinkButton" model="prj"/>
+        </div>
+    }        
+</div>
