@@ -1,8 +1,16 @@
 ﻿@page
 @model Ginseng.Mvc.Pages.Dashboard.AppsModel
 @{
-    ViewData["Title"] = "Apps";
+    ViewData["Title"] = "Applications";
 }
 
-<h1>Apps</h1>
+@if (!Model.Id.HasValue)
+{
+    <partial name="Items/_AppCards" model="Model"/>
+}
+else
+{
+
+}
+
 

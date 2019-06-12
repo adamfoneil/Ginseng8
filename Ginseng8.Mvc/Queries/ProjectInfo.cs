@@ -16,10 +16,6 @@ namespace Ginseng.Mvc.Queries
         public string ApplicationName { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int? Priority { get; set; }
-        public string PriorityTier { get; set; }
-        public int? TierRank { get; set; }
-        public int? MaxProjects { get; set; }
         public string BranchUrl { get; set; }
         public string TextBody { get; set; }
         public string HtmlBody { get; set; }

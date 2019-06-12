@@ -45,6 +45,9 @@ namespace Ginseng.Models
         [DefaultExpression("1")]
         public bool AllowNewItems { get; set; }
 
+        [References(typeof(Team))]
+        public int? TeamId { get; set; }
+
 		public bool IsActive { get; set; } = true;
         
         public Organization Organization { get; set; }
