@@ -19,8 +19,7 @@
         <th>App Name</th>
         <th>Description</th>
         <th>URL</th>
-        <th>Invoice Email</th>
-        <th>Data Entry</th>
+        <th>Invoice Email</th>        
         <th>Active</th>
         <th></th>
     </tr>
@@ -30,8 +29,7 @@
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Url, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.InvoiceEmail, new { @class = "form-control" })</td>
-            <td>@grid.CheckBox(m => m.AllowNewItems)</td>
+            <td>@grid.TextBox(m => m.InvoiceEmail, new { @class = "form-control" })</td>            
             <td>@grid.CheckBox(m => m.IsActive)</td>
             <td>@grid.Controls()</td>
         </tr>
@@ -41,7 +39,6 @@
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Url, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.InvoiceEmail, new { @class = "form-control" })</td>
-        <td>@grid.CheckBox(m => m.AllowNewItems)</td>
         <td>@grid.CheckBox(m => m.IsActive)</td>
         <td>@grid.Controls()</td>
     </tr>

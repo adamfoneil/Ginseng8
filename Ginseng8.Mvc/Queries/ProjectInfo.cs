@@ -140,6 +140,9 @@ namespace Ginseng.Mvc.Queries
         [Where("[p].[IsActive]=@isActive")]
         public bool? IsActive { get; set; }
 
+        [Where("[app].[IsActive]=@isAppActive")]
+        public bool? IsAppActive { get; set; }
+
         [Case(ProjectInfoShowOptions.HasOpenItems, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
         [Case(ProjectInfoShowOptions.NoOpenItems, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
         public ProjectInfoShowOptions Show { get; set; } = ProjectInfoShowOptions.All;
