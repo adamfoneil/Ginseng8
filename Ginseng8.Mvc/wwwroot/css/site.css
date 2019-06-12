@@ -154,3 +154,9 @@ body {
 .js-calendar-month-with-milestone-list-droppable {
   min-height: 203px;
 }
+
+.appButton, .appButton:hover {
+    background-color: #b13393;
+    border-color: #b13393;
+    color: white
+}

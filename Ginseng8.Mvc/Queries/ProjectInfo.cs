@@ -30,7 +30,7 @@ namespace Ginseng.Mvc.Queries
         public int? UnestimatedWorkItems { get; set; }
         public int? StoppedWorkItems { get; set; }
         public int? ImpededWorkItems { get; set; }
-        public float PercentComplete { get; set; }
+        public double PercentComplete { get; set; }
         public bool AllowDelete { get; set; }
         public int? EstimateHours { get; set; }
 

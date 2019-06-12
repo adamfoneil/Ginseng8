@@ -1,5 +1,6 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Postulate.Base;
+using Postulate.Base.Attributes;
 using System;
 
 namespace Ginseng.Mvc.Queries
@@ -18,6 +19,8 @@ namespace Ginseng.Mvc.Queries
         public DateTime? DateModified { get; set; }
         public string InvoiceEmail { get; set; }
         public bool AllowNewItems { get; set; }
+        public int? TeamId { get; set; }
+        public string TeamName { get; set; }
         public int? EstimateHours { get; set; }
         public int? TotalWorkItems { get; set; }
         public int? OpenWorkItems { get; set; }
@@ -27,7 +30,7 @@ namespace Ginseng.Mvc.Queries
         public int? UnscheduledWorkItems { get; set; }
         public int? ImpededWorkItems { get; set; }
         public int AllowDelete { get; set; }
-        public double? PercentComplete { get; set; }
+        public double PercentComplete { get; set; }
 
         public bool HasModifiers()
         {
@@ -44,6 +47,7 @@ namespace Ginseng.Mvc.Queries
             @"WITH [source] AS (
                 SELECT
                     [app].*,
+                    [t].[Name] AS [TeamName],
                     (SELECT
                         SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours]))
                         FROM [dbo].[WorkItem] [wi] LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
@@ -69,8 +73,9 @@ namespace Ginseng.Mvc.Queries
                     END AS [AllowDelete]
                 FROM
                     [dbo].[Application] [app]
+                    LEFT JOIN [dbo].[Team] [t] ON [app].[TeamId]=[t].[Id]
                 WHERE
-                    [app].[OrganizationId]=@orgId        
+                    [app].[OrganizationId]=@orgId {andWhere}
             ) SELECT
                 [source].*,
                 CASE
@@ -81,5 +86,13 @@ namespace Ginseng.Mvc.Queries
                 [source]")
         {
         }
+
+        public int OrgId { get; set; }
+
+        [Where("[app].[IsActive]=@isActive")]
+        public bool? IsActive { get; set; }
+
+        [Where("[app].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
     }
 }
