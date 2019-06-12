@@ -21,8 +21,5 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[Id]=@id")]
 		public int? Id { get; set; }
-
-        [Where("[TeamId]=@teamId")]
-        public int? TeamId { get; set; }
 	}
 }

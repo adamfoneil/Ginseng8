@@ -7,25 +7,16 @@
 
 <h4>Applications</h4>
 <p>Use Applications to define the different products your organization develops and supports.</p>
-<p>You can also use applications to represent Freshdesk companies.</p>
 
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Application>(this, Xsrf, defaults: new { IsActive = true, TeamId = Model.FilterTeamId ?? 0 });
+    var grid = new GridEditor<Application>(this, Xsrf, defaults: new { IsActive = true });
 }
 
-<form method="get" class="form-inline mb-3">
-    <label class="mr-2">Team:</label>
-    <select name="filterTeamId" asp-items="Model.TeamSelect" onchange="this.form.submit();" class="form-control">
-        <option value="">(all teams)</option>
-    </select>
-</form>
-
 <table class="table">
-    <tr>
-        <th>Team</th>
-        <th>App/Company Name</th>
+    <tr>        
+        <th>App Name</th>
         <th>Description</th>
         <th>URL</th>
         <th>Invoice Email</th>
@@ -36,7 +27,6 @@
     @foreach (var item in Model.Applications)
     {
         <tr id="@grid.RowId(item)">
-            <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Url, new { @class = "form-control" })</td>
@@ -47,7 +37,6 @@
         </tr>
     }
     <tr id="@grid.NewRowId()">
-        <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Url, new { @class = "form-control" })</td>

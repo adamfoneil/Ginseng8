@@ -46,10 +46,7 @@ namespace Ginseng.Models
         public bool AllowNewItems { get; set; }
 
 		public bool IsActive { get; set; } = true;
-
-        [References(typeof(Team))]
-        public int? TeamId { get; set; }
-
+        
         public Organization Organization { get; set; }
         public Team Team { get; set; }
 
@@ -72,14 +69,12 @@ namespace Ginseng.Models
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {
-            Organization = commandProvider.Find<Organization>(connection, OrganizationId);
-            if (TeamId.HasValue) Team = commandProvider.Find<Team>(connection, TeamId.Value);
+            Organization = commandProvider.Find<Organization>(connection, OrganizationId);            
         }
 
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
-            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
-            if (TeamId.HasValue) Team = await commandProvider.FindAsync<Team>(connection, TeamId.Value);
+            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);            
         }
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
