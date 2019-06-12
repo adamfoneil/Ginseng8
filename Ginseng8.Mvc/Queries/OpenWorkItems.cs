@@ -42,6 +42,8 @@ namespace Ginseng.Mvc.Queries
 		public int? DeveloperUserId { get; set; }
 		public int ApplicationId { get; set; }
 		public string ApplicationName { get; set; }
+        public int TeamId { get; set; }
+        public string TeamName { get; set; }
 		public bool HasImpediment { get; set; }
 		public int ProjectId { get; set; }
 		public string ProjectName { get; set; }
@@ -146,6 +148,7 @@ namespace Ginseng.Mvc.Queries
 				[wi].[BusinessUserId],
 				[wi].[DeveloperUserId],
 				[wi].[ApplicationId], [app].[Name] AS [ApplicationName],
+                COALESCE([wi].[TeamId], 0), [t].[Name] AS [TeamName],
 				[wi].[HasImpediment],
 				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
@@ -194,6 +197,7 @@ namespace Ginseng.Mvc.Queries
 			FROM
 				[dbo].[WorkItem] [wi]
 				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
+                LEFT JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]

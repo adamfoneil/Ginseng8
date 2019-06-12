@@ -4,7 +4,7 @@
     ViewData["Title"] = "New";
 }
 
-<p>Use this to create new work items in the teamropriate grouping. Items shown here have no <a asp-page="/Dashboard/Projects">project</a> selected.</p>
+<p>Use this to create new work items in the appropriate grouping. Items shown here have no <a asp-page="/Dashboard/Applications">application</a> selected.</p>
 
 <div id="accordion">
 @foreach  (var team in Model.Teams)
@@ -32,8 +32,7 @@
                         <p>Add new <span class="badge" style="color:@label.ForeColor;background-color:@label.BackColor">@label.Name</span> item:</p>
                         @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                         {
-                            { "teamId", Html.CurrentTeamId() },
-                            { "teamlicationId", team.Id },
+                            { "teamId", team.Id },                            
                             { "labelId", label.Id }
                         }))
 
