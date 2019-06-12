@@ -341,6 +341,8 @@ $(document)
 
     let formData = new FormData(frm);
 
+    $(ev.currentTarget).attr('disabled', true);
+
     fetch('/WorkItem/SaveComment', {
         method: 'post',
         body: formData
@@ -349,6 +351,7 @@ $(document)
     }).then(function (html) {
         var objectId = frm.ObjectId.value;
         var objectType = frm.ObjectType.value;
+
         $('#comments-' + objectId + '-' + objectType + '-output').first().html(html);
         $('#addComment-' + objectId + '-HtmlBody').froalaEditor(GetFroalaSettings());
     });
