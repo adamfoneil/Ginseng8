@@ -1,9 +1,8 @@
 ﻿using Ginseng.Models;
+using Ginseng.Models.Interfaces;
 using Ginseng.Mvc.Queries;
-using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,8 +18,8 @@ namespace Ginseng.Mvc.Pages.Setup
 
         public IEnumerable<Label> Labels { get; set; }
         public Dictionary<int, LabelSubscription> Subscriptions { get; set; }
-        public IEnumerable<Application> AllApps { get; set; }
-        public ILookup<int, Application> NewItemApps { get; set; }
+        public IEnumerable<Team> AllTeams { get; set; }
+        public ILookup<int, Team> NewItemTeams { get; set; }
 
         public async Task OnGetAsync(bool isActive = true)
         {
@@ -33,24 +32,27 @@ namespace Ginseng.Mvc.Pages.Setup
                 var subscriptions = await new MyLabelSubscriptions() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(cn);
                 Subscriptions = subscriptions.ToDictionary(row => row.LabelId);
 
-                AllApps = await new Applications() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
+                AllTeams = await new Teams() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
 
-                var newItemAppLabels = await new NewItemAppLabelsInUse() { OrgId = OrgId }.ExecuteAsync(cn);
-                NewItemApps = newItemAppLabels.ToLookup(row => row.LabelId);                
+                var labelsInUse = await new TeamLabelsInUse() { OrgId = OrgId }.ExecuteAsync(cn);
+                NewItemTeams = labelsInUse.ToLookup(row => row.LabelId);
             }
         }
-        
-        public MultiSelector<Application> GetAppSelector(int labelId)
+
+        public MultiSelector<ISelectable> GetTeamSelector(int labelId)
         {
-            var apps = NewItemApps[labelId];
-            return new MultiSelector<Application>()
+            var apps = NewItemTeams[labelId];
+            return new MultiSelector<ISelectable>()
             {
+                PrimaryFieldName = "TeamId",
+                RelatedFieldName = "LabelId",
+                PostUrl = "/Update/TeamLabel",
                 RelatedId = labelId,
-                Items = AllApps.Select(app => new Application()
+                Items = AllTeams.Select(t => new Team()
                 {
-                    Id = app.Id,
-                    Name = app.Name,
-                    Selected = apps.Contains(app)
+                    Id = t.Id,
+                    Name = t.Name,
+                    Selected = apps.Contains(t)
                 })
             };
         }

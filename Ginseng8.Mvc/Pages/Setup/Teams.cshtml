@@ -23,6 +23,7 @@
         <th>Description</th>
         <th>Use Applications</th>
         <th>Use Freshdesk Companies</th>
+        <th>Active</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Teams)
@@ -32,6 +33,7 @@
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
             <td>@grid.CheckBox(m => m.UseApplications)</td>
             <td>@grid.CheckBox(m => m.CompanySpecificProjects)</td>
+            <td>@grid.CheckBox(m => m.IsActive)</td>
             <td>@grid.Controls()</td>
         </tr>
     }
@@ -40,6 +42,7 @@
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
         <td>@grid.CheckBox(m => m.UseApplications)</td>
         <td>@grid.CheckBox(m => m.CompanySpecificProjects)</td>
+        <td>@grid.CheckBox(m => m.IsActive)</td>
         <td>@grid.Controls()</td>
     </tr>    
 </table>

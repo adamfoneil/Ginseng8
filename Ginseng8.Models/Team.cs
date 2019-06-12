@@ -2,12 +2,13 @@
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-    public class Team : BaseTable, IOrgSpecific
+    public class Team : BaseTable, IOrgSpecific, ISelectable
     {
         [References(typeof(Organization))]
         [PrimaryKey]
@@ -33,6 +34,23 @@ namespace Ginseng.Models
         public bool CompanySpecificProjects { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        [NotMapped]
+        public bool Selected { get; set; }
+
+        [NotMapped]
+        public int LabelId { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            var test = obj as Team;
+            return (test != null) ? test.Id == Id : false;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id.GetHashCode();
+        }
 
         public Task<int> GetOrgIdAsync(IDbConnection connection)
         {

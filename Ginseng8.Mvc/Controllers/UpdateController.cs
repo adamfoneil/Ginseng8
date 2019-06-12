@@ -150,22 +150,22 @@ namespace Ginseng.Mvc.Controllers
 			throw new Exception($"Work item number {workItemNumber} not found.");
 		}
 
-        public async Task<ContentResult> NewItemAppLabel(int applicationId, int labelId, bool selected)
+        public async Task<ContentResult> TeamLabel(int teamId, int labelId, bool selected)
         {
             using (var cn = _data.GetConnection())
             {               
                 if (selected)
                 {
-                    var nal = new NewItemAppLabel() { ApplicationId = applicationId, LabelId = labelId };
-                    await cn.MergeAsync(nal, _data.CurrentUser);
+                    var tl = new TeamLabel() { TeamId = teamId, LabelId = labelId };
+                    await cn.MergeAsync(tl, _data.CurrentUser);
                 }
                 else
                 {
-                    var nal = await cn.FindWhereAsync<NewItemAppLabel>(new { ApplicationId = applicationId, LabelId = labelId });
-                    if (nal != null) await cn.DeleteAsync<NewItemAppLabel>(nal.Id);
+                    var tl = await cn.FindWhereAsync<TeamLabel>(new { TeamId = teamId, LabelId = labelId });
+                    if (tl != null) await cn.DeleteAsync<TeamLabel>(tl.Id);
                 }
 
-                var apps = await new NewItemAppLabelsInUse() { OrgId = _data.CurrentOrg.Id, LabelId = labelId }.ExecuteAsync(cn);
+                var apps = await new TeamLabelsInUse() { OrgId = _data.CurrentOrg.Id, LabelId = labelId }.ExecuteAsync(cn);
                 return Content(string.Join(", ", apps.Select(a => a.Name)));
             }
         }
