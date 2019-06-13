@@ -37,6 +37,7 @@ namespace Ginseng.Models
                 int eventLogId = await EventLog.WriteAsync(connection, new EventLog()
                 {
                     OrganizationId = workItem.OrganizationId,
+                    TeamId = workItem.TeamId,
                     ApplicationId = workItem.ApplicationId,
                     WorkItemId = workItem.Id,
                     EventId = SystemEvent.LabelAdded,

@@ -204,6 +204,7 @@ namespace Ginseng.Models
 				{
 					WorkItemId = Id,
 					OrganizationId = OrganizationId,
+                    TeamId = TeamId,
 					ApplicationId = ApplicationId,
 					EventId = (CloseReasonId.HasValue) ? SystemEvent.WorkItemClosed : SystemEvent.WorkItemOpened,
 					IconClass = (CloseReasonId.HasValue) ? IconClosed : "fas fa-play",
@@ -219,6 +220,7 @@ namespace Ginseng.Models
 				{
 					WorkItemId = Id,
 					OrganizationId = OrganizationId,
+                    TeamId = TeamId,
 					ApplicationId = ApplicationId,
 					EventId = SystemEvent.MilestoneChanged,
 					IconClass = "fas fa-flag-checkered",
@@ -243,6 +245,7 @@ namespace Ginseng.Models
 					{
 						WorkItemId = Id,
 						OrganizationId = OrganizationId,
+                        TeamId = TeamId,
 						ApplicationId = ApplicationId,
 						EventId = SystemEvent.WorkItemFieldChanged,
 						IconClass = "far fa-pencil",
