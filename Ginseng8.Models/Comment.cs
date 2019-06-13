@@ -61,26 +61,27 @@ namespace Ginseng.Models
 
 			if (action == SaveAction.Insert)
 			{
-				if (IsImpediment.HasValue && ObjectType == ObjectType.WorkItem)
-				{
-					var workItem = await connection.FindAsync<WorkItem>(ObjectId);
-					workItem.HasImpediment = IsImpediment.Value;
-					await connection.UpdateAsync(workItem, user, r => r.HasImpediment);
-				}
+                if (ObjectType == ObjectType.WorkItem)
+                {
+                    var workItem = await connection.FindAsync<WorkItem>(ObjectId);
+                    if (IsImpediment.HasValue)
+                    {
+                        workItem.HasImpediment = IsImpediment.Value;
+                        await connection.UpdateAsync(workItem, user, r => r.HasImpediment);
+                    }
 
-				if (ObjectType == ObjectType.WorkItem)
-				{
-					await EventLog.WriteAsync(connection, new EventLog(ObjectId, user)
-					{
-						EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded,
-						IconClass = IconClass,
-						IconColor = (IsImpediment ?? false) ? "darkred" : "auto",
-						HtmlBody = HtmlBody,
-						TextBody = TextBody
-					});
-				}
+                    await EventLog.WriteAsync(connection, new EventLog(ObjectId, user)
+                    {
+                        TeamId = workItem.TeamId,
+                        EventId = (IsImpediment ?? false) ? SystemEvent.ImpedimentAdded : SystemEvent.CommentAdded,
+                        IconClass = IconClass,
+                        IconColor = (IsImpediment ?? false) ? "darkred" : "auto",
+                        HtmlBody = HtmlBody,
+                        TextBody = TextBody
+                    });
+                }
 
-				await PendingWorkLog.FromCommentAsync(connection, this, user as UserProfile);
+                await PendingWorkLog.FromCommentAsync(connection, this, user as UserProfile);
 				await ParseMentionsAsync(connection, this, user as UserProfile);
 			}
 		}
