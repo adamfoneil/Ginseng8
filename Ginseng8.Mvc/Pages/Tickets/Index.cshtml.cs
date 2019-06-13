@@ -22,7 +22,7 @@ namespace Ginseng.Mvc.Pages.Tickets
     public enum ActionObjectType
     {
         Project,
-        Application
+        Team
     }
 
     [Authorize]
@@ -73,9 +73,9 @@ namespace Ginseng.Mvc.Pages.Tickets
                 }
                 else
                 {
-                    ActionObjectType = ActionObjectType.Application;
+                    ActionObjectType = ActionObjectType.Team;
                     AppSelect = await BuildAppSelectAsync(cn, ResponsibilityId);
-                }                
+                }
             }            
 
             LoadedFrom = FreshdeskCache.TicketCache.LoadedFrom;
@@ -190,7 +190,7 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         private async Task<int> CreateWorkItemFromTicketAsync(SqlConnection cn, IFreshdeskClient client, Ticket ticket, int objectId, ActionObjectType objectType)
         {
-            int appId = (objectType == ActionObjectType.Application) ? 
+            int teamId = (objectType == ActionObjectType.Team) ? 
                 objectId : 
                 (objectId == -1) ?
                     CurrentOrgUser.CurrentAppId.Value :
@@ -209,7 +209,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             var workItem = new Ginseng.Models.WorkItem()
             {
                 OrganizationId = OrgId,
-                ApplicationId = appId,
+                TeamId = teamId,
                 ProjectId = projectId,
                 Title = $"FD: {ticket.Subject} (ticket # {ticket.Id})",
                 HtmlBody = $"<p>Created from Freshdesk <a href=\"{CurrentOrg.FreshdeskUrl}/a/tickets/{ticket.Id}\">ticket {ticket.Id}</a></p>"
