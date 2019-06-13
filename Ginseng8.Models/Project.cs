@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace Ginseng.Models
 {
 	/// <summary>
-	/// A collection of work items centered around a single goal, feature, or some other unifying idea
+	/// A collection of work items centered around a single goal, feature, or some other unifying idea or theme
 	/// </summary>
 	public class Project : BaseTable, IBody, IFindRelated<int>, IOrgSpecific
 	{
