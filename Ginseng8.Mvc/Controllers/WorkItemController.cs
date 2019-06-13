@@ -179,7 +179,7 @@ namespace Ginseng.Mvc.Controllers
                     // work item can have just one priority, so we look to see if there's one existing
                     if (!(await cn.ExistsWhereAsync<WorkItemPriority>(new { WorkItemId = workItem.Id })))
                     {
-                        var nextPriority = await new NextPriority() { OrgId = _data.CurrentOrg.Id, AppId = workItem.ApplicationId }.ExecuteSingleAsync(cn);
+                        var nextPriority = await new NextPriority() { OrgId = _data.CurrentOrg.Id, TeamId = workItem.TeamId }.ExecuteSingleAsync(cn);
                         var wip = new WorkItemPriority()
                         {
                             WorkItemId = workItem.Id,

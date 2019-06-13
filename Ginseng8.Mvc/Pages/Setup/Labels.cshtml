@@ -36,7 +36,7 @@
             <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
             <td><span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></td>
-            <td><partial name="_MultiSelect" model="Model.GetTeamSelector(item.Id)"/></td>
+            <td><partial name="_MultiSelect" model="Model.GetAppSelector(item.Id)"/></td>
             <td>
                 <div id="notifyOptions-@Model.Subscriptions[item.Id].Id">
                     <partial name="Shared/_NotifyOptions" model="@Model.Subscriptions[item.Id]"/>

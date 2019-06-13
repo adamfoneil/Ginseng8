@@ -34,20 +34,20 @@ namespace Ginseng.Mvc.Pages.Setup
 
                 AllApps = await new Applications() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
 
-                //var labelsInUse = await new AppLabelsInUse() { OrgId = OrgId }.ExecuteAsync(cn);
-                //NewItemApps = labelsInUse.ToLookup(row => row.LabelId);
+                var newItemAppLabels = await new NewItemAppLabelsInUse() { OrgId = OrgId }.ExecuteAsync(cn);
+                NewItemApps = newItemAppLabels.ToLookup(row => row.LabelId);
             }
         }
 
-        public MultiSelector<ISelectable> GetTeamSelector(int labelId)
+        public MultiSelector<ISelectable> GetAppSelector(int labelId)
         {
             var apps = NewItemApps[labelId];
             return new MultiSelector<ISelectable>()
             {
-                Prompt = "Teams:",
-                PrimaryFieldName = "TeamId",
+                Prompt = "Apps:",
+                PrimaryFieldName = "ApplicationId",
                 RelatedFieldName = "LabelId",
-                PostUrl = "/Update/TeamLabel",
+                PostUrl = "/Update/NewItemAppLabel",
                 RelatedId = labelId,
                 Items = AllApps.Select(t => new Team()
                 {

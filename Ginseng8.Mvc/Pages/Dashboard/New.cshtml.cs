@@ -20,13 +20,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public int TeamId { get; set; }
         public IEnumerable<Application> Applications { get; set; }
         public ILookup<int, Label> Labels { get; set; }
-        public ILookup<TeamLabelCell, OpenWorkItemsResult> TeamLabelItems { get; set; }
+        public ILookup<AppLabelCell, OpenWorkItemsResult> AppLabelItems { get; set; }
         public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }
 
-        public IEnumerable<OpenWorkItemsResult> GetTeamLabelItems(int teamId, int labelId)
+        public IEnumerable<OpenWorkItemsResult> GetAppLabelItems(int appId, int labelId)
         {
-            var cell = new TeamLabelCell(teamId, labelId);
-            return TeamLabelItems[cell];
+            var cell = new AppLabelCell(appId, labelId);
+            return AppLabelItems[cell];
         }
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
@@ -34,11 +34,16 @@ namespace Ginseng.Mvc.Pages.Dashboard
             TeamId = CurrentOrgUser.CurrentTeamId ?? 0;
             Applications = await new Applications() { OrgId = OrgId, AllowNewItems = true, TeamId = TeamId, IsActive = true }.ExecuteAsync(connection);
 
+            if (!Applications.Any())
+            {
+
+            }
+
             var workItemLabelMap = SelectedLabels
                 .Select(grp => new { WorkItemId = grp.Key, LabelId = grp.First().Id })
                 .ToDictionary(row => row.WorkItemId, row => row.LabelId);
 
-            TeamLabelItems = WorkItems.ToLookup(row => new TeamLabelCell(row.TeamId, workItemLabelMap[row.Id]));
+            AppLabelItems = WorkItems.ToLookup(row => new AppLabelCell(row.ApplicationId, workItemLabelMap[row.Id]));
 
             var instructions = await new MyLabelInstructions() { OrgId = OrgId }.ExecuteAsync(connection);
             LabelInstructions = instructions.ToDictionary(row => row.LabelId);

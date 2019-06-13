@@ -15,17 +15,16 @@
 <div id="accordion">
 @foreach  (var app in Model.Applications)
 {
-    <h2>@app.Name</h2>
+    <h4>@app.Name</h4>
     <div class="ml-3">
         <p>@app.Description</p>
-
         <ul class="nav nav-tabs" role="tablist">
             @foreach (var label in Model.Labels[app.Id])
             {
                 <li class="nav-item">
                     <a href="#team-@app.Id-label-@label.Id" data-toggle="tab" class="nav-link" id="tab-team-@app.Id-label-@label.Id">
                         @label.Name
-                        <sup>@Model.GetTeamLabelItems(app.Id, label.Id).Count()</sup>
+                        <sup>@Model.GetAppLabelItems(app.Id, label.Id).Count()</sup>
                     </a>
                 </li>
             }
@@ -43,7 +42,7 @@
                             { "labelId", label.Id }
                         }))
 
-                        @foreach (var item in Model.GetTeamLabelItems(app.Id, label.Id))
+                        @foreach (var item in Model.GetAppLabelItems(app.Id, label.Id))
                         {
                             <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
                         }

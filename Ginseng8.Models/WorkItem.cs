@@ -60,16 +60,16 @@ namespace Ginseng.Models
 		[DefaultExpression("0")]
 		public bool HasImpediment { get; set; }
 
-		[References(typeof(Application))]
-		public int ApplicationId { get; set; }
-
         [References(typeof(Team))]
-        public int? TeamId { get; set; }
+        public int TeamId { get; set; }
 
-		/// <summary>
-		/// Broad estimate of amount of work involved
-		/// </summary>
-		[References(typeof(WorkItemSize))]
+        [References(typeof(Application))]
+        public int? ApplicationId { get; set; }
+
+        /// <summary>
+        /// Broad estimate of amount of work involved
+        /// </summary>
+        [References(typeof(WorkItemSize))]
 		public int? SizeId { get; set; }
 
 		/// <summary>
@@ -116,6 +116,7 @@ namespace Ginseng.Models
 				{
 					WorkItemId = Id,
 					OrganizationId = OrganizationId,
+                    TeamId = TeamId,
 					ApplicationId = ApplicationId,
 					EventId = SystemEvent.WorkItemCreated,
 					HtmlBody = Title,

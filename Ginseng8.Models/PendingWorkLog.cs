@@ -22,6 +22,9 @@ namespace Ginseng.Models
 		[References(typeof(Organization))]
 		public int OrganizationId { get; set; }
 
+        [References(typeof(Team))]
+        public int TeamId { get; set; }
+
 		/// <summary>
 		/// Work must at minimum be related to a project
 		/// </summary>
@@ -36,7 +39,7 @@ namespace Ginseng.Models
 		public int? WorkItemId { get; set; }		
 
         [References(typeof(Application))]
-        public int ApplicationId { get; set; }
+        public int? ApplicationId { get; set; }
 
 		[References(typeof(UserProfile))]
 		public int UserId { get; set; }
@@ -92,6 +95,7 @@ namespace Ginseng.Models
 				var workLog = new PendingWorkLog()
 				{
 					OrganizationId = link.OrganizationId,
+                    TeamId = link.TeamId,
                     ApplicationId = link.ApplicationId,
 					ProjectId = link.ProjectId,
 					WorkItemId = link.WorkItemId,
@@ -159,7 +163,8 @@ namespace Ginseng.Models
 	internal class PendingHoursLink
 	{
 		public int OrganizationId { get; set; }
-        public int ApplicationId { get; set; }
+        public int TeamId { get; set; }
+        public int? ApplicationId { get; set; }
 		public int? ProjectId { get; set; }
 		public int? WorkItemId { get; set; }
 	}
