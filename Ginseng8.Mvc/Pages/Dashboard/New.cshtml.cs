@@ -36,7 +36,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             if (!Applications.Any())
             {
-
+                Applications = new Application[]
+                {
+                    new Application()
+                    {
+                        Name = $"New {CurrentOrgUser.CurrentTeam.Name}"
+                    }
+                };
             }
 
             var workItemLabelMap = SelectedLabels
