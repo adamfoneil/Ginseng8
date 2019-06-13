@@ -8,6 +8,7 @@ namespace Ginseng.Mvc.ViewModels
     /// </summary>
     public class MultiSelector<T> where T : ISelectable
     {
+        public string Prompt { get; set; }
         public string PrimaryFieldName { get; set; }
         public string RelatedFieldName { get; set; }
         public int RelatedId { get; set; }

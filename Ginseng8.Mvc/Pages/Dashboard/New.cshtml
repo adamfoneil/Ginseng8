@@ -4,39 +4,46 @@
     ViewData["Title"] = "New";
 }
 
-<p>Use this to create new work items for the appropriate team. Items shown here have no <a asp-page="/Dashboard/Applications">application</a> selected.</p>
+<p>Use this to create new work items for the appropriate team and app. Items shown here have no project selected.</p>
+
+@if (!Model.Applications.Any())
+{
+    <p>Please select a team above.</p>
+    return;
+}
 
 <div id="accordion">
-@foreach  (var team in Model.Teams)
+@foreach  (var app in Model.Applications)
 {
-    <h2>@team.Name</h2>
+    <h2>@app.Name</h2>
     <div class="ml-3">
-        <p>@team.Description</p>
+        <p>@app.Description</p>
 
         <ul class="nav nav-tabs" role="tablist">
-            @foreach (var label in Model.Labels[team.Id])
+            @foreach (var label in Model.Labels[app.Id])
             {
                 <li class="nav-item">
-                    <a href="#team-@team.Id-label-@label.Id" data-toggle="tab" class="nav-link" id="tab-team-@team.Id-label-@label.Id">
+                    <a href="#team-@app.Id-label-@label.Id" data-toggle="tab" class="nav-link" id="tab-team-@app.Id-label-@label.Id">
                         @label.Name
-                        <sup>@Model.GetTeamLabelItems(team.Id, label.Id).Count()</sup>
+                        <sup>@Model.GetTeamLabelItems(app.Id, label.Id).Count()</sup>
                     </a>
                 </li>
             }
         </ul>
         <div class="tab-content my-3" id="tabContent">
-            @foreach  (var label in Model.Labels[team.Id])
+            @foreach  (var label in Model.Labels[app.Id])
             {
-                <div id="team-@team.Id-label-@label.Id" class="tab-pane fade" data-tab-id="tab-team-@team.Id-label-@label.Id" role="tabpanel">
+                <div id="team-@app.Id-label-@label.Id" class="tab-pane fade" data-tab-id="tab-team-@app.Id-label-@label.Id" role="tabpanel">
                     <div class="ml-3">
                         <p>Add new <span class="badge" style="color:@label.ForeColor;background-color:@label.BackColor">@label.Name</span> item:</p>
                         @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                         {
-                            { "teamId", team.Id },                            
+                            { "teamId", Model.TeamId },
+                            { "applicationId", app.Id },
                             { "labelId", label.Id }
                         }))
 
-                        @foreach (var item in Model.GetTeamLabelItems(team.Id, label.Id))
+                        @foreach (var item in Model.GetTeamLabelItems(app.Id, label.Id))
                         {
                             <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
                         }
@@ -46,9 +53,9 @@
                     {
                         <div class="mt-2">
                             <i class="far fa-info-circle"></i>
-                            <span><a data-toggle="collapse" href="#instructions-@label.Id-@team.Id">Tips on writing a good @label.Name item</a></span>
+                            <span><a data-toggle="collapse" href="#instructions-@label.Id-@app.Id">Tips on writing a good @label.Name item</a></span>
                         </div>
-                        <div class="collapse ml-3" id="instructions-@label.Id-@team.Id">
+                        <div class="collapse ml-3" id="instructions-@label.Id-@app.Id">
                             @Html.Raw(Model.LabelInstructions[label.Id].HtmlBody)
                         </div>
                     }

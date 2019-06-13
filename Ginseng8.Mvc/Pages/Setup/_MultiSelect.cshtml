@@ -2,7 +2,7 @@
 
 <div style="display:inline-block">
     <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <span class="mr-1">Apps:</span>
+        <span class="mr-1">@Model.Prompt</span>
         <span id="teams-@Model.RelatedId">
         @foreach (var item in Model.Items.Where(row => row.Selected))
         {

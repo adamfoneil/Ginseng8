@@ -16,8 +16,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
             ShowLabelFilter = false;
             ShowExcelDownload = false;
         }
-        
-        public IEnumerable<Team> Teams { get; set; }
+               
+        public int TeamId { get; set; }
+        public IEnumerable<Application> Applications { get; set; }
         public ILookup<int, Label> Labels { get; set; }
         public ILookup<TeamLabelCell, OpenWorkItemsResult> TeamLabelItems { get; set; }
         public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }
@@ -30,7 +31,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
-            Teams = await new Teams() { OrgId = OrgId, IsActive = true }.ExecuteAsync(connection);            
+            TeamId = CurrentOrgUser.CurrentTeamId ?? 0;
+            Applications = await new Applications() { OrgId = OrgId, AllowNewItems = true, TeamId = TeamId, IsActive = true }.ExecuteAsync(connection);
 
             var workItemLabelMap = SelectedLabels
                 .Select(grp => new { WorkItemId = grp.Key, LabelId = grp.First().Id })

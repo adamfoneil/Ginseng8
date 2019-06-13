@@ -18,8 +18,8 @@ namespace Ginseng.Mvc.Pages.Setup
 
         public IEnumerable<Label> Labels { get; set; }
         public Dictionary<int, LabelSubscription> Subscriptions { get; set; }
-        public IEnumerable<Team> AllTeams { get; set; }
-        public ILookup<int, Team> NewItemTeams { get; set; }
+        public IEnumerable<Application> AllApps { get; set; }
+        public ILookup<int, Application> NewItemApps { get; set; }
 
         public async Task OnGetAsync(bool isActive = true)
         {
@@ -32,23 +32,24 @@ namespace Ginseng.Mvc.Pages.Setup
                 var subscriptions = await new MyLabelSubscriptions() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(cn);
                 Subscriptions = subscriptions.ToDictionary(row => row.LabelId);
 
-                AllTeams = await new Teams() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
+                AllApps = await new Applications() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
 
-                var labelsInUse = await new TeamLabelsInUse() { OrgId = OrgId }.ExecuteAsync(cn);
-                NewItemTeams = labelsInUse.ToLookup(row => row.LabelId);
+                //var labelsInUse = await new AppLabelsInUse() { OrgId = OrgId }.ExecuteAsync(cn);
+                //NewItemApps = labelsInUse.ToLookup(row => row.LabelId);
             }
         }
 
         public MultiSelector<ISelectable> GetTeamSelector(int labelId)
         {
-            var apps = NewItemTeams[labelId];
+            var apps = NewItemApps[labelId];
             return new MultiSelector<ISelectable>()
             {
+                Prompt = "Teams:",
                 PrimaryFieldName = "TeamId",
                 RelatedFieldName = "LabelId",
                 PostUrl = "/Update/TeamLabel",
                 RelatedId = labelId,
-                Items = AllTeams.Select(t => new Team()
+                Items = AllApps.Select(t => new Team()
                 {
                     Id = t.Id,
                     Name = t.Name,
