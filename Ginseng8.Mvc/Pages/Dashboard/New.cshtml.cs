@@ -34,7 +34,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             TeamId = CurrentOrgUser.CurrentTeamId ?? 0;
             Applications = await new Applications() { OrgId = OrgId, AllowNewItems = true, TeamId = TeamId, IsActive = true }.ExecuteAsync(connection);
 
-            if (!Applications.Any())
+            if (!Applications.Any() && TeamId != 0)
             {
                 Applications = new Application[]
                 {
@@ -67,9 +67,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 labelIds = allLabels.GroupBy(row => row.Id).Select(grp => grp.Key).ToArray();
             }
 
-            return new OpenWorkItems()
+            return new OpenWorkItems(QueryTraces)
             {
                 OrgId = OrgId,
+                TeamId = CurrentOrgUser.CurrentTeamId,
                 HasProject = false,                
                 LabelIds = labelIds,
                 HasAssignedUserId = false,

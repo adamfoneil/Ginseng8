@@ -4,9 +4,16 @@
     <div class="d-flex justify-content-between">
         <form class="form-inline">
             <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
-                    
-            <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects fillMilestones"></select>
-                    
+            
+            <select name="TeamId" asp-items="@Model.Dropdowns.TeamSelect(Model.WorkItem.TeamId)" class="form-control-sm mr-2 projectUpdate"></select>
+
+            @if (Model.WorkItem.UseApplications)
+            {
+                <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects fillMilestones">
+                    <option value="">- application -</option>
+                </select>
+            }
+                                
             <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number">
                 <option value="">- project -</option>
             </select>
@@ -52,12 +59,11 @@
         <div class="d-flex flex-row-reverse align-items-center">
             @if (Model.ShowDetailsButton)
             {
-                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number">
+                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number" title="Created by @Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated">
                     <i class="far fa-info-circle"></i>
                     Details
                 </a>
-            }
-            <span class="text-muted small mr-2">@Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated</span>
+            }            
         </div>
     </div>
     

@@ -90,6 +90,7 @@ namespace Ginseng.Mvc.Queries
         public long FDContactId { get; set; }
         public string FDContactName { get; set; }
         public TicketStatus FDTicketStatus { get; set; }
+        public bool UseApplications { get; set; }
 
 		public bool IsEditable(string userName)
 		{
@@ -147,7 +148,7 @@ namespace Ginseng.Mvc.Queries
 				[wi].[HtmlBody],
 				[wi].[BusinessUserId],
 				[wi].[DeveloperUserId],
-				COALESCE([wi].[ApplicationId], 0), [app].[Name] AS [ApplicationName],
+				COALESCE([wi].[ApplicationId], 0) AS [ApplicationId], [app].[Name] AS [ApplicationName],
                 [wi].[TeamId], [t].[Name] AS [TeamName],
 				[wi].[HasImpediment],
 				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
@@ -192,7 +193,8 @@ namespace Ginseng.Mvc.Queries
                 [wit].[ContactName] AS [FDContactName],
                 [wit].[Subject] AS [FDTicketSubject],
                 [wit].[TicketStatus] AS [FDTicketStatus],
-                [org].[FreshdeskUrl]
+                [org].[FreshdeskUrl],
+                [t].[UseApplications]
 			FROM
 				[dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
@@ -251,6 +253,9 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+        [Where("[wi].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 
 		[Offset(30)]
 		public int? Page { get; set; }

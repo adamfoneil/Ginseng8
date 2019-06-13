@@ -253,7 +253,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         private async Task<int> GetAppFromProjectIdAsync(SqlConnection cn, int projectId)
         {
             var prj = await cn.FindAsync<Project>(projectId);
-            return prj.ApplicationId;
+            return prj.ApplicationId ?? 0;
         }
 
         public async Task<RedirectResult> OnPostIgnoreSelectedAsync(string ticketIds, int responsibilityId)

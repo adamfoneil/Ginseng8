@@ -20,22 +20,38 @@ namespace Ginseng.Mvc
 		/// </summary>
 		public IEnumerable<Activity> Activities { get; set; }
 
-		public IEnumerable<SelectListItem> Applications { get; set; }
-		public ILookup<int, SelectListItem> AllProjects { get; set; }
+        public IEnumerable<SelectListItem> Teams { get; set; }
+		public ILookup<int, SelectListItem> AllApps { get; set; } // keyed to teams
+		public ILookup<int, SelectListItem> AllProjects { get; set; } // keyed to applications
 		public IEnumerable<SelectListItem> Sizes { get; set; }
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }		
-        public ILookup<int, SelectListItem> AllMilestones { get; set; }
-		public ILookup<int, SelectListItem> AllDataModels { get; set; }
+        public ILookup<int, SelectListItem> AllMilestones { get; set; } // keyed to applications
+		public ILookup<int, SelectListItem> AllDataModels { get; set; } // keyed to projects
 		public IEnumerable<Label> Labels { get; set; }
 
-		public SelectList AppSelect(int? appId)
+        public SelectList TeamSelect(int? teamId = null)
+        {
+            return new SelectList(Teams, "Value", "Text", teamId);
+        }
+
+        public SelectList TeamSelect(OpenWorkItemsResult item = null)
+        {
+            return new SelectList(Teams, "Value", "Text", item?.TeamId);
+        }
+
+        public SelectList AppSelect(Project project)
+        {
+            return new SelectList(AllApps[project.TeamId], "Value", "Text", project.ApplicationId);
+        }
+
+		public SelectList AppSelect(int teamId, int? appId)
 		{
-			return new SelectList(Applications, "Value", "Text", appId);
+			return new SelectList(AllApps[teamId], "Value", "Text", appId);
 		}
 
 		public SelectList AppSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(Applications, "Value", "Text", item?.ApplicationId);
+			return new SelectList(AllApps[item.TeamId], "Value", "Text", item?.ApplicationId);
 		}
 
 		public SelectList ProjectSelect(int appId, int? projectId, bool withNoneOption = false)
@@ -101,11 +117,14 @@ namespace Ginseng.Mvc
 			var result = new CommonDropdowns();
 
             // org-scoped items
+            result.Teams = await new TeamSelect() { OrgId = orgId }.ExecuteAsync(connection);
 			result.Activities = await new Activities() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
             result.Sizes = await new SizeSelect() { OrgId = orgId }.ExecuteAsync(connection);
-            result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);
-            result.Applications = await new AppSelect() { OrgId = orgId }.ExecuteAsync(connection);
+            result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);            
             result.Labels = await new Labels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+
+            var allApps = await new Applications() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+            result.AllApps = allApps.ToLookup(row => row.TeamId ?? 0, row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
 
             // app-scoped items
             var allProjects = await new AllProjects() { OrgId = orgId }.ExecuteAsync(connection);

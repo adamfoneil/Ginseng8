@@ -81,7 +81,7 @@ namespace Ginseng.Mvc.Queries
 				SELECT
 					[p].*,
 					[app].[Name] AS [ApplicationName],
-                    [app].[TeamId], [t].[Name] AS [TeamName],
+                    [t].[Name] AS [TeamName],
 					(SELECT
 						SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours]))
 						FROM [dbo].[WorkItem] [wi] LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
@@ -108,8 +108,8 @@ namespace Ginseng.Mvc.Queries
 					END AS [AllowDelete]
 				FROM
 					[dbo].[Project] [p]
-					INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
-                    LEFT JOIN [dbo].[Team] [t] ON [app].[TeamId]=[t].[Id]
+                    INNER JOIN [dbo].[Team] [t] ON [p].[TeamId]=[t].[Id]					
+                    LEFT JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]                    
 				WHERE
 					[app].[OrganizationId]=@orgId
 					{{andWhere}}
