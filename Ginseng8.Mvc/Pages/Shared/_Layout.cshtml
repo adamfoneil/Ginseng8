@@ -79,7 +79,10 @@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <partial name="_NavOptions" model="@(new NavOptionsView() { UpdateAction = "CurrentTeam", Text = Html.CurrentTeamNameString(), Options = await Html.TeamFilterOptions(), PluralText = "Teams" })" />
-                    <partial name="_NavOptions" model="@(new NavOptionsView() { UpdateAction = "CurrentApp", Text = Html.CurrentAppNameString(), Options = await Html.AppFilterOptions(), PluralText = "Apps" })" />
+                    if (Html.CurrentTeam()?.UseApplications ?? true)
+                    {
+                        <partial name="_NavOptions" model="@(new NavOptionsView() { UpdateAction = "CurrentApp", Text = Html.CurrentAppNameString(), Options = await Html.AppFilterOptions(), PluralText = "Apps" })" />
+                    }                    
                 }
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"

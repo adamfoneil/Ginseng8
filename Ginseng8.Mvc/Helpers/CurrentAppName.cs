@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using Ginseng.Models;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Threading.Tasks;
 
@@ -49,6 +50,12 @@ namespace Ginseng.Mvc.Helpers
 			AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
 			return model?.CurrentOrgUser?.CurrentAppId ?? 0;
 		}
+
+        public static Team CurrentTeam(this IHtmlHelper<dynamic> html)
+        {
+            AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
+            return model?.CurrentOrgUser?.CurrentTeam;
+        }
 
         public static int CurrentTeamId<T>(this IHtmlHelper<T> html)
         {
