@@ -14,5 +14,8 @@ namespace Ginseng.Mvc.Queries.SelectLists
 		}
 
 		public int OrgId { get; set; }
+
+        [Where("[app].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 	}
 }
