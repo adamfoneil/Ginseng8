@@ -16,13 +16,16 @@ namespace Ginseng.Models
 	/// </summary>
 	public class Project : BaseTable, IBody, IFindRelated<int>, IOrgSpecific
 	{
-		[References(typeof(Application))]
+		[References(typeof(Team))]
 		[PrimaryKey]
-		public int ApplicationId { get; set; }
+		public int TeamId { get; set; }
 
 		[PrimaryKey]
 		[MaxLength(50)]
 		public string Name { get; set; }
+
+        [References(typeof(Application))]
+        public int? ApplicationId { get; set; }
 
 		[MaxLength(255)]
 		public string Description { get; set; }
@@ -55,6 +58,7 @@ namespace Ginseng.Models
 
 		public bool IsActive { get; set; } = true;
 
+        public Team Team { get; set; }
 		public Application Application { get; set; }
 
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
@@ -64,18 +68,20 @@ namespace Ginseng.Models
 
 		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
 		{
-			Application = commandProvider.Find<Application>(connection, ApplicationId);
+            Team = commandProvider.Find<Team>(connection, TeamId);
+			if (ApplicationId.HasValue) Application = commandProvider.Find<Application>(connection, ApplicationId.Value);
 		}
 
 		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
 		{
-			Application = await commandProvider.FindAsync<Application>(connection, ApplicationId);
+            Team = await commandProvider.FindAsync<Team>(connection, TeamId);
+			if (ApplicationId.HasValue) Application = await commandProvider.FindAsync<Application>(connection, ApplicationId.Value);
 		}
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
-            var app = await connection.FindAsync<Application>(ApplicationId);
-            return app.OrganizationId;
+            var team = await connection.FindAsync<Team>(TeamId);
+            return team.OrganizationId;
         }
 
         public async Task SyncWorkItemsToProjectAsync(IDbConnection connection)
