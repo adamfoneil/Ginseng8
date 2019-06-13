@@ -361,8 +361,8 @@ $(document)
     var div = document.getElementById(target);
     $(div).slideToggle('fast', function () {
         if ($(div).is(':visible')) {
-            var field = document.getElementById(target + '-HtmlBody');
-            field.focus();
+            var objectId = button.getAttribute('data-id');
+            $('#addComment-' + objectId + '-HtmlBody').froalaEditor('events.focus');            
         }
     });
 });
