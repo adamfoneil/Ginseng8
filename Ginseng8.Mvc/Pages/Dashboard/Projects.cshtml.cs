@@ -108,8 +108,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 				return new OpenWorkItems(QueryTraces)
 				{
 					OrgId = OrgId,
-					ProjectId = Id,
-					AppId = CurrentOrgUser.CurrentAppId,
+					ProjectId = Id,					
 					LabelId = LabelId
 				};
 			}
