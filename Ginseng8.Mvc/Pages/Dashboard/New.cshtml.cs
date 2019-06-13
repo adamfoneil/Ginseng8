@@ -40,7 +40,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 {
                     new Application()
                     {
-                        Name = $"New {CurrentOrgUser.CurrentTeam.Name}"
+                        Name = $"Enter New {CurrentOrgUser.CurrentTeam.Name} work item"
                     }
                 };
             }
@@ -60,9 +60,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
             int[] labelIds = null;
             using (var cn = Data.GetConnection())
             {
-                var labels = new NewItemAppLabels() { OrgId = OrgId }.Execute(cn);
-                Labels = labels.ToLookup(row => row.ApplicationId);
-                labelIds = labels.GroupBy(row => row.Id).Select(grp => grp.Key).ToArray();
+                var appLabels = new NewItemAppLabels() { OrgId = OrgId }.Execute(cn);
+                var teamLabels = new TeamLabels() { OrgId = OrgId, TeamId = CurrentOrgUser.CurrentTeamId ?? 0 }.Execute(cn);
+                var allLabels = appLabels.Concat(teamLabels);
+                Labels = allLabels.ToLookup(row => row.ApplicationId);
+                labelIds = allLabels.GroupBy(row => row.Id).Select(grp => grp.Key).ToArray();
             }
 
             return new OpenWorkItems()
