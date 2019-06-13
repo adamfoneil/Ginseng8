@@ -30,7 +30,7 @@
             }
         </ul>
         <div class="tab-content my-3" id="tabContent">
-            @foreach  (var label in Model.Labels[app.Id])
+            @foreach (var label in Model.Labels[app.Id])
             {
                 <div id="team-@app.Id-label-@label.Id" class="tab-pane fade" data-tab-id="tab-team-@app.Id-label-@label.Id" role="tabpanel">
                     <div class="ml-3">
