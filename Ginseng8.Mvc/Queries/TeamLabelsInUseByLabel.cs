@@ -4,9 +4,9 @@ using Postulate.Base.Attributes;
 
 namespace Ginseng.Mvc.Queries
 {
-    public class TeamLabelsInUse : Query<Team>
+    public class TeamLabelsInUseByLabel : Query<Team>
     {
-        public TeamLabelsInUse() : base(
+        public TeamLabelsInUseByLabel() : base(
             @"SELECT
                 [tl].[LabelId],
                 [t].*

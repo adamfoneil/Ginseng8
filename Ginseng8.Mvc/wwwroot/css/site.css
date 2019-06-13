@@ -160,3 +160,9 @@ body {
     border-color: #b13393;
     color: white
 }
+
+.scrollable-menu { /* thanks to https://stackoverflow.com/a/19229738/2023653 */
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}

@@ -59,6 +59,14 @@ namespace Ginseng.Models
         [NotMapped]
         public int LabelId { get; set; }
 
+        /// <summary>
+        /// For ISelectable
+        /// </summary>
+        [NotMapped]
+        public string ForeColor { get; set; } = "auto";
+        [NotMapped]
+        public string BackColor { get; set; } = "auto";
+
         public override bool Equals(object obj)
         {
             var test = obj as Application;

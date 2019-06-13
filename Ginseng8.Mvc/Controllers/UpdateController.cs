@@ -165,7 +165,7 @@ namespace Ginseng.Mvc.Controllers
                     if (tl != null) await cn.DeleteAsync<TeamLabel>(tl.Id);
                 }
 
-                var apps = await new TeamLabelsInUse() { OrgId = _data.CurrentOrg.Id, LabelId = labelId }.ExecuteAsync(cn);
+                var apps = await new TeamLabelsInUseByLabel() { OrgId = _data.CurrentOrg.Id, LabelId = labelId }.ExecuteAsync(cn);
                 return Content(string.Join(", ", apps.Select(a => a.Name)));
             }
         }

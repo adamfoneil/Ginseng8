@@ -4,7 +4,7 @@
     <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fal fa-tags" title="Labels"></i>
     </button>
-    <div class="dropdown-menu">
+    <div class="dropdown-menu scrollable-menu">
         @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
         {
             <form method="post">

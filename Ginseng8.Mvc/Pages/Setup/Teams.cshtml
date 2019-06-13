@@ -6,10 +6,9 @@
 }
 
 <h4>Teams</h4>
-<p>Use teams to define groups of people in your organization who work on the same <a asp-page="/Setup/Applications">Applications</a>.</p>
-<p>The <strong>Use Applications</strong> option lets teams indicate whether they have an Applications dashboard.</p>
+<p>Use teams to define groups of people in your organization who work on the same <a asp-page="/Setup/Applications">Applications</a> or projects.</p>
 <p>The <strong>Use Freshdesk Companies</strong> option causes the Freshdesk company dropdown to appear when editing a project.</p>
-
+<p>For teams that don't use applications, add <strong>Related Labels</strong> to enable data entry of work items from <a asp-page="/Dashboard/New">New Items</a> page.</p>
 
 @Html.ActionAlert(TempData)
 
@@ -23,6 +22,7 @@
         <th>Description</th>
         <th>Use Applications</th>
         <th>Use Freshdesk Companies</th>
+        <th>Related Labels</th>
         <th>Active</th>
         <th></th>
     </tr>
@@ -33,6 +33,16 @@
             <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
             <td>@grid.CheckBox(m => m.UseApplications)</td>
             <td>@grid.CheckBox(m => m.CompanySpecificProjects)</td>
+            <td>
+                @if (!item.UseApplications)
+                {
+                    <partial name="_MultiSelect" model="Model.GetLabelSelector(item.Id)"/>
+                }
+                else
+                {
+                    <span class="small text-muted">n/a</span>
+                }
+            </td>
             <td>@grid.CheckBox(m => m.IsActive)</td>
             <td>@grid.Controls()</td>
         </tr>
@@ -42,6 +52,7 @@
         <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
         <td>@grid.CheckBox(m => m.UseApplications)</td>
         <td>@grid.CheckBox(m => m.CompanySpecificProjects)</td>
+        <td></td>
         <td>@grid.CheckBox(m => m.IsActive)</td>
         <td>@grid.Controls()</td>
     </tr>    
@@ -50,4 +61,5 @@
 
 @section Scripts {
     <script src="~/js/GridEditor.js"></script>
+    <script src="~/js/MultiSelect.js"></script>
 }
