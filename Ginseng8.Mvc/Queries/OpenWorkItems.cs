@@ -195,9 +195,9 @@ namespace Ginseng.Mvc.Queries
                 [org].[FreshdeskUrl]
 			FROM
 				[dbo].[WorkItem] [wi]
-				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
-                LEFT JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
+                INNER JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]				                
+                LEFT JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]                
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
 				LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
