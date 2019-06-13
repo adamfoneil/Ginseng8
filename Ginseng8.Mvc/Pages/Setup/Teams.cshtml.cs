@@ -40,8 +40,8 @@ namespace Ginseng.Mvc.Pages.Setup
             return new MultiSelector<ISelectable>()
             {
                 Prompt = "Labels:",
-                PrimaryFieldName = "TeamId",
-                RelatedFieldName = "LabelId",
+                PrimaryFieldName = "LabelId",
+                RelatedFieldName = "TeamId",
                 PostUrl = "/Update/TeamLabel",
                 RelatedId = teamId,
                 Items = AllLabels.Select(lbl => new Label()
