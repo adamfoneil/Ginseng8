@@ -9,7 +9,7 @@
                 @Model.HandOffButtonText()
                 <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                 @foreach (var act in Model.GetActivityOptions())
                 {
                     <partial name="Dashboard/Items/_Activities" model="act"/>
