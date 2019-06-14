@@ -242,7 +242,8 @@ selfStartLinks.forEach(function (ele) {
             $(loading).hide();
             $(ev.target).hide();
             if (result.success) {
-                $(ev.target).nextAll('.success').show();
+                console.log('next success', $(ev.target).next('.success'));
+                $(ev.target).next('.success').show();
             } else {
                 $(ev.target).next('.error').show();
             }
