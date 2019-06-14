@@ -100,7 +100,7 @@ namespace Ginseng.Mvc.Queries
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)
         {
-            return TestExecute(connection);
+            return TestExecuteHelper(connection);
         }
     }
 }

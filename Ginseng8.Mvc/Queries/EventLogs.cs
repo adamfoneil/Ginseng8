@@ -31,8 +31,10 @@ namespace Ginseng.Mvc.Queries
 		public string ProjectName { get; set; }
 		public string Title { get; set; }
 		public int? ProjectPriority { get; set; }
+        public string TeamName { get; set; }
+        public string ApplicationName { get; set; }
 
-		public bool IsEditable(string userName)
+        public bool IsEditable(string userName)
 		{
 			return false;
 		}
@@ -45,6 +47,9 @@ namespace Ginseng.Mvc.Queries
 				[ev].[Name] AS [EventName],
 				[el].*,
 				[wi].[Number],
+                [t].[Name] AS [TeamName],
+                [wi].[ApplicationId],
+                [app].[Name] AS [ApplicationName],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId],
 				[p].[Name] AS [ProjectName], [p].[Priority] AS [ProjectPriority],				
 				[wi].[Title],
@@ -56,7 +61,9 @@ namespace Ginseng.Mvc.Queries
 				[dbo].[EventLog] [el]
 				INNER JOIN [app].[Event] [ev] ON [el].[EventId]=[ev].[Id]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [el].[WorkItemId]=[wi].[Id]
+                INNER JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
+                LEFT JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
 				LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
 				LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
