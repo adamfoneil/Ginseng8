@@ -39,6 +39,7 @@ namespace Ginseng.Mvc.Pages.Setup
                 {
                     var team = await cn.FindAsync<Team>(TeamId);
                     UseApplications = team.UseApplications;
+                    if (!UseApplications && AppId.HasValue) AppId = null;
                 }                
 
                 TeamSelect = await new TeamSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, TeamId);
