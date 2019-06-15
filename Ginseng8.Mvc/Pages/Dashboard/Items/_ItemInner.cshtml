@@ -9,12 +9,12 @@
 
             @if (Model.WorkItem.UseApplications)
             {
-                <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects fillMilestones" style="max-width:175px" title="Application" id="AppId-@Model.WorkItem.Number">
+                <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects fillMilestones" style="max-width:200px" id="AppId-@Model.WorkItem.Number">
                     <option value="">- application -</option>
                 </select>
             }
                                 
-            <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number" style="max-width:175px">
+            <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number" style="max-width:200px">
                 <option value="">- project -</option>
             </select>
 
