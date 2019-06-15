@@ -45,6 +45,7 @@ namespace Ginseng.Mvc.Controllers
             try
             {
                 var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, fields.Number });
+                workItem.TeamId = fields.TeamId;
                 workItem.ApplicationId = fields.ApplicationId;
                 workItem.ProjectId = fields.ProjectId;
                 workItem.MilestoneId = fields.MilestoneId;
@@ -53,7 +54,7 @@ namespace Ginseng.Mvc.Controllers
                 workItem.ModifiedBy = User.Identity.Name;
                 workItem.DateModified = _data.CurrentUser.LocalTime;
                 await _data.TryUpdateAsync(workItem,
-                    r => r.ApplicationId, r => r.ProjectId, r => r.MilestoneId, r => r.SizeId, r => r.CloseReasonId,
+                    r => r.TeamId, r => r.ApplicationId, r => r.ProjectId, r => r.MilestoneId, r => r.SizeId, r => r.CloseReasonId,
                     r => r.ModifiedBy, r => r.DateModified);
                 return Json(new { success = true });
             }

@@ -144,7 +144,8 @@ namespace Ginseng.Mvc.Pages.Work
 			{
 				IsOpen = null,
 				OrgId = OrgId,
-				AppId = CurrentOrgUser.CurrentAppId,
+                TeamId = CurrentOrgUser.CurrentTeamId,
+				AppId = CurrentOrgUser.EffectiveAppId,
 				ProjectId = FilterProjectId,
 				LabelId = FilterLabelId,				
 				MilestoneId = FilterMilestoneId,

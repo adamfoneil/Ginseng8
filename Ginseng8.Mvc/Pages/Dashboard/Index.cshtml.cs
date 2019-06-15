@@ -62,7 +62,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 				OrgId = OrgId,
 				AssignedUserId = UserId,
                 TeamId = CurrentOrgUser.CurrentTeamId,
-				AppId = CurrentOrgUser.CurrentAppId,
+				AppId = CurrentOrgUser.EffectiveAppId,
 				LabelId = LabelId
 			};
 

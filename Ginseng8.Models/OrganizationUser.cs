@@ -77,6 +77,11 @@ namespace Ginseng.Models
 		public UserProfile UserProfile { get; set; }
 		public Organization Organization { get; set; }
 
+        public int? EffectiveAppId
+        {
+            get { return (CurrentTeam?.UseApplications ?? false) ? CurrentAppId : null; }
+        }
+
         [NotMapped]
         public decimal WeeklyHours { get; set; }
 
