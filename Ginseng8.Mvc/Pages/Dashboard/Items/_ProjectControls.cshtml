@@ -16,8 +16,7 @@
         <select name="DataModelId" asp-items="@Model.Dropdowns.DataModelSelect(Model.SelectedProject.ApplicationId ?? 0, Model.SelectedProject.DataModelId)" class="form-control-sm mr-2 projectUpdate">
             <option value="">- data model -</option>
         </select>
-    }
-        
+    }        
     
     @if (Model.SelectedProject.DataModelId.HasValue)
     {
@@ -26,7 +25,7 @@
         </a>
     }
 
-    @if (Model.FreshdeskCompanySelect != null)
+    @if (Model.SelectedProject.Team.CompanySpecificProjects && Model.FreshdeskCompanySelect != null)
     {
         <select name="FreshdeskCompanyId" asp-items="Model.FreshdeskCompanySelect" class="form-control-sm projectUpdate mr-2">
             <option value="">(none)</option>
