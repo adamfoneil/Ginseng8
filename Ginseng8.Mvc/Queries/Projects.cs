@@ -6,9 +6,12 @@ namespace Ginseng.Mvc.Queries
 {
 	public class Projects : Query<Project>
 	{
-		public Projects() : base("SELECT [p].* FROM [dbo].[Project] [p] WHERE [IsActive]=@isActive {andWhere} ORDER BY [Priority], [Name]")
+		public Projects() : base("SELECT [p].* FROM [dbo].[Project] [p] WHERE [IsActive]=@isActive {andWhere} ORDER BY [Name]")
 		{
 		}
+
+        [Where("[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 
 		[Where("[ApplicationId]=@appId")]
 		public int? AppId { get; set; }
