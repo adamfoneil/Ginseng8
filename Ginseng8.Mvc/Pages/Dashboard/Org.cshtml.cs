@@ -2,7 +2,7 @@
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using System;
+using Postulate.SqlServer.IntKey;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -15,6 +15,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public OrgModel(IConfiguration config) : base(config)
         {
             ShowExcelDownload = false;
+            ShowLabelFilter = false;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -26,12 +27,16 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<Team> Teams { get; set; }
         public ILookup<int, AppInfoResult> AppInfo { get; set; }
         public ILookup<int, ProjectInfoResult> ProjectInfo { get; set; }
+        
+        public Application Application { get; set; }
+        public IEnumerable<ProjectInfoResult> AppProjects { get; set; }
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
             if (AppId.HasValue)
             {
-                //AppInfo = await new AppInfo() { OrgId = OrgId, TeamId = CurrentOrgUser.CurrentTeamId, Id =  }.ExecuteAsync(connection);
+                Application = await connection.FindAsync<Application>(AppId.Value);                
+                AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId }.ExecuteAsync(connection);
             }
             else
             {
@@ -51,14 +56,23 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 return new OpenWorkItems(QueryTraces)
                 {
-                    OrgId = OrgId,                    
-                    LabelId = LabelId,                    
+                    OrgId = OrgId,
+                    LabelId = LabelId,
                     AppId = AppId
                 };
             }
 
             return null;
-
         }
+
+        public async Task<IActionResult> OnPostCreateProjectAsync(int teamId, int? applicationId, string name)
+        {
+            var project = new Project() { Name = name, ApplicationId = applicationId, TeamId = teamId };
+            await Data.TrySaveAsync(project);            
+            return (applicationId.HasValue) ?
+                Redirect($"Org?appId={applicationId}") :
+                Redirect($"Org?teamId={teamId}");
+        }
+
     }
 }

@@ -80,12 +80,14 @@ namespace Ginseng.Models
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {
-            Organization = commandProvider.Find<Organization>(connection, OrganizationId);            
+            Organization = commandProvider.Find<Organization>(connection, OrganizationId);
+            if (TeamId.HasValue) Team = commandProvider.Find<Team>(connection, TeamId.Value);
         }
 
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
-            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);            
+            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
+            if (TeamId.HasValue) Team = await commandProvider.FindAsync<Team>(connection, TeamId.Value);
         }
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)

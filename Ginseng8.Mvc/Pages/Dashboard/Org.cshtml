@@ -4,7 +4,6 @@
     ViewData["Title"] = "Applications";
 }
 
-
 @if (!Model.AppId.HasValue)
 {
     foreach (var t in Model.Teams)
@@ -18,13 +17,23 @@
         }
         else
         {
-            <partial name="Items/_ProjectCardsInner" model="Model.ProjectInfo[t.Id]"/>
-        }
+            <partial name="Items/_ProjectCardsInner" model="Model.ProjectInfo[t.Id]"/>            
+            <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = t.Id })"/>
+        }        
     }    
 }
 else
 {
-
+    <hr/>
+    <h4>@Model.Application.Team.Name / @Model.Application.Name</h4>
+    <partial name="Items/_ProjectCardsInner" model="Model.AppProjects"/>
+    @if (Model.Application.TeamId.HasValue)
+    {
+        <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = Model.Application.TeamId.Value, ApplicationId = Model.AppId })"/>
+    }    
 }
 
+@section Scripts {
+    <script src="~/js/Projects.js"></script>
+}
 

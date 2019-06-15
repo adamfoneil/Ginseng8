@@ -40,7 +40,7 @@ else
         {
             @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
             {
-                { "teamId", Html.CurrentTeamId() },
+                { "teamId", Model.SelectedProject.TeamId },
                 { "applicationId", Model.CurrentAppId.Value },
                 { "projectId", Model.Id.Value }
             }))
@@ -66,7 +66,6 @@ else
         </p>
     }
 }
-
 
 @section Scripts {
     <script src="~/js/Projects.js"></script>
