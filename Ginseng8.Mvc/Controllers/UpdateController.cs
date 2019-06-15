@@ -45,6 +45,15 @@ namespace Ginseng.Mvc.Controllers
             try
             {
                 var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, fields.Number });
+
+                if (fields.TeamId != workItem.TeamId)
+                {
+                    // if the team changes, then some other fields must be cleared
+                    workItem.ApplicationId = null;
+                    workItem.ProjectId = null;
+                    workItem.MilestoneId = null;
+                }
+
                 workItem.TeamId = fields.TeamId;
                 workItem.ApplicationId = fields.ApplicationId;
                 workItem.ProjectId = fields.ProjectId;
