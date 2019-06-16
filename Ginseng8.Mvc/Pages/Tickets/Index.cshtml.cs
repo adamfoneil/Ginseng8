@@ -68,10 +68,10 @@ namespace Ginseng.Mvc.Pages.Tickets
                 var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);                
                 Tickets = FreshdeskCache.Tickets.Where(t => !IgnoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id)).ToArray();
 
-                if (CurrentOrgUser.CurrentAppId.HasValue)
+                if (CurrentOrgUser.CurrentTeamId.HasValue)
                 {
                     ActionObjectType = ActionObjectType.Project;
-                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, teamId, CurrentOrgUser.CurrentAppId.Value, Tickets);
+                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, teamId, CurrentOrgUser.CurrentTeamId.Value, Tickets);
                 }
                 else
                 {
@@ -160,7 +160,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                     var wit = new WorkItemTicket()
                     {
                         TicketId = ticketId,
-                        WorkItemNumber = number,
+                        WorkItemNumber = number,                        
                         OrganizationId = OrgId,
                         TicketStatus = ticket.Status,
                         TicketType = WebhookRequestToWebhookConverter.TicketTypeFromString(ticket.Type),
@@ -195,8 +195,8 @@ namespace Ginseng.Mvc.Pages.Tickets
             int teamId = (objectType == ActionObjectType.Team) ? 
                 objectId : 
                 (objectId == -1) ?
-                    CurrentOrgUser.CurrentAppId.Value :
-                    await GetAppFromProjectIdAsync(cn, objectId);
+                    CurrentOrgUser.CurrentTeamId.Value :
+                    await GetTeamFromProjectIdAsync(cn, objectId);
 
             int? projectId = (objectType == ActionObjectType.Project) ? objectId : default(int?);
 
@@ -252,20 +252,20 @@ namespace Ginseng.Mvc.Pages.Tickets
             return prj.Id;
         }
 
-        private async Task<int> GetAppFromProjectIdAsync(SqlConnection cn, int projectId)
+        private async Task<int> GetTeamFromProjectIdAsync(SqlConnection cn, int projectId)
         {
             var prj = await cn.FindAsync<Project>(projectId);
-            return prj.ApplicationId ?? 0;
+            return prj.TeamId;
         }
 
-        public async Task<RedirectResult> OnPostIgnoreSelectedAsync(string ticketIds, int responsibilityId)
+        public async Task<RedirectResult> OnPostIgnoreSelectedAsync(string ticketIds, int teamId)
         {
             int[] tickets = ticketIds.Split(',').Select(s => int.Parse(s)).ToArray();
             using (var cn = Data.GetConnection())
             {
-                foreach (int ticketId in tickets) await IgnoreTicketInner(ticketId, responsibilityId, cn);
+                foreach (int ticketId in tickets) await IgnoreTicketInner(ticketId, teamId, cn);
             }
-            return Redirect($"Tickets/Index?responsibilityId={responsibilityId}");
+            return Redirect($"Tickets/Index");
         }
     }
 }

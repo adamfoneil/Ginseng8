@@ -1,6 +1,6 @@
 ﻿@model TicketRowView
 
-@if (Model.PageModel.ResponsibilityId != 0)
+@if (Model.PageModel.TeamId != 0)
 {
     <td><input type="checkbox" name="ticketId[@Model.RowIndex]" value="@Model.Ticket.Id" class="selectTicket"/></td>
 }            

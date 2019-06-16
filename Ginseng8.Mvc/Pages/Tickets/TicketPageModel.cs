@@ -1,10 +1,7 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Models.Freshdesk.Dto;
 using Ginseng.Mvc.Queries;
-using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data;
@@ -19,6 +16,11 @@ namespace Ginseng.Mvc.Pages.Tickets
             IFreshdeskClientFactory freshdeskClientFactory) : base(config)
         {
             FreshdeskCache = new FreshdeskCache(config, freshdeskClientFactory);
+        }
+
+        public int TeamId
+        {
+            get { return CurrentOrgUser.CurrentTeamId ?? 0; }
         }
 
         public Dictionary<string, string> TypeBadges
@@ -61,7 +63,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         /// <summary>
         /// This is virtual because you might want ignored tickets paginated,
         /// see <see cref="IgnoredModel"/>
-        /// </summary>                
+        /// </summary>
         protected virtual async Task<IEnumerable<long>> GetIgnoredTicketsAsync(IDbConnection connection)
         {
             return await new IgnoredTickets() { TeamId = CurrentOrgUser.CurrentTeamId ?? 0, OrgId = OrgId }.ExecuteAsync(connection);
@@ -71,9 +73,9 @@ namespace Ginseng.Mvc.Pages.Tickets
         {
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
             await FreshdeskCache.InitializeAsync(Data.CurrentOrg.Name);
-           
+
             using (var cn = Data.GetConnection())
-            {                
+            {
                 IgnoredTickets = await GetIgnoredTicketsAsync(cn);
             }
         }
