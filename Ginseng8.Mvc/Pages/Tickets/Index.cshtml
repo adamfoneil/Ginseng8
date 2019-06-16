@@ -37,7 +37,7 @@
             <td>                
                 <form method="post" asp-page-handler="DoAction" class="form-inline">
                     <input type="hidden" name="ticketId" value="@item.Id"/>         
-                    <input type="hidden" name="responsibilityId" value="@Model.TeamId"/>
+                    <input type="hidden" name="teamId" value="@Model.TeamId"/>
                     <input type="hidden" name="objectType" value="@Model.ActionObjectType"/>
                     <div class="input-group">
                         <select name="objectId" id="objectId" asp-items="Model.GetActionSelect(item.CompanyId ?? 0)" class="form-control mr-2" required="required">
