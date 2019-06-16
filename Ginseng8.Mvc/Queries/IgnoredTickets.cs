@@ -8,13 +8,13 @@ namespace Ginseng.Mvc.Queries
         public IgnoredTickets() : base(
             @"SELECT [TicketId] 
             FROM [dbo].[IgnoredTicket] 
-            WHERE [ResponsibilityId]=@responsibilityId AND [OrganizationId]=@orgId
+            WHERE [TeamId]=@teamId AND [OrganizationId]=@orgId
             ORDER BY [DateCreated] DESC
             {offset}")
         {
         }
 
-        public int ResponsibilityId { get; set; }
+        public int TeamId { get; set; }
         public int OrgId { get; set; }
 
         [Offset(10)]

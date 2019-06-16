@@ -34,7 +34,7 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         protected override async Task<IEnumerable<long>> GetIgnoredTicketsAsync(IDbConnection connection)
         {
-            return await new IgnoredTickets() { ResponsibilityId = ResponsibilityId, OrgId = OrgId, Page = PageNumber }.ExecuteAsync(connection);
+            return await new IgnoredTickets() { TeamId = ResponsibilityId, OrgId = OrgId, Page = PageNumber }.ExecuteAsync(connection);
         }
 
         public async Task<RedirectResult> OnPostRestoreAsync(long ticketId, int responsibilityId)

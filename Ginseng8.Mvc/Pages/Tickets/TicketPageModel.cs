@@ -42,10 +42,6 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         public string FreshdeskUrl { get; private set; }
 
-        [BindProperty(SupportsGet = true)]
-        public int ResponsibilityId { get; set; }
-
-        public SelectList ResponsibilitySelect { get; set; }
         public IEnumerable<Ticket> Tickets { get; set; }
         public Dictionary<long, Group> Groups { get { return FreshdeskCache.GroupDictionary; } }
 
@@ -68,23 +64,16 @@ namespace Ginseng.Mvc.Pages.Tickets
         /// </summary>                
         protected virtual async Task<IEnumerable<long>> GetIgnoredTicketsAsync(IDbConnection connection)
         {
-            return await new IgnoredTickets() { ResponsibilityId = ResponsibilityId, OrgId = OrgId }.ExecuteAsync(connection);
+            return await new IgnoredTickets() { TeamId = CurrentOrgUser.CurrentTeamId ?? 0, OrgId = OrgId }.ExecuteAsync(connection);
         }
 
         protected async Task InitializeAsync()
         {
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
             await FreshdeskCache.InitializeAsync(Data.CurrentOrg.Name);
-
-            object selectedResponsibilityId = (ResponsibilityId != 0) ? 
-                ResponsibilityId : (CurrentOrgUser.Responsibilities < 3) ? CurrentOrgUser.Responsibilities :
-                default(object);
-
-            ResponsibilityId = (int?)selectedResponsibilityId ?? 0;
-
+           
             using (var cn = Data.GetConnection())
-            {
-                ResponsibilitySelect = await new ResponsibilitySelect().ExecuteSelectListAsync(cn, selectedResponsibilityId);
+            {                
                 IgnoredTickets = await GetIgnoredTicketsAsync(cn);
             }
         }

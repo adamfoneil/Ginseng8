@@ -61,6 +61,8 @@ namespace Ginseng.Mvc.Pages.Tickets
         {
             await InitializeAsync();
 
+            int teamId = CurrentOrgUser.CurrentTeamId ?? 0;
+
             using (var cn = Data.GetConnection())
             {                                
                 var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);                
@@ -69,12 +71,12 @@ namespace Ginseng.Mvc.Pages.Tickets
                 if (CurrentOrgUser.CurrentAppId.HasValue)
                 {
                     ActionObjectType = ActionObjectType.Project;
-                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, ResponsibilityId, CurrentOrgUser.CurrentAppId.Value, Tickets);
+                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, teamId, CurrentOrgUser.CurrentAppId.Value, Tickets);
                 }
                 else
                 {
                     ActionObjectType = ActionObjectType.Team;
-                    AppSelect = await BuildAppSelectAsync(cn, ResponsibilityId);
+                    AppSelect = await BuildAppSelectAsync(cn, teamId);
                 }
             }            
 
@@ -85,14 +87,14 @@ namespace Ginseng.Mvc.Pages.Tickets
         /// <summary>
         /// Returns a dictionary of SeletLists keyed to Freshdesk Company Ids
         /// </summary>
-        private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int responsibilityId, int appId, IEnumerable<Ticket> tickets)
+        private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int teamId, int appId, IEnumerable<Ticket> tickets)
         {
             Dictionary<long, SelectList> results = new Dictionary<long, SelectList>();
 
             var projects = await new ProjectSelectEx() { OrgId = OrgId, AppId = appId }.ExecuteAsync(cn);
 
-            var resp = await cn.FindAsync<Responsibility>(responsibilityId);
-            bool companySpecific = resp?.CompanySpecificProjects ?? false;
+            var team = await cn.FindAsync<Team>(teamId);
+            bool companySpecific = team?.CompanySpecificProjects ?? false;
 
             if (companySpecific)
             {                
@@ -100,7 +102,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 foreach (var companyGrp in projectsByCompany)
                 {
                     var items = companyGrp.ToList();
-                    if (responsibilityId != 0) items.Insert(0, new ProjectSelectResult() { Value = 0, Text = "Ignore Ticket" });
+                    if (teamId != 0) items.Insert(0, new ProjectSelectResult() { Value = 0, Text = "Ignore Ticket" });
                     items.Insert(1, new ProjectSelectResult() { Value = -1, Text = "[ new project ]" });
                     var selectItems = items.Select(item => new SelectListItem() { Value = item.Value.ToString(), Text = item.Text });
                     var firstProject = items.FirstOrDefault(p => p.FreshdeskCompanyId == companyGrp.Key);
@@ -114,7 +116,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 if (!results.ContainsKey(companyGrp.Key))
                 {
                     var items = new List<SelectListItem>();
-                    if (responsibilityId != 0) items.Add(new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+                    if (teamId != 0) items.Add(new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
                     items.Add(new SelectListItem() { Value = "-1", Text = "[ new project ]" });
                     if (!companySpecific)
                     {
@@ -139,7 +141,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             throw new NotImplementedException();
         }
 
-        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int objectId, int responsibilityId, ActionObjectType objectType)
+        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int objectId, int teamId, ActionObjectType objectType)
         {
             var client = await _freshdeskClientFactory.CreateClientForOrganizationAsync(OrgId);
             var ticket = await client.GetTicketAsync(ticketId);
@@ -150,7 +152,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             {                
                 if (objectId == 0)
                 {
-                    await IgnoreTicketInner(ticketId, responsibilityId, cn);
+                    await IgnoreTicketInner(ticketId, teamId, cn);
                 }
                 else
                 {
@@ -174,16 +176,16 @@ namespace Ginseng.Mvc.Pages.Tickets
                 }                
             }
 
-            return Redirect($"Tickets/Index?responsibilityId={responsibilityId}");
+            return Redirect($"Tickets/Index");
         }
 
-        private async Task IgnoreTicketInner(int ticketId, int responsibilityId, SqlConnection cn)
+        private async Task IgnoreTicketInner(int ticketId, int teamId, SqlConnection cn)
         {
             var ignoreTicket = new IgnoredTicket()
             {
                 TicketId = ticketId,
                 OrganizationId = OrgId,
-                ResponsibilityId = responsibilityId
+                TeamId = teamId
             };
             await Data.TrySaveAsync(cn, ignoreTicket);
         }
