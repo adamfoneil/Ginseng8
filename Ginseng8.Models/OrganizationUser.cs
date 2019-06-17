@@ -79,7 +79,7 @@ namespace Ginseng.Models
 
         public int? EffectiveAppId
         {
-            get { return (CurrentTeam?.UseApplications ?? false) ? CurrentAppId : null; }
+            get { return (CurrentTeam?.UseApplications ?? true) ? CurrentAppId : null; }
         }
 
         [NotMapped]
