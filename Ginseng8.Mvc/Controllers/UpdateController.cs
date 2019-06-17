@@ -206,7 +206,8 @@ namespace Ginseng.Mvc.Controllers
             if (_data.CurrentOrgUser == null) return Redirect(returnUrl);
 
             _data.CurrentOrgUser.CurrentTeamId = (id != 0) ? id : default(int?);
-            await _data.TryUpdateAsync(_data.CurrentOrgUser, r => r.CurrentTeamId);
+            _data.CurrentOrgUser.CurrentAppId = null;
+            await _data.TryUpdateAsync(_data.CurrentOrgUser, r => r.CurrentTeamId, r => r.CurrentAppId);
             return Redirect(returnUrl);
         }
 

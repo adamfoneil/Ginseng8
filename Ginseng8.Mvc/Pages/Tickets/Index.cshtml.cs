@@ -83,7 +83,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 if (CurrentOrgUser.CurrentTeamId.HasValue)
                 {
                     ActionObjectType = (!CurrentOrgUser.CurrentTeam.UseApplications || (CurrentOrgUser.CurrentAppId.HasValue && CurrentOrgUser.CurrentTeam.UseApplications)) ? ActionItemType.Project : ActionItemType.Application;
-                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, teamId, CurrentOrgUser.CurrentTeamId.Value, Tickets);
+                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, teamId, CurrentOrgUser.CurrentAppId, Tickets);
                 }
             }            
 
@@ -94,11 +94,11 @@ namespace Ginseng.Mvc.Pages.Tickets
         /// <summary>
         /// Returns a dictionary of SeletLists keyed to Freshdesk Company Ids
         /// </summary>
-        private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int teamId, int appId, IEnumerable<Ticket> tickets)
+        private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int teamId, int? appId, IEnumerable<Ticket> tickets)
         {
             Dictionary<long, SelectList> results = new Dictionary<long, SelectList>();
 
-            var projects = await new ProjectSelectEx() { OrgId = OrgId, TeamId = appId }.ExecuteAsync(cn);
+            var projects = await new ProjectSelectEx() { OrgId = OrgId, TeamId = teamId, AppId = appId }.ExecuteAsync(cn);
 
             var team = await cn.FindAsync<Team>(teamId);
             bool companySpecific = team?.CompanySpecificProjects ?? false;
