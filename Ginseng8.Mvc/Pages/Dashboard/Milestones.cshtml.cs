@@ -71,7 +71,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, ProjectId = ProjectId }.ExecuteAsync(connection);
 
             // for the create milestone partial
-            ProjectSelect = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId }.ExecuteSelectListAsync(connection);
+            ProjectSelect = await new ProjectSelect() { TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteSelectListAsync(connection);
 
             if (!Id.HasValue && CurrentOrgUser.CurrentAppId.HasValue)
             {

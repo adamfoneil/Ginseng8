@@ -16,7 +16,7 @@ namespace Ginseng.Mvc.Queries.SelectLists
         public const string BaseSql = 
             @"SELECT [p].[Id] AS [Value], [p].[Name] AS [Text], [p].[FreshdeskCompanyId]
 			FROM [dbo].[Project] [p]		
-            INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
+            INNER JOIN [dbo].[Team] [t] ON [p].[TeamId]=[t].[Id]
 			WHERE [p].[IsActive]=1 {andWhere}
 			ORDER BY [p].[Name]";
 
@@ -24,10 +24,10 @@ namespace Ginseng.Mvc.Queries.SelectLists
         {
         }
 
-        [Where("[p].[ApplicationId]=@appId")]
-        public int? AppId { get; set; }
+        [Where("[p].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 
-        [Where("[app].[OrganizationId]=@orgId")]
+        [Where("[t].[OrganizationId]=@orgId")]
         public int? OrgId { get; set; }
     }
 
@@ -37,7 +37,7 @@ namespace Ginseng.Mvc.Queries.SelectLists
 		{
 		}
 
-        [Where("[p].[ApplicationId]=@appId")]
-		public int? AppId { get; set; }
+        [Where("[p].[TeamId]=@teamId")]
+		public int? TeamId { get; set; }
 	}
 }

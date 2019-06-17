@@ -390,7 +390,7 @@ namespace Ginseng.Mvc.Controllers
         {
             using (var cn = _data.GetConnection())
             {
-                var results = await new ProjectSelect() { AppId = appId }.ExecuteAsync(cn);
+                var results = await new ProjectSelect() { TeamId = appId }.ExecuteAsync(cn);
                 return Json(results);
             }
         }

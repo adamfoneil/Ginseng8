@@ -19,10 +19,20 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Tickets
 {
-    public enum ActionObjectType
+    /// <summary>
+    /// What kind of items are in the action dropdown?
+    /// This depends on whether the current team uses applications and whether a current app is selected
+    /// </summary>
+    public enum ActionItemType
     {
+        /// <summary>
+        /// For teams that don't use apps or if team *does* use apps and one is selected, we show projects
+        /// </summary>
         Project,
-        Team
+        /// <summary>
+        /// If no current app selected, then we show apps
+        /// </summary>
+        Application
     }
 
     [Authorize]
@@ -41,13 +51,13 @@ namespace Ginseng.Mvc.Pages.Tickets
         public LoadedFrom LoadedFrom { get; set; }
         public DateTime DateQueried { get; set; }
        
-        public ActionObjectType ActionObjectType { get; set; } // tells us whether the work item action Id is an app or a project
+        public ActionItemType ActionObjectType { get; set; } // tells us whether the work item action Id is an app or a project
         public SelectList AppSelect { get; set; } // available when no current app selected
         public Dictionary<long, SelectList> ProjectByCompanySelect { get; set; } // available when app is current                        
 
         public SelectList GetActionSelect(long companyId)
         {
-            return (CurrentOrgUser.CurrentAppId.HasValue && ProjectByCompanySelect.ContainsKey(companyId)) ? ProjectByCompanySelect[companyId] : AppSelect;
+            return (ActionObjectType == ActionItemType.Project && ProjectByCompanySelect.ContainsKey(companyId)) ? ProjectByCompanySelect[companyId] : AppSelect;
         }
 
         public string GetWorkItemCreateMessage()
@@ -64,19 +74,16 @@ namespace Ginseng.Mvc.Pages.Tickets
             int teamId = CurrentOrgUser.CurrentTeamId ?? 0;
 
             using (var cn = Data.GetConnection())
-            {                                
+            {
+                AppSelect = await BuildAppSelectAsync(cn);
+
                 var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);                
                 Tickets = FreshdeskCache.Tickets.Where(t => !IgnoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id)).ToArray();
 
                 if (CurrentOrgUser.CurrentTeamId.HasValue)
                 {
-                    ActionObjectType = ActionObjectType.Project;
+                    ActionObjectType = (!CurrentOrgUser.CurrentTeam.UseApplications || (CurrentOrgUser.CurrentAppId.HasValue && CurrentOrgUser.CurrentTeam.UseApplications)) ? ActionItemType.Project : ActionItemType.Application;
                     ProjectByCompanySelect = await BuildProjectSelectAsync(cn, teamId, CurrentOrgUser.CurrentTeamId.Value, Tickets);
-                }
-                else
-                {
-                    ActionObjectType = ActionObjectType.Team;
-                    AppSelect = await BuildAppSelectAsync(cn, teamId);
                 }
             }            
 
@@ -91,7 +98,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         {
             Dictionary<long, SelectList> results = new Dictionary<long, SelectList>();
 
-            var projects = await new ProjectSelectEx() { OrgId = OrgId, AppId = appId }.ExecuteAsync(cn);
+            var projects = await new ProjectSelectEx() { OrgId = OrgId, TeamId = appId }.ExecuteAsync(cn);
 
             var team = await cn.FindAsync<Team>(teamId);
             bool companySpecific = team?.CompanySpecificProjects ?? false;
@@ -128,11 +135,11 @@ namespace Ginseng.Mvc.Pages.Tickets
             return results;
         }
 
-        private async Task<SelectList> BuildAppSelectAsync(SqlConnection cn, int responsibilityId)
+        private async Task<SelectList> BuildAppSelectAsync(SqlConnection cn)
         {
             var appItems = await new AppSelect() { OrgId = OrgId }.ExecuteItemsAsync(cn);
-            // you can ignore tickets only if a responsibility is selected
-            if (responsibilityId != 0) appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+            // you can ignore tickets only if a team is selected
+            if (CurrentOrgUser.CurrentTeamId.HasValue) appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
             return new SelectList(appItems, "Value", "Text");
         }
 
@@ -141,7 +148,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             throw new NotImplementedException();
         }
 
-        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int objectId, int teamId, ActionObjectType objectType)
+        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int objectId, int teamId, ActionItemType objectType)
         {
             var client = await _freshdeskClientFactory.CreateClientForOrganizationAsync(OrgId);
             var ticket = await client.GetTicketAsync(ticketId);
@@ -190,15 +197,15 @@ namespace Ginseng.Mvc.Pages.Tickets
             await Data.TrySaveAsync(cn, ignoreTicket);
         }
 
-        private async Task<int> CreateWorkItemFromTicketAsync(SqlConnection cn, IFreshdeskClient client, Ticket ticket, int objectId, ActionObjectType objectType)
+        private async Task<int> CreateWorkItemFromTicketAsync(SqlConnection cn, IFreshdeskClient client, Ticket ticket, int objectId, ActionItemType objectType)
         {
-            int teamId = (objectType == ActionObjectType.Team) ? 
+            int teamId = (objectType == ActionItemType.Application) ? 
                 objectId : 
                 (objectId == -1) ?
                     CurrentOrgUser.CurrentTeamId.Value :
                     await GetTeamFromProjectIdAsync(cn, objectId);
 
-            int? projectId = (objectType == ActionObjectType.Project) ? objectId : default(int?);
+            int? projectId = (objectType == ActionItemType.Project) ? objectId : default(int?);
 
             if (projectId == -1 && ticket.CompanyId.HasValue)
             {                                
