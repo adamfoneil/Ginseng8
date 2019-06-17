@@ -199,11 +199,11 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         private async Task<int> CreateWorkItemFromTicketAsync(SqlConnection cn, IFreshdeskClient client, Ticket ticket, int objectId, ActionItemType objectType)
         {
-            int teamId = (objectType == ActionItemType.Application) ? 
+            int? appId = (objectType == ActionItemType.Application) ? 
                 objectId : 
                 (objectId == -1) ?
-                    CurrentOrgUser.CurrentTeamId.Value :
-                    await GetTeamFromProjectIdAsync(cn, objectId);
+                    CurrentOrgUser.CurrentAppId :
+                    await GetAppFromProjectIdAsync(cn, objectId);
 
             int? projectId = (objectType == ActionItemType.Project) ? objectId : default(int?);
 
@@ -218,7 +218,8 @@ namespace Ginseng.Mvc.Pages.Tickets
             var workItem = new Ginseng.Models.WorkItem()
             {
                 OrganizationId = OrgId,
-                TeamId = teamId,
+                ApplicationId = appId,
+                TeamId = CurrentOrgUser.CurrentTeamId.Value,
                 ProjectId = projectId,
                 Title = $"FD: {ticket.Subject} (ticket # {ticket.Id})",
                 HtmlBody = $"<p>Created from Freshdesk <a href=\"{CurrentOrg.FreshdeskUrl}/a/tickets/{ticket.Id}\">ticket {ticket.Id}</a></p>"
@@ -237,7 +238,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             return workItem.Number;
         }
 
-        private async Task<int> CreateNewProjectAsync(SqlConnection cn, int appId, Company company)
+        private async Task<int> CreateNewProjectAsync(SqlConnection cn, int? appId, Company company)
         {
             string projectName = company.Name;
             int increment = 0;
@@ -249,6 +250,7 @@ namespace Ginseng.Mvc.Pages.Tickets
 
             var prj = new Project()
             {
+                TeamId = CurrentOrgUser.CurrentTeamId.Value,
                 ApplicationId = appId,
                 Name = projectName,
                 FreshdeskCompanyId = company.Id
@@ -259,10 +261,10 @@ namespace Ginseng.Mvc.Pages.Tickets
             return prj.Id;
         }
 
-        private async Task<int> GetTeamFromProjectIdAsync(SqlConnection cn, int projectId)
+        private async Task<int?> GetAppFromProjectIdAsync(SqlConnection cn, int projectId)
         {
             var prj = await cn.FindAsync<Project>(projectId);
-            return prj.TeamId;
+            return prj.ApplicationId;
         }
 
         public async Task<RedirectResult> OnPostIgnoreSelectedAsync(string ticketIds, int teamId)
