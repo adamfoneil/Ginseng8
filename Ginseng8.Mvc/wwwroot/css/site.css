@@ -166,3 +166,9 @@ body {
     max-height: 200px;
     overflow-x: hidden;
 }
+
+.scrollable-tooltip {
+    height: auto;
+    max-height:300px;
+    overflow-x:hidden
+}

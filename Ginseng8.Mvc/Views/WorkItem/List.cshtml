@@ -1,5 +1,6 @@
 ﻿@model Ginseng.Mvc.ViewModels.WorkItemListView
 
+<div class="scrollable-tooltip">
 @foreach  (var userGrp in Model.WorkItems.OrderBy(row => row.AssignedUserName).GroupBy(row => row.AssignedUserId))
 {
     <h6>@(userGrp.First().AssignedUserName ?? "(unassigned)")</h6>
@@ -13,6 +14,6 @@
             @await Html.PartialAsync("/Pages/Dashboard/Items/_Modifiers.cshtml", item)
         </li>
     }
-</ul>
+    </ul>
 }
-
+</div>
