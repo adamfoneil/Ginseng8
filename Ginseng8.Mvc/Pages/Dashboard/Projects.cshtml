@@ -22,10 +22,13 @@ else
     {
         @if (Model.SelectedProject != null)
         {
-            <h5>
-                <a asp-page="/Dashboard/Org" class="nounderline" title="Back to Organization dashboard">
+            <h4>
+                <a asp-page="/Dashboard/Org" asp-route-appId="@Model.SelectedProject?.ApplicationId" class="nounderline" title="Back to Application dashboard">
                     <i class="fas fa-arrow-up"></i>
                 </a>
+                @Model.SelectedProject.AppOrTeamName
+            </h4>
+            <h5>                
                 <span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span>
             </h5>
             <partial name="Items/_ItemInfo" model="Model.SelectedProjectInfo"/>
@@ -38,18 +41,13 @@ else
                 </div>
             </div>
         }
-    
-        <p>This project has no open work items.</p>
-
-        @if (Model.CurrentAppId.HasValue)
+            
+        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
         {
-            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-            {
-                { "teamId", Model.SelectedProject.TeamId },
-                { "applicationId", Model.CurrentAppId.Value },
-                { "projectId", Model.Id.Value }
-            }))
-        }
+            { "teamId", Model.SelectedProject.TeamId },
+            { "applicationId", Model.SelectedProject.ApplicationId ?? 0 },
+            { "projectId", Model.Id.Value }
+        }))        
     }
     else
     {

@@ -4,7 +4,7 @@
     @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
     {
         <h4>
-            <a asp-page="/Dashboard/Org" class="nounderline" title="Back to Organization dashboard">
+            <a asp-page="/Dashboard/Org" asp-route-appId="@appGrp.Key" class="nounderline" title="Back to Organization dashboard">
                 <i class="fas fa-arrow-up"></i>
             </a>
             @appGrp.First().ApplicationName

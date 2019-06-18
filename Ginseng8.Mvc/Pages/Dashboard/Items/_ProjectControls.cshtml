@@ -28,7 +28,7 @@
     @if (Model.SelectedProject.Team.CompanySpecificProjects && Model.FreshdeskCompanySelect != null)
     {
         <select name="FreshdeskCompanyId" asp-items="Model.FreshdeskCompanySelect" class="form-control-sm projectUpdate mr-2">
-            <option value="">(none)</option>
+            <option value="">- Freshdesk company -</option>
         </select>
     }
 

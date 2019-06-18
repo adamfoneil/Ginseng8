@@ -61,6 +61,11 @@ namespace Ginseng.Models
         public Team Team { get; set; }
 		public Application Application { get; set; }
 
+        public string AppOrTeamName
+        {
+            get { return Application?.Name ?? Team?.Name; }
+        }
+
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
 		{
 			if (action == SaveAction.Update) await SyncWorkItemsToProjectAsync(connection);
