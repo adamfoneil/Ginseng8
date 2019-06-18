@@ -16,8 +16,12 @@
 
 <form method="get" class="form-inline mb-3">
     <label class="mr-2">Team:</label>
-    <select name="filterTeamId" asp-items="Model.TeamSelect" onchange="this.form.submit();" class="form-control">
+    <select name="filterTeamId" asp-items="Model.TeamSelect" onchange="this.form.submit();" class="form-control mr-2">
         <option value="">(all teams)</option>
+    </select>
+
+    <label class="mr-2">Filter:</label>
+    <select name="IsActive" asp-items="@SelectListHelper.YesNoItems("Active", "Inactive", Model.IsActive)" onchange="this.form.submit()" class="form-control">
     </select>
 </form>
 

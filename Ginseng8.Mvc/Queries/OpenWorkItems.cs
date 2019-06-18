@@ -100,6 +100,11 @@ namespace Ginseng.Mvc.Queries
             get { return (UseApplications) ? ApplicationId : TeamId; }
         }
 
+        public string ProjectParentField
+        {
+            get { return (UseApplications) ? "applicationId" : "teamId"; }
+        }
+
         public ProjectParentType ProjectParentType
         {
             get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }
