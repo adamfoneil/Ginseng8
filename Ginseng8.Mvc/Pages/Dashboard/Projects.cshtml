@@ -23,10 +23,10 @@ else
         @if (Model.SelectedProject != null)
         {
             <h4>
-                <a asp-page="/Dashboard/Org" asp-route-appId="@Model.SelectedProject?.ApplicationId" class="nounderline" title="Back to Application dashboard">
+                <a asp-page="/Dashboard/Org" asp-route-parentId="@Model.SelectedProject.ParentId" asp-route-parentType="@Model.SelectedProject.ParentType" class="nounderline" title="Back to Application dashboard">
                     <i class="fas fa-arrow-up"></i>
                 </a>
-                @Model.SelectedProject.AppOrTeamName
+                @Model.SelectedProject.ParentName
             </h4>
             <h5>                
                 <span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span>

@@ -19,7 +19,16 @@ namespace Ginseng.Mvc.Pages.Dashboard
         }
 
         [BindProperty(SupportsGet = true)]
+        public int? ParentId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public ProjectParentType? ParentType { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public int? AppId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? TeamId { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public bool? FilterIsActive { get; set; } = true;
@@ -33,6 +42,22 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
+            if (!TeamId.HasValue) TeamId = CurrentOrgUser.CurrentTeamId;
+
+            if (ParentId.HasValue && ParentType.HasValue)
+            {
+                switch (ParentType)
+                {
+                    case ProjectParentType.Application:
+                        AppId = ParentId;
+                        break;
+
+                    case ProjectParentType.Team:
+                        TeamId = ParentId;
+                        break;
+                }
+            }
+
             if (AppId.HasValue)
             {
                 Application = await connection.FindAsync<Application>(AppId.Value);                
@@ -40,9 +65,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
             }
             else
             {
-                Teams = await new Teams() { OrgId = OrgId, IsActive = FilterIsActive, Id = CurrentOrgUser.CurrentTeamId }.ExecuteAsync(connection);
+                Teams = await new Teams() { OrgId = OrgId, IsActive = FilterIsActive, Id = TeamId }.ExecuteAsync(connection);
 
-                var apps = await new AppInfo() { OrgId = OrgId, TeamId = CurrentOrgUser.CurrentTeamId, IsActive = FilterIsActive }.ExecuteAsync(connection);
+                var apps = await new AppInfo() { OrgId = OrgId, TeamId = TeamId, IsActive = FilterIsActive }.ExecuteAsync(connection);
                 AppInfo = apps.ToLookup(row => row.TeamId ?? 0);
 
                 var projects = await new ProjectInfo() { OrgId = OrgId, TeamUsesApplications = false }.ExecuteAsync(connection);
@@ -73,6 +98,5 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 Redirect($"Org?appId={applicationId}") :
                 Redirect($"Org?teamId={teamId}");
         }
-
     }
 }

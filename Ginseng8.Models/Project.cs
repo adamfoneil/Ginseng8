@@ -11,6 +11,16 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
+    /// <summary>
+    /// A project's parent container varies depending on whether the Team uses apps or not.
+    /// This enum provides a way to navigate the Dashboard/Org
+    /// </summary>
+    public enum ProjectParentType
+    {
+        Team,
+        Application
+    }
+
 	/// <summary>
 	/// A collection of work items centered around a single goal, feature, or some other unifying idea or theme
 	/// </summary>
@@ -61,9 +71,19 @@ namespace Ginseng.Models
         public Team Team { get; set; }
 		public Application Application { get; set; }
 
-        public string AppOrTeamName
+        public string ParentName
         {
             get { return Application?.Name ?? Team?.Name; }
+        }
+
+        public int ParentId
+        {
+            get { return (Team.UseApplications) ? (ApplicationId ?? 0) : TeamId; }
+        }
+
+        public ProjectParentType ParentType
+        {
+            get { return (Team?.UseApplications ?? false) ? ProjectParentType.Application : ProjectParentType.Team; }
         }
 
 		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
