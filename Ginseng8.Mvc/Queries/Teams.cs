@@ -10,10 +10,7 @@ namespace Ginseng.Mvc.Queries
     public class Teams : Query<Team>, ITestableQuery
     {
         public Teams() : base(
-            @"SELECT 
-                [t].*,
-                (SELECT COUNT(1) FROM [dbo].[Project] WHERE [TeamId]=[t].[Id] AND [IsActive]=1) AS [ActiveProjects],
-                (SELECT COUNT(1) FROM [dbo].[Project] WHERE [TeamId]=[t].[Id] AND [IsActive]=0) AS [InactiveProjects]
+            @"SELECT [t].*
             FROM [dbo].[Team] [t]
             WHERE [OrganizationId]=@orgId {andWhere} 
             ORDER BY [Name]")

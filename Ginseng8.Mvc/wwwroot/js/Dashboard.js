@@ -5,10 +5,31 @@ reloadAppDropdowns.forEach(function (ele) {
     });
 });
 
+var showHideApps = document.querySelectorAll('.showHideApps');
+showHideApps.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {
+        var teamId = $(ev.target).val();
+        var useApps = teamUseApps[teamId];
+        var number = ev.target.form.Number.value;        
+        if (useApps) {
+            $('#AppId-' + number).show();
+        } else {
+            $('#AppId-' + number).hide();
+        }
+    });
+});
+
 var reloadProjectDropdowns = document.querySelectorAll('.fillProjects');
 reloadProjectDropdowns.forEach(function (ele) {
-    ele.addEventListener('change', function (ev) {        
-        FillDropdown(ev, '/WorkItem/GetAppProjects?appId=', '#ProjectId-', '- project -');
+    ele.addEventListener('change', function (ev) {
+        var number = ev.target.form.Number.value;
+        var teamId = $('#TeamId-' + number).val();
+        var useApps = teamUseApps[teamId];
+        if (useApps) {            
+            FillDropdown(ev, '/WorkItem/GetAppProjects?appId=', '#ProjectId-', '- project -');
+        } else {
+            FillDropdown(ev, '/WorkItem/GetTeamProjects?teamId=', '#ProjectId-', '- project -');
+        }        
     });
 });
 

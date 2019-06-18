@@ -59,9 +59,15 @@
     <a class="btn btn-light" asp-page-handler="ExcelDownload">Download to Excel</a>
 }
 
-@section Scripts {
-    @RenderSection("Scripts", false)
+@section Scripts {    
+    @if (Model is DashboardPageModel)
+    {
+        <script>
+            var teamUseApps = @Html.Raw((Model as DashboardPageModel).TeamUseApps);                        
+        </script>
+    }
     <script src="~/js/MultiSelect.js"></script>
     <script src="~/js/Dashboard.js"></script>
     <script src="~/js/Sortable.js"></script>
+    @RenderSection("Scripts", false)
 }

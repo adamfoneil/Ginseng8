@@ -5,7 +5,7 @@
         <form class="form-inline">
             <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
             
-            <select name="TeamId" asp-items="@Model.Dropdowns.TeamSelect(Model.WorkItem.TeamId)" class="form-control-sm mr-2 itemUpdate fillApps fillProjects fillMilestones" title="Team"></select>
+            <select name="TeamId" asp-items="@Model.Dropdowns.TeamSelect(Model.WorkItem.TeamId)" class="form-control-sm mr-2 itemUpdate fillApps showHideApps fillProjects fillMilestones" title="Team" id="TeamId-@Model.WorkItem.Number"></select>
 
             @if (Model.WorkItem.UseApplications)
             {
