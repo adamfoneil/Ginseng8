@@ -130,7 +130,7 @@ namespace Ginseng.Mvc
             return Page();
         }
 
-        public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, Func<WorkDaysResult, bool> workDayFilter = null, MilestoneMetricsResult metrics = null)
+        public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, MilestoneMetricsResult metrics = null)
         {
             int estimateHours = milestoneGrp.Sum(wi => wi.EstimateHours);
 

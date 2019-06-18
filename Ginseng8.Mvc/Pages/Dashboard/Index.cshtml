@@ -42,7 +42,7 @@
     <partial name="Items/_MilestoneHeader" model="milestoneItem" />
    
     <div class="ml-3">
-        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp, (wd) => wd.UserId == Model.UserId)"/>
+        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
     </div>
 
     @foreach (var appGrp in milestoneGrp.GroupBy(row => row.ProjectParentId))
@@ -60,7 +60,7 @@
                 {
                     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                     {
-                        { "teamId", Html.CurrentTeamId() },
+                        { "teamId", appGrp.First().TeamId },
                         { "applicationId", appGrp.Key },
                         { "milestoneId", milestoneGrp.Key },
                         { Model.UserIdColumnName, Model.UserId },
@@ -77,20 +77,27 @@
 }
 </div>
 
-@if (!Model.WorkItems.Any() && Html.CurrentAppId() != 0)
+@if (!Model.WorkItems.Any())
 {
-    @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
+    if (Html.CurrentTeamId() != 0)
     {
-        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+        if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
         {
-            { "teamId", Html.CurrentTeamId() },
-            { "applicationId", Html.CurrentAppId() },        
-            { Model.UserIdColumnName, Model.UserId },
-            { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
-        }))
+            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+            {
+                { "teamId", Html.CurrentTeamId() },
+                { "applicationId", Html.CurrentAppId() },
+                { Model.UserIdColumnName, Model.UserId },
+                { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
+            }))
+        }
+        else
+        {
+            <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+        }    
     }
     else
     {
-        <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
-    }
+        <p>To add work items here, please select a Team above.</p>
+    }    
 }
