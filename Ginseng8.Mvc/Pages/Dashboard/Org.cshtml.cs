@@ -70,7 +70,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 var apps = await new AppInfo() { OrgId = OrgId, TeamId = TeamId, IsActive = FilterIsActive }.ExecuteAsync(connection);
                 AppInfo = apps.ToLookup(row => row.TeamId ?? 0);
 
-                var projects = await new ProjectInfo() { OrgId = OrgId, TeamUsesApplications = false }.ExecuteAsync(connection);
+                var projects = await new ProjectInfo() { OrgId = OrgId, TeamUsesApplications = false, IsActive = true }.ExecuteAsync(connection);
                 ProjectInfo = projects.ToLookup(row => row.TeamId ?? 0);
             }
         }

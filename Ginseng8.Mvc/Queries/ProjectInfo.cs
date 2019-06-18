@@ -111,7 +111,7 @@ namespace Ginseng.Mvc.Queries
                     INNER JOIN [dbo].[Team] [t] ON [p].[TeamId]=[t].[Id]					
                     LEFT JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]                    
 				WHERE
-					[app].[OrganizationId]=@orgId
+					[t].[OrganizationId]=@orgId
 					{{andWhere}}
 			) SELECT
 				[source].*,

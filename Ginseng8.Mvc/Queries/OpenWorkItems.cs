@@ -92,6 +92,24 @@ namespace Ginseng.Mvc.Queries
         public TicketStatus FDTicketStatus { get; set; }
         public bool UseApplications { get; set; }
 
+        /// <summary>
+        /// Lets us use a single property to switch between the app or team Id based on whether the team uses applications
+        /// </summary>
+        public int ProjectParentId
+        {
+            get { return (UseApplications) ? ApplicationId : TeamId; }
+        }
+
+        public ProjectParentType ProjectParentType
+        {
+            get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }
+        }
+
+        public string ProjectParentName
+        {
+            get { return (UseApplications) ? ApplicationName : TeamName; }
+        }
+
 		public bool IsEditable(string userName)
 		{
 			return CreatedBy.Equals(userName);

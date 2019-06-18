@@ -80,11 +80,12 @@ namespace Ginseng.Mvc.Controllers
                 using (var cn = _data.GetConnection())
                 {
                     var project = await _data.FindAsync<Project>(cn, fields.Id);
+                    project.TeamId = fields.TeamId;
                     project.ApplicationId = fields.ApplicationId;
                     project.IsActive = fields.IsActive;
                     project.DataModelId = fields.DataModelId;
                     project.FreshdeskCompanyId = fields.FreshdeskCompanyId;
-                    await cn.UpdateAsync(project, _data.CurrentUser, r => r.ApplicationId, r => r.IsActive, r => r.DataModelId, r => r.FreshdeskCompanyId);
+                    await cn.UpdateAsync(project, _data.CurrentUser, r => r.TeamId, r => r.ApplicationId, r => r.IsActive, r => r.DataModelId, r => r.FreshdeskCompanyId);
                     await project.SyncWorkItemsToProjectAsync(cn);
                     return Json(new { success = true });
                 }

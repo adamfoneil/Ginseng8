@@ -4,6 +4,8 @@
     ViewData["Title"] = "Applications";
 }
 
+@Html.ActionAlert(TempData)
+
 @if (!Model.AppId.HasValue)
 {
     foreach (var t in Model.Teams)

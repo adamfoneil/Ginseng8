@@ -1,13 +1,13 @@
 ﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
 
 <div id="accordion">
-    @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+    @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ProjectParentId))
     {
         <h4>
-            <a asp-page="/Dashboard/Org" asp-route-appId="@appGrp.Key" class="nounderline" title="Back to Organization dashboard">
+            <a asp-page="/Dashboard/Org" asp-route-parentId="@appGrp.Key" asp-route-parentType="@appGrp.First().ProjectParentType" class="nounderline" title="Back to Organization dashboard">
                 <i class="fas fa-arrow-up"></i>
             </a>
-            @appGrp.First().ApplicationName
+            @appGrp.First().ProjectParentName
         </h4>
         foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
         {

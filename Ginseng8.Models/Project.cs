@@ -78,7 +78,7 @@ namespace Ginseng.Models
 
         public int ParentId
         {
-            get { return (Team.UseApplications) ? (ApplicationId ?? 0) : TeamId; }
+            get { return (Team?.UseApplications ?? false) ? (ApplicationId ?? 0) : TeamId; }
         }
 
         public ProjectParentType ParentType
