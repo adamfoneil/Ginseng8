@@ -24,10 +24,14 @@
     @if (Model.UseApplications)
     {
         <label class="mr-2">Application:</label>
-        <select name="AppId" class="form-control" asp-items="Model.AppSelect" onchange="this.form.submit();">
+        <select name="AppId" class="form-control mr-2" asp-items="Model.AppSelect" onchange="this.form.submit();">
             <option>(select)</option>
         </select>
     }
+
+    <label class="mr-2">Filter:</label>
+    <select name="IsActive" asp-items="@SelectListHelper.YesNoItems("Active", "Inactive", Model.IsActive)" onchange="this.form.submit()" class="form-control">
+    </select>
 </form>
 
 @if (Model.TeamId == 0)

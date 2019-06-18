@@ -6,7 +6,14 @@ namespace Ginseng.Mvc.Queries
 {
     public class Teams : Query<Team>
     {
-        public Teams() : base("SELECT * FROM [dbo].[Team] WHERE [OrganizationId]=@orgId {andWhere} ORDER BY [Name]")
+        public Teams() : base(
+            @"SELECT 
+                [t].*,
+                (SELECT COUNT(1) FROM [dbo].[Project] WHERE [TeamId]=[t].[Id] AND [IsActive]=1) AS [ActiveProjects],
+                (SELECT COUNT(1) FROM [dbo].[Project] WHERE [TeamId]=[t].[Id] AND [IsActive]=0) AS [InactiveProjects],
+            FROM [dbo].[Team] [t]
+            WHERE [OrganizationId]=@orgId {andWhere} 
+            ORDER BY [Name]")
         {
         }
 

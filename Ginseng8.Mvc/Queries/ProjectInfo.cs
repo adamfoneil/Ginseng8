@@ -24,7 +24,7 @@ namespace Ginseng.Mvc.Queries
         public DateTime DateCreated { get; set; }
         public string ModifiedBy { get; set; }
         public DateTime? DateModified { get; set; }
-        public int? TeamId { get; set; }
+        public int TeamId { get; set; }
         public string TeamName { get; set; }
         public int? TotalWorkItems { get; set; }
         public int? OpenWorkItems { get; set; }

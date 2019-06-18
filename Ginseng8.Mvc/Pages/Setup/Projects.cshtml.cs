@@ -17,6 +17,9 @@ namespace Ginseng.Mvc.Pages.Setup
 		}
 
         [BindProperty(SupportsGet = true)]
+        public bool IsActive { get; set; } = true;
+
+        [BindProperty(SupportsGet = true)]
         public int TeamId { get; set; }
 
 		[BindProperty(SupportsGet = true)]
@@ -29,7 +32,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
 		public IEnumerable<Project> Projects { get; set; }
 
-		public async Task OnGetAsync(bool isActive = true)
+		public async Task OnGetAsync()
 		{
 			using (var cn = Data.GetConnection())
 			{
@@ -44,7 +47,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
                 TeamSelect = await new TeamSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, TeamId);
 				AppSelect = await new AppSelect() { OrgId = OrgId, TeamId = TeamId }.ExecuteSelectListAsync(cn, AppId);
-				Projects = await new Projects() { IsActive = isActive, AppId = AppId, TeamId = TeamId }.ExecuteAsync(cn);
+				Projects = await new Projects() { IsActive = IsActive, AppId = AppId, TeamId = TeamId }.ExecuteAsync(cn);
 			}
 		}
 

@@ -61,7 +61,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             if (AppId.HasValue)
             {
                 Application = await connection.FindAsync<Application>(AppId.Value);                
-                AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId }.ExecuteAsync(connection);
+                AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId, IsActive = FilterIsActive }.ExecuteAsync(connection);
             }
             else
             {
@@ -70,8 +70,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 var apps = await new AppInfo() { OrgId = OrgId, TeamId = TeamId, IsActive = FilterIsActive }.ExecuteAsync(connection);
                 AppInfo = apps.ToLookup(row => row.TeamId ?? 0);
 
-                var projects = await new ProjectInfo() { OrgId = OrgId, TeamUsesApplications = false, IsActive = true }.ExecuteAsync(connection);
-                ProjectInfo = projects.ToLookup(row => row.TeamId ?? 0);
+                var projects = await new ProjectInfo() { OrgId = OrgId, TeamUsesApplications = false, IsActive = FilterIsActive }.ExecuteAsync(connection);
+                ProjectInfo = projects.ToLookup(row => row.TeamId);
             }
         }
 

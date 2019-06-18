@@ -41,6 +41,12 @@ namespace Ginseng.Models
         [NotMapped]
         public int LabelId { get; set; }
 
+        [NotMapped]
+        public int InactiveProjects { get; set; }
+
+        [NotMapped]
+        public int ActiveProjects { get; set; }
+
         /// <summary>
         /// For ISelectable
         /// </summary>
