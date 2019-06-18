@@ -120,7 +120,7 @@ namespace Ginseng.Mvc
                     MilestoneMetrics = milestoneMetrics.ToDictionary(row => row.Id);
                 }
 
-                Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
+                Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId);
 
                 await OnGetInternalAsync(cn);
 

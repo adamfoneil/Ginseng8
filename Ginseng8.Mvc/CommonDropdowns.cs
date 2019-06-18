@@ -22,7 +22,8 @@ namespace Ginseng.Mvc
 
         public IEnumerable<SelectListItem> Teams { get; set; }
 		public ILookup<int, SelectListItem> AllApps { get; set; } // keyed to teams
-		public ILookup<int, SelectListItem> AllProjects { get; set; } // keyed to applications
+		public ILookup<int, SelectListItem> ProjectsByApp { get; set; } 
+        public ILookup<int, SelectListItem> ProjectsByTeam { get; set; }
 		public IEnumerable<SelectListItem> Sizes { get; set; }
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }		
         public ILookup<int, SelectListItem> AllMilestones { get; set; } // keyed to applications
@@ -56,14 +57,16 @@ namespace Ginseng.Mvc
 
 		public SelectList ProjectSelect(int appId, int? projectId, bool withNoneOption = false)
 		{
-			var items = AllProjects[appId].ToList();
+			var items = ProjectsByApp[appId].ToList();
 			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no project -" });
 			return new SelectList(items, "Value", "Text", projectId);
 		}
 
 		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(AllProjects[item?.ApplicationId ?? 0], "Value", "Text", item?.ProjectId);
+            return (item.UseApplications) ?
+                new SelectList(ProjectsByApp[item?.ApplicationId ?? 0], "Value", "Text", item?.ProjectId) :
+                new SelectList(ProjectsByTeam[item?.TeamId ?? 0], "Value", "Text", item?.ProjectId);            
 		}
 
 		public SelectList DataModelSelect(int appId, int? dataModelId)
@@ -112,7 +115,7 @@ namespace Ginseng.Mvc
 			});
 		}
 
-		public static async Task<CommonDropdowns> FillAsync(SqlConnection connection, int orgId, int responsibilities)
+		public static async Task<CommonDropdowns> FillAsync(SqlConnection connection, int orgId)
 		{
 			var result = new CommonDropdowns();
 
@@ -128,7 +131,8 @@ namespace Ginseng.Mvc
 
             // app-scoped items
             var allProjects = await new AllProjects() { OrgId = orgId }.ExecuteAsync(connection);
-			result.AllProjects = allProjects.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
+			result.ProjectsByApp = allProjects.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
+            result.ProjectsByTeam = allProjects.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
 
             var allMilestones = await new AllMilestones() { OrgId = orgId }.ExecuteAsync(connection);
             result.AllMilestones = allMilestones.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());

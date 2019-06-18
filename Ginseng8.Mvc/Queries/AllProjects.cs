@@ -5,6 +5,7 @@ namespace Ginseng.Mvc.Queries
 {
 	public class AllProjectsResult
 	{
+        public int TeamId { get; set; }
 		public int ApplicationId { get; set; }
 		public int Value { get; set; }
 		public string Text { get; set; }
@@ -19,15 +20,15 @@ namespace Ginseng.Mvc.Queries
 	{
 		public AllProjects() : base(
 			@"SELECT
-				[p].[ApplicationId], [p].[Id] AS [Value], [p].[Name] AS [Text]
+				[p].[ApplicationId], [p].[TeamId], [p].[Id] AS [Value], [p].[Name] AS [Text]
 			FROM
 				[dbo].[Project] [p]
-				INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
+				INNER JOIN [dbo].[Team] [t] ON [p].[TeamId]=[t].[Id]
 			WHERE
-				[app].[OrganizationId]=@orgId AND
+				[t].[OrganizationId]=@orgId AND
 				[p].[IsActive]=1
 			ORDER BY
-				[p].[ApplicationId], [p].[Name]")
+				[p].[Name]")
 		{
 		}
 
