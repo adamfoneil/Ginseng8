@@ -158,5 +158,11 @@ namespace Testing
         {
             TestQuery<DevMilestoneWorkingHours>();
         }
+
+        [TestMethod]
+        public void TeamsQuery()
+        {
+            TestQuery<Teams>();
+        }
     }
 }
