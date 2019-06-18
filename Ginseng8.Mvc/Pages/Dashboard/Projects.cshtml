@@ -22,7 +22,12 @@ else
     {
         @if (Model.SelectedProject != null)
         {
-            <h5><span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span></h5>        
+            <h5>
+                <a asp-page="/Dashboard/Org" class="nounderline" title="Back to Organization dashboard">
+                    <i class="fas fa-arrow-up"></i>
+                </a>
+                <span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span>
+            </h5>
             <partial name="Items/_ItemInfo" model="Model.SelectedProjectInfo"/>
 
             <div class="ml-3">

@@ -9,14 +9,15 @@
     foreach (var t in Model.Teams)
     {
         <hr/>
-        <h4>@t.Name</h4>
-
+        
         if (t.UseApplications)
         {
+            <h4>@t.Name <span class="text-muted small">Applications</span></h4>
             <partial name="Items/_AppCards" model="Model.AppInfo[t.Id]"/>
         }
         else
         {
+            <h4>@t.Name <span class="text-muted small">Projects</span></h4>
             <partial name="Items/_ProjectCardsInner" model="Model.ProjectInfo[t.Id]"/>            
             <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = t.Id })"/>
         }        
@@ -24,8 +25,13 @@
 }
 else
 {
-    <hr/>
-    <h4>@Model.Application.Team.Name / @Model.Application.Name</h4>
+    <hr/>    
+    <h4>
+        <a asp-page="/Dashboard/Org" class="nounderline" title="Back to Organization dashboard">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+        @Model.Application.Team.Name / @Model.Application.Name <span class="small text-muted">Projects</span>
+    </h4>
     <partial name="Items/_ProjectCardsInner" model="Model.AppProjects"/>
     @if (Model.Application.TeamId.HasValue)
     {

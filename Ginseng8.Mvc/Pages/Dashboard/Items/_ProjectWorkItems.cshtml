@@ -3,11 +3,18 @@
 <div id="accordion">
     @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
     {
-        <h4>@appGrp.First().ApplicationName</h4>
+        <h4>
+            <a asp-page="/Dashboard/Org" class="nounderline" title="Back to Organization dashboard">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+            @appGrp.First().ApplicationName
+        </h4>
         foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
         {
             var projectItem = projectGrp.First();
-            <h5><span class="editable" id="project-name-@projectGrp.Key" data-url="/Update/ProjectName">@projectItem.ProjectName</span></h5>
+            <h5>
+                <span class="editable" id="project-name-@projectGrp.Key" data-url="/Update/ProjectName">@projectItem.ProjectName</span>
+            </h5>
 
             @if (projectGrp.Key != 0)
             {

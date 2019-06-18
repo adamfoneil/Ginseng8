@@ -172,3 +172,7 @@ body {
     max-height:300px;
     overflow-x:hidden
 }
+
+.nounderline, a:hover.nounderline {
+    text-decoration: none
+}
