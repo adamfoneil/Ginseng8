@@ -16,16 +16,18 @@ namespace Ginseng.Mvc.Pages.Setup
         {
         }
 
-        public IEnumerable<Team> Teams { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public bool IsActive { get; set; } = true;
 
+        public IEnumerable<Team> Teams { get; set; }
         public IEnumerable<Label> AllLabels { get; set; }
         public ILookup<int, Label> TeamLabels { get; set; }
 
-        public async Task OnGetAsync(bool isActive = true)
+        public async Task OnGetAsync()
         {
             using (var cn = Data.GetConnection())
             {
-                Teams = await new Teams() { OrgId = OrgId, IsActive = isActive }.ExecuteAsync(cn);
+                Teams = await new Teams() { OrgId = OrgId, IsActive = IsActive }.ExecuteAsync(cn);
 
                 AllLabels = await new Labels() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
 

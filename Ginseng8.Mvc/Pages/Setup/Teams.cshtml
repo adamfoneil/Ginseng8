@@ -16,6 +16,12 @@
     var grid = new GridEditor<Team>(this, Xsrf, defaults: new { IsActive = true });
 }
 
+<form method="get" class="form-inline mb-3">
+    <label class="mr-2">Filter:</label>
+    <select name="IsActive" asp-items="@SelectListHelper.YesNoItems("Active", "Inactive", Model.IsActive)" onchange="this.form.submit()" class="form-control">
+    </select>
+</form>
+
 <table class="table">
     <tr>
         <th>Team Name</th>
