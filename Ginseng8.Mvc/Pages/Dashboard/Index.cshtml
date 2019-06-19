@@ -1,103 +1,61 @@
 ﻿@page
-@model Ginseng.Mvc.Pages.Dashboard.MyItemsModel
+@model Ginseng.Mvc.Pages.Dashboard.IndexModel
 @{
-    ViewData["Title"] = "My Items";
+    ViewData["Title"] = "Dashboard";
 }
 
-<a asp-page="/Setup/AppActivities" class="btn btn-light btn-sm mb-3 mr-3">My Activities: @Model.MyHandOffActivityList()</a>
-
-@if (Model.MyHandOffItems.Any())
+@if (!Model.AppId.HasValue)
 {
-    <button class="btn btn-sm btn-light mb-3" data-toggle="collapse" data-target="#handOffItems" aria-expanded="false" aria-controls="handOffItems">@Model.MyHandOffItems.Count() Paused Items</button>
-    <div class="collapse" id="handOffItems">
-        @foreach (var appGrp in Model.MyHandOffItems.GroupBy(row => row.ProjectParentId))
-        {
-            <h4>@appGrp.First().ProjectParentName</h4>
-            @foreach (var milestoneGrp in appGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
-            {
-                var milestoneItem = milestoneGrp.First();
-                <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-                <div id="handOff-app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-                    <div class="ml-3" data-user-id="@Model.UserId">
-                        @foreach (var item in milestoneGrp)
-                        {
-                            <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.HandOffLabels[item.Id], UserId = Model.UserId, Comments = Model.HandOffComments[item.Id], AccordionElement = "handOffItems", AssignToUsers = Model.AssignToUsers })" />
-                        }
-                    </div>
-                </div>
-            }
-        }
-    </div>
-}
-
-@if (Model.MySchedule?.Any() ?? false)
-{
-    <partial name="Items/_MySchedule" model="Model"/>
-}
-
-<div id="accordion">
-@foreach (var milestoneGrp in Model.WorkItems.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
-{
-    var milestoneItem = milestoneGrp.First();
-    <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-   
-    <div class="ml-3">
-        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
-    </div>
-
-    @foreach (var appGrp in milestoneGrp.GroupBy(row => row.ProjectParentId))
+    foreach (var t in Model.Teams)
     {
-        <h5 class="ml-3">@appGrp.First().ProjectParentName</h5>
+        <hr/>
         
-        <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">            
-            <div class="ml-3 sortable" data-user-id="@Model.UserId">
-                @foreach (var item in appGrp)
-                {
-                    <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers }" />
-                }
-
-                @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
-                {
-                    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-                    {
-                        { "teamId", appGrp.First().TeamId },
-                        { "applicationId", appGrp.Key },
-                        { "milestoneId", milestoneGrp.Key },
-                        { Model.UserIdColumnName, Model.UserId },
-                        { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
-                    }))
-                }
-                else
-                {
-                    <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
-                }
-            </div>                        
-        </div>
-    }
-}
-</div>
-
-@if (!Model.WorkItems.Any())
-{
-    if (Html.CurrentTeamId() != 0)
-    {
-        if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
+        if (t.UseApplications)
         {
-            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-            {
-                { "teamId", Html.CurrentTeamId() },
-                { "applicationId", Html.CurrentAppId() },
-                { Model.UserIdColumnName, Model.UserId },
-                { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
-            }))
+            <h4>@t.Name <span class="text-muted small">Applications</span></h4>
+            <partial name="Items/_AppCards" model="Model.AppInfo[t.Id]"/>
         }
         else
         {
-            <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
-        }    
-    }
-    else
-    {
-        <p>To add work items here, please select a Team above.</p>
+            <h4>@t.Name <span class="text-muted small">Projects</span></h4>
+            <partial name="Items/_ProjectCardsInner" model="Model.ProjectInfo[t.Id]"/>            
+            <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = t.Id })"/>
+        }        
     }    
 }
+else
+{
+    <hr/>
+    <h4>
+        <a asp-page="/Dashboard/Index" class="nounderline" title="Back to Organization dashboard">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+        @Model.Application.Team.Name / @Model.Application.Name <span class="small text-muted">Projects</span>
+    </h4>
+    <partial name="Items/_ProjectCardsInner" model="Model.AppProjects"/>
+    @if (Model.Application.TeamId.HasValue)
+    {
+        <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = Model.Application.TeamId.Value, ApplicationId = Model.AppId })"/>
+    }
+    
+    @if (Model.WorkItems.Any())
+    {
+        <h5>Work Items without a Project</h5>
+        <div id="accordion" class="ml-3">        
+            @foreach (var item in Model.WorkItems)
+            {
+                <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers })" />
+            }
+            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+            {
+                { "teamId", Model.Application.TeamId ?? 0 },
+                { "applicationId", Model.AppId.Value }                
+            }))        
+        </div>
+    }
+}
+
+@section Scripts {
+    <script src="~/js/Projects.js"></script>
+}
+

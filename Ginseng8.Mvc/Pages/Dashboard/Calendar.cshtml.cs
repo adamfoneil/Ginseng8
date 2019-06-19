@@ -17,9 +17,9 @@ using System.Threading.Tasks;
 namespace Ginseng.Mvc.Pages.Dashboard
 {
 	[Authorize]
-	public class MilestonesModel : DashboardPageModel
+	public class CalendarModel : DashboardPageModel
 	{
-		public MilestonesModel(IConfiguration config) : base(config)
+		public CalendarModel(IConfiguration config) : base(config)
 		{
             ShowExcelDownload = Id.HasValue;
 		}
