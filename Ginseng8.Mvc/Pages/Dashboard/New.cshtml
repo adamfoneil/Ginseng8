@@ -4,11 +4,19 @@
     ViewData["Title"] = "New";
 }
 
-<p>Use this to create new work items for the appropriate team and app. Items shown here have no project selected.</p>
+<p>Use this to create new work items for the appropriate team.</p>
 
 @if (!Model.Applications.Any())
 {
-    <p>Please select a team above.</p>
+    <p>Please select a team above, or click a team button below:</p>
+    <ul class="">
+        @foreach (var team in Model.Teams)
+        {
+            <li class="mb-3">
+                <a asp-action="CurrentTeam" asp-controller="Update" asp-route-id="@team.Id" asp-route-returnUrl="/Dashboard/New" class="btn btn-secondary">@team.Name</a>
+            </li>
+        }
+    </ul>
     return;
 }
 

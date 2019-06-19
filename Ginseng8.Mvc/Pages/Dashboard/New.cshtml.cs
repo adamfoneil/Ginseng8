@@ -1,7 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -17,12 +16,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
             ShowLabelFilter = false;
             ShowExcelDownload = false;
         }
-               
+
         public int TeamId { get; set; }
+        public IEnumerable<Team> Teams { get; set; }
         public IEnumerable<Application> Applications { get; set; }
         public ILookup<int, Label> Labels { get; set; }
         public ILookup<AppLabelCell, OpenWorkItemsResult> AppLabelItems { get; set; }
-        public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }        
+        public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }
         public Dictionary<int, string> LabelNotifyUsers { get; set; }
 
         public IEnumerable<OpenWorkItemsResult> GetAppLabelItems(int appId, int labelId)
@@ -40,6 +40,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             TeamId = CurrentOrgUser.CurrentTeamId ?? 0;
             Applications = await new Applications() { OrgId = OrgId, AllowNewItems = true, TeamId = TeamId, IsActive = true }.ExecuteAsync(connection);
+            Teams = await new Teams() { OrgId = OrgId, IsActive = true }.ExecuteAsync(connection);
 
             if (!Applications.Any() && TeamId != 0)
             {
@@ -82,7 +83,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 OrgId = OrgId,
                 TeamId = CurrentOrgUser.CurrentTeamId,
-                HasProject = false,                
+                HasProject = false,
                 LabelIds = labelIds,
                 HasAssignedUserId = false,
                 HasPriority = false

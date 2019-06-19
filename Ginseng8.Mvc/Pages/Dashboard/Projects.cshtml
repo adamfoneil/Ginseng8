@@ -23,7 +23,7 @@ else
         @if (Model.SelectedProject != null)
         {
             <h4>
-                <a asp-page="/Dashboard/Org" asp-route-parentId="@Model.SelectedProject.ParentId" asp-route-parentType="@Model.SelectedProject.ParentType" class="nounderline" title="Back to Application dashboard">
+                <a asp-page="/Dashboard/Org" class="nounderline" title="Back to Application dashboard">
                     <i class="fas fa-arrow-up"></i>
                 </a>
                 @Model.SelectedProject.ParentName

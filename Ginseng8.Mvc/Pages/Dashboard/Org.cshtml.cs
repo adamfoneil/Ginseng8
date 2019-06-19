@@ -3,6 +3,7 @@ using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -15,9 +16,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public OrgModel(IConfiguration config) : base(config)
         {
             ShowExcelDownload = false;
-            ShowLabelFilter = false;
+            ShowLabelFilter = false;            
         }
-
+    
         [BindProperty(SupportsGet = true)]
         public int? ParentId { get; set; }
 
@@ -36,7 +37,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<Team> Teams { get; set; }
         public ILookup<int, AppInfoResult> AppInfo { get; set; }
         public ILookup<int, ProjectInfoResult> ProjectInfo { get; set; }
-        
+
         public Application Application { get; set; }
         public IEnumerable<ProjectInfoResult> AppProjects { get; set; }
 
@@ -60,7 +61,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             if (AppId.HasValue)
             {
-                Application = await connection.FindAsync<Application>(AppId.Value);                
+                Application = await connection.FindAsync<Application>(AppId.Value);
                 AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId, IsActive = FilterIsActive }.ExecuteAsync(connection);
             }
             else
@@ -83,7 +84,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 {
                     OrgId = OrgId,
                     LabelId = LabelId,
-                    AppId = AppId
+                    AppId = AppId,
+                    HasProject = false
                 };
             }
 
