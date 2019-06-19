@@ -38,7 +38,7 @@
                  
             @if (Model.WorkItem.MilestoneId != 0)
             {
-                <a asp-page="/Dashboard/Milestones" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
+                <a asp-page="/Dashboard/Calendar" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
                     <i class="fas fa-chevron-double-right small"></i>
                 </a>
             }

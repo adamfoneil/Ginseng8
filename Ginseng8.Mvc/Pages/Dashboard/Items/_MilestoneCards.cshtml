@@ -16,13 +16,13 @@
         {            
             var buttonClass = (prj.Id.Equals(Model.ProjectId)) ? "btn-dark" : "btn-light";
             <li class="list-inline-item">
-                <a asp-page="/Dashboard/Milestones" asp-route-projectId="@prj.Id" class="btn btn-sm @buttonClass" title="@prj.Name">@(prj.Nickname ?? prj.Name)</a>
+                <a asp-page="/Dashboard/Calendar" asp-route-projectId="@prj.Id" class="btn btn-sm @buttonClass" title="@prj.Name">@(prj.Nickname ?? prj.Name)</a>
             </li>
         }
         @if (Model.ProjectId.HasValue)
         {
             <li class="list-inline-item">
-                <a asp-page="/Dashboard/Milestones" class="btn btn-sm btn-light">show all</a>
+                <a asp-page="/Dashboard/Calendar" class="btn btn-sm btn-light">show all</a>
             </li>
         }        
     </ul>
@@ -43,7 +43,7 @@
                             {
                                 var metrics = Model.Metrics[ms.Id];
                                 <p data-milestone-id="@ms.Id" class="col-12 mb-0 px-3 py-2 bg-white js-item-draggable">
-                                    <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-secondary" : "btn-light") milestone-work-items" asp-page="Milestones" data-milestone-id="@ms.Id">
+                                    <a asp-route-id="@ms.Id" class="btn @((metrics.TotalWorkItems > 0) ? "btn-secondary" : "btn-light") milestone-work-items" asp-page="Calendar" data-milestone-id="@ms.Id">
                                         <i class="fas fa-flag-checkered"></i>
                                         @ms.Name
                                         <sup id="ms-date-@ms.Id">@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
