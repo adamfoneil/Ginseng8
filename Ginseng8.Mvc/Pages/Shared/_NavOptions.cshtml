@@ -8,7 +8,7 @@
 {
 <div class="dropdown">
     <button class="btn btn-light dropdown-toggle mr-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.Text</button>
-    <div class="dropdown-menu">
+    <div class="dropdown-menu" style="z-index:10000">
         @foreach (var item in Model.Options)
         {
             <a asp-action="@Model.UpdateAction" asp-controller="Update" asp-route-id="@item.Value" asp-route-returnUrl="@returnUrl" class="dropdown-item">@item.Text</a>
