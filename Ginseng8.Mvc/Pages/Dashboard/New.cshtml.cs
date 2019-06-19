@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -21,12 +22,18 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<Application> Applications { get; set; }
         public ILookup<int, Label> Labels { get; set; }
         public ILookup<AppLabelCell, OpenWorkItemsResult> AppLabelItems { get; set; }
-        public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }
+        public Dictionary<int, LabelInstructions> LabelInstructions { get; set; }        
+        public Dictionary<int, string> LabelNotifyUsers { get; set; }
 
         public IEnumerable<OpenWorkItemsResult> GetAppLabelItems(int appId, int labelId)
         {
             var cell = new AppLabelCell(appId, labelId);
             return AppLabelItems[cell];
+        }
+
+        public string GetLabelNotifyUsers(int labelId)
+        {
+            return LabelNotifyUsers.ContainsKey(labelId) ? LabelNotifyUsers[labelId] : "no one currently setup";
         }
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
@@ -48,6 +55,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
             var workItemLabelMap = SelectedLabels
                 .Select(grp => new { WorkItemId = grp.Key, LabelId = grp.First().Id })
                 .ToDictionary(row => row.WorkItemId, row => row.LabelId);
+
+            var notifyResults = await new LabelSubscriptionUsers() { OrgId = OrgId }.ExecuteAsync(connection);
+            var notifyUserLookup = notifyResults.ToLookup(row => row.LabelId);
+            LabelNotifyUsers = notifyUserLookup.ToDictionary(row => row.Key, items => string.Join(", ", items.Select(u => u.UserName)));
 
             AppLabelItems = WorkItems.ToLookup(row => new AppLabelCell(row.ApplicationId, workItemLabelMap[row.Id]));
 

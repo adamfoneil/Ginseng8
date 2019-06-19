@@ -164,5 +164,11 @@ namespace Testing
         {
             TestQuery<Teams>();
         }
+
+        [TestMethod]
+        public void LabelSubscriptionUsersQuery()
+        {
+            TestQuery<LabelSubscriptionUsers>();
+        }
     }
 }

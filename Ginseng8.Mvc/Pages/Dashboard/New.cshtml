@@ -42,7 +42,7 @@
                 {
                     <div id="team-@app.Id-label-@label.Id" class="tab-pane fade" data-tab-id="tab-team-@app.Id-label-@label.Id" role="tabpanel">
                         <div class="ml-3">
-                            <p>Add new <span class="badge" style="color:@label.ForeColor;background-color:@label.BackColor">@label.Name</span> item:</p>
+                            <p>Add new <span class="badge" style="color:@label.ForeColor;background-color:@label.BackColor">@label.Name</span> item, will notify <strong>@Model.GetLabelNotifyUsers(label.Id)</strong></p>
                             @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                             {
                                 { "teamId", Model.TeamId },
