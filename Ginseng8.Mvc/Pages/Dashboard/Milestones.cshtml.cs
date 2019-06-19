@@ -34,6 +34,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public int? ProjectId { get; set; }
 
         public IEnumerable<Project> FilterProjects { get; set; } // projects with milestones
+        public Milestone SelectedMilestone { get; private set; }
         public IEnumerable<Milestone> Milestones { get; private set; }
         public Dictionary<int, MilestoneMetricsResult> Metrics { get; private set; }
         public ILookup<int, string> ProjectNicknames { get; set; }
@@ -59,6 +60,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                     MilestoneId = Id.Value,                    
                     LabelId = LabelId,
                     IsPastDue = PastDue,
+                    TeamId = CurrentOrgUser.CurrentTeamId,
                     AppId = CurrentOrgUser.CurrentAppId
                 };
             }
@@ -70,8 +72,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 		{
             Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, ProjectId = ProjectId }.ExecuteAsync(connection);
 
+            if (Id.HasValue)
+            {
+                SelectedMilestone = await connection.FindAsync<Milestone>(Id.Value);
+            }
+
             // for the create milestone partial
-            ProjectSelect = await new ProjectSelect() { TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteSelectListAsync(connection);
+            ProjectSelect = await new ProjectSelect() { TeamId = CurrentOrgUser.CurrentTeamId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteSelectListAsync(connection);
 
             if (!Id.HasValue && CurrentOrgUser.CurrentAppId.HasValue)
             {
@@ -118,9 +125,12 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             const string text = @"Placeholder item created with milestone. This enables you to filter for this project on the milestone dashboard. This will automatically close when you add another work item to this milestone.";
 
+            var app = await cn.FindAsync<Application>(record.ApplicationId);
+
             var workItem = new Ginseng.Models.WorkItem()
             {
-                OrganizationId = OrgId,
+                OrganizationId = OrgId,                
+                TeamId = app.TeamId ?? 0,
                 ApplicationId = record.ApplicationId,
                 MilestoneId = record.Id,
                 ProjectId = record.ProjectId,
