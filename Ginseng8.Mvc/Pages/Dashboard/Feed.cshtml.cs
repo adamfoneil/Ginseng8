@@ -38,12 +38,24 @@ namespace Ginseng.Mvc.Pages.Work
 
 				Events = await new Events().ExecuteAsync(cn);
 
-				await CreateDefaultEventSubscriptionsAsync(cn);
+                var qry = new EventLogs(QueryTraces)
+                {
+                    OrgId = OrgId,
+                    TeamId = CurrentOrgUser.CurrentTeamId ?? 0,
+                    UserId = FilterUserId
+                };
 
-				var subs = await new MyEventSubscriptions() { OrgId = OrgId, UserId = UserId, AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteAsync(cn);
-				Subscriptions = subs.ToDictionary(row => row.EventId);
-				var eventIds = subs.Where(s => s.Visible).Select(es => es.EventId).ToArray();
-				EventLogs = await new EventLogs() { EventIds = eventIds, OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, UserId = FilterUserId }.ExecuteAsync(cn);
+                if (CurrentOrgUser.CurrentAppId.HasValue)
+                {
+                    await CreateDefaultEventSubscriptionsAsync(cn);
+                    var subs = await new MyEventSubscriptions() { OrgId = OrgId, UserId = UserId, AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteAsync(cn);
+                    Subscriptions = subs.ToDictionary(row => row.EventId);
+                    qry.EventsUserId = UserId;
+                    qry.AppId = CurrentOrgUser.CurrentAppId.Value;
+                    qry.MyEvents = true;                    
+                }
+
+                EventLogs = await qry.ExecuteAsync(cn);
 			}
 		}
 

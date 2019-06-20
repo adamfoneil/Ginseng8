@@ -1,6 +1,7 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Classes;
 using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -42,7 +43,9 @@ namespace Ginseng.Mvc.Queries
 
 	public class EventLogs : Query<EventLogsResult>, ITestableQuery
 	{
-		public EventLogs() : base(
+        private readonly List<QueryTrace> _traces;
+
+        public EventLogs() : base(
 			@"SELECT TOP (100)
 				[ev].[Name] AS [EventName],
 				[el].*,
@@ -73,18 +76,37 @@ namespace Ginseng.Mvc.Queries
 				INNER JOIN [dbo].[OrganizationUser] [ou] ON 
 					[u].[UserId]=[ou].[UserId] AND
 					[wi].[OrganizationId]=[ou].[OrganizationId]
+                {join}
 			WHERE
 				[el].[OrganizationId]=@orgId AND
-				[el].[ApplicationId]=@appId
-				{andWhere}
+				[el].[TeamId]=@teamId 
+                {andWhere}				
 			ORDER BY
 				[el].[DateCreated] DESC")
 		{
 		}
 
-		public int OrgId { get; set; }
+        public EventLogs(List<QueryTrace> traces = null) : this()
+        {
+            _traces = traces;
+        }
 
-		public int AppId { get; set; }
+        protected override void OnQueryExecuted(QueryTrace queryTrace)
+        {
+            _traces?.Add(queryTrace);
+        }
+
+        public int OrgId { get; set; }
+
+        public int TeamId { get; set; }
+
+        [Join("INNER JOIN [dbo].[EventSubscription] [es] ON [el].[EventId]=[es].[EventId] AND [el].[ApplicationId]=[es].[ApplicationId] AND [es].[OrganizationId]=@orgId AND [es].[UserId]=@eventsUserId AND [es].[Visible]=1")]
+        public bool MyEvents { get; set; }
+
+        public int? EventsUserId { get; set; }
+
+        [Where("[el].[ApplicationId]=@appId")]
+		public int? AppId { get; set; }
 
 		[Where("[el].[EventId] IN @eventIds")]
 		public int[] EventIds { get; set; }
