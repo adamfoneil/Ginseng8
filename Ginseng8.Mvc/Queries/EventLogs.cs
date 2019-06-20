@@ -111,6 +111,9 @@ namespace Ginseng.Mvc.Queries
 		[Where("[el].[EventId] IN @eventIds")]
 		public int[] EventIds { get; set; }
 
+        [Where("[el].[EventId]=@eventId")]
+        public int? EventId { get; set; }
+
         [Where("[ou].[UserId]=@userId")]
         public int? UserId { get; set; }
 

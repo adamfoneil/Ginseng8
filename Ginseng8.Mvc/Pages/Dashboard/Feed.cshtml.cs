@@ -26,9 +26,13 @@ namespace Ginseng.Mvc.Pages.Work
 		public IEnumerable<EventLogsResult> EventLogs { get; set; }
 
         public SelectList UserSelect { get; set; }
+        public SelectList EventSelect { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public int? FilterUserId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? FilterEventId { get; set; }
 
 		public async Task OnGetAsync()
 		{
@@ -37,12 +41,15 @@ namespace Ginseng.Mvc.Pages.Work
                 UserSelect = await new UserSelect() { OrgId = OrgId, IsEnabled = true }.ExecuteSelectListAsync(cn, FilterUserId);
 
 				Events = await new Events().ExecuteAsync(cn);
+                var eventItems = Events.Select(ev => new SelectListItem() { Value = ev.Id.ToString(), Text = ev.Name });
+                EventSelect = new SelectList(eventItems, "Value", "Text", FilterEventId);
 
                 var qry = new EventLogs(QueryTraces)
                 {
                     OrgId = OrgId,
                     TeamId = CurrentOrgUser.CurrentTeamId ?? 0,
-                    UserId = FilterUserId
+                    UserId = FilterUserId,
+                    EventId = FilterEventId
                 };
 
                 if (CurrentOrgUser.CurrentAppId.HasValue)

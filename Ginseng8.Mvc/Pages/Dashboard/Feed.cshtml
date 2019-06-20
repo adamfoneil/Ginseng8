@@ -17,15 +17,20 @@
     <div class="col-9">
         <form method="get" class="form-inline mb-3">
             <label class="mr-2">Show user:</label>
-            <select name="filterUserId" asp-items="Model.UserSelect" class="form-control" onchange="this.form.submit();">
+            <select name="filterUserId" asp-items="Model.UserSelect" class="form-control mr-2" onchange="this.form.submit();">
                 <option value="">- all users -</option>
+            </select>
+
+            <label class="mr-2">Event:</label>
+            <select name="filterEventId" asp-items="Model.EventSelect" class="form-control" onchange="this.form.submit();">
+                <option value="">- all events -</option>
             </select>
         </form>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-3">
+    <div class="col-3 border-right">
         @if (Model.CurrentOrgUser.CurrentAppId.HasValue)
         {
             foreach (var ev in Model.Events)
