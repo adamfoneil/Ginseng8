@@ -31,7 +31,7 @@ namespace Ginseng.Mvc.Pages.Invoice
                     OrgId = OrgId,
                     AppId = CurrentOrgUser.CurrentAppId,
                     UserId = UserId
-                }.ExecuteAsync(cn);                
+                }.ExecuteAsync(cn);
             }
         }
 

@@ -4,10 +4,10 @@
 
 <ul class="nav nav-pills mt-3 mb-3">
     <li class="nav-item">
-        <activelink page="/Tickets/Index" text="New Tickets" preserve-query-string="true"/>
+        <activelink page="/Tickets/Index" text="New Tickets" preserve-query-string="true" />
     </li>
     <li class="nav-item">
-        <activelink page="/Tickets/Ignored" text="Ignored" preserve-query-string="true"/>
+        <activelink page="/Tickets/Ignored" text="Ignored" preserve-query-string="true" />
     </li>
     <li class="nav-item">
         <a href="/Dashboard/AllItems?filterFreshdeskTickets=true" class="nav-link">Assigned Items</a>
@@ -16,7 +16,7 @@
 
 @Html.ActionAlert(TempData)
 
-@{ 
+@{
     var model = Model as TicketPageModel;
 }
 

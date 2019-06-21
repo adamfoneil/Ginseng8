@@ -14,11 +14,11 @@
             <li class="nav-item">
                 <a href="#impeded-@appGrp.Key" data-toggle="tab" class="nav-link">
                     <i class="far fa-comment-times"></i>
-                    <span>Impediments</span>                    
+                    <span>Impediments</span>
                 </a>
             </li>
         }
-        
+
         @if (Model.PausedItems.Any(wi => wi.ApplicationId == appGrp.Key))
         {
             <li class="nav-item">
@@ -37,7 +37,7 @@
                     <span>Not Started</span>
                 </a>
             </li>
-        }        
+        }
     </ul>
 
     <div class="tab-content my-3" id="tabContent">
@@ -45,7 +45,7 @@
         {
             <div class="tab-pane fade" id="impeded-@appGrp.Key" role="tabpanel">
                 <p>Items with an impediment</p>
-                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.ImpededItems.Where(wi => wi.ApplicationId == appGrp.Key), Comments = Model.Comments, AssignToUsers = Model.AssignToUsers }"/>
+                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.ImpededItems.Where(wi => wi.ApplicationId == appGrp.Key), Comments = Model.Comments, AssignToUsers = Model.AssignToUsers }" />
             </div>
         }
 
@@ -53,7 +53,7 @@
         {
             <div class="tab-pane fade" id="paused-@appGrp.Key" role="tabpanel">
                 <p>Items waiting for someone to resume, either because of hand-off or the assigned people removed themselves.</p>
-                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.PausedItems.Where(wi => wi.ApplicationId == appGrp.Key), Comments = Model.Comments, AssignToUsers = Model.AssignToUsers }"/>
+                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.PausedItems.Where(wi => wi.ApplicationId == appGrp.Key), Comments = Model.Comments, AssignToUsers = Model.AssignToUsers }" />
             </div>
         }
 
@@ -61,10 +61,9 @@
         {
             <div class="tab-pane fade" id="stopped-@appGrp.Key" role="tabpanel">
                 <p>Items in a milestone that no one is working on.</p>
-                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.StoppedItems.Where(wi => wi.ApplicationId == appGrp.Key), Comments = Model.Comments, AssignToUsers = Model.AssignToUsers }"/>
+                <partial name="Items/_FilteredItems" model="new FilteredItemView() { Page = Model, WorkItems = Model.StoppedItems.Where(wi => wi.ApplicationId == appGrp.Key), Comments = Model.Comments, AssignToUsers = Model.AssignToUsers }" />
             </div>
-        }                
+        }
     </div>
 }
 </div>
-

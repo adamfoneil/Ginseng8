@@ -1,6 +1,4 @@
 ﻿using Ginseng.Models;
-using Ginseng.Mvc.Models;
-using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -10,24 +8,24 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Wiki
 {
-	[Authorize]
-	public class IndexModel : WikiPageModel
-	{
-		public IndexModel(IConfiguration config) : base(config)
-		{
-		}
+    [Authorize]
+    public class IndexModel : WikiPageModel
+    {
+        public IndexModel(IConfiguration config) : base(config)
+        {
+        }
 
-		[BindProperty(SupportsGet = true)]
-		public int Id { get; set; }		
+        [BindProperty(SupportsGet = true)]
+        public int Id { get; set; }
 
-		public Article Article { get; set; }
+        public Article Article { get; set; }
 
-		protected override async Task OnGetInternalAsync(SqlConnection connection)
-		{
-			if (Id != 0)
-			{
-				Article = await connection.FindAsync<Article>(Id);
-			}
-		}
-	}
+        protected override async Task OnGetInternalAsync(SqlConnection connection)
+        {
+            if (Id != 0)
+            {
+                Article = await connection.FindAsync<Article>(Id);
+            }
+        }
+    }
 }

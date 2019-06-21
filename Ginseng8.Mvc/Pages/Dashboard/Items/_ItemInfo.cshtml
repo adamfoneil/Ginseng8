@@ -10,10 +10,10 @@
     {
         <span> | </span>
         @Html.FormatValue(Model.PercentComplete, "{0:P0}")<span> complete</span>
-    }    
+    }
 </span>
 
-<partial name="Items/_ItemMetrics" model="Model"/>
+<partial name="Items/_ItemMetrics" model="Model" />
 
-<br/>
+<br />
 <meter value="@Model.PercentComplete" max="1"></meter>

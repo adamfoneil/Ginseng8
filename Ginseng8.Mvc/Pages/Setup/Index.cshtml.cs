@@ -4,16 +4,16 @@ using Microsoft.Extensions.Configuration;
 
 namespace Ginseng.Mvc.Pages.Setup
 {
-	[Authorize]
-	[OrgNotRequired]
-	public class IndexModel : AppPageModel
-	{
-		public IndexModel(IConfiguration config) : base(config)
-		{
-		}
+    [Authorize]
+    [OrgNotRequired]
+    public class IndexModel : AppPageModel
+    {
+        public IndexModel(IConfiguration config) : base(config)
+        {
+        }
 
-		public void OnGet()
-		{
-		}
-	}
+        public void OnGet()
+        {
+        }
+    }
 }

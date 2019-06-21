@@ -1,12 +1,12 @@
 ﻿@model WeeklyHoursView
 
-@{ 
+@{
     var weekInfo = Model.WeekInfo;
 }
 
 @foreach (var weekGrp in Model.WorkLogs.OrderBy(row => row.Date).GroupBy(row => row.ToWeek()))
 {
-    var days = weekGrp.GroupBy(row => row.Date);        
+    var days = weekGrp.GroupBy(row => row.Date);
     <table class="table">
         <tr>
             <th>
@@ -32,9 +32,9 @@
                     }
                     else
                     {
-                        <partial name="~/Pages/Dashboard/Items/_ItemNumber.cshtml" model="itemGrp.First()"/>                                             
-                        <partial name="~/Pages/Dashboard/Items/_Title.cshtml" model="itemGrp.First()"/>                                             
-                    }                    
+                        <partial name="~/Pages/Dashboard/Items/_ItemNumber.cshtml" model="itemGrp.First()" />
+                        <partial name="~/Pages/Dashboard/Items/_Title.cshtml" model="itemGrp.First()" />
+                    }
                 </td>
                 @foreach (var dayGrp in days)
                 {
@@ -51,7 +51,7 @@
                 </td>
             </tr>
         }
-         @{  
+         @{
              var dailyAmount = days.ToDictionary(grp => grp.Key, grp => grp.Sum(row => row.Amount));
              var dailyHours = days.ToDictionary(grp => grp.Key, grp => grp.Sum(row => row.Hours));
         }

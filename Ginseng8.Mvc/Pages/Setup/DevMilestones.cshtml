@@ -13,7 +13,7 @@
 
 @Html.ActionAlert(TempData)
 
-@{ 
+@{
     var grid = new GridEditor<DeveloperMilestone>(this, Xsrf, defaults: new { MilestoneId = Model.MilestoneId });
 }
 
@@ -37,7 +37,7 @@
             <th>Start Date</th>
             <th>Away Hours</th>
             <th>Working Hours</th>
-            <th>Estimate Hours</th>            
+            <th>Estimate Hours</th>
             <th>Available Hours</th>
             <th></th>
         </tr>
@@ -47,7 +47,7 @@
                 <td>@grid.DropDownList(m => m.DeveloperId, Model.UserSelect, new { @class = "form-control" })</td>
                 <td>@grid.TextBox(m => m.StartDate, new { @class = "datepicker form-control" })</td>
                 <td>@Model.GetAwayHours(dev.DeveloperId)</td>
-                <td>@Model.GetLoadHours(dev.DeveloperId, (r) => r.WorkingHours)</td>                
+                <td>@Model.GetLoadHours(dev.DeveloperId, (r) => r.WorkingHours)</td>
                 <td>@Model.GetLoadHours(dev.DeveloperId, (r) => r.EstimateHours)</td>
                 <td>@Model.GetLoadHours(dev.DeveloperId, (r) => r.AvailableHours)</td>
                 <td>@grid.Controls()</td>
@@ -57,7 +57,7 @@
             <td>@grid.DropDownList(m => m.DeveloperId, Model.UserSelect, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.StartDate, new { @class = "datepicker form-control" })</td>
             <td></td>
-            <td></td>            
+            <td></td>
             <td></td>
             <td></td>
             <td>@grid.Controls()</td>

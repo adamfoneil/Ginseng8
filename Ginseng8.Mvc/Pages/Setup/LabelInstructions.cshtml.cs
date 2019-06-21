@@ -29,10 +29,10 @@ namespace Ginseng.Mvc.Pages.Setup
 
                 if (LabelId != 0)
                 {
-                    LabelInstructions = 
-                        await Data.FindWhereAsync<LabelInstructions>(cn, new { LabelId }) ?? 
+                    LabelInstructions =
+                        await Data.FindWhereAsync<LabelInstructions>(cn, new { LabelId }) ??
                         new LabelInstructions() { LabelId = LabelId };
-                }                
+                }
             }
         }
 

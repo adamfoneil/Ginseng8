@@ -21,31 +21,34 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
 		[JsonProperty("fr_escalated")]
 		public bool FrEscalated { get; set; }
         */
-		[JsonProperty("spam")]
-		public bool Spam { get; set; }
+
+        [JsonProperty("spam")]
+        public bool Spam { get; set; }
+
         /*
 		[JsonProperty("email_config_id")]
 		public long? EmailConfigId { get; set; }
         */
 
-		[JsonProperty("group_id")]
-		public long? GroupId { get; set; }
+        [JsonProperty("group_id")]
+        public long? GroupId { get; set; }
 
         /*
 		[JsonProperty("priority")]
 		public int Priority { get; set; }
         */
-		[JsonProperty("requester_id")]
-		public long RequesterId { get; set; }
 
-		[JsonProperty("responder_id")]
-		public long? ResponderId { get; set; }
+        [JsonProperty("requester_id")]
+        public long RequesterId { get; set; }
 
-		[JsonProperty("source")]
-		public long Source { get; set; }
+        [JsonProperty("responder_id")]
+        public long? ResponderId { get; set; }
 
-		[JsonProperty("company_id")]
-		public long? CompanyId { get; set; }        
+        [JsonProperty("source")]
+        public long Source { get; set; }
+
+        [JsonProperty("company_id")]
+        public long? CompanyId { get; set; }
 
         [JsonProperty("status")]
         public TicketStatus Status { get; set; }
@@ -69,8 +72,8 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
 
         [JsonProperty("type")]
         public string Type { get; set; }
-        
-        /*		
+
+        /*
 		[JsonProperty("due_by")]
 		public DateTimeOffset DueBy { get; set; }
 

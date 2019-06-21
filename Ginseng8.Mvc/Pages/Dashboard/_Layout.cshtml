@@ -7,13 +7,13 @@
         <activelink page="/Dashboard/MyItems" text="My Items" />
     </li>
     <li class="nav-item">
-        <activelink page="/Dashboard/New" text="New Items"/>
+        <activelink page="/Dashboard/New" text="New Items" />
     </li>
     <li class="nav-item">
-        <activelink page="/Dashboard/Hung" text="Hung Items"/>
+        <activelink page="/Dashboard/Hung" text="Hung Items" />
     </li>
     <li class="nav-item">
-        <activelink page="/Dashboard/Index" text="Dashboard"/>
+        <activelink page="/Dashboard/Index" text="Dashboard" />
     </li>
     <li class="nav-item">
         <activelink page="/Dashboard/Calendar" text="Calendar" />
@@ -33,23 +33,23 @@
 
 <div id="infoBanner"></div>
 
-@{ 
+@{
     var model = Html.ViewContext.ViewData.Model as DashboardPageModel;
     if (model != null && model.LabelFilter != null && model.ShowLabelFilter)
     {
-        <partial name="Items/_LabelFilter" model="model.LabelFilter"/>
+        <partial name="Items/_LabelFilter" model="model.LabelFilter" />
         @if (model.LabelId.HasValue)
         {
             <div class="text-center">
                 <a asp-route-labelId="" class="btn btn-sm btn-light mb-2">show all</a>
-            </div>            
+            </div>
         }
     }
 }
 
 @if (Model is DashboardPageModel)
 {
-    <partial name="Items/_PastDue" model="Model"/>
+    <partial name="Items/_PastDue" model="Model" />
 }
 
 @RenderBody()
@@ -59,11 +59,11 @@
     <a class="btn btn-light" asp-page-handler="ExcelDownload">Download to Excel</a>
 }
 
-@section Scripts {    
+@section Scripts {
     @if (Model is DashboardPageModel)
     {
         <script>
-            var teamUseApps = @Html.Raw((Model as DashboardPageModel).TeamUseApps);                        
+            var teamUseApps = @Html.Raw((Model as DashboardPageModel).TeamUseApps);
         </script>
     }
     <script src="~/js/MultiSelect.js"></script>

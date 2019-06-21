@@ -39,7 +39,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         [JsonProperty("health_score")]
         public string HealthScore { get; set; }
 
-        [JsonProperty("account_tier")]        
+        [JsonProperty("account_tier")]
         public long? AccountTier { get; set; }
 
         [JsonProperty("renewal_date")]

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -18,9 +17,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IndexModel(IConfiguration config) : base(config)
         {
             ShowExcelDownload = false;
-            ShowLabelFilter = false;            
+            ShowLabelFilter = false;
         }
-    
+
         [BindProperty(SupportsGet = true)]
         public int? ParentId { get; set; }
 
@@ -59,7 +58,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                         TeamId = ParentId;
                         break;
                 }
-            }            
+            }
 
             if (AppId.HasValue)
             {
@@ -67,7 +66,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId, IsActive = FilterIsActive }.ExecuteAsync(connection);
             }
             else
-            {                
+            {
                 Teams = await new Teams() { OrgId = OrgId, IsActive = FilterIsActive, Id = TeamId }.ExecuteAsync(connection);
 
                 var apps = await new AppInfo() { OrgId = OrgId, TeamId = TeamId, IsActive = FilterIsActive }.ExecuteAsync(connection);
@@ -99,7 +98,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public async Task<IActionResult> OnPostCreateProjectAsync(int teamId, int? applicationId, string name)
         {
             var project = new Project() { Name = name, ApplicationId = applicationId, TeamId = teamId };
-            await Data.TrySaveAsync(project);            
+            await Data.TrySaveAsync(project);
             return (applicationId.HasValue) ?
                 Redirect($"/Dashboard/Index?appId={applicationId}") :
                 Redirect($"/Dashboard/Index?teamId={teamId}");

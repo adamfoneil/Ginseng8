@@ -29,8 +29,8 @@
                 <td>
                     <div class="row">
                         <form method="post" asp-page-handler="UpdateSubscription">
-                            <input type="hidden" name="ApplicationId" value="@app.Id"/>
-                            <input type="hidden" name="ActivityId" value="@act.Id"/>
+                            <input type="hidden" name="ApplicationId" value="@app.Id" />
+                            <input type="hidden" name="ActivityId" value="@act.Id" />
                             @Html.CheckBox("IsSelected", isSelected, new { onclick = "this.form.submit();" })
                         </form>
 
@@ -38,7 +38,7 @@
                         {
                             var notification = Model.MyActivities[key];
                             <div id="notifyOptions-@notification.Id" class="ml-2">
-                                <partial name="Shared/_NotifyOptions" model="notification"/>
+                                <partial name="Shared/_NotifyOptions" model="notification" />
                             </div>
                         }
                     </div>

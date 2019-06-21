@@ -5,9 +5,9 @@
 {
     <h3>@Model.Article.Title</h3>
 
-    <partial name="/Pages/Shared/_UserDateStamp.cshtml" model="Model.Article"/>
+    <partial name="/Pages/Shared/_UserDateStamp.cshtml" model="Model.Article" />
 
-    <hr/>
+    <hr />
 
     @Html.Raw(Model.Article.HtmlBody)
 

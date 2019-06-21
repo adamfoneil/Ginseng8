@@ -1,7 +1,7 @@
 ﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
 
-<partial name="Items/_ProjectViewControls" model="Model"/>
-    
+<partial name="Items/_ProjectViewControls" model="Model" />
+
 @*crosstab columns*@
 <div class="row sticky-top">
     <div class="col-@Model.CrosstabRowHeadingGridCols()">
@@ -37,12 +37,12 @@
     {
         <div class="row">
             <div class="col-@Model.CrosstabRowHeadingGridCols()">
-                <partial name="Dashboard/Items/_ProjectLinkButton" model="prj"/>
-            </div>        
+                <partial name="Dashboard/Items/_ProjectLinkButton" model="prj" />
+            </div>
             @foreach (var ms in Model.MilestoneDates)
             {
                 <div class="col-@Model.CrosstabColumnHeadingGridCols()">
-                    @{ 
+                    @{
                         var items = Model.ProjectWorkItems[new ProjectDashboardCell(prj.Id, ms.Key)];
                     }
                     @foreach (var msName in ms)
@@ -51,7 +51,7 @@
                             @foreach (var wi in items)
                             {
                                 <span class="js-item-draggable">
-                                    <partial name="Dashboard/Items/_ItemNumber" model="wi"/>
+                                    <partial name="Dashboard/Items/_ItemNumber" model="wi" />
                                 </span>
                                 <span id="work-item-title-@wi.Number" style="display:none">
                                     <span>@wi.Title</span>
@@ -65,12 +65,12 @@
                     }
                     <div class="small text-muted">@items.Sum(row => row.EstimateHours) est hrs</div>
                 </div>
-            }            
+            }
         </div>
-        <hr/>
+        <hr />
     }
-    
-    <partial name="Items/_ProjectCreate" model="appGrp.Key"/>    
+
+    <partial name="Items/_ProjectCreate" model="appGrp.Key" />
 }
 
-<partial name="Shared/_IActive" model="Model"/>
+<partial name="Shared/_IActive" model="Model" />

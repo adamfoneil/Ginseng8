@@ -1,11 +1,11 @@
 ﻿@model OpenWorkItemsResult
 
-<h5 data-milestone-id="@Model.MilestoneId">    
+<h5 data-milestone-id="@Model.MilestoneId">
     <i class="fas fa-flag-checkered"></i>
-    <span class="@((Model.MilestoneId != 0) ? "editable" : string.Empty)" id="milestone-name-@Model.MilestoneId" data-url="/Update/MilestoneName">@Model.MilestoneName</span>        
+    <span class="@((Model.MilestoneId != 0) ? "editable" : string.Empty)" id="milestone-name-@Model.MilestoneId" data-url="/Update/MilestoneName">@Model.MilestoneName</span>
     @if (Model.MilestoneId != 0)
     {
-        <a href="#" class="ms-datepicker" data-milestone-id="@Model.MilestoneId">@Html.FormatValue(Model.MilestoneDate, "{0:ddd M/d}")</a>        
+        <a href="#" class="ms-datepicker" data-milestone-id="@Model.MilestoneId">@Html.FormatValue(Model.MilestoneDate, "{0:ddd M/d}")</a>
         <input type="hidden" class="ms-datepicker-input" data-milestone-id="@Model.MilestoneId" />
         <span class="text-muted small">
             @if (Model.MilestoneDaysAway > 0)

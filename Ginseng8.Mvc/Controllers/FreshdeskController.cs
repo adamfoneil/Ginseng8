@@ -101,7 +101,7 @@ namespace Ginseng.Mvc.Controllers
         public async Task<IActionResult> Webhook([FromBody] WebhookRequest request)
         {
             var result = await WebhookInnerAsync(request);
-            
+
             if (!(result is OkResult))
             {
                 await _freshdeskService.StoreWebhookPayloadAsync(Request.Body, result);

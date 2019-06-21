@@ -2,16 +2,16 @@
 
 @if (Model.PageModel.TeamId != 0)
 {
-    <td><input type="checkbox" name="ticketId[@Model.RowIndex]" value="@Model.Ticket.Id" class="selectTicket"/></td>
-}            
+    <td><input type="checkbox" name="ticketId[@Model.RowIndex]" value="@Model.Ticket.Id" class="selectTicket" /></td>
+}
 <td>@Model.Ticket.Id</td>
-<td>                
+<td>
     <a href="@Model.FreshdeskUrl/a/contacts/@Model.Ticket.RequesterId" target="_blank">@Model.PageModel.GetContactName(Model.Ticket.RequesterId)</a>
     @if (Model.Ticket.CompanyId.HasValue)
     {
-        <br/>
+        <br />
         <a href="@Model.FreshdeskUrl/a/companies/@Model.Ticket.CompanyId.Value" target="_blank">@Model.PageModel.GetCompanyName(Model.Ticket.CompanyId.Value)</a>
-    }                
+    }
 </td>
 <td>
     <a href="@Model.FreshdeskUrl/a/tickets/@Model.Ticket.Id" target="_blank">
@@ -23,7 +23,7 @@
         @if (Model.Ticket.GroupId.HasValue)
         {
             <strong>@Model.PageModel.Groups[Model.Ticket.GroupId.Value].Name</strong>
-        }                    
+        }
         @if (Model.Ticket.Spam)
         {
             <span class="badge badge-dark">Spam</span>

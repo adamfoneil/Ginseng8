@@ -29,6 +29,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         /// For teams that don't use apps or if team *does* use apps and one is selected, we show projects
         /// </summary>
         Project,
+
         /// <summary>
         /// If no current app selected, then we show apps
         /// </summary>
@@ -41,7 +42,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         private IFreshdeskClientFactory _freshdeskClientFactory;
 
         public IndexModel(
-            IConfiguration config,            
+            IConfiguration config,
             IFreshdeskClientFactory freshdeskClientFactory)
             : base(config, freshdeskClientFactory)
         {
@@ -50,10 +51,10 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         public LoadedFrom LoadedFrom { get; set; }
         public DateTime DateQueried { get; set; }
-       
+
         public ActionItemType ActionObjectType { get; set; } // tells us whether the work item action Id is an app or a project
         public SelectList AppSelect { get; set; } // available when no current app selected
-        public Dictionary<long, SelectList> ProjectByCompanySelect { get; set; } // available when app is current                        
+        public Dictionary<long, SelectList> ProjectByCompanySelect { get; set; } // available when app is current
 
         public SelectList GetActionSelect(long companyId)
         {
@@ -77,7 +78,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             {
                 AppSelect = await BuildAppSelectAsync(cn);
 
-                var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);                
+                var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);
                 Tickets = FreshdeskCache.Tickets.Where(t => !IgnoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id)).ToArray();
 
                 if (CurrentOrgUser.CurrentTeamId.HasValue)
@@ -85,7 +86,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                     ActionObjectType = (!CurrentOrgUser.CurrentTeam.UseApplications || (CurrentOrgUser.CurrentAppId.HasValue && CurrentOrgUser.CurrentTeam.UseApplications)) ? ActionItemType.Project : ActionItemType.Application;
                     ProjectByCompanySelect = await BuildProjectSelectAsync(cn, teamId, CurrentOrgUser.CurrentAppId, Tickets);
                 }
-            }            
+            }
 
             LoadedFrom = FreshdeskCache.TicketCache.LoadedFrom;
             DateQueried = FreshdeskCache.TicketCache.LastApiCallDateTime;
@@ -104,7 +105,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             bool companySpecific = team?.CompanySpecificProjects ?? false;
 
             if (companySpecific)
-            {                
+            {
                 var projectsByCompany = projects.GroupBy(row => row.FreshdeskCompanyId ?? 0);
                 foreach (var companyGrp in projectsByCompany)
                 {
@@ -156,7 +157,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             await FreshdeskCache.InitializeAsync(OrgName);
 
             using (var cn = Data.GetConnection())
-            {                
+            {
                 if (objectId == 0)
                 {
                     await IgnoreTicketInner(ticketId, teamId, cn);
@@ -167,7 +168,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                     var wit = new WorkItemTicket()
                     {
                         TicketId = ticketId,
-                        WorkItemNumber = number,                        
+                        WorkItemNumber = number,
                         OrganizationId = OrgId,
                         TicketStatus = ticket.Status,
                         TicketType = WebhookRequestToWebhookConverter.TicketTypeFromString(ticket.Type),
@@ -177,10 +178,10 @@ namespace Ginseng.Mvc.Pages.Tickets
                         ContactName = GetContactName(ticket.RequesterId),
                         Subject = ticket.Subject
                     };
-                    
+
                     await client.UpdateTicketWorkItemAsync(ticketId, number.ToString());
                     await Data.TrySaveAsync(cn, wit);
-                }                
+                }
             }
 
             return Redirect($"Tickets/Index");
@@ -199,8 +200,8 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         private async Task<int> CreateWorkItemFromTicketAsync(SqlConnection cn, IFreshdeskClient client, Ticket ticket, int objectId, ActionItemType objectType)
         {
-            int? appId = (objectType == ActionItemType.Application) ? 
-                objectId : 
+            int? appId = (objectType == ActionItemType.Application) ?
+                objectId :
                 (objectId == -1) ?
                     CurrentOrgUser.CurrentAppId :
                     await GetAppFromProjectIdAsync(cn, objectId);
@@ -208,7 +209,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             int? projectId = (objectType == ActionItemType.Project) ? objectId : default(int?);
 
             if (projectId == -1 && ticket.CompanyId.HasValue)
-            {                                
+            {
                 var company = await client.GetCompanyAsync(ticket.CompanyId.Value);
                 projectId = await CreateNewProjectAsync(cn, CurrentOrgUser.CurrentAppId.Value, company);
             }

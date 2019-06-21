@@ -2,7 +2,7 @@
 
 <ul>
     <li>@Model.Name</li>
-    
+
     @if (Model.Items?.Any() ?? false)
     {
         <li>
@@ -12,16 +12,16 @@
                     <li><a asp-page="Index" asp-route-id="@item.Id">@item.Title</a></li>
                 }
             </ul>
-        </li>        
-    }    
-    
+        </li>
+    }
+
     @if (Model.Children?.Any() ?? false)
     {
         <li>
             @foreach (var child in Model.Children)
             {
-                <partial name="_TocNode" model="child"/>
-            }    
+                <partial name="_TocNode" model="child" />
+            }
         </li>
-    }    
+    }
 </ul>

@@ -2,15 +2,15 @@
 
 <div class="ml-3 mt-3">
     <form method="post" asp-page-handler="CreateProject">
-        <input type="hidden" name="TeamId" value="@Model.TeamId"/>
-        <input type="hidden" name="ApplicationId" value="@Model.ApplicationId"/>            
+        <input type="hidden" name="TeamId" value="@Model.TeamId" />
+        <input type="hidden" name="ApplicationId" value="@Model.ApplicationId" />
         <div class="row mb-3">
             <div class="col-6">
-                <input type="text" name="Name" placeholder="create new project" class="form-control" required="required"/>                    
+                <input type="text" name="Name" placeholder="create new project" class="form-control" required="required" />
             </div>
             <div class="col-1">
                 <button type="submit" class="btn btn-dark">Add</button>
-            </div>            
+            </div>
         </div>
     </form>
 </div>

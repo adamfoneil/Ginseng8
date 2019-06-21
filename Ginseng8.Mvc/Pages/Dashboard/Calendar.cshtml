@@ -6,16 +6,16 @@
 
 @if (!Model.Id.HasValue)
 {
-    <partial name="Items/_MilestoneCards" model="Model"/>    
+    <partial name="Items/_MilestoneCards" model="Model" />
 }
 else
 {
-    <partial name="Items/_MilestoneDetail" model="Model"/>
+    <partial name="Items/_MilestoneDetail" model="Model" />
 }
 
 @if (Model.CurrentOrgUser.CurrentAppId.HasValue)
 {
-    <partial name="Dashboard/Items/_CreateMilestone" model="@(new CreateMilestoneView() { ProjectSelect = Model.ProjectSelect })"/>
+    <partial name="Dashboard/Items/_CreateMilestone" model="@(new CreateMilestoneView() { ProjectSelect = Model.ProjectSelect })" />
 }
 
 @section Scripts {

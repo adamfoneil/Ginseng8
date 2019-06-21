@@ -4,12 +4,11 @@
 
 <div class="row">
     <div class="col-3">
-
     </div>
     <div class="col-9">
         <div class="lead justify-content-between">
             <i class="far fa-database"></i>
-            <span>@Html.CurrentAppName()</span>            
+            <span>@Html.CurrentAppName()</span>
             <button class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@(Model?.CurrentModel?.Name ?? "no model selected")</button>
             <div class="dropdown-menu">
                 @foreach (var dm in Model.ModelSelect)
@@ -39,22 +38,22 @@
     </div>
 </div>
 
-<hr/>
+<hr />
 
 <div class="row">
     <div class="col-3">
         <form method="post" asp-page-handler="AddClass" class="form-inline mt-2 row no-gutters">
             <div class="col pr-2">
-                <input type="hidden" name="Id" value="0"/>
-                <input type="hidden" name="DataModelId" value="@Model.ModelId"/>
-                <input type="text" name="Name" required="required" class="form-control-sm form-control w-100" placeholder="add model class"/>
+                <input type="hidden" name="Id" value="0" />
+                <input type="hidden" name="DataModelId" value="@Model.ModelId" />
+                <input type="text" name="Name" required="required" class="form-control-sm form-control w-100" placeholder="add model class" />
             </div>
             <div class="col col-auto">
                 <button class="btn btn-dark btn-sm">Add</button>
             </div>
         </form>
 
-        <div class="list-group mt-3">                        
+        <div class="list-group mt-3">
             @foreach (var c in Model.ModelClasses)
             {
                 var activeClass = (c.Id == Model.Id) ? "active" : string.Empty;
@@ -77,7 +76,7 @@
                 <i class="fal fa-table mr-2"></i>
                 <span class="editable" id="class-id-@Model.CurrentClass.Id" data-url="/Update/ModelClassName">@Model.CurrentClass.Name</span>
                 <span class="small text-muted">
-                @{ 
+                @{
                     var keyProps = Model.Properties.Where(p => p.InPrimaryKey);
                     if (keyProps.Any())
                     {
@@ -112,7 +111,7 @@
                                 <a asp-route-id="@p.TypeId">
                                     <i class="fas fa-chevron-double-right"></i>
                                 </a>
-                            }                            
+                            }
                         </td>
                         <td>@grid.CheckBox(m => m.IsNullable)</td>
                         <td>@grid.TextBox(m => m.Description, new { @class = "form-control-sm", autocomplete = "off" })</td>
@@ -135,7 +134,7 @@
             @if (!Model.Properties.Any() && Model.CurrentClass != null)
                     {
                 <form method="post" asp-page-handler="DeleteClass">
-                    <input type="hidden" name="Id" value="@Model.CurrentClass.Id"/>
+                    <input type="hidden" name="Id" value="@Model.CurrentClass.Id" />
                     <button class="btn btn-danger">Delete Model Class</button>
                 </form>
             }

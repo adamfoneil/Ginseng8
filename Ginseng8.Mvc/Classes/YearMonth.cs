@@ -1,11 +1,11 @@
 ﻿using System;
 
 namespace Ginseng.Mvc.Classes
-{    
+{
     public class YearMonth : IComparable<YearMonth>
     {
         public int Year { get; set; }
-        public int Month { get; set; }        
+        public int Month { get; set; }
         public int Index { get; set; }
 
         public YearMonth()

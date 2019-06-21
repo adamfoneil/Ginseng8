@@ -3,5 +3,5 @@
 <a asp-route-id="@Model.Id" class="btn @((Model.Id != 0 && Model.TotalWorkItems > 0) ? "btn-info" : "btn-light") project-work-items" asp-page="Projects" data-project-id="@Model.Id">
     @Model.Name
 </a>
-<br/>
-<partial name="Items/_ItemInfo" model="Model"/>
+<br />
+<partial name="Items/_ItemInfo" model="Model" />

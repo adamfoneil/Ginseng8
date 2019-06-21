@@ -5,7 +5,7 @@
     var backColorStyle = (Model.EstimateHours > 0) ? $"background-color:{Html.WeightedColorToHex(Model.ColorGradientPosition)}" : string.Empty;
 }
 <span
-    class="badge @itemNumClass work-item-number tooltips"    
+    class="badge @itemNumClass work-item-number tooltips"
     style="@backColorStyle"
     id="work-item-number-@Model.Number"
     data-number="@Model.Number">

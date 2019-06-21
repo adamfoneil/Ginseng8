@@ -1,6 +1,6 @@
 ﻿@model InsertItemView
 
-<div class="mb-3">    
+<div class="mb-3">
     <div id="insert-item-area-@Model.Context">
         <form method="post" asp-controller="WorkItem" asp-action="Create">
             @Model.WriteContextFields(Html)

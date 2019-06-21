@@ -34,12 +34,12 @@
             <td>
                 <span class="small">
                 <span class="mr-2">@user.DailyWorkHours hrs/day</span>
-                <br/>
+                <br />
                 @foreach (var day in Model.WorkDays[user.UserId])
                 {
                     <span>@day</span>
                 }
-                <br/>
+                <br />
                 <span>@user.WeeklyHours hrs/week</span>
                 </span>
             </td>

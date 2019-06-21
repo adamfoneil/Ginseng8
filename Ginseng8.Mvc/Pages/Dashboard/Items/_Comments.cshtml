@@ -2,8 +2,8 @@
 
 <div class="mt-2" id="addComment-@Model.ObjectId" style="display:none">
     <form method="post">
-        <input type="hidden" name="ObjectId" value="@Model.ObjectId"/>
-        <input type="hidden" name="ObjectType" value="@Model.ObjectType"/>
+        <input type="hidden" name="ObjectId" value="@Model.ObjectId" />
+        <input type="hidden" name="ObjectType" value="@Model.ObjectType" />
         <div class="form-row">
             <div class="col-12">
                 <textarea name="HtmlBody" class="form-control form-control-sm htmlEditor" required="required" placeholder="add comment" id="addComment-@Model.ObjectId-HtmlBody" data-folder-name="@(Model.ObjectType.ToString())Comments" data-id="@Model.ObjectId"></textarea>
@@ -15,11 +15,11 @@
                     <option value="">Info Only</option>
                     <option value="true">Help needed</option>
                     <option value="false">Issue resolved</option>
-                </select>                
+                </select>
             </div>
             <div class="col-2">
                 <button type="submit" class="btn btn-dark btn-sm add-comment-submit">Add</button>
-            </div>            
+            </div>
         </div>
     </form>
 </div>
@@ -31,7 +31,7 @@
         <i class="@item.IconClass"></i>
         <strong>@item.DisplayName</strong>
         <span class="small text-muted">@Html.FormatValue(item.DateCreated, "{0:ddd M/d}")</span>
-        <div>@Html.Raw(item.HtmlBody)</div>        
+        <div>@Html.Raw(item.HtmlBody)</div>
     </li>
 }
 </ul>

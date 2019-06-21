@@ -1,14 +1,14 @@
 ﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
 
-<partial name="Items/_ProjectViewControls" model="Model"/>
+<partial name="Items/_ProjectViewControls" model="Model" />
 
 @foreach (var appGrp in Model.ProjectInfo.GroupBy(row => row.ApplicationId))
-{    
+{
     <h4>@appGrp.First().ApplicationName</h4>
 
     <div class="app-container">
-        <partial name="Items/_ProjectCardsInner" model="appGrp"/>
+        <partial name="Items/_ProjectCardsInner" model="appGrp" />
     </div>
-    
-    <partial name="Items/_ProjectCreate" model="appGrp.Key"/>
+
+    <partial name="Items/_ProjectCreate" model="appGrp.Key" />
 }

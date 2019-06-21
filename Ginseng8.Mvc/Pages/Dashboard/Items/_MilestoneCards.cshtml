@@ -1,6 +1,6 @@
 ﻿@model Ginseng.Mvc.Pages.Dashboard.CalendarModel
 
-@{ 
+@{
     var months = Model.GetYearMonthRange(4);
     var milestones = Model.GetCalendar();
 }
@@ -13,7 +13,7 @@
         </li>
 
         @foreach (var prj in Model.FilterProjects)
-        {            
+        {
             var buttonClass = (prj.Id.Equals(Model.ProjectId)) ? "btn-dark" : "btn-light";
             <li class="list-inline-item">
                 <a asp-page="/Dashboard/Calendar" asp-route-projectId="@prj.Id" class="btn btn-sm @buttonClass" title="@prj.Name">@(prj.Nickname ?? prj.Name)</a>
@@ -24,14 +24,14 @@
             <li class="list-inline-item">
                 <a asp-page="/Dashboard/Calendar" class="btn btn-sm btn-light">show all</a>
             </li>
-        }        
+        }
     </ul>
 }
 
 @foreach (var yearGrp in months.GroupBy(row => row.Year))
 {
-    <h4>@yearGrp.Key</h4> 
-    <div class="row">        
+    <h4>@yearGrp.Key</h4>
+    <div class="row">
         @foreach (var month in yearGrp)
         {
             <div class="col-12 col-sm-6 col-md-4 col-lg-4 mb-4">
@@ -48,9 +48,9 @@
                                         @ms.Name
                                         <sup id="ms-date-@ms.Id">@Html.FormatValue(ms.Date, "{0:M/d}")</sup>
                                     </a>
-                                    <br/>
-                                    <partial name="Items/_MilestoneInfo" model="metrics"/>                            
-                                    
+                                    <br />
+                                    <partial name="Items/_MilestoneInfo" model="metrics" />
+
                                     @if (Model.DevLoad[ms.Id].Any())
                                     {
                                         <ul class="small">
@@ -63,9 +63,9 @@
                                 </p>
                             }
                         </div>
-                    </div>                    
+                    </div>
                 </div>
-            </div> 
-        }        
+            </div>
+        }
      </div>
 }

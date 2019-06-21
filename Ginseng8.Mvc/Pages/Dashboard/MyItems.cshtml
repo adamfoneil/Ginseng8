@@ -32,7 +32,7 @@
 
 @if (Model.MySchedule?.Any() ?? false)
 {
-    <partial name="Items/_MySchedule" model="Model"/>
+    <partial name="Items/_MySchedule" model="Model" />
 }
 
 <div id="accordion">
@@ -40,16 +40,16 @@
 {
     var milestoneItem = milestoneGrp.First();
     <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-   
+
     <div class="ml-3">
-        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
+        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
     </div>
 
     @foreach (var appGrp in milestoneGrp.GroupBy(row => row.ProjectParentId))
     {
         <h5 class="ml-3">@appGrp.First().ProjectParentName</h5>
-        
-        <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">            
+
+        <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
             <div class="ml-3 sortable" data-user-id="@Model.UserId">
                 @foreach (var item in appGrp)
                 {
@@ -71,7 +71,7 @@
                 {
                     <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
                 }
-            </div>                        
+            </div>
         </div>
     }
 }
@@ -94,10 +94,10 @@
         else
         {
             <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
-        }    
+        }
     }
     else
     {
         <p>To add work items here, please select a Team above.</p>
-    }    
+    }
 }

@@ -46,9 +46,9 @@
         @if (Model.UseApplications)
         {
             <th>Application</th>
-        }        
+        }
         <th>Project Name</th>
-        <th>Nickname</th>        
+        <th>Nickname</th>
         <th>Active</th>
         <th>Manage</th>
         <th></th>
@@ -60,9 +60,9 @@
             @if (Model.UseApplications)
             {
                 <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
-            }            
+            }
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>            
+            <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>
             <td>@grid.CheckBox(m => m.IsActive)</td>
             <td><a asp-page="/Dashboard/Projects" asp-route-id="@item.Id">Manage</a></td>
             <td>@grid.Controls()</td>
@@ -73,9 +73,9 @@
         @if (Model.UseApplications)
         {
             <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
-        }        
+        }
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>        
+        <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>
         <td>@grid.CheckBox(m => m.IsActive)</td>
         <td></td>
         <td>@grid.Controls()</td>

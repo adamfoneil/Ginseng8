@@ -1,7 +1,7 @@
 ﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
 
 <form class="form-inline mb-2">
-    <input type="hidden" name="Id" value="@Model.SelectedProject.Id"/>
+    <input type="hidden" name="Id" value="@Model.SelectedProject.Id" />
 
     <select name="TeamId" asp-items="@Model.Dropdowns.TeamSelect(Model.SelectedProject.TeamId)" class="form-control-sm mr-2 projectUpdate"></select>
 
@@ -12,12 +12,12 @@
         @if (Model.SelectedProject.DataModelId.HasValue)
         {
             <i class="far fa-database mr-2"></i>
-        }    
+        }
         <select name="DataModelId" asp-items="@Model.Dropdowns.DataModelSelect(Model.SelectedProject.ApplicationId ?? 0, Model.SelectedProject.DataModelId)" class="form-control-sm mr-2 projectUpdate">
             <option value="">- data model -</option>
         </select>
-    }        
-    
+    }
+
     @if (Model.SelectedProject.DataModelId.HasValue)
     {
         <a asp-page="/Data/Index" asp-route-modelId="@Model.SelectedProject.DataModelId" title="Goto data model" class="mr-2">
@@ -34,7 +34,7 @@
 
     <span class="text-muted small mr-2">Nickname:</span>
     <span class="editable mr-2 small" id="project-nickname-@Model.SelectedProject.Id" data-url="/Update/ProjectNickname">@(Model.SelectedProject.Nickname ?? "nickame")</span>
-    
+
     <label>
         @Html.CheckBox("IsActive", Model.SelectedProject.IsActive, new { @class = "projectUpdate mr-1" })
         Active

@@ -8,17 +8,17 @@
         @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
         {
             <form method="post">
-                <input type="hidden" name="WorkItemNumber" value="@Model.WorkItem.Number"/>
-                <input type="hidden" name="LabelId" value="@item.Id"/>
+                <input type="hidden" name="WorkItemNumber" value="@Model.WorkItem.Number" />
+                <input type="hidden" name="LabelId" value="@item.Id" />
                 <a class="dropdown-item labelCheckboxLink">
                     @Html.CheckBox("selected", item.Selected, new { @class = "labelCheckbox" })
                     <span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span>
                 </a>
-            </form>                            
+            </form>
         }
     </div>
 </div>
 
 <div id="labels-@Model.WorkItem.Number" style="display:inline-block">
-    <partial name="Dashboard/Items/_Labels" model="Model.SelectedLabels"/>
+    <partial name="Dashboard/Items/_Labels" model="Model.SelectedLabels" />
 </div>

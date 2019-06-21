@@ -10,7 +10,7 @@
                 <div>
                     <pre>@trace.Sql</pre>
                 </div>
-                
+
                 @if (trace.Parameters.ParameterNames.Any())
                 {
                     <ul>
@@ -19,7 +19,7 @@
                             <li>@param = @(trace.Parameters.Get<dynamic>(param))</li>
                         }
                     </ul>
-                }                
+                }
             </li>
         }
     </ul>

@@ -1,18 +1,18 @@
 ﻿@model MilestoneMetricsResult
 
 <span class="text-muted small mr-2">
-    @Model.OpenWorkItems work items    
+    @Model.OpenWorkItems work items
 
     <span> | @Model.EstimateHours est hrs</span>
-    
+
     @if (Model.OpenWorkItems > 0)
     {
         <span> | </span>
         @Html.FormatValue(Model.PercentComplete, "{0:P0}")<span> complete</span>
-    }    
+    }
 </span>
 
-<partial name="Items/_ItemMetrics" model="Model"/>
+<partial name="Items/_ItemMetrics" model="Model" />
 
-<br/>
+<br />
 <meter value="@Model.PercentComplete" max="1"></meter>

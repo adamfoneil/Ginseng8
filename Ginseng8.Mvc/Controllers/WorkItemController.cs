@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Ginseng.Integration.Services;
 using Ginseng.Models;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
@@ -239,7 +238,7 @@ namespace Ginseng.Mvc.Controllers
                     workItem.DeveloperUserId = userId;
                     workItem.ActivityId = orgUser.DefaultActivityId ?? _data.CurrentOrg.DeveloperActivityId.Value;
 
-                    if (await _data.TrySaveAsync(cn, workItem, new string[] 
+                    if (await _data.TrySaveAsync(cn, workItem, new string[]
                     {
                         nameof(WorkItem.DeveloperUserId),
                         nameof(WorkItem.ActivityId)
@@ -483,7 +482,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 OrgId = _data.CurrentOrg.Id,
                 ProjectId = id
-            });            
+            });
 
             return PartialView("List", vm);
         }

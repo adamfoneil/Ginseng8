@@ -10,7 +10,7 @@
         {
             foreach (var keyPair in Model.PostFields)
             {
-                <input type="hidden" name="@keyPair.Key" value="@keyPair.Value"/>
+                <input type="hidden" name="@keyPair.Key" value="@keyPair.Value" />
             }
         }
         <textarea name="HtmlBody" id="@(Model.IdPrefix)-content-@(Model.Id)" class="htmlEditor" data-id="@Model.UploadId" data-folder-name="@Model.UploadFolderName">@Model.Content</textarea>
@@ -27,5 +27,5 @@
             <i class="far fa-comment-plus"></i>
             Add Comment
         </a>
-    }    
+    }
 </div>

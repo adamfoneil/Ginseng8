@@ -38,16 +38,16 @@
                 <div class="row mb-1">
                     <label class="small mr-2">
                         @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible, new { @class = "update-event-subscription", data_id = ev.Id, data_appId = Model.CurrentOrgUser.CurrentAppId })
-                        @ev.Name                    
-                        <img src="~/img/loading.gif" style="display:none" />                    
+                        @ev.Name
+                        <img src="~/img/loading.gif" style="display:none" />
                     </label>
                     <div id="notifyOptions-@Model.Subscriptions[ev.Id].Id">
-                        <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]"/>
-                    </div>                
+                        <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]" />
+                    </div>
                 </div>
-            }      
+            }
             <a asp-page-handler="DisableNotifications" class="small" onclick="return confirm('This will disable all event notifications. Hand-off (activity) notifications are not affected.');">Turn off all notifications</a>
-            <br/>
+            <br />
             <a class="btn btn-sm btn-info" asp-page="Feed" style="display:none" onclick="$(this).hide();" id="btnRefresh">Refresh</a>
         }
         else
@@ -64,22 +64,22 @@
             {
                 <div class="ml-4">
                     <div class="border-bottom mb-1">
-                        <partial name="Dashboard/Items/_ItemNumber" model="numberGrp.First()"/>
+                        <partial name="Dashboard/Items/_ItemNumber" model="numberGrp.First()" />
                         <a asp-page="/WorkItem/View" asp-route-id="@numberGrp.First().Number">
-                            <partial name="Dashboard/Items/_Title" model="numberGrp.First()"/>
+                            <partial name="Dashboard/Items/_Title" model="numberGrp.First()" />
                         </a>
-                    </div>                                
+                    </div>
                     <ul style="list-style:none">
                         @foreach (var ev in numberGrp)
                         {
                             <li>
-                                <i class="@ev.IconClass" style="color:@ev.IconColor"></i>                    
+                                <i class="@ev.IconClass" style="color:@ev.IconColor"></i>
                                 <span>@(ev.DisplayName):</span>
                                 @Html.Raw(@ev.HtmlBody)
                             </li>
                         }
                     </ul>
-                </div>                
+                </div>
             }
         }
     </div>

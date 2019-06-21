@@ -1,5 +1,4 @@
-﻿using Dapper;
-using Ginseng.Models;
+﻿using Ginseng.Models;
 using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
@@ -16,20 +15,20 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Dashboard
 {
-	[Authorize]
-	public class CalendarModel : DashboardPageModel
-	{
-		public CalendarModel(IConfiguration config) : base(config)
-		{
+    [Authorize]
+    public class CalendarModel : DashboardPageModel
+    {
+        public CalendarModel(IConfiguration config) : base(config)
+        {
             ShowExcelDownload = Id.HasValue;
-		}
+        }
 
         [BindProperty(SupportsGet = true)]
         public int? Id { get; set; }
 
-		[BindProperty(SupportsGet = true)]
-		public bool? PastDue { get; set; }
-        
+        [BindProperty(SupportsGet = true)]
+        public bool? PastDue { get; set; }
+
         [BindProperty(SupportsGet = true)]
         public int? ProjectId { get; set; }
 
@@ -43,21 +42,21 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public SelectList ProjectSelect { get; set; }
 
         public Milestone NextSoonest { get; private set; }
-		public Milestone NextGenerated { get; private set; }
+        public Milestone NextGenerated { get; private set; }
 
-		public IEnumerable<OpenWorkItemsResult> EmptyMilestones { get; set; }
-		public IEnumerable<OpenWorkItemsResult> BacklogItems { get; set; }
+        public IEnumerable<OpenWorkItemsResult> EmptyMilestones { get; set; }
+        public IEnumerable<OpenWorkItemsResult> BacklogItems { get; set; }
 
-		protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (row) => row.MilestoneId ?? 0;
+        protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (row) => row.MilestoneId ?? 0;
 
-		protected override OpenWorkItems GetQuery()
-		{
+        protected override OpenWorkItems GetQuery()
+        {
             if (Id.HasValue)
             {
                 return new OpenWorkItems(QueryTraces)
                 {
                     OrgId = OrgId,
-                    MilestoneId = Id.Value,                    
+                    MilestoneId = Id.Value,
                     LabelId = LabelId,
                     IsPastDue = PastDue,
                     TeamId = CurrentOrgUser.CurrentTeamId,
@@ -66,10 +65,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
             }
 
             return null;
-		}
+        }
 
-		protected override async Task OnGetInternalAsync(SqlConnection connection)
-		{
+        protected override async Task OnGetInternalAsync(SqlConnection connection)
+        {
             Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, ProjectId = ProjectId }.ExecuteAsync(connection);
 
             if (Id.HasValue)
@@ -83,7 +82,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             if (!Id.HasValue && CurrentOrgUser.CurrentAppId.HasValue)
             {
                 FilterProjects = await new Projects() { AppId = CurrentOrgUser.CurrentAppId, HasMilestones = true, IsActive = true }.ExecuteAsync(connection);
-            }            
+            }
 
             var metrics = (!Id.HasValue) ?
                 await new MilestoneMetrics() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection) :
@@ -92,23 +91,23 @@ namespace Ginseng.Mvc.Pages.Dashboard
             Metrics = metrics.ToDictionary(row => row.Id);
 
             var emptyMilestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, HasOpenWorkItems = false, Id = Id }.ExecuteAsync(connection);
-			EmptyMilestones = emptyMilestones.Select(ms => new OpenWorkItemsResult()
-			{
-				MilestoneId = ms.Id,
-				MilestoneDate = ms.Date,
-				MilestoneDaysAway = ms.DaysAway,
-				MilestoneName = ms.Name
-			});
+            EmptyMilestones = emptyMilestones.Select(ms => new OpenWorkItemsResult()
+            {
+                MilestoneId = ms.Id,
+                MilestoneDate = ms.Date,
+                MilestoneDaysAway = ms.DaysAway,
+                MilestoneName = ms.Name
+            });
 
             var load = await new DevMilestoneWorkingHours() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
             DevLoad = load.ToLookup(row => row.MilestoneId);
 
-			NextSoonest = await Milestone.GetSoonestNextAsync(connection, OrgId);
-			NextGenerated = await Milestone.CreateNextAsync(connection, OrgId);
-		}
+            NextSoonest = await Milestone.GetSoonestNextAsync(connection, OrgId);
+            NextGenerated = await Milestone.CreateNextAsync(connection, OrgId);
+        }
 
-		public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)
-		{
+        public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)
+        {
             record.ApplicationId = CurrentOrgUser.CurrentAppId ?? 0;
             using (var cn = Data.GetConnection())
             {
@@ -117,9 +116,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
                     if (record.ProjectId != 0) await CreatePlaceholderItemAsync(cn, record);
                 }
             }
-			
-			return Redirect(returnUrl);
-		}
+
+            return Redirect(returnUrl);
+        }
 
         private async Task CreatePlaceholderItemAsync(SqlConnection cn, Milestone record)
         {
@@ -129,7 +128,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             var workItem = new Ginseng.Models.WorkItem()
             {
-                OrganizationId = OrgId,                
+                OrganizationId = OrgId,
                 TeamId = app.TeamId ?? 0,
                 ApplicationId = record.ApplicationId,
                 MilestoneId = record.Id,
@@ -155,8 +154,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         private async Task<int> GetPlaceholderLabelIdAsync(SqlConnection cn)
         {
-            var label = 
-                await cn.FindWhereAsync<Label>(new { OrganizationId = OrgId, Name = Label.PlaceholderLabel }) ?? 
+            var label =
+                await cn.FindWhereAsync<Label>(new { OrganizationId = OrgId, Name = Label.PlaceholderLabel }) ??
                 new Label() { OrganizationId = OrgId, Name = Label.PlaceholderLabel, BackColor = "#B8B8B8", ForeColor = "black", IsActive = false };
 
             if (label.Id == 0) await cn.SaveAsync(label, CurrentUser);
@@ -165,41 +164,41 @@ namespace Ginseng.Mvc.Pages.Dashboard
         }
 
         public async Task<IActionResult> OnPostMoveToNextMilestone(int appId, int fromMilestoneId, int toMilestoneId)
-		{
-			return await UpdateMilestoneInner(appId, fromMilestoneId, toMilestoneId);
-		}
+        {
+            return await UpdateMilestoneInner(appId, fromMilestoneId, toMilestoneId);
+        }
 
-		public async Task<IActionResult> OnPostMoveToNewMilestone(int appId, int fromMilestoneId, string toName, DateTime toDate)
-		{
-			var newMs = new Milestone()
-			{
-				ApplicationId = OrgId,
-				Name = toName,
-				Date = toDate
-			};
+        public async Task<IActionResult> OnPostMoveToNewMilestone(int appId, int fromMilestoneId, string toName, DateTime toDate)
+        {
+            var newMs = new Milestone()
+            {
+                ApplicationId = OrgId,
+                Name = toName,
+                Date = toDate
+            };
 
-			await Data.TrySaveAsync(newMs);
+            await Data.TrySaveAsync(newMs);
 
-			return await UpdateMilestoneInner(appId, fromMilestoneId, newMs.Id);
-		}
+            return await UpdateMilestoneInner(appId, fromMilestoneId, newMs.Id);
+        }
 
-		private async Task<IActionResult> UpdateMilestoneInner(int appId, int fromMilestoneId, int toMilestoneId)
-		{
-			using (var cn = Data.GetConnection())
-			{
-				var workItems = await new OpenWorkItems() { OrgId = OrgId, AppId = appId, MilestoneId = fromMilestoneId }.ExecuteAsync(cn);
-				foreach (var openItem in workItems)
-				{
-					// note that query results are read-only, so we need a separate query to the updateable work item
-					var item = await cn.FindAsync<Ginseng.Models.WorkItem>(openItem.Id);
-					item.MilestoneId = toMilestoneId;
-					// this assures that event log happens
-					await Data.TryUpdateAsync(item, r => r.MilestoneId);
-				}
+        private async Task<IActionResult> UpdateMilestoneInner(int appId, int fromMilestoneId, int toMilestoneId)
+        {
+            using (var cn = Data.GetConnection())
+            {
+                var workItems = await new OpenWorkItems() { OrgId = OrgId, AppId = appId, MilestoneId = fromMilestoneId }.ExecuteAsync(cn);
+                foreach (var openItem in workItems)
+                {
+                    // note that query results are read-only, so we need a separate query to the updateable work item
+                    var item = await cn.FindAsync<Ginseng.Models.WorkItem>(openItem.Id);
+                    item.MilestoneId = toMilestoneId;
+                    // this assures that event log happens
+                    await Data.TryUpdateAsync(item, r => r.MilestoneId);
+                }
 
-				return RedirectToPage("Milestones");
-			}
-		}
+                return RedirectToPage("Milestones");
+            }
+        }
 
         /// <summary>
         /// returns the row number for a given yearMonth
@@ -225,11 +224,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
         private IEnumerable<YearMonth> GetYearMonthRange(YearMonth start, YearMonth end)
         {
             List<YearMonth> results = new List<YearMonth>();
-            YearMonth add = start;                        
+            YearMonth add = start;
             while (add <= end)
             {
                 results.Add(add);
-                add += 1;                                               
+                add += 1;
             }
             return results;
         }

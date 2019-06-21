@@ -42,7 +42,7 @@
             <td>
                 @if (!item.UseApplications)
                 {
-                    <partial name="_MultiSelect" model="Model.GetLabelSelector(item.Id)"/>
+                    <partial name="_MultiSelect" model="Model.GetLabelSelector(item.Id)" />
                 }
                 else
                 {
@@ -61,7 +61,7 @@
         <td></td>
         <td>@grid.CheckBox(m => m.IsActive)</td>
         <td>@grid.Controls()</td>
-    </tr>    
+    </tr>
 </table>
 @grid.HandlerForms("Save", "Delete")
 

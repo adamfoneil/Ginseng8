@@ -23,8 +23,8 @@
 @if (Model.LabelId != 0)
 {
     <form method="post" asp-page-handler="Save">
-        <input type="hidden" name="Id" value="@Model.LabelInstructions.Id"/>
-        <input type="hidden" name="LabelId" value="@Model.LabelId"/>
+        <input type="hidden" name="Id" value="@Model.LabelInstructions.Id" />
+        <input type="hidden" name="LabelId" value="@Model.LabelId" />
         <div class="form-row">
             <div class="col-12 mt-2">
                 <textarea name="HtmlBody" class="htmlEditor">@Model.LabelInstructions.HtmlBody</textarea>

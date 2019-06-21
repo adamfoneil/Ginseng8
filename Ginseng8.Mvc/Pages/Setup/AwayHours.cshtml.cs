@@ -28,7 +28,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
         public async Task<ActionResult> OnPostSave(VacationHours record)
         {
-            // had a problem where incoming variable was called "hours" 
+            // had a problem where incoming variable was called "hours"
             // and model binding failed (see https://stackoverflow.com/a/43733129/2023653)
 
             if (record.Hours > CurrentOrgUser.DailyWorkHours) throw new Exception("Can't be away more than your daily work hours.");

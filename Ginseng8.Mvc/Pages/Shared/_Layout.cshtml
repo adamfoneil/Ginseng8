@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-6jHF7Z3XI3fF4XZixAuSu0gGKrXwoX/w3uFPxC56OtjChio7wtTGJWRW53Nhx6Ev" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.css">
     <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_editor.pkgd.min.css" rel="stylesheet" type="text/css" />
-    <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_style.min.css" rel="stylesheet" type="text/css" />    
+    <link href="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/css/froala_style.min.css" rel="stylesheet" type="text/css" />
     @RenderSection("Head", false)
 </head>
 <body>
@@ -39,27 +39,27 @@
                         <a class="dropdown-item" asp-page="/Dashboard/MyItems">My Items</a>
                         <a class="dropdown-item" asp-page="/Dashboard/New">New Items</a>
                         <a class="dropdown-item" asp-page="/Dashboard/Hung">Hung Items</a>
-                        <a class="dropdown-item" asp-page="/Dashboard/Index">Dashboard</a>                        
+                        <a class="dropdown-item" asp-page="/Dashboard/Index">Dashboard</a>
                         <a class="dropdown-item" asp-page="/Dashboard/Calendar">Calendar</a>
                         <a class="dropdown-item" asp-page="/Dashboard/AllItems">All Items</a>
                         <a class="dropdown-item" asp-page="/Dashboard/Team">Team</a>
                         <a class="dropdown-item" asp-page="/Dashboard/Feed">Feed</a>
                         <div class="dropdown-divider"></div>
                         @if (Html.HasCurrentApp())
-                        {     
-                            <a class="dropdown-item" asp-page="/Data/Index">Data Models</a>                         
-                        }                        
+                        {
+                            <a class="dropdown-item" asp-page="/Data/Index">Data Models</a>
+                        }
                         @if (User.Identity.IsAuthenticated)
                         {
                             @if (Html.CurrentOrgUsesFreshdesk())
                             {
                                 <a class="dropdown-item" asp-page="/Tickets/Index">Freshdesk Tickets</a>
-                            }                            
+                            }
                             <a class="dropdown-item" asp-page="/Wiki/Index">Wiki</a>
                             <a class="dropdown-item" asp-page="/Setup/Index">Setup</a>
                             <a class="dropdown-item" asp-page="/Help/Index">Help</a>
-                        }                                                
-                        @{ 
+                        }
+                        @{
                             var switchOrgs = Html.MySwitchOrgs();
                             string returnUrl = UriHelper.GetDisplayUrl(Html.ViewContext.HttpContext.Request);
                         }
@@ -67,7 +67,7 @@
                         {
                             <div class="dropdown-divider"></div>
                             @foreach (var org in switchOrgs)
-                            {                                
+                            {
                                 <a asp-action="CurrentOrg" asp-controller="Update" asp-route-id="@org.Id" asp-route-returnUrl="@returnUrl" class="dropdown-item">
                                     <i class="far fa-arrow-circle-right"></i>
                                     @org.Name
@@ -82,7 +82,7 @@
                     if (Html.CurrentTeam()?.UseApplications ?? true)
                     {
                         <partial name="_NavOptions" model="@(new NavOptionsView() { UpdateAction = "CurrentApp", Text = Html.CurrentAppNameString(), Options = await Html.AppFilterOptions(), PluralText = "Apps" })" />
-                    }                    
+                    }
                 }
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -121,18 +121,18 @@
         <environment include="Development">
         @if ((Model as AppPageModel)?.QueryTraces?.Any() ?? false)
         {
-            <partial name="/Pages/Dashboard/Items/_QueryTraces.cshtml" model="(Model as AppPageModel).QueryTraces"/>
+            <partial name="/Pages/Dashboard/Items/_QueryTraces.cshtml" model="(Model as AppPageModel).QueryTraces" />
         }
         </environment>
     </div>
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2019 - Ginseng.Mvc - <a asp-area="" asp-page="/Privacy">Privacy</a>            
+            &copy; 2019 - Ginseng.Mvc - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>
         <div id="antiForgeryToken">
             @Html.AntiForgeryToken()
-        </div>                
+        </div>
     </footer>
 
     <environment include="Development">
@@ -157,8 +157,8 @@
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/js/froala_editor.pkgd.min.js"></script>    
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jeditable.js/2.0.7/jquery.jeditable.min.js"></script>    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/froala-editor@2.9.3/js/froala_editor.pkgd.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jeditable.js/2.0.7/jquery.jeditable.min.js"></script>
     <script type="text/javascript" src="~/js/Util.js"></script>
     <script>
         function GetFroalaSettings() {
@@ -179,7 +179,7 @@
     @if (User.Identity.IsAuthenticated)
     {
         <script type="text/javascript" src="https://s3.amazonaws.com/assets.freshdesk.com/widget/freshwidget.js"></script>
-        <script type="text/javascript">	        
+        <script type="text/javascript">
 	        FreshWidget.init("", {"queryString": "&widgetType=popup&helpdesk_ticket[requester]=@User.Identity.Name", "utf8": "✓", "widgetType": "popup", "buttonType": "text", "buttonText": "Support", "buttonColor": "white", "buttonBg": "#006063", "alignment": "4", "offset": "235px", "formHeight": "500px", "url": "https://adamosoftware.freshdesk.com"} );
         </script>
     }

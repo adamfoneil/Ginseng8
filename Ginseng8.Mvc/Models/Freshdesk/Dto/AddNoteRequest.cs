@@ -26,7 +26,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
         public string Body => $"<div style=\"{Style}\">{_comment.HtmlBody}<br/>from {_userName}</div>";
 
         [JsonProperty("private")]
-        public bool Private { get; set; } = true;        
+        public bool Private { get; set; } = true;
 
         public string ToJson() => JsonConvert.SerializeObject(this);
     }
