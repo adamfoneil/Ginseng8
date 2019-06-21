@@ -143,8 +143,10 @@ namespace Ginseng.Models
 
                 if (projectId != 0)
                 {
+                    var prj = await connection.FindAsync<Project>(projectId);
                     ProjectId = projectId;
-                    await connection.UpdateAsync(this, null, r => r.ProjectId);
+                    if (!ApplicationId.HasValue) ApplicationId = prj.ApplicationId;
+                    await connection.UpdateAsync(this, null, r => r.ProjectId, r => r.ApplicationId);
                 }
             }
         }
