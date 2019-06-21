@@ -6,34 +6,49 @@
 }
 
 <h4>Projects</h4>
-<p>Use Projects to group related ongoing work related to a feature area, goal, or some other unifying idea or objective.
+<p>Use Projects to group related ongoing work related to a feature area, goal, or some other unifying idea, objective, or theme.
     Projects do not have due dates or time frames. If you need to use due dates, use <a asp-route-page="/Setup/Milestones">Milestones</a>.</p>
 
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Project>(this, Xsrf, defaults: new { ApplicationId = Model.AppId, IsActive = true });
+    var grid = new GridEditor<Project>(this, Xsrf, defaults: new { TeamId = Model.TeamId, ApplicationId = Model.AppId ?? 0, IsActive = true });
 }
 
-<form method="get" class="form-inline mb-2">
-    <label class="mr-2">Application:</label>
-    <select name="AppId" class="form-control" asp-items="Model.AppSelect" onchange="this.form.submit();">
+<form method="get" class="form-inline mb-4">
+    <label class="mr-2">Team:</label>
+    <select name="TeamId" class="form-control mr-2" asp-items="Model.TeamSelect" onchange="this.form.submit();">
         <option>(select)</option>
+    </select>
+
+    @if (Model.UseApplications)
+    {
+        <label class="mr-2">Application:</label>
+        <select name="AppId" class="form-control mr-2" asp-items="Model.AppSelect" onchange="this.form.submit();">
+            <option>(select)</option>
+        </select>
+    }
+
+    <label class="mr-2">Filter:</label>
+    <select name="IsActive" asp-items="@SelectListHelper.YesNoItems("Active", "Inactive", Model.IsActive)" onchange="this.form.submit()" class="form-control">
     </select>
 </form>
 
-@if (Model.AppId == 0)
+@if (Model.TeamId == 0)
 {
-    <p>Please select an app above.</p>
+    <p>Please select a team above.</p>
     return;
 }
 
 <table class="table">
     <tr>
-        <th>Application</th>
+        <th>Team</th>
+        @if (Model.UseApplications)
+        {
+            <th>Application</th>
+        }        
         <th>Project Name</th>
-        <th>Nickname</th>
-        <th>Priority</th>
+        <th>Nickname</th>        
         <th>Active</th>
         <th>Manage</th>
         <th></th>
@@ -41,20 +56,26 @@
     @foreach (var item in Model.Projects)
     {
         <tr id="@grid.RowId(item)">
-            <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
+            <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>
+            @if (Model.UseApplications)
+            {
+                <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
+            }            
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-            <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>
-            <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>            
             <td>@grid.CheckBox(m => m.IsActive)</td>
             <td><a asp-page="/Dashboard/Projects" asp-route-id="@item.Id">Manage</a></td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
-        <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
+        <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>
+        @if (Model.UseApplications)
+        {
+            <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
+        }        
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
-        <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>
-        <td>@grid.TextBox(m => m.Priority, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Nickname, new { @class = "form-control", maxlength = "5" })</td>        
         <td>@grid.CheckBox(m => m.IsActive)</td>
         <td></td>
         <td>@grid.Controls()</td>

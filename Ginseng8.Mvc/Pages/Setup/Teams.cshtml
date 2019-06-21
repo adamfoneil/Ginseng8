@@ -1,0 +1,71 @@
+﻿@page
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@model Ginseng.Mvc.Pages.Setup.TeamsModel
+@{
+    ViewData["Title"] = "Teams";
+}
+
+<h4>Teams</h4>
+<p>Use teams to define groups of people in your organization who work on the same <a asp-page="/Setup/Applications">Applications</a> or projects.</p>
+<p>The <strong>Use Freshdesk Companies</strong> option causes the Freshdesk company dropdown to appear when editing a project.</p>
+<p>For teams that don't use applications, add <strong>Related Labels</strong> to enable data entry of work items from <a asp-page="/Dashboard/New">New Items</a> page.</p>
+
+@Html.ActionAlert(TempData)
+
+@{
+    var grid = new GridEditor<Team>(this, Xsrf, defaults: new { IsActive = true });
+}
+
+<form method="get" class="form-inline mb-3">
+    <label class="mr-2">Filter:</label>
+    <select name="IsActive" asp-items="@SelectListHelper.YesNoItems("Active", "Inactive", Model.IsActive)" onchange="this.form.submit()" class="form-control">
+    </select>
+</form>
+
+<table class="table">
+    <tr>
+        <th>Team Name</th>
+        <th>Description</th>
+        <th>Use Applications</th>
+        <th>Use Freshdesk Companies</th>
+        <th>Related Labels</th>
+        <th>Active</th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model.Teams)
+    {
+        <tr id="@grid.RowId(item)">
+            <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+            <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+            <td>@grid.CheckBox(m => m.UseApplications)</td>
+            <td>@grid.CheckBox(m => m.CompanySpecificProjects)</td>
+            <td>
+                @if (!item.UseApplications)
+                {
+                    <partial name="_MultiSelect" model="Model.GetLabelSelector(item.Id)"/>
+                }
+                else
+                {
+                    <span class="small text-muted">n/a</span>
+                }
+            </td>
+            <td>@grid.CheckBox(m => m.IsActive)</td>
+            <td>@grid.Controls()</td>
+        </tr>
+    }
+    <tr id="@grid.NewRowId()">
+        <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
+        <td>@grid.TextBox(m => m.Description, new { @class = "form-control" })</td>
+        <td>@grid.CheckBox(m => m.UseApplications)</td>
+        <td>@grid.CheckBox(m => m.CompanySpecificProjects)</td>
+        <td></td>
+        <td>@grid.CheckBox(m => m.IsActive)</td>
+        <td>@grid.Controls()</td>
+    </tr>    
+</table>
+@grid.HandlerForms("Save", "Delete")
+
+@section Scripts {
+    <script src="~/js/GridEditor.js"></script>
+    <script src="~/js/MultiSelect.js"></script>
+}

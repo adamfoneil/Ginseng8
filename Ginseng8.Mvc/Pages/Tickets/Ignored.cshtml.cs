@@ -34,18 +34,18 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         protected override async Task<IEnumerable<long>> GetIgnoredTicketsAsync(IDbConnection connection)
         {
-            return await new IgnoredTickets() { ResponsibilityId = ResponsibilityId, OrgId = OrgId, Page = PageNumber }.ExecuteAsync(connection);
+            return await new IgnoredTickets() { TeamId = CurrentOrgUser.CurrentTeamId ?? 0, OrgId = OrgId, Page = PageNumber }.ExecuteAsync(connection);
         }
 
-        public async Task<RedirectResult> OnPostRestoreAsync(long ticketId, int responsibilityId)
+        public async Task<RedirectResult> OnPostRestoreAsync(long ticketId, int teamId)
         {
             using (var cn = Data.GetConnection())
             {
-                var ignored = await cn.FindWhereAsync<IgnoredTicket>(new { OrganizationId = OrgId, TicketId = ticketId, ResponsibilityId = responsibilityId });
+                var ignored = await cn.FindWhereAsync<IgnoredTicket>(new { OrganizationId = OrgId, TicketId = ticketId, TeamId = teamId });
                 if (ignored != null) await cn.DeleteAsync<IgnoredTicket>(ignored.Id);
             }
 
-            return Redirect($"Ignored?responsibilityId={responsibilityId}");
+            return Redirect($"Ignored?teamId={teamId}");
         }
     }
 }

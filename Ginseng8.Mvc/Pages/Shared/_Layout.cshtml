@@ -28,7 +28,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
                 <div class="btn-group">
-                    <a class="btn btn-light" asp-area="" asp-page="/Dashboard/Index">
+                    <a class="btn btn-light" asp-area="" asp-page="/Dashboard/MyItems">
                         <i class="fas fa-home" title="My Items"></i>
                         @Html.CurrentOrgName()
                     </a>
@@ -36,11 +36,11 @@
                         <span class="sr-only">Toggle Dropdown</span>
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" asp-page="/Dashboard/Index">My Items</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/MyItems">My Items</a>
                         <a class="dropdown-item" asp-page="/Dashboard/New">New Items</a>
                         <a class="dropdown-item" asp-page="/Dashboard/Hung">Hung Items</a>
-                        <a class="dropdown-item" asp-page="/Dashboard/Projects">Projects</a>
-                        <a class="dropdown-item" asp-page="/Dashboard/Milestones">Milestones</a>
+                        <a class="dropdown-item" asp-page="/Dashboard/Index">Dashboard</a>                        
+                        <a class="dropdown-item" asp-page="/Dashboard/Calendar">Calendar</a>
                         <a class="dropdown-item" asp-page="/Dashboard/AllItems">All Items</a>
                         <a class="dropdown-item" asp-page="/Dashboard/Team">Team</a>
                         <a class="dropdown-item" asp-page="/Dashboard/Feed">Feed</a>
@@ -78,7 +78,11 @@
                 </div>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <partial name="_AppFilter" model="new AppFilterView() { CurrentAppName = Html.CurrentAppNameString(), AppOptions = await Html.AppFilterOptions() }" />
+                    <partial name="_NavOptions" model="@(new NavOptionsView() { UpdateAction = "CurrentTeam", Text = Html.CurrentTeamNameString(), Options = await Html.TeamFilterOptions(), PluralText = "Teams" })" />
+                    if (Html.CurrentTeam()?.UseApplications ?? true)
+                    {
+                        <partial name="_NavOptions" model="@(new NavOptionsView() { UpdateAction = "CurrentApp", Text = Html.CurrentAppNameString(), Options = await Html.AppFilterOptions(), PluralText = "Apps" })" />
+                    }                    
                 }
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"

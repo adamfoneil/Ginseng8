@@ -24,7 +24,7 @@
         <th>Back Color</th>
         <th>Text Color</th>
         <th>Preview</th>
-        <th>New Items</th>
+        <th>Related Apps</th>
         <th>Notify Me</th>
         <th>Active</th>
         <th></th>
@@ -36,8 +36,8 @@
             <td>@grid.TextBox(m => m.BackColor, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.ForeColor, new { @class = "form-control" })</td>
             <td><span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span></td>
-            <td><partial name="_LabelNewItemApps" model="Model.GetAppSelector(item.Id)"/></td>
-            <td>                
+            <td><partial name="_MultiSelect" model="Model.GetAppSelector(item.Id)"/></td>
+            <td>
                 <div id="notifyOptions-@Model.Subscriptions[item.Id].Id">
                     <partial name="Shared/_NotifyOptions" model="@Model.Subscriptions[item.Id]"/>
                 </div>
@@ -63,9 +63,4 @@
     <script src="~/js/GridEditor.js"></script>
     <script src="~/js/Notification.js"></script>
     <script src="~/js/MultiSelect.js"></script>
-    <script>
-        $(document).ready(function () {
-            InitMultiSelectCheckboxes('.appCheckbox', '.appCheckboxLink');
-        });        
-    </script>
 }

@@ -1,9 +1,9 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -12,94 +12,95 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Dashboard
 {
-	[Authorize]
-	public class MyItemsModel : DashboardPageModel
-	{
-		public MyItemsModel(IConfiguration config) : base(config)
-		{
-		}
-
-		/// <summary>
-		/// What column is user Id assigned to when items are created?
-		/// </summary>
-		public string UserIdColumnName { get; set; }
-
-		/// <summary>
-		/// All my hand-off activities
-		/// </summary>
-		public IEnumerable<ActivitySubscription> MyActivitySubscriptions { get; set; }
-		
-		/// <summary>
-		/// Items in activities that I follow that are paused
-		/// </summary>
-		public IEnumerable<OpenWorkItemsResult> MyHandOffItems { get; set; }
-		public ILookup<int, Label> HandOffLabels { get; set; }
-		public ILookup<int, Comment> HandOffComments { get; set; }        
-        public IEnumerable<MyWorkScheduleResult> MySchedule { get; set; }
-        public int UnestimatedItemCount { get; set; }
+    [Authorize]
+    public class IndexModel : DashboardPageModel
+    {
+        public IndexModel(IConfiguration config) : base(config)
+        {
+            ShowExcelDownload = false;
+            ShowLabelFilter = false;            
+        }
+    
+        [BindProperty(SupportsGet = true)]
+        public int? ParentId { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public DateTime? Date { get; set; }
+        public ProjectParentType? ParentType { get; set; }
 
         [BindProperty(SupportsGet = true)]
-        public bool NeedsEstimate { get; set; }
+        public int? AppId { get; set; }
 
-		public HtmlString MyHandOffActivityList()
-		{
-			string result = (MyActivitySubscriptions?.Any() ?? false) ?
-				string.Join(", ", MyActivitySubscriptions
-					.GroupBy(asub => asub.ActivityId)
-					.Select(grp => $"<strong>{grp.First().ActivityName}:</strong> {string.Join(", ", grp.Select(asub => asub.AppName))}")) :
-				"none";
+        [BindProperty(SupportsGet = true)]
+        public int? TeamId { get; set; }
 
-			return new HtmlString(result);
-		}
+        [BindProperty(SupportsGet = true)]
+        public bool? FilterIsActive { get; set; } = true;
 
-		protected override OpenWorkItems GetQuery()
-		{
-			var result = new OpenWorkItems(QueryTraces)
-			{
-				OrgId = OrgId,
-				AssignedUserId = UserId,
-				AppId = CurrentOrgUser.CurrentAppId,
-				LabelId = LabelId
-			};
+        public IEnumerable<Team> Teams { get; set; }
+        public ILookup<int, AppInfoResult> AppInfo { get; set; }
+        public ILookup<int, ProjectInfoResult> ProjectInfo { get; set; }
 
-            if (Date.HasValue)
+        public Application Application { get; set; }
+        public IEnumerable<ProjectInfoResult> AppProjects { get; set; }
+
+        protected override async Task OnGetInternalAsync(SqlConnection connection)
+        {
+            if (!TeamId.HasValue) TeamId = CurrentOrgUser.CurrentTeamId;
+
+            if (ParentId.HasValue && ParentType.HasValue)
             {
-                result.WithWorkSchedule = true;
-                result.ScheduleUserId = UserId;
-                result.WorkDate = Date;
+                switch (ParentType)
+                {
+                    case ProjectParentType.Application:
+                        AppId = ParentId;
+                        break;
+
+                    case ProjectParentType.Team:
+                        TeamId = ParentId;
+                        break;
+                }
             }
 
-            if (NeedsEstimate) result.SizeId = 0;
+            if (AppId.HasValue)
+            {
+                Application = await connection.FindAsync<Application>(AppId.Value);
+                AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId, IsActive = FilterIsActive }.ExecuteAsync(connection);
+            }
+            else
+            {
+                Teams = await new Teams() { OrgId = OrgId, IsActive = FilterIsActive, Id = TeamId }.ExecuteAsync(connection);
 
-            return result;
-		}
+                var apps = await new AppInfo() { OrgId = OrgId, TeamId = TeamId, IsActive = FilterIsActive }.ExecuteAsync(connection);
+                AppInfo = apps.ToLookup(row => row.TeamId ?? 0);
 
-		protected override void OnGetInternal(SqlConnection connection)
-		{
-			int responsibilityId = CurrentOrgUser.Responsibilities;
-			// if you have dev and biz responsibility, then assume dev
-			if (responsibilityId == 3 || responsibilityId == 0) responsibilityId = 2;
-			UserIdColumnName = Responsibility.WorkItemColumnName[responsibilityId];
-		}
+                var projects = await new ProjectInfo() { OrgId = OrgId, TeamUsesApplications = false, IsActive = FilterIsActive }.ExecuteAsync(connection);
+                ProjectInfo = projects.ToLookup(row => row.TeamId);
+            }
+        }
 
-		protected override async Task OnGetInternalAsync(SqlConnection connection)
-		{
-            UnestimatedItemCount = WorkItems.Where(wi => wi.EstimateHours == 0).Count();
+        protected override OpenWorkItems GetQuery()
+        {
+            if (AppId.HasValue)
+            {
+                return new OpenWorkItems(QueryTraces)
+                {
+                    OrgId = OrgId,
+                    LabelId = LabelId,
+                    AppId = AppId,
+                    HasProject = false
+                };
+            }
 
-			MyActivitySubscriptions = await new MyHandOffActivities() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
-			MyHandOffItems = await new OpenWorkItems(QueryTraces) { OrgId = OrgId, InMyActivities = true, ActivityUserId = UserId, IsPaused = true, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+            return null;
+        }
 
-			var itemIds = MyHandOffItems.Select(wi => wi.Id).ToArray();
-			var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(connection);
-			HandOffLabels = labelsInUse.ToLookup(row => row.WorkItemId);
-
-			var comments = await new Comments() { OrgId = OrgId, ObjectIds = itemIds, ObjectType = ObjectType.WorkItem }.ExecuteAsync(connection);
-			HandOffComments = comments.ToLookup(row => row.ObjectId);
-
-            MySchedule = await new MyWorkSchedule() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
-		}
-	}
+        public async Task<IActionResult> OnPostCreateProjectAsync(int teamId, int? applicationId, string name)
+        {
+            var project = new Project() { Name = name, ApplicationId = applicationId, TeamId = teamId };
+            await Data.TrySaveAsync(project);            
+            return (applicationId.HasValue) ?
+                Redirect($"/Dashboard/Index?appId={applicationId}") :
+                Redirect($"/Dashboard/Index?teamId={teamId}");
+        }
+    }
 }

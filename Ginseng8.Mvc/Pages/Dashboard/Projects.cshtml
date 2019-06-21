@@ -22,8 +22,16 @@ else
     {
         @if (Model.SelectedProject != null)
         {
-            <h5><span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span></h5>        
-            <partial name="Items/_ProjectInfo" model="Model.SelectedProjectInfo"/>
+            <h4>
+                <a asp-page="/Dashboard/Index" class="nounderline" title="Back to Application dashboard">
+                    <i class="fas fa-arrow-up"></i>
+                </a>
+                @Model.SelectedProject.ParentName
+            </h4>
+            <h5>                
+                <span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span>
+            </h5>
+            <partial name="Items/_ItemInfo" model="Model.SelectedProjectInfo"/>
 
             <div class="ml-3">
                 <partial name="Items/_ProjectControls" model="Model"/>
@@ -33,17 +41,13 @@ else
                 </div>
             </div>
         }
-    
-        <p>This project has no open work items.</p>
-
-        @if (Model.CurrentAppId.HasValue)
+            
+        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
         {
-            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-            {
-                { "applicationId", Model.CurrentAppId.Value },
-                { "projectId", Model.Id.Value }
-            }))
-        }
+            { "teamId", Model.SelectedProject.TeamId },
+            { "applicationId", Model.SelectedProject.ApplicationId ?? 0 },
+            { "projectId", Model.Id.Value }
+        }))        
     }
     else
     {
@@ -65,7 +69,6 @@ else
         </p>
     }
 }
-
 
 @section Scripts {
     <script src="~/js/Projects.js"></script>

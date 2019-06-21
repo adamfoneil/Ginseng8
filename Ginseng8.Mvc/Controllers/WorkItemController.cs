@@ -179,7 +179,7 @@ namespace Ginseng.Mvc.Controllers
                     // work item can have just one priority, so we look to see if there's one existing
                     if (!(await cn.ExistsWhereAsync<WorkItemPriority>(new { WorkItemId = workItem.Id })))
                     {
-                        var nextPriority = await new NextPriority() { OrgId = _data.CurrentOrg.Id, AppId = workItem.ApplicationId }.ExecuteSingleAsync(cn);
+                        var nextPriority = await new NextPriority() { OrgId = _data.CurrentOrg.Id, TeamId = workItem.TeamId }.ExecuteSingleAsync(cn);
                         var wip = new WorkItemPriority()
                         {
                             WorkItemId = workItem.Id,
@@ -377,11 +377,29 @@ namespace Ginseng.Mvc.Controllers
             }
         }
 
+        public async Task<JsonResult> GetApps(int teamId)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var results = await new AppSelect() { OrgId = _data.CurrentOrg.Id, TeamId = teamId }.ExecuteAsync(cn);
+                return Json(results);
+            }
+        }
+
         public async Task<JsonResult> GetAppProjects(int appId)
         {
             using (var cn = _data.GetConnection())
             {
                 var results = await new ProjectSelect() { AppId = appId }.ExecuteAsync(cn);
+                return Json(results);
+            }
+        }
+
+        public async Task<JsonResult> GetTeamProjects(int teamId)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var results = await new ProjectSelect() { TeamId = teamId }.ExecuteAsync(cn);
                 return Json(results);
             }
         }

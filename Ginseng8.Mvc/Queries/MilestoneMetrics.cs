@@ -13,9 +13,9 @@ namespace Ginseng.Mvc.Queries
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime Date { get; set; }
-        public int EstimateHours { get; set; }
-        public int TotalWorkItems { get; set; }        
-        public int OpenWorkItems { get; set; }
+        public int? EstimateHours { get; set; }
+        public int? TotalWorkItems { get; set; }        
+        public int? OpenWorkItems { get; set; }
         public int CompletedWorkItems { get; set; }
         public double PercentComplete { get; set; }
         public int? StoppedWorkItems { get; set; }
@@ -100,7 +100,7 @@ namespace Ginseng.Mvc.Queries
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)
         {
-            return TestExecute(connection);
+            return TestExecuteHelper(connection);
         }
     }
 }

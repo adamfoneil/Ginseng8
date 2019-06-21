@@ -2,9 +2,9 @@
     Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
-<ul class="nav nav-pills nav-fill mt-3 mb-3">
+<ul class="nav nav-pills nav-fill mt-3 mb-3 nav-justified">
     <li class="nav-item">
-        <activelink page="/Dashboard/Index" text="My Items" />
+        <activelink page="/Dashboard/MyItems" text="My Items" />
     </li>
     <li class="nav-item">
         <activelink page="/Dashboard/New" text="New Items"/>
@@ -13,10 +13,10 @@
         <activelink page="/Dashboard/Hung" text="Hung Items"/>
     </li>
     <li class="nav-item">
-        <activelink page="/Dashboard/Projects" text="Projects" />
+        <activelink page="/Dashboard/Index" text="Dashboard"/>
     </li>
     <li class="nav-item">
-        <activelink page="/Dashboard/Milestones" text="Milestones" />
+        <activelink page="/Dashboard/Calendar" text="Calendar" />
     </li>
     <li class="nav-item">
         <activelink page="/Dashboard/AllItems" text="All Items" />
@@ -59,9 +59,15 @@
     <a class="btn btn-light" asp-page-handler="ExcelDownload">Download to Excel</a>
 }
 
-@section Scripts {
-    @RenderSection("Scripts", false)
+@section Scripts {    
+    @if (Model is DashboardPageModel)
+    {
+        <script>
+            var teamUseApps = @Html.Raw((Model as DashboardPageModel).TeamUseApps);                        
+        </script>
+    }
     <script src="~/js/MultiSelect.js"></script>
     <script src="~/js/Dashboard.js"></script>
     <script src="~/js/Sortable.js"></script>
+    @RenderSection("Scripts", false)
 }

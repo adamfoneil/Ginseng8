@@ -4,16 +4,23 @@
     <div class="d-flex justify-content-between">
         <form class="form-inline">
             <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
-                    
-            <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects fillMilestones"></select>
-                    
-            <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number">
+            
+            <select name="TeamId" asp-items="@Model.Dropdowns.TeamSelect(Model.WorkItem.TeamId)" class="form-control-sm mr-2 itemUpdate fillApps showHideApps fillProjects fillMilestones" title="Team" id="TeamId-@Model.WorkItem.Number"></select>
+
+            @if (Model.WorkItem.UseApplications)
+            {
+                <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects fillMilestones" style="max-width:200px" id="AppId-@Model.WorkItem.Number">
+                    <option value="">- application -</option>
+                </select>
+            }
+                                
+            <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number" style="max-width:200px">
                 <option value="">- project -</option>
             </select>
 
             @if (Model.WorkItem.ProjectId != 0)
             {
-                <a asp-page="/Dashboard/Projects" asp-route-id="@Model.WorkItem.ProjectId" title="Goto project" class="mr-2">
+                <a asp-page="/Dashboard/Projects" asp-route-id="@Model.WorkItem.ProjectId" title="Goto project" class="mr-2" style="max-width:175px">
                     <i class="fas fa-chevron-double-right small"></i>
                 </a>
 
@@ -25,13 +32,13 @@
                 }
             }
 
-            <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="MilestoneId-@Model.WorkItem.Number">
+            <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="MilestoneId-@Model.WorkItem.Number" style="max-width:150px">
                 <option value="">- milestone -</option>
             </select>
                  
             @if (Model.WorkItem.MilestoneId != 0)
             {
-                <a asp-page="/Dashboard/Milestones" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
+                <a asp-page="/Dashboard/Calendar" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
                     <i class="fas fa-chevron-double-right small"></i>
                 </a>
             }
@@ -52,12 +59,11 @@
         <div class="d-flex flex-row-reverse align-items-center">
             @if (Model.ShowDetailsButton)
             {
-                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number">
+                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number" title="Created by @Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated">
                     <i class="far fa-info-circle"></i>
                     Details
                 </a>
-            }
-            <span class="text-muted small mr-2">@Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated</span>
+            }            
         </div>
     </div>
     

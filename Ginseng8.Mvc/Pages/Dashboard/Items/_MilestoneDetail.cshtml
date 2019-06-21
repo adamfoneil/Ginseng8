@@ -1,4 +1,4 @@
-﻿@model Ginseng.Mvc.Pages.Dashboard.MilestonesModel
+﻿@model Ginseng.Mvc.Pages.Dashboard.CalendarModel
 
 <div id="accordion">
 @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
@@ -43,6 +43,7 @@
 
     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
     {
+        { "teamId", appGrp.First().TeamId },
         { "applicationId", appGrp.Key },
         { "milestoneId", Model.Id.Value }
     }))
@@ -55,7 +56,7 @@
 }
 </div>
 
-@if (Model.CurrentOrgUser.CurrentAppId.HasValue && Model.EmptyMilestones.Any())
+@if (Model.SelectedMilestone != null && Model.EmptyMilestones.Any())
 {
     <div id="emptyMilestones">
         <span>Tip: Milestones with no work items show here. After they get at least one work item, they display like others.</span>
@@ -65,7 +66,8 @@
             <div class="ml-3">
                 @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                 {
-                    { "applicationId", Model.CurrentOrgUser.CurrentAppId.Value },
+                    { "teamId", Model.SelectedMilestone.Application.TeamId ?? 0 },
+                    { "applicationId", Model.SelectedMilestone.ApplicationId },
                     { "milestoneId", ms.MilestoneId }
                 }))
             </div>

@@ -154,3 +154,25 @@ body {
 .js-calendar-month-with-milestone-list-droppable {
   min-height: 203px;
 }
+
+.appButton, .appButton:hover {
+    background-color: #b13393;
+    border-color: #b13393;
+    color: white
+}
+
+.scrollable-menu { /* thanks to https://stackoverflow.com/a/19229738/2023653 */
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}
+
+.scrollable-tooltip {
+    height: auto;
+    max-height:300px;
+    overflow-x:hidden
+}
+
+.nounderline, a:hover.nounderline {
+    text-decoration: none
+}

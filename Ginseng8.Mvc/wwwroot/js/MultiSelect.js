@@ -34,3 +34,7 @@ function InitMultiSelectCheckboxes(checkboxSelector, linkSelector) {
         ele.addEventListener('click', MultiSelectCheckboxLinkOnClick);
     });
 }
+
+$(document).ready(function () {
+    InitMultiSelectCheckboxes('.multiSelectCheckbox', '.multiSelectCheckboxLink');
+});        

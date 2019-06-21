@@ -42,6 +42,8 @@ namespace Ginseng.Mvc.Queries
 		public int? DeveloperUserId { get; set; }
 		public int ApplicationId { get; set; }
 		public string ApplicationName { get; set; }
+        public int TeamId { get; set; }
+        public string TeamName { get; set; }
 		public bool HasImpediment { get; set; }
 		public int ProjectId { get; set; }
 		public string ProjectName { get; set; }
@@ -88,6 +90,30 @@ namespace Ginseng.Mvc.Queries
         public long FDContactId { get; set; }
         public string FDContactName { get; set; }
         public TicketStatus FDTicketStatus { get; set; }
+        public bool UseApplications { get; set; }
+
+        /// <summary>
+        /// Lets us use a single property to switch between the app or team Id based on whether the team uses applications
+        /// </summary>
+        public int ProjectParentId
+        {
+            get { return (UseApplications) ? ApplicationId : TeamId; }
+        }
+
+        public string ProjectParentField
+        {
+            get { return (UseApplications) ? "applicationId" : "teamId"; }
+        }
+
+        public ProjectParentType ProjectParentType
+        {
+            get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }
+        }
+
+        public string ProjectParentName
+        {
+            get { return (UseApplications) ? ApplicationName : TeamName; }
+        }
 
 		public bool IsEditable(string userName)
 		{
@@ -145,12 +171,12 @@ namespace Ginseng.Mvc.Queries
 				[wi].[HtmlBody],
 				[wi].[BusinessUserId],
 				[wi].[DeveloperUserId],
-				[wi].[ApplicationId], [app].[Name] AS [ApplicationName],
+				COALESCE([wi].[ApplicationId], 0) AS [ApplicationId], [app].[Name] AS [ApplicationName],
+                [wi].[TeamId], [t].[Name] AS [TeamName],
 				[wi].[HasImpediment],
 				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
-				[p].[Priority] AS [ProjectPriority],
-				[ptr].[Name] AS [PriorityTier],
+				[p].[Priority] AS [ProjectPriority],				
 				COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
 				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
 				COALESCE([wi].[ActivityId], 0) AS [ActivityId],
@@ -190,11 +216,13 @@ namespace Ginseng.Mvc.Queries
                 [wit].[ContactName] AS [FDContactName],
                 [wit].[Subject] AS [FDTicketSubject],
                 [wit].[TicketStatus] AS [FDTicketStatus],
-                [org].[FreshdeskUrl]
+                [org].[FreshdeskUrl],
+                [t].[UseApplications]
 			FROM
 				[dbo].[WorkItem] [wi]
-				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
+                INNER JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]				                
+                LEFT JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]                
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
 				LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
@@ -224,9 +252,6 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
-				LEFT JOIN [dbo].[FnPriorityTierRanges](@orgId) [ptr] ON
-					[p].[Priority] >= [ptr].[MinPriority] AND
-					[p].[Priority] <= [ptr].[MaxPriority]
                 LEFT JOIN [dbo].[WorkItemTicket] [wit] ON 
                     [wit].[OrganizationId]=[wi].[OrganizationId] AND
                     [wit].[WorkItemNumber]=[wi].[Number]   
@@ -251,6 +276,9 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+        [Where("[wi].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 
 		[Offset(30)]
 		public int? Page { get; set; }

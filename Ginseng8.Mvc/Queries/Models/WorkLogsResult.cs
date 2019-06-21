@@ -36,6 +36,9 @@ namespace Ginseng.Mvc.Queries.Models
         public int? ProjectPriority => null;
         public int EstimateHours { get; set; }
         public decimal ColorGradientPosition { get; set; }
+        public string TeamName { get; set; }
+        public int ApplicationId { get; set; }
+        public string ApplicationName { get; set; }
         int IWorkItemTitle.ProjectId => ProjectId ?? 0;
         int IWorkItemNumber.Number { get { return WorkItemNumber ?? 0; } set { WorkItemNumber = value; } }
 

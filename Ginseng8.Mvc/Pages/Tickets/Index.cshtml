@@ -5,14 +5,14 @@
     ViewData["Title"] = "New Tickets";
 }
 
-<p>Use this to generate work items, or route elsewhere as needed. Select a responsibility below to see what's waiting for action for that responsibility.</p>
+<p>Use this to generate work items, or route elsewhere as needed.</p>
 
 
 @{ int index = 0; }
 
 <table class="table">
     <tr>
-        @if (Model.ResponsibilityId != 0)
+        @if (Model.TeamId != 0)
         {
             <th></th>
         }        
@@ -35,7 +35,7 @@
             <td>                
                 <form method="post" asp-page-handler="DoAction" class="form-inline">
                     <input type="hidden" name="ticketId" value="@item.Id"/>         
-                    <input type="hidden" name="responsibilityId" value="@Model.ResponsibilityId"/>
+                    <input type="hidden" name="teamId" value="@Model.TeamId"/>
                     <input type="hidden" name="objectType" value="@Model.ActionObjectType"/>
                     <div class="input-group">
                         <select name="objectId" id="objectId" asp-items="Model.GetActionSelect(item.CompanyId ?? 0)" class="form-control mr-2" required="required">
@@ -50,11 +50,11 @@
     }
 </table>
 
-@if (Model.ResponsibilityId != 0)
+@if (Model.TeamId != 0)
 {
     <form method="post" asp-page-handler="IgnoreSelected">
         <input type="hidden" name="ticketIds" id="ticketIds"/>
-        <input type="hidden" name="responsibilityId" value="@Model.ResponsibilityId"/>
+        <input type="hidden" name="teamId" value="@Model.TeamId"/>
         <button class="btn btn-primary">Ignore Selected</button>
     </form>
 }

@@ -36,8 +36,12 @@ namespace Ginseng.Models
 		[References(typeof(Organization))]
 		public int OrganizationId { get; set; }
 
+        [DefaultExpression("1")]
+        [References(typeof(Team))]        
+        public int TeamId { get; set; }
+
 		[References(typeof(Application))]
-		public int ApplicationId { get; set; }
+		public int? ApplicationId { get; set; }
 
 		[References(typeof(WorkItem))]
 		public int WorkItemId { get; set; }

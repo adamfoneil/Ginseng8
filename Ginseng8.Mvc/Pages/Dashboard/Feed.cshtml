@@ -6,9 +6,9 @@
 
 <h4>Feed</h4>
 
-@if (!Model.CurrentOrgUser.CurrentAppId.HasValue)
+@if (!Model.CurrentOrgUser.CurrentTeamId.HasValue)
 {
-    <p>Please select an App above.</p>
+    <p>Please select a Team above.</p>
     return;
 }
 
@@ -17,33 +17,43 @@
     <div class="col-9">
         <form method="get" class="form-inline mb-3">
             <label class="mr-2">Show user:</label>
-            <select name="filterUserId" asp-items="Model.UserSelect" class="form-control" onchange="this.form.submit();">
+            <select name="filterUserId" asp-items="Model.UserSelect" class="form-control mr-2" onchange="this.form.submit();">
                 <option value="">- all users -</option>
+            </select>
+
+            <label class="mr-2">Event:</label>
+            <select name="filterEventId" asp-items="Model.EventSelect" class="form-control" onchange="this.form.submit();">
+                <option value="">- all events -</option>
             </select>
         </form>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-3">        
-        @foreach (var ev in Model.Events)
+    <div class="col-3 border-right">
+        @if (Model.CurrentOrgUser.CurrentAppId.HasValue)
         {
-            <div class="row mb-1">
-                <label class="small mr-2">
-                    @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible, new { @class = "update-event-subscription", data_id = ev.Id, data_appId = Model.CurrentOrgUser.CurrentAppId })
-                    @ev.Name                    
-                    <img src="~/img/loading.gif" style="display:none" />                    
-                </label>
-                <div id="notifyOptions-@Model.Subscriptions[ev.Id].Id">
-                    <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]"/>
-                </div>                
-            </div>
-        }      
-        
-        <a asp-page-handler="DisableNotifications" class="small" onclick="return confirm('This will disable all event notifications. Hand-off (activity) notifications are not affected.');">Turn off all notifications</a>
-        <br/>
-
-        <a class="btn btn-sm btn-info" asp-page="Feed" style="display:none" onclick="$(this).hide();" id="btnRefresh">Refresh</a>
+            foreach (var ev in Model.Events)
+            {
+                <div class="row mb-1">
+                    <label class="small mr-2">
+                        @Html.CheckBox("Visible", Model.Subscriptions[ev.Id].Visible, new { @class = "update-event-subscription", data_id = ev.Id, data_appId = Model.CurrentOrgUser.CurrentAppId })
+                        @ev.Name                    
+                        <img src="~/img/loading.gif" style="display:none" />                    
+                    </label>
+                    <div id="notifyOptions-@Model.Subscriptions[ev.Id].Id">
+                        <partial name="Shared/_NotifyOptions" model="Model.Subscriptions[ev.Id]"/>
+                    </div>                
+                </div>
+            }      
+            <a asp-page-handler="DisableNotifications" class="small" onclick="return confirm('This will disable all event notifications. Hand-off (activity) notifications are not affected.');">Turn off all notifications</a>
+            <br/>
+            <a class="btn btn-sm btn-info" asp-page="Feed" style="display:none" onclick="$(this).hide();" id="btnRefresh">Refresh</a>
+        }
+        else
+        {
+            <p class="small text-muted">Please select an app above to filter select events and update your notifications.</p>
+        }
     </div>
 
     <div class="col-9">

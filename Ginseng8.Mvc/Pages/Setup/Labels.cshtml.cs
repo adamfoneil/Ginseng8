@@ -1,9 +1,8 @@
 ﻿using Ginseng.Models;
+using Ginseng.Models.Interfaces;
 using Ginseng.Mvc.Queries;
-using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,21 +35,25 @@ namespace Ginseng.Mvc.Pages.Setup
                 AllApps = await new Applications() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);
 
                 var newItemAppLabels = await new NewItemAppLabelsInUse() { OrgId = OrgId }.ExecuteAsync(cn);
-                NewItemApps = newItemAppLabels.ToLookup(row => row.LabelId);                
+                NewItemApps = newItemAppLabels.ToLookup(row => row.LabelId);
             }
         }
-        
-        public MultiSelector<Application> GetAppSelector(int labelId)
+
+        public MultiSelector<ISelectable> GetAppSelector(int labelId)
         {
             var apps = NewItemApps[labelId];
-            return new MultiSelector<Application>()
+            return new MultiSelector<ISelectable>()
             {
+                Prompt = "Apps:",
+                PrimaryFieldName = "ApplicationId",
+                RelatedFieldName = "LabelId",
+                PostUrl = "/Update/NewItemAppLabel",
                 RelatedId = labelId,
-                Items = AllApps.Select(app => new Application()
+                Items = AllApps.Select(t => new Team()
                 {
-                    Id = app.Id,
-                    Name = app.Name,
-                    Selected = apps.Contains(app)
+                    Id = t.Id,
+                    Name = t.Name,
+                    Selected = apps.Contains(t)
                 })
             };
         }

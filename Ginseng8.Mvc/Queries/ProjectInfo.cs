@@ -16,10 +16,6 @@ namespace Ginseng.Mvc.Queries
         public string ApplicationName { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public int? Priority { get; set; }
-        public string PriorityTier { get; set; }
-        public int? TierRank { get; set; }
-        public int? MaxProjects { get; set; }
         public string BranchUrl { get; set; }
         public string TextBody { get; set; }
         public string HtmlBody { get; set; }
@@ -28,13 +24,15 @@ namespace Ginseng.Mvc.Queries
         public DateTime DateCreated { get; set; }
         public string ModifiedBy { get; set; }
         public DateTime? DateModified { get; set; }
+        public int TeamId { get; set; }
+        public string TeamName { get; set; }
         public int? TotalWorkItems { get; set; }
         public int? OpenWorkItems { get; set; }
         public int? ClosedWorkItems { get; set; }
         public int? UnestimatedWorkItems { get; set; }
         public int? StoppedWorkItems { get; set; }
         public int? ImpededWorkItems { get; set; }
-        public float PercentComplete { get; set; }
+        public double PercentComplete { get; set; }
         public bool AllowDelete { get; set; }
         public int? EstimateHours { get; set; }
 
@@ -83,9 +81,10 @@ namespace Ginseng.Mvc.Queries
 				SELECT
 					[p].*,
 					[app].[Name] AS [ApplicationName],
+                    [t].[Name] AS [TeamName],
 					(SELECT
 						SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours]))
-						FROM [dbo].[WorkItem] [wi] LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
+						FROM  [dbo].[WorkItem] [wi] LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
 						LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
 						WHERE [wi].[ProjectId]=[p].[Id] AND [wi].[CloseReasonId] IS NULL) AS [EstimateHours],
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id]) AS [TotalWorkItems],
@@ -109,9 +108,10 @@ namespace Ginseng.Mvc.Queries
 					END AS [AllowDelete]
 				FROM
 					[dbo].[Project] [p]
-					INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
+                    INNER JOIN [dbo].[Team] [t] ON [p].[TeamId]=[t].[Id]					
+                    LEFT JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]                    
 				WHERE
-					[app].[OrganizationId]=@orgId
+					[t].[OrganizationId]=@orgId
 					{{andWhere}}
 			) SELECT
 				[source].*,
@@ -139,6 +139,12 @@ namespace Ginseng.Mvc.Queries
 
         [Where("[p].[IsActive]=@isActive")]
         public bool? IsActive { get; set; }
+
+        [Where("[app].[IsActive]=@isAppActive")]
+        public bool? IsAppActive { get; set; }
+
+        [Where("[t].[UseApplications]=@teamUsesApplications")]
+        public bool? TeamUsesApplications { get; set; }
 
         [Case(ProjectInfoShowOptions.HasOpenItems, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]
         [Case(ProjectInfoShowOptions.NoOpenItems, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ProjectId]=[p].[Id] AND [CloseReasonId] IS NULL)")]

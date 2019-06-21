@@ -1,31 +1,59 @@
-﻿var reloadProjectDropdowns = document.querySelectorAll('.fillProjects');
+﻿var reloadAppDropdowns = document.querySelectorAll('.fillApps');
+reloadAppDropdowns.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {
+        FillDropdown(ev, '/WorkItem/GetApps?teamId=', '#AppId-', '- application -');
+    });
+});
+
+var showHideApps = document.querySelectorAll('.showHideApps');
+showHideApps.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {
+        var teamId = $(ev.target).val();
+        var useApps = teamUseApps[teamId];
+        var number = ev.target.form.Number.value;        
+        if (useApps) {
+            $('#AppId-' + number).show();
+        } else {
+            $('#AppId-' + number).hide();
+        }
+    });
+});
+
+var reloadProjectDropdowns = document.querySelectorAll('.fillProjects');
 reloadProjectDropdowns.forEach(function (ele) {
-    ele.addEventListener('change', function (ev) {        
-        FillAppDropdown(ev, '/WorkItem/GetAppProjects', '#ProjectId-', '- project -');
+    ele.addEventListener('change', function (ev) {
+        var number = ev.target.form.Number.value;
+        var teamId = $('#TeamId-' + number).val();
+        var useApps = teamUseApps[teamId];
+        if (useApps) {            
+            FillDropdown(ev, '/WorkItem/GetAppProjects?appId=', '#ProjectId-', '- project -');
+        } else {
+            FillDropdown(ev, '/WorkItem/GetTeamProjects?teamId=', '#ProjectId-', '- project -');
+        }        
     });
 });
 
 var reloadMilestoneDropdowns = document.querySelectorAll('.fillMilestones');
 reloadMilestoneDropdowns.forEach(function (ele) {
     ele.addEventListener('change', function (ev) {
-        FillAppDropdown(ev, '/WorkItem/GetAppMilestones', '#MilestoneId-', '- milestone -');
+        FillDropdown(ev, '/WorkItem/GetAppMilestones?appId=', '#MilestoneId-', '- milestone -');
     });
 });
 
-function FillAppDropdown(ev, url, selectIdPrefix, blankOption) {
+function FillDropdown(ev, url, selectIdPrefix, blankOption) {
     var number = ev.target.form.Number.value;
-    var appId = $(ev.target).val();
-    fetch(url + '?appId=' + appId, {
+    var id = $(ev.target).val();
+    fetch(url + id, {
         method: 'get'
     }).then(function (response) {
         return response.json();
     }).then(function (data) {
         var select = $(selectIdPrefix + number);
-        FillDropdown(data, select, blankOption);
+        FillDropdownItems(data, select, blankOption);
     });
 }
 
-function FillDropdown(data, select, blankOption) {
+function FillDropdownItems(data, select, blankOption) {
     select.children().remove();
     $("<option>").val("").text(blankOption).appendTo(select);
     $(data).each(function () {

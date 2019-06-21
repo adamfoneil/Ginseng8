@@ -3,16 +3,20 @@
 <form class="form-inline mb-2">
     <input type="hidden" name="Id" value="@Model.SelectedProject.Id"/>
 
-    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject.ApplicationId)" class="form-control-sm mr-2 projectUpdate"></select>
-    
-    @if (Model.SelectedProject.DataModelId.HasValue)
+    <select name="TeamId" asp-items="@Model.Dropdowns.TeamSelect(Model.SelectedProject.TeamId)" class="form-control-sm mr-2 projectUpdate"></select>
+
+    @if (Model.SelectedProject.Team.UseApplications)
     {
-        <i class="far fa-database mr-2"></i>
-    }
-    
-    <select name="DataModelId" asp-items="@Model.Dropdowns.DataModelSelect(Model.SelectedProject.ApplicationId, Model.SelectedProject.DataModelId)" class="form-control-sm mr-2 projectUpdate">
-        <option value="">- data model -</option>
-    </select>
+        <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject)" class="form-control-sm mr-2 projectUpdate"></select>
+
+        @if (Model.SelectedProject.DataModelId.HasValue)
+        {
+            <i class="far fa-database mr-2"></i>
+        }    
+        <select name="DataModelId" asp-items="@Model.Dropdowns.DataModelSelect(Model.SelectedProject.ApplicationId ?? 0, Model.SelectedProject.DataModelId)" class="form-control-sm mr-2 projectUpdate">
+            <option value="">- data model -</option>
+        </select>
+    }        
     
     @if (Model.SelectedProject.DataModelId.HasValue)
     {
@@ -21,10 +25,10 @@
         </a>
     }
 
-    @if (Model.FreshdeskCompanySelect != null)
+    @if (Model.SelectedProject.Team.CompanySpecificProjects && Model.FreshdeskCompanySelect != null)
     {
         <select name="FreshdeskCompanyId" asp-items="Model.FreshdeskCompanySelect" class="form-control-sm projectUpdate mr-2">
-            <option value="">(none)</option>
+            <option value="">- Freshdesk company -</option>
         </select>
     }
 

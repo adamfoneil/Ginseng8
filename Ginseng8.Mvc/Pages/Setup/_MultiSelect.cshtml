@@ -1,0 +1,26 @@
+﻿@model MultiSelector<ISelectable>
+
+<div style="display:inline-block">
+    <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="mr-1">@Model.Prompt</span>
+        <span id="teams-@Model.RelatedId">
+        @foreach (var item in Model.Items.Where(row => row.Selected))
+        {
+            <span class="mr-1">@item.Name</span>
+        }
+        </span>
+    </button>
+    <div class="dropdown-menu scrollable-menu">
+        @foreach (var item in Model.Items)
+        {
+            <form method="post">
+                <input type="hidden" name="@Model.PrimaryFieldName" value="@item.Id"/>
+                <input type="hidden" name="@Model.RelatedFieldName" value="@Model.RelatedId"/>
+                <a class="dropdown-item multiSelectCheckboxLink">
+                    @Html.CheckBox("selected", item.Selected, new { @class = "multiSelectCheckbox", data_post_url = Model.PostUrl, data_selected_name_span = $"teams-{Model.RelatedId}" })
+                    <span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span>
+                </a>
+            </form>                            
+        }
+    </div>
+</div>

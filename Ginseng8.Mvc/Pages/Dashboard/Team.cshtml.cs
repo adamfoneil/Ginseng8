@@ -41,7 +41,8 @@ namespace Ginseng.Mvc.Pages.Work
 			return new OpenWorkItems(QueryTraces)
 			{
 				OrgId = OrgId,
-				AppId = CurrentOrgUser.CurrentAppId,
+                TeamId = CurrentOrgUser.CurrentTeamId,
+				AppId = CurrentOrgUser.EffectiveAppId,
 				LabelId = LabelId,
 				HasAssignedUserId = true
 			};

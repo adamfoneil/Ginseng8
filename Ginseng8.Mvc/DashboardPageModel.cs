@@ -6,6 +6,7 @@ using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Postulate.Base;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,7 @@ namespace Ginseng.Mvc
         public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
         public IEnumerable<WorkDaysResult> WorkDays { get; set; }
         public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }
+        public string TeamUseApps { get; private set; } // this enables JS show-hides of app dropdown based on team selection
 
         /// <summary>
         /// triggers display of partial to offer to move items to soonest upcoming or new milestone
@@ -84,6 +86,9 @@ namespace Ginseng.Mvc
                 var redirect = await GetRedirectAsync(cn);
                 if (redirect != null) return redirect;
 
+                var teams = await new Teams() { OrgId = OrgId }.ExecuteAsync(cn);
+                TeamUseApps = JsonConvert.SerializeObject(teams.ToDictionary(row => row.Id, row => row.UseApplications));
+
                 var query = GetQuery();
                 if (query != null)
                 {
@@ -120,7 +125,7 @@ namespace Ginseng.Mvc
                     MilestoneMetrics = milestoneMetrics.ToDictionary(row => row.Id);
                 }
 
-                Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
+                Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId);
 
                 await OnGetInternalAsync(cn);
 
@@ -130,7 +135,7 @@ namespace Ginseng.Mvc
             return Page();
         }
 
-        public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, Func<WorkDaysResult, bool> workDayFilter = null, MilestoneMetricsResult metrics = null)
+        public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, MilestoneMetricsResult metrics = null)
         {
             int estimateHours = milestoneGrp.Sum(wi => wi.EstimateHours);
 

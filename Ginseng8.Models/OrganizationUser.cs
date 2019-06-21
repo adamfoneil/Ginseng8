@@ -52,6 +52,9 @@ namespace Ginseng.Models
 		[References(typeof(Application))]
 		public int? CurrentAppId { get; set; }
 
+        [References(typeof(Team))]
+        public int? CurrentTeamId { get; set; }
+
 		[References(typeof(Activity))]
 		public int? DefaultActivityId { get; set; }
 
@@ -69,9 +72,15 @@ namespace Ginseng.Models
 		public bool IsEnabled { get; set; }
 
 		public Application CurrentApp { get; set; }
+        public Team CurrentTeam { get; set; }
 
 		public UserProfile UserProfile { get; set; }
 		public Organization Organization { get; set; }
+
+        public int? EffectiveAppId
+        {
+            get { return (CurrentTeam?.UseApplications ?? true) ? CurrentAppId : null; }
+        }
 
         [NotMapped]
         public decimal WeeklyHours { get; set; }
@@ -107,6 +116,11 @@ namespace Ginseng.Models
 				CurrentApp = commandProvider.Find<Application>(connection, CurrentAppId.Value);
 			}
 
+            if (CurrentTeamId.HasValue)
+            {
+                CurrentTeam = commandProvider.Find<Team>(connection, CurrentTeamId.Value);
+            }
+
 			UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
 			Organization = commandProvider.Find<Organization>(connection, OrganizationId);
 		}
@@ -118,7 +132,12 @@ namespace Ginseng.Models
 				CurrentApp = await commandProvider.FindAsync<Application>(connection, CurrentAppId.Value);
 			}
 
-			UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
+            if (CurrentTeamId.HasValue)
+            {
+                CurrentTeam = await commandProvider.FindAsync<Team>(connection, CurrentTeamId.Value);
+            }
+
+            UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
 			Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
 		}
 

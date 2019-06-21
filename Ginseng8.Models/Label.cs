@@ -55,6 +55,9 @@ namespace Ginseng.Models
 		[NotMapped]
 		public bool Selected { get; set; }
 
+        [NotMapped]
+        public int TeamId { get; set; }
+
 		public override bool Equals(object obj)
 		{
 			Label test = obj as Label;

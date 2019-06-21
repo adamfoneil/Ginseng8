@@ -1,6 +1,7 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Classes;
 using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -31,8 +32,10 @@ namespace Ginseng.Mvc.Queries
 		public string ProjectName { get; set; }
 		public string Title { get; set; }
 		public int? ProjectPriority { get; set; }
+        public string TeamName { get; set; }
+        public string ApplicationName { get; set; }
 
-		public bool IsEditable(string userName)
+        public bool IsEditable(string userName)
 		{
 			return false;
 		}
@@ -40,11 +43,16 @@ namespace Ginseng.Mvc.Queries
 
 	public class EventLogs : Query<EventLogsResult>, ITestableQuery
 	{
-		public EventLogs() : base(
+        private readonly List<QueryTrace> _traces;
+
+        public EventLogs() : base(
 			@"SELECT TOP (100)
 				[ev].[Name] AS [EventName],
 				[el].*,
 				[wi].[Number],
+                [t].[Name] AS [TeamName],
+                [wi].[ApplicationId],
+                [app].[Name] AS [ApplicationName],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId],
 				[p].[Name] AS [ProjectName], [p].[Priority] AS [ProjectPriority],				
 				[wi].[Title],
@@ -56,7 +64,9 @@ namespace Ginseng.Mvc.Queries
 				[dbo].[EventLog] [el]
 				INNER JOIN [app].[Event] [ev] ON [el].[EventId]=[ev].[Id]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [el].[WorkItemId]=[wi].[Id]
+                INNER JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
+                LEFT JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
 				LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
 				LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
@@ -66,21 +76,43 @@ namespace Ginseng.Mvc.Queries
 				INNER JOIN [dbo].[OrganizationUser] [ou] ON 
 					[u].[UserId]=[ou].[UserId] AND
 					[wi].[OrganizationId]=[ou].[OrganizationId]
+                {join}
 			WHERE
 				[el].[OrganizationId]=@orgId AND
-				[el].[ApplicationId]=@appId
-				{andWhere}
+				[el].[TeamId]=@teamId 
+                {andWhere}				
 			ORDER BY
 				[el].[DateCreated] DESC")
 		{
 		}
 
-		public int OrgId { get; set; }
+        public EventLogs(List<QueryTrace> traces = null) : this()
+        {
+            _traces = traces;
+        }
 
-		public int AppId { get; set; }
+        protected override void OnQueryExecuted(QueryTrace queryTrace)
+        {
+            _traces?.Add(queryTrace);
+        }
+
+        public int OrgId { get; set; }
+
+        public int TeamId { get; set; }
+
+        [Join("INNER JOIN [dbo].[EventSubscription] [es] ON [el].[EventId]=[es].[EventId] AND [el].[ApplicationId]=[es].[ApplicationId] AND [es].[OrganizationId]=@orgId AND [es].[UserId]=@eventsUserId AND [es].[Visible]=1")]
+        public bool MyEvents { get; set; }
+
+        public int? EventsUserId { get; set; }
+
+        [Where("[el].[ApplicationId]=@appId")]
+		public int? AppId { get; set; }
 
 		[Where("[el].[EventId] IN @eventIds")]
 		public int[] EventIds { get; set; }
+
+        [Where("[el].[EventId]=@eventId")]
+        public int? EventId { get; set; }
 
         [Where("[ou].[UserId]=@userId")]
         public int? UserId { get; set; }
@@ -90,6 +122,7 @@ namespace Ginseng.Mvc.Queries
 			yield return new EventLogs() { OrgId = 0 };
 			yield return new EventLogs() { AppId = 0 };
 			yield return new EventLogs() { EventIds = new int[] { 1, 2, 3 } };
+            yield return new EventLogs() { MyEvents = true, EventsUserId = 1 };
 		}
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)

@@ -13,6 +13,7 @@
 {
     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
     {
+        { "teamId", Html.CurrentTeamId() },
         { "applicationId", Html.CurrentAppId() }
     }))
 }
@@ -53,12 +54,12 @@
 </form>
 
 <div id="accordion">
-@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ProjectParentId))
 {
-    <h4>@appGrp.First().ApplicationName</h4>
+    <h4>@appGrp.First().ProjectParentName</h4>
     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
     {
-        { "applicationId", appGrp.Key }                        
+        { appGrp.First().ProjectParentField, appGrp.Key }                        
     }))
     foreach (var priorityGrp in appGrp.OrderBy(row => row.PriorityGroup).GroupBy(row => row.PriorityGroup))
     {

@@ -14,9 +14,9 @@ namespace Ginseng.Mvc.Queries.SelectLists
     public class ProjectSelectEx : Query<ProjectSelectResult>
     {
         public const string BaseSql = 
-            @"SELECT [p].[Id] AS [Value], [p].[Name] AS [Text], [p].[FreshdeskCompanyId]
+            @"SELECT [p].[Id] AS [Value], COALESCE([p].[Nickname], [p].[Name]) AS [Text], [p].[FreshdeskCompanyId]
 			FROM [dbo].[Project] [p]		
-            INNER JOIN [dbo].[Application] [app] ON [p].[ApplicationId]=[app].[Id]
+            INNER JOIN [dbo].[Team] [t] ON [p].[TeamId]=[t].[Id]
 			WHERE [p].[IsActive]=1 {andWhere}
 			ORDER BY [p].[Name]";
 
@@ -24,11 +24,14 @@ namespace Ginseng.Mvc.Queries.SelectLists
         {
         }
 
+        [Where("[p].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
+
+        [Where("[t].[OrganizationId]=@orgId")]
+        public int? OrgId { get; set; }
+
         [Where("[p].[ApplicationId]=@appId")]
         public int? AppId { get; set; }
-
-        [Where("[app].[OrganizationId]=@orgId")]
-        public int? OrgId { get; set; }
     }
 
     public class ProjectSelect : SelectListQuery
@@ -37,7 +40,10 @@ namespace Ginseng.Mvc.Queries.SelectLists
 		{
 		}
 
+        [Where("[p].[TeamId]=@teamId")]
+		public int? TeamId { get; set; }
+
         [Where("[p].[ApplicationId]=@appId")]
-		public int? AppId { get; set; }
+        public int? AppId { get; set; }
 	}
 }

@@ -7,14 +7,7 @@
     <h4>@appGrp.First().ApplicationName</h4>
 
     <div class="app-container">
-        <div class="row ml-3">
-            @foreach (var prj in appGrp)
-            {
-                <div class="col-3 p-2 project-card" data-project-id="@prj.Id">
-                    <partial name="Items/_ProjectLinkButton" model="prj"/>
-                </div>
-            }        
-        </div>
+        <partial name="Items/_ProjectCardsInner" model="appGrp"/>
     </div>
     
     <partial name="Items/_ProjectCreate" model="appGrp.Key"/>
