@@ -69,7 +69,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
-            Milestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, ProjectId = ProjectId }.ExecuteAsync(connection);
+            Milestones = await new Milestones()
+            {
+                OrgId = OrgId,
+                TeamId = CurrentOrgUser.CurrentTeamId,
+                AppId = CurrentOrgUser.CurrentAppId,
+                ProjectId = ProjectId
+            }.ExecuteAsync(connection);
 
             if (Id.HasValue)
             {
@@ -217,8 +223,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 var end = Milestones.Last().Date.AddMonths(futureMonths);
                 return GetYearMonthRange(new YearMonth(start), new YearMonth(end));
             }
-
-            return Enumerable.Empty<YearMonth>();
+            else
+            {
+                return GetYearMonthRange(new YearMonth(DateTime.Today), new YearMonth(DateTime.Today.AddMonths(futureMonths)));
+            }
         }
 
         private IEnumerable<YearMonth> GetYearMonthRange(YearMonth start, YearMonth end)

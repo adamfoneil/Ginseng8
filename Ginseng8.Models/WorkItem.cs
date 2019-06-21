@@ -138,13 +138,15 @@ namespace Ginseng.Models
 
                 var projectId = await connection.QuerySingleOrDefaultAsync<int>(
                     @"SELECT TOP (1) [Id] FROM [dbo].[Project]
-					WHERE [ApplicationId]=@appId AND
-					([Name] LIKE '%' + @projectName + '%' OR [Nickname]=@projectName)", new { appId = ApplicationId, projectName = projectToken });
+					WHERE [TeamId]=@teamId AND
+					([Name] LIKE '%' + @projectName + '%' OR [Nickname]=@projectName)", new { teamId = TeamId, projectName = projectToken });
 
                 if (projectId != 0)
                 {
+                    var prj = await connection.FindAsync<Project>(projectId);
                     ProjectId = projectId;
-                    await connection.UpdateAsync(this, null, r => r.ProjectId);
+                    if (!ApplicationId.HasValue) ApplicationId = prj.ApplicationId;
+                    await connection.UpdateAsync(this, null, r => r.ProjectId, r => r.ApplicationId);
                 }
             }
         }
