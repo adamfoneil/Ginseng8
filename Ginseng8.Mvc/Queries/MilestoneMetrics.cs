@@ -69,7 +69,7 @@ namespace Ginseng.Mvc.Queries
                     INNER JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]
                     LEFT JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
                 WHERE
-                    [app].[OrganizationId]=@orgId AND
+                    [t].[OrganizationId]=@orgId AND
                     [ms].[Date] > DATEADD(d, -7, getdate())
                     {andWhere}                    
             ) SELECT
