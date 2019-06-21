@@ -1,4 +1,5 @@
 ﻿using Ginseng.Mvc.Classes;
+using Postulate.Base.Attributes;
 
 namespace Ginseng.Mvc.Queries.SelectLists
 {
@@ -10,14 +11,17 @@ namespace Ginseng.Mvc.Queries.SelectLists
 				[Name] + ': ' + FORMAT([Date], 'ddd M/d') AS [Text]
 			FROM 
 				[dbo].[Milestone]
-			WHERE 
-				[ApplicationId]=@appId AND
-				[Date]>DATEADD(d, -7, getdate())
+			WHERE 				
+				[Date]>DATEADD(d, -7, getdate()) {andWhere}
 			ORDER BY
 				[Date]")
 		{
 		}
 
-		public int AppId { get; set; }
+        [Where("[ApplicationId]=@appId")]
+		public int? AppId { get; set; }
+
+        [Where("[TeamId]=@appId")]
+        public int? TeamId { get; set; }
 	}
 }

@@ -36,7 +36,14 @@ reloadProjectDropdowns.forEach(function (ele) {
 var reloadMilestoneDropdowns = document.querySelectorAll('.fillMilestones');
 reloadMilestoneDropdowns.forEach(function (ele) {
     ele.addEventListener('change', function (ev) {
-        FillDropdown(ev, '/WorkItem/GetAppMilestones?appId=', '#MilestoneId-', '- milestone -');
+        var number = ev.target.form.Number.value;
+        var teamId = $('#TeamId-' + number).val();
+        var useApps = teamUseApps[teamId];
+        if (useApps) {
+            FillDropdown(ev, '/WorkItem/GetAppMilestones?appId=', '#ProjectId-', '- project -');
+        } else {
+            FillDropdown(ev, '/WorkItem/GetTeamMilestones?teamId=', '#ProjectId-', '- project -');
+        }        
     });
 });
 

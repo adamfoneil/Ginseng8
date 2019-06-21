@@ -412,6 +412,16 @@ namespace Ginseng.Mvc.Controllers
             }
         }
 
+        public async Task<JsonResult> GetTeamMilestones(int teamId)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var results = await new MilestoneSelect() { TeamId = teamId }.ExecuteAsync(cn);
+                return Json(results);
+            }
+        }
+
+
         [HttpPost]
         public async Task<JsonResult> SetMilestone()
         {

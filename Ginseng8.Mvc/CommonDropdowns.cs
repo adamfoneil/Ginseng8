@@ -18,7 +18,7 @@ namespace Ginseng.Mvc
 		/// <summary>
 		/// Activities are handled differently from the SelectList properties
 		/// </summary>
-		public IEnumerable<Activity> Activities { get; set; }
+		public IEnumerable<Activity> Activities { get; set; }        
 
         public IEnumerable<SelectListItem> Teams { get; set; }
 		public ILookup<int, SelectListItem> AllApps { get; set; } // keyed to teams
@@ -26,7 +26,8 @@ namespace Ginseng.Mvc
         public ILookup<int, SelectListItem> ProjectsByTeam { get; set; }
 		public IEnumerable<SelectListItem> Sizes { get; set; }
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }		
-        public ILookup<int, SelectListItem> AllMilestones { get; set; } // keyed to applications
+        public ILookup<int, SelectListItem> MilestonesByApp { get; set; } 
+        public ILookup<int, SelectListItem> MilestonesByTeam { get; set; }
 		public ILookup<int, SelectListItem> AllDataModels { get; set; } // keyed to projects
 		public IEnumerable<Label> Labels { get; set; }
 
@@ -69,6 +70,13 @@ namespace Ginseng.Mvc
                 new SelectList(ProjectsByTeam[item?.TeamId ?? 0], "Value", "Text", item?.ProjectId);            
 		}
 
+        public SelectList MilestoneSelect(OpenWorkItemsResult item = null)
+        {
+            return (item.UseApplications) ?
+                new SelectList(MilestonesByApp[item?.ApplicationId ?? 0], "Value", "Text", item?.MilestoneId) :
+                new SelectList(MilestonesByTeam[item?.TeamId ?? 0], "Value", "Text", item?.MilestoneId);
+        }
+
 		public SelectList DataModelSelect(int appId, int? dataModelId)
 		{
 			return new SelectList(AllDataModels[appId], "Value", "Text", dataModelId);
@@ -93,14 +101,9 @@ namespace Ginseng.Mvc
 
 		public SelectList MilestoneSelect(int appId, int? milestoneId, bool withNoneOption = false)
 		{
-			var items = AllMilestones[appId].ToList();
+			var items = MilestonesByApp[appId].ToList();
 			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no milestone -" });
 			return new SelectList(items, "Value", "Text", milestoneId);
-		}
-
-		public SelectList MilestoneSelect(OpenWorkItemsResult item = null)
-		{
-			return new SelectList(AllMilestones[item?.ApplicationId ?? 0], "Value", "Text", item?.MilestoneId);
 		}
 
 		public IEnumerable<Label> LabelItems(IEnumerable<Label> selectedLabels)
@@ -135,9 +138,10 @@ namespace Ginseng.Mvc
             result.ProjectsByTeam = allProjects.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
 
             var allMilestones = await new AllMilestones() { OrgId = orgId }.ExecuteAsync(connection);
-            result.AllMilestones = allMilestones.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
-                       
-			var allModels = await new DataModels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+            result.MilestonesByApp = allMilestones.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
+            result.MilestonesByTeam = allMilestones.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
+
+            var allModels = await new DataModels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 			result.AllDataModels = allModels.ToLookup(row => row.ApplicationId, row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
 
 			return result;
