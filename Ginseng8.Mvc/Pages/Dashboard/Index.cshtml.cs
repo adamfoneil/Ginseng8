@@ -59,7 +59,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                         TeamId = ParentId;
                         break;
                 }
-            }
+            }            
 
             if (AppId.HasValue)
             {
@@ -67,7 +67,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId, IsActive = FilterIsActive }.ExecuteAsync(connection);
             }
             else
-            {
+            {                
                 Teams = await new Teams() { OrgId = OrgId, IsActive = FilterIsActive, Id = TeamId }.ExecuteAsync(connection);
 
                 var apps = await new AppInfo() { OrgId = OrgId, TeamId = TeamId, IsActive = FilterIsActive }.ExecuteAsync(connection);
@@ -80,6 +80,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         protected override OpenWorkItems GetQuery()
         {
+            if (CurrentOrgUser.CurrentAppId.HasValue) AppId = CurrentOrgUser.CurrentAppId.Value;
+
             if (AppId.HasValue)
             {
                 return new OpenWorkItems(QueryTraces)
