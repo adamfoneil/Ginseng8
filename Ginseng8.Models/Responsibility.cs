@@ -44,6 +44,9 @@ namespace Ginseng.Models
         [DefaultExpression("0")]
         public bool CompanySpecificProjects { get; set; }
 
+        [References(typeof(Team))]        
+        public int? TeamId { get; set; }
+
 		/// <summary>
 		/// Indicates what WorkItem property to set according to the Responsibility.Id in effect (which comes from the activity that was selected).
 		/// The Id (dictionary key) values are assumed from the order of the seed data records
