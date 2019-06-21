@@ -22,8 +22,8 @@ namespace Ginseng.Models
     public class Milestone : BaseTable, IOrgSpecific, IFindRelated<int>
     {
         [PrimaryKey]
-        [References(typeof(Application))]
-        public int ApplicationId { get; set; }
+        [References(typeof(Team))]
+        public int TeamId { get; set; }
 
         [MaxLength(50)]
         [PrimaryKey]
@@ -32,6 +32,9 @@ namespace Ginseng.Models
         [Column(TypeName = "date")]
         [DisplayFormat(DataFormatString = "{0:M/d/yy}")]
         public DateTime Date { get; set; }
+
+        [References(typeof(Application))]
+        public int? ApplicationId { get; set; }
 
         [NotMapped]
         public int? DaysAway { get; set; }
@@ -57,49 +60,50 @@ namespace Ginseng.Models
         [NotMapped]
         public int ProjectId { get; set; }
 
+        public Team Team { get; set; }
         public Application Application { get; set; }
 
-        public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int appId)
+        public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int teamId)
         {
-            if (appId == 0) return null;
+            if (teamId == 0) return null;
 
             return await connection.QuerySingleOrDefaultAsync<Milestone>(
                 @"WITH [source] AS (
 					SELECT MAX([Date]) AS [MaxDate]
 					FROM [dbo].[Milestone]
-					WHERE [ApplicationId]=@appId
+					WHERE [TeamId]=@teamId
 				) SELECT TOP (1) [ms].*
 				FROM
 					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MaxDate]
 				WHERE
-					[ApplicationId]=@appId", new { appId });
+					[TeamId]=@teamId", new { teamId });
         }
 
-        public static async Task<Milestone> GetSoonestNextAsync(IDbConnection connection, int appId)
+        public static async Task<Milestone> GetSoonestNextAsync(IDbConnection connection, int teamId)
         {
-            if (appId == 0) return null;
+            if (teamId == 0) return null;
 
             return await connection.QuerySingleOrDefaultAsync<Milestone>(
                 @"WITH [source] AS (
 					SELECT MIN([Date]) AS [MinDate]
 					FROM [dbo].[Milestone]
-					WHERE [ApplicationId]=@appId AND [Date]>getdate()
+					WHERE [TeamId]=@teamId AND [Date]>getdate()
 				) SELECT TOP (1) [ms].*
 				FROM
 					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MinDate]
 				WHERE
-					[ApplicationId]=@appId", new { appId });
+					[TeamId]=@teamId", new { teamId });
         }
 
-        public static async Task<Milestone> CreateNextAsync(IDbConnection connection, int appId)
+        public static async Task<Milestone> CreateNextAsync(IDbConnection connection, int teamId)
         {
-            var app = await connection.FindAsync<Application>(appId);
-            var latest = await GetLatestAsync(connection, appId);
+            var team = await connection.FindAsync<Team>(teamId);
+            var latest = await GetLatestAsync(connection, teamId);
 
-            DayOfWeek nextDayOfWeek = app.Organization.MilestoneWorkDay.ToDayOfWeek();
+            DayOfWeek nextDayOfWeek = team.Organization.MilestoneWorkDay.ToDayOfWeek();
             DateTime nextDate =
-                latest?.Date.NextDayOfWeek(nextDayOfWeek, app.Organization.IterationWeeks) ??
-                DateTime.Today.NextDayOfWeek(nextDayOfWeek, app.Organization.IterationWeeks);
+                latest?.Date.NextDayOfWeek(nextDayOfWeek, team.Organization.IterationWeeks) ??
+                DateTime.Today.NextDayOfWeek(nextDayOfWeek, team.Organization.IterationWeeks);
 
             DateTimeFormatInfo dtfi = DateTimeFormatInfo.CurrentInfo;
             var cal = dtfi.Calendar;
@@ -107,7 +111,7 @@ namespace Ginseng.Models
 
             return new Milestone()
             {
-                ApplicationId = appId,
+                TeamId = team.Id,                
                 Date = nextDate,
                 Name = $"week {weekNumber}"
             };
@@ -115,18 +119,20 @@ namespace Ginseng.Models
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
-            var app = await connection.FindAsync<Application>(ApplicationId);
-            return app.OrganizationId;
+            var team = await connection.FindAsync<Team>(TeamId);
+            return team.OrganizationId;
         }
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {
-            Application = commandProvider.Find<Application>(connection, ApplicationId);
+            Team = commandProvider.Find<Team>(connection, TeamId);
+            if (ApplicationId.HasValue) Application = commandProvider.Find<Application>(connection, ApplicationId.Value);
         }
 
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
-            Application = await commandProvider.FindAsync<Application>(connection, ApplicationId);
+            Team = await commandProvider.FindAsync<Team>(connection, TeamId);
+            if (ApplicationId.HasValue) Application = await commandProvider.FindAsync<Application>(connection, ApplicationId.Value);
         }
     }
 }

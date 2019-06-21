@@ -1,6 +1,8 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
+using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -8,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-    public class Team : BaseTable, IOrgSpecific, ISelectable
+    public class Team : BaseTable, IOrgSpecific, ISelectable, IFindRelated<int>
     {
         [References(typeof(Organization))]
         [PrimaryKey]
@@ -56,10 +58,22 @@ namespace Ginseng.Models
         [NotMapped]
         public string BackColor { get; set; } = "auto";
 
+        public Organization Organization { get; set; }
+
         public override bool Equals(object obj)
         {
             var test = obj as Team;
             return (test != null) ? test.Id == Id : false;
+        }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            Organization = commandProvider.Find<Organization>(connection, OrganizationId);
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
         }
 
         public override int GetHashCode()

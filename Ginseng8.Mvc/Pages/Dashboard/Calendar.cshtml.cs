@@ -130,12 +130,12 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             const string text = @"Placeholder item created with milestone. This enables you to filter for this project on the milestone dashboard. This will automatically close when you add another work item to this milestone.";
 
-            var app = await cn.FindAsync<Application>(record.ApplicationId);
+            var team = await cn.FindAsync<Team>(record.TeamId);
 
             var workItem = new Ginseng.Models.WorkItem()
             {
-                OrganizationId = OrgId,
-                TeamId = app.TeamId ?? 0,
+                OrganizationId = team.OrganizationId,
+                TeamId = team.Id,
                 ApplicationId = record.ApplicationId,
                 MilestoneId = record.Id,
                 ProjectId = record.ProjectId,

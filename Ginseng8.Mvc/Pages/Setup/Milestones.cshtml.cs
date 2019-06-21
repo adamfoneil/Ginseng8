@@ -16,8 +16,12 @@ namespace Ginseng.Mvc.Pages.Setup
         }
 
         [BindProperty(SupportsGet = true)]
-        public int AppId { get; set; }
+        public int TeamId { get; set; }
 
+        [BindProperty(SupportsGet = true)]
+        public int? AppId { get; set; }
+
+        public SelectList TeamSelect { get; set; }
         public SelectList AppSelect { get; set; }
         public IEnumerable<Milestone> Milestones { get; set; }
 
@@ -25,22 +29,23 @@ namespace Ginseng.Mvc.Pages.Setup
         {
             using (var cn = Data.GetConnection())
             {
-                AppSelect = await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, AppId);
-                Milestones = await new Milestones() { OrgId = OrgId, AppId = AppId }.ExecuteAsync(cn);
+                TeamSelect = await new TeamSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, TeamId);
+                AppSelect = await new AppSelect() { OrgId = OrgId, TeamId = TeamId }.ExecuteSelectListAsync(cn, AppId);
+                Milestones = await new Milestones() { OrgId = OrgId, TeamId = TeamId, AppId = AppId }.ExecuteAsync(cn);
             }
         }
 
         public async Task<ActionResult> OnPostSave(Milestone record)
         {
             await Data.TrySaveAsync(record);
-            return Redirect($"/Setup/Milestones?appId={record.ApplicationId}");
+            return Redirect($"/Setup/Milestones?teamId={record.TeamId}&appId={record.ApplicationId}");
         }
 
         public async Task<ActionResult> OnPostDelete(int id)
         {
             var ms = await Data.FindAsync<Milestone>(id);
             await Data.TryDeleteAsync<Milestone>(id);
-            return Redirect($"/Setup/Milestones?appId={ms.ApplicationId}");
+            return Redirect($"/Setup/Milestones?teamId={ms.TeamId}&appId={ms.ApplicationId}");
         }
     }
 }
