@@ -138,8 +138,8 @@ namespace Ginseng.Models
 
                 var projectId = await connection.QuerySingleOrDefaultAsync<int>(
                     @"SELECT TOP (1) [Id] FROM [dbo].[Project]
-					WHERE [ApplicationId]=@appId AND
-					([Name] LIKE '%' + @projectName + '%' OR [Nickname]=@projectName)", new { appId = ApplicationId, projectName = projectToken });
+					WHERE [TeamId]=@teamId AND
+					([Name] LIKE '%' + @projectName + '%' OR [Nickname]=@projectName)", new { teamId = TeamId, projectName = projectToken });
 
                 if (projectId != 0)
                 {
