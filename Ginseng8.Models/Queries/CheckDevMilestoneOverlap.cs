@@ -16,21 +16,21 @@ namespace Ginseng.Models.Queries
     {
         public CheckDevMilestoneOverlap() : base(
             @"WITH [committed] AS (
-                SELECT 
+                SELECT
                     [dm].[DeveloperId],
                     [dm].[MilestoneId],
                     [ms].[Name] AS [MilestoneName],
-                    [dm].[StartDate],        
-                    [ms].[Date] AS [EndDate] 
-                FROM 
+                    [dm].[StartDate],
+                    [ms].[Date] AS [EndDate]
+                FROM
                     [dbo].[DeveloperMilestone] [dm]
                     INNER JOIN [dbo].[Milestone] [ms] ON [dm].[MilestoneId]=[ms].[Id]
                 WHERE
                     [dm].[DeveloperId]=@userId
-            ) SELECT                
-                [c].*                
+            ) SELECT
+                [c].*
             FROM
-                [committed] [c]                
+                [committed] [c]
             WHERE
                 @checkDate BETWEEN [StartDate] AND [EndDate]")
         {

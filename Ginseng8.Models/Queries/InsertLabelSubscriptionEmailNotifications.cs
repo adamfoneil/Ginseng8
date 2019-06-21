@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using Postulate.Base;
+﻿using Postulate.Base;
 using Postulate.Base.Interfaces;
+using System.Collections.Generic;
+using System.Data;
 
 namespace Ginseng.Models.Queries
 {
@@ -11,13 +11,13 @@ namespace Ginseng.Models.Queries
             @"INSERT INTO [dbo].[Notification] (
 				[EventLogId], [DateCreated], [Method], [SendTo], [Content], [SourceId], [SourceTable]
 			) SELECT
-	            @id, getutcdate(), 1, [u].[Email], [el].[HtmlBody], [ls].[Id], 'LabelSubscription'	
+	            @id, getutcdate(), 1, [u].[Email], [el].[HtmlBody], [ls].[Id], 'LabelSubscription'
             FROM
 	            [dbo].[EventLog] [el]
-                INNER JOIN [dbo].[WorkItemLabel] [wil] ON [el].[SourceId]=[wil].[Id]                
+                INNER JOIN [dbo].[WorkItemLabel] [wil] ON [el].[SourceId]=[wil].[Id]
                 INNER JOIN [dbo].[LabelSubscription] [ls] ON
                     [wil].[LabelId]=[ls].[LabelId] AND
-		            [el].[OrganizationId]=[ls].[OrganizationId]        
+		            [el].[OrganizationId]=[ls].[OrganizationId]
                 INNER JOIN [dbo].[AspNetUsers] [u] ON [ls].[UserId]=[u].[UserId]
             WHERE
 	            [wil].[WorkItemId]=[el].[WorkItemId] AND

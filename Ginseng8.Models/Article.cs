@@ -7,25 +7,25 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	//[TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
-	public class Article : BaseTable, IBody, IOrgSpecific
-	{
-		[References(typeof(Organization))]
-		[PrimaryKey]
-		public int OrganizationId { get; set; }
+    //[TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
+    public class Article : BaseTable, IBody, IOrgSpecific
+    {
+        [References(typeof(Organization))]
+        [PrimaryKey]
+        public int OrganizationId { get; set; }
 
-		[MaxLength(255)]
-		[PrimaryKey]
-		public string Title { get; set; }
+        [MaxLength(255)]
+        [PrimaryKey]
+        public string Title { get; set; }
 
-		[MaxLength(255)]
-		public string Location { get; set; }
+        [MaxLength(255)]
+        public string Location { get; set; }
 
-		public string TextBody { get; set; }
+        public string TextBody { get; set; }
 
-		public string HtmlBody { get; set; }
+        public string HtmlBody { get; set; }
 
-		public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = true;
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {

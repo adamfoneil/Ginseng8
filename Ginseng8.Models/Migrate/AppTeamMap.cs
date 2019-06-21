@@ -5,7 +5,7 @@ namespace Ginseng.Models.Migrate
     /// <summary>
     /// Used to migrate work items from apps to their equivalent teams
     /// </summary>
-    [Schema("migrate")]    
+    [Schema("migrate")]
     [Identity(nameof(Id))]
     public class AppTeamMap
     {

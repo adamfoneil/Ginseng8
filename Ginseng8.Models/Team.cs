@@ -52,6 +52,7 @@ namespace Ginseng.Models
         /// </summary>
         [NotMapped]
         public string ForeColor { get; set; } = "auto";
+
         [NotMapped]
         public string BackColor { get; set; } = "auto";
 

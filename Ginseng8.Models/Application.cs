@@ -11,33 +11,33 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	/// <summary>
-	/// A software product managed by an organization (or team)
-	/// </summary>
-	public class Application : BaseTable, IOrgSpecific, IFindRelated<int>, ISelectable
-	{
-		[References(typeof(Organization))]
-		[PrimaryKey]
-		public int OrganizationId { get; set; }
+    /// <summary>
+    /// A software product managed by an organization (or team)
+    /// </summary>
+    public class Application : BaseTable, IOrgSpecific, IFindRelated<int>, ISelectable
+    {
+        [References(typeof(Organization))]
+        [PrimaryKey]
+        public int OrganizationId { get; set; }
 
-		[PrimaryKey]
-		[MaxLength(50)]
-		public string Name { get; set; }
+        [PrimaryKey]
+        [MaxLength(50)]
+        public string Name { get; set; }
 
-		[MaxLength(255)]
-		public string Description { get; set; }
+        [MaxLength(255)]
+        public string Description { get; set; }
 
-		/// <summary>
-		/// App's live URL, as applicable
-		/// </summary>
-		[MaxLength(255)]
-		public string Url { get; set; }
+        /// <summary>
+        /// App's live URL, as applicable
+        /// </summary>
+        [MaxLength(255)]
+        public string Url { get; set; }
 
         /// <summary>
         /// Where do we email invoices?
         /// </summary>
         [MaxLength(100)]
-        public string InvoiceEmail { get; set; }            
+        public string InvoiceEmail { get; set; }
 
         /// <summary>
         /// Show this app on the New Items dashbord page
@@ -48,8 +48,8 @@ namespace Ginseng.Models
         [References(typeof(Team))]
         public int? TeamId { get; set; }
 
-		public bool IsActive { get; set; } = true;
-        
+        public bool IsActive { get; set; } = true;
+
         public Organization Organization { get; set; }
         public Team Team { get; set; }
 
@@ -64,6 +64,7 @@ namespace Ginseng.Models
         /// </summary>
         [NotMapped]
         public string ForeColor { get; set; } = "auto";
+
         [NotMapped]
         public string BackColor { get; set; } = "auto";
 

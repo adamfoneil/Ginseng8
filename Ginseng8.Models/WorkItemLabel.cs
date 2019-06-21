@@ -1,10 +1,10 @@
-﻿using System.Data;
-using System.Threading.Tasks;
-using Ginseng.Models.Conventions;
+﻿using Ginseng.Models.Conventions;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {

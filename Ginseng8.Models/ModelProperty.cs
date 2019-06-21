@@ -9,33 +9,33 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	/// <summary>
-	/// Describes a model property (database column)
-	/// </summary>
-	[TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
-	public class ModelProperty : BaseTable, IOrgSpecific
-	{
-		[References(typeof(ModelClass))]
-		[PrimaryKey]
-		public int ModelClassId { get; set; }
+    /// <summary>
+    /// Describes a model property (database column)
+    /// </summary>
+    [TrackChanges(IgnoreProperties = "DateModified,ModifiedBy")]
+    public class ModelProperty : BaseTable, IOrgSpecific
+    {
+        [References(typeof(ModelClass))]
+        [PrimaryKey]
+        public int ModelClassId { get; set; }
 
-		[PrimaryKey]
-		[MaxLength(50)]
-		public string Name { get; set; }
+        [PrimaryKey]
+        [MaxLength(50)]
+        public string Name { get; set; }
 
-		[References(typeof(ModelClass))]
-		public int TypeId { get; set; }
+        [References(typeof(ModelClass))]
+        public int TypeId { get; set; }
 
-		public bool InPrimaryKey { get; set; }
+        public bool InPrimaryKey { get; set; }
 
-		public bool IsNullable { get; set; }
+        public bool IsNullable { get; set; }
 
-		public string Description { get; set; }
+        public string Description { get; set; }
 
-		public int? Position { get; set; }
+        public int? Position { get; set; }
 
-		[NotMapped]
-		public bool IsScalarType { get; set; }
+        [NotMapped]
+        public bool IsScalarType { get; set; }
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {

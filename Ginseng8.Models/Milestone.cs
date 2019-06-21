@@ -85,7 +85,7 @@ namespace Ginseng.Models
 					FROM [dbo].[Milestone]
 					WHERE [ApplicationId]=@appId AND [Date]>getdate()
 				) SELECT TOP (1) [ms].*
-				FROM 
+				FROM
 					[dbo].[Milestone] [ms] INNER JOIN [source] [src] ON [ms].[Date]=[src].[MinDate]
 				WHERE
 					[ApplicationId]=@appId", new { appId });

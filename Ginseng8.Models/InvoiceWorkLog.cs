@@ -42,7 +42,7 @@ namespace Ginseng.Models
         public decimal Rate { get; set; }
 
         [Calculated("[Hours]*[Rate]", true)]
-        [DecimalPrecision(5,2)]
+        [DecimalPrecision(5, 2)]
         public decimal Amount { get; set; }
 
         public string TextBody { get; set; }
