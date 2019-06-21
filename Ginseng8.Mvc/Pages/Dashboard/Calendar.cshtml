@@ -13,7 +13,7 @@ else
     <partial name="Items/_MilestoneDetail" model="Model" />
 }
 
-@if (Model.CurrentOrgUser.CurrentAppId.HasValue)
+@if (Model.CurrentOrgUser.CurrentTeamId.HasValue)
 {
     <partial name="Dashboard/Items/_CreateMilestone" model="@(new CreateMilestoneView() { ProjectSelect = Model.ProjectSelect })" />
 }

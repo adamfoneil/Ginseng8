@@ -66,7 +66,8 @@ namespace Ginseng.Mvc.Queries
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL AND [HasImpediment]=1) AS [ImpededWorkItems]
                 FROM
                     [dbo].[Milestone] [ms]
-                    INNER JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
+                    INNER JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]
+                    LEFT JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
                 WHERE
                     [app].[OrganizationId]=@orgId AND
                     [ms].[Date] > DATEADD(d, -7, getdate())
@@ -83,6 +84,9 @@ namespace Ginseng.Mvc.Queries
         }
 
         public int OrgId { get; set; }
+
+        [Where("[ms].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 
         [Where("[ms].[ApplicationId]=@appId")]
         public int? AppId { get; set; }

@@ -91,12 +91,12 @@ namespace Ginseng.Mvc.Pages.Dashboard
             }
 
             var metrics = (!Id.HasValue) ?
-                await new MilestoneMetrics() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection) :
-                await new MilestoneMetrics() { OrgId = OrgId, Id = Id }.ExecuteAsync(connection);
+                await new MilestoneMetrics() { OrgId = OrgId, TeamId = CurrentOrgUser.CurrentTeamId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection) :
+                await new MilestoneMetrics() { OrgId = OrgId, TeamId = CurrentOrgUser.CurrentTeamId, Id = Id }.ExecuteAsync(connection);
 
             Metrics = metrics.ToDictionary(row => row.Id);
 
-            var emptyMilestones = await new Milestones() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId ?? 0, HasOpenWorkItems = false, Id = Id }.ExecuteAsync(connection);
+            var emptyMilestones = await new Milestones() { OrgId = OrgId, TeamId = CurrentOrgUser.CurrentTeamId, AppId = CurrentOrgUser.CurrentAppId, HasOpenWorkItems = false, Id = Id }.ExecuteAsync(connection);
             EmptyMilestones = emptyMilestones.Select(ms => new OpenWorkItemsResult()
             {
                 MilestoneId = ms.Id,
@@ -112,9 +112,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
             NextGenerated = await Milestone.CreateNextAsync(connection, OrgId);
         }
 
-        public async Task<IActionResult> OnPostCreate(Milestone record, string returnUrl)
+        public async Task<IActionResult> OnPostCreateAsync(Milestone record, string returnUrl)
         {
-            record.ApplicationId = CurrentOrgUser.CurrentAppId ?? 0;
+            record.TeamId = CurrentOrgUser.CurrentTeamId ?? 0;
+            record.ApplicationId = CurrentOrgUser.CurrentAppId;
+            
             using (var cn = Data.GetConnection())
             {
                 if (await Data.TrySaveAsync(cn, record))

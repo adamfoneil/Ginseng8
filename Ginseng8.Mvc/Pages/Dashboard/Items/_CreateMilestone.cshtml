@@ -5,7 +5,7 @@
 }
 <div class="offset-2 mt-4 justify-content-center">
     <form method="post" asp-page="/Dashboard/Calendar" asp-page-handler="Create" class="form-inline">
-        <input type="hidden" name="returnUrl" value="@returnUrl" />
+        <input type="hidden" name="returnUrl" value="@returnUrl" />        
         <input type="text" name="Name" class="form-control form-control-sm mr-2" placeholder="milestone name" required="required" />
         <select name="ProjectId" asp-items="Model.ProjectSelect" class="form-control form-control-sm mr-2">
             <option value="">- project optional -</option>
