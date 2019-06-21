@@ -35,6 +35,9 @@ namespace Ginseng.Mvc.Queries
         
         public int OrgId { get; set; }
 
+        [Where("[app].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
+
         [Where("[ms].[ApplicationId]=@appId")]
 		public int? AppId { get; set; }
 
