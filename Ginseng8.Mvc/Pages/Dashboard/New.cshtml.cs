@@ -19,6 +19,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         public int TeamId { get; set; }
         public IEnumerable<Team> Teams { get; set; }
+        public Dictionary<int, Team> TeamInfo { get; set; }
         public IEnumerable<Application> Applications { get; set; }
         public ILookup<int, Label> Labels { get; set; }
         public ILookup<AppLabelCell, OpenWorkItemsResult> AppLabelItems { get; set; }
@@ -36,11 +37,17 @@ namespace Ginseng.Mvc.Pages.Dashboard
             return LabelNotifyUsers.ContainsKey(labelId) ? LabelNotifyUsers[labelId] : "no one currently setup";
         }
 
+        public bool UseApplications(int? teamId)
+        {
+            return (teamId.HasValue) ? TeamInfo[teamId.Value].UseApplications : true;
+        }
+
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
             TeamId = CurrentOrgUser.CurrentTeamId ?? 0;
             Applications = await new Applications() { OrgId = OrgId, AllowNewItems = true, TeamId = TeamId, IsActive = true }.ExecuteAsync(connection);
             Teams = await new Teams() { OrgId = OrgId, IsActive = true }.ExecuteAsync(connection);
+            TeamInfo = Teams.ToDictionary(row => row.Id); // used to give access to Team.UseApplications for determining whether to show app dropdown in new item form
 
             if (!Applications.Any() && TeamId != 0)
             {

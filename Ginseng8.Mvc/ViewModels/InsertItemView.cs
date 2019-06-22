@@ -41,22 +41,23 @@ namespace Ginseng.Mvc.ViewModels
             var properties = type.GetProperties();
             foreach (var kp in ContextValues.Where(kp => kp.Value != 0))
             {
-                PropertyInfo property = FindProperty(properties, kp.Key);
-                property.SetValue(result, kp.Value);
+                if (FindProperty(properties, kp.Key, out PropertyInfo property)) property.SetValue(result, kp.Value);
             }
 
             return result;
         }
 
-        private PropertyInfo FindProperty(IEnumerable<PropertyInfo> properties, string propertyName)
+        private bool FindProperty(IEnumerable<PropertyInfo> properties, string propertyName, out PropertyInfo result)
         {
             try
             {                
-                return properties.Single(p => p.Name.ToLower().Equals(propertyName.ToLower()));
+                result = properties.Single(p => p.Name.ToLower().Equals(propertyName.ToLower()));
+                return true;
             }
-            catch (Exception exc)
+            catch
             {
-                throw new Exception($"Couldn't find property {propertyName}", exc);
+                result = null;
+                return false;
             }
         }
 
