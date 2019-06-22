@@ -251,7 +251,12 @@ itemDetailButtons.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
         var divId = ev.target.getAttribute('data-target');
         var div = document.getElementById(divId);
-        $(div).slideToggle();
+        $(div).slideToggle('fast', function () {
+            if ($(this).is(':visible')) {
+                var editor = $(this).find('.htmlEditor');
+                editor.froalaEditor('events.focus');
+            }
+        });        
     });
 });
 
