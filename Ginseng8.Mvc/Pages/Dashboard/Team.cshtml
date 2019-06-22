@@ -43,7 +43,7 @@
                                 { "milestoneId", milestoneGrp.Key },
                                 { Model.UserIdColumns[userGrp.Key].UserIdColumn, userGrp.Key },
                                 { "activityId", Model.UserIdColumns[userGrp.Key].ActivityId }
-                            }))
+                            }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
                             </div>
                         </div>
                     }

@@ -47,7 +47,7 @@ else
             { "teamId", Model.SelectedProject.TeamId },
             { "applicationId", Model.SelectedProject.ApplicationId ?? 0 },
             { "projectId", Model.Id.Value }
-        }))
+        }) { Dropdowns = Model.Dropdowns, UseApplications = Model.SelectedProject.Team.UseApplications })
     }
     else
     {
