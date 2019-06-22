@@ -105,6 +105,18 @@ namespace Ginseng.Mvc.Queries
             get { return (UseApplications) ? "applicationId" : "teamId"; }
         }
 
+        /// <summary>
+        /// Used to create hidden fields for inserting work items.
+        /// It varies whether we need an applicationId based on the kind of team
+        /// </summary>        
+        public Dictionary<string, int> ContextFields()
+        {
+            var result = new Dictionary<string, int>();
+            result.Add("teamId", TeamId);
+            if (UseApplications) result.Add("applicationId", ApplicationId);
+            return result;
+        }
+
         public ProjectParentType ProjectParentType
         {
             get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }

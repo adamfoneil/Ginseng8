@@ -57,10 +57,7 @@
 @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ProjectParentId))
 {
     <h4>@appGrp.First().ProjectParentName</h4>
-    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-    {
-        { appGrp.First().ProjectParentField, appGrp.Key }        
-    }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
+    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(appGrp.First().ContextFields()) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
 
     foreach (var priorityGrp in appGrp.OrderBy(row => row.PriorityGroup).GroupBy(row => row.PriorityGroup))
     {
