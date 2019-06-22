@@ -1,0 +1,47 @@
+﻿@model WorkItemCardView
+
+<input type="hidden" name="Number" value="@Model.WorkItem.Number" />
+
+@{ string itemUpdateClass = (Model.UpdatesEnabled) ? "itemUpdate" : string.Empty; }
+
+<select name="TeamId" asp-items="@Model.Dropdowns.TeamSelect(Model.WorkItem.TeamId)" class="form-control-sm mr-2 @itemUpdateClass fillApps showHideApps fillProjects fillMilestones" title="Team" id="TeamId-@Model.WorkItem.Number"></select>
+
+@if (Model.WorkItem.UseApplications)
+{
+    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass fillProjects fillMilestones" style="max-width:200px" id="AppId-@Model.WorkItem.Number">
+        <option value="">- application -</option>
+    </select>
+}
+
+<select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass" id="ProjectId-@Model.WorkItem.Number" style="max-width:200px">
+    <option value="">- project -</option>
+</select>
+
+@if (Model.WorkItem.ProjectId != 0)
+{
+    <a asp-page="/Dashboard/Projects" asp-route-id="@Model.WorkItem.ProjectId" title="Goto project" class="mr-2" style="max-width:175px">
+        <i class="fas fa-chevron-double-right small"></i>
+    </a>
+
+    @if (Model.WorkItem.DataModelId.HasValue)
+    {
+        <a asp-page="/Data/Index" asp-route-modelId="@Model.WorkItem.DataModelId">
+            <i class="far fa-database small mr-2"></i>
+        </a>
+    }
+}
+
+<select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass" id="MilestoneId-@Model.WorkItem.Number" style="max-width:150px">
+    <option value="">- milestone -</option>
+</select>
+
+@if (Model.WorkItem.MilestoneId != 0)
+{
+    <a asp-page="/Dashboard/Calendar" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
+        <i class="fas fa-chevron-double-right small"></i>
+    </a>
+}
+
+<select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass">
+    <option value="">- size -</option>
+</select>

@@ -65,7 +65,7 @@
                         { "milestoneId", milestoneGrp.Key },
                         { Model.UserIdColumnName, Model.UserId },
                         { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
-                    }))
+                    }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
                 }
                 else
                 {

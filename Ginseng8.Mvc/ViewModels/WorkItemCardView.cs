@@ -18,6 +18,12 @@ namespace Ginseng.Mvc.ViewModels
 		public bool ShowDetailsButton { get; set; } = true;
         public IEnumerable<SelectListItem> AssignToUsers { get; set; }
 
+        /// <summary>
+        /// Indicates whether ajax calls are made to update work items when fields are changed in the UI.
+        /// Set to false when used from _InsertItem.cshtml because it's a new item that doesn't exist yet
+        /// </summary>
+        public bool UpdatesEnabled { get; set; } = true;
+
 		public string HandOffButtonText()
 		{
 			if (WorkItem.ActivityId != 0 || WorkItem.DeveloperUserId.HasValue)
