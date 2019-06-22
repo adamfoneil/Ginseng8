@@ -96,7 +96,6 @@ updateFields.forEach(function (e) {
                     numberBadge.css('background-color', result.backgroundColor);
                     numberBadge.removeClass('badge-secondary');
                     if (result.className) numberBadge.addClass(result.className);
-
                     var missingEstimateModifier = $('#' + result.missingEstimateModifierId);
                     if (result.showMissingEstimateModifier) {
                         missingEstimateModifier.show();
