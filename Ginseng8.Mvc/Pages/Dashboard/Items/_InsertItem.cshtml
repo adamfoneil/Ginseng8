@@ -17,9 +17,12 @@
 
             <div class="form-row">
                 <div class="col-12" style="display:none" id="item-detail-@Model.Context">
-                    <div class="mb-2">
-                        <partial name="/Pages/Dashboard/Items/_ItemFields.cshtml" model="new WorkItemCardView() { Dropdowns = Model.Dropdowns, WorkItem = Model.GetDefaultWorkItem(), UpdatesEnabled = false }"/>
-                    </div>
+                    @if (Model.Dropdowns != null)
+                    {
+                        <div class="mb-2">
+                            <partial name="/Pages/Dashboard/Items/_ItemFields.cshtml" model="new WorkItemCardView() { Dropdowns = Model.Dropdowns, WorkItem = Model.GetDefaultWorkItem(), UpdatesEnabled = false }"/>
+                        </div>
+                    }
                     <textarea name="HtmlBody" class="htmlEditor"></textarea>
                 </div>
             </div>

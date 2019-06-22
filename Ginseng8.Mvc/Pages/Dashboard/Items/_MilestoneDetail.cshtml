@@ -46,7 +46,7 @@
         { "teamId", appGrp.First().TeamId },
         { "applicationId", appGrp.Key },
         { "milestoneId", Model.Id.Value }
-    }))
+    }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
 
     var recentlyClosed = Model.ClosedItems[Model.Id.Value].Take(10);
     @if (recentlyClosed.Any())

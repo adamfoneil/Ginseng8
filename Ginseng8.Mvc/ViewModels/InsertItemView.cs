@@ -66,8 +66,10 @@ namespace Ginseng.Mvc.ViewModels
             // filter out zeroes from fields because they are FK violations
             // also filter out fields that are rendered in dropdowns
 
-            // didn't know another way to identify these
-            var visibleFields = new [] { "teamId", "applicationId", "projectId", "milestoneId", "sizeId" }.Select(s => s.ToLower());
+            // if we're using Dropdowns, then it  means we need to exclude the visible fields from the hidden fields
+            var visibleFields = (Dropdowns != null) ?
+                new [] { "teamId", "applicationId", "projectId", "milestoneId", "sizeId" }.Select(s => s.ToLower()) :
+                Enumerable.Empty<string>();
 
 			foreach (var kp in ContextValues.Where(kp => kp.Value != 0 && !visibleFields.Contains(kp.Key.ToLower())))
 			{

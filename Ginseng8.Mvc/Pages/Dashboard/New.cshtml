@@ -56,7 +56,7 @@
                                 { "teamId", Model.TeamId },
                                 { "applicationId", app.Id },
                                 { "labelId", label.Id }
-                            }) { Dropdowns = Model.Dropdowns, UseApplications = Model.UseApplications(app.TeamId) })
+                            }))
 
                             @foreach (var item in Model.GetAppLabelItems(app.Id, label.Id))
                             {

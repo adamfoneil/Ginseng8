@@ -51,7 +51,7 @@
                             { "applicationId", appGrp.Key },
                             { "projectId", projectGrp.Key },
                             { "milestoneId", milestoneGrp.Key }
-                        }))
+                        }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
                     </div>
                 </div>
             }
