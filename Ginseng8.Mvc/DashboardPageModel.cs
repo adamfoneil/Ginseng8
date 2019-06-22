@@ -97,10 +97,10 @@ namespace Ginseng.Mvc
                     ItemsInPastMilestone = WorkItems.Where(wi => wi.MilestoneDate < DateTime.Today).ToArray();
                     if (ItemsInPastMilestone.Any())
                     {
-                        var appId = CurrentOrgUser.CurrentAppId ?? 0;
-                        if (appId != 0)
+                        var teamId = CurrentOrgUser.CurrentTeamId ?? 0;
+                        if (teamId != 0)
                         {
-                            NextSoonestMilestone = await Milestone.GetSoonestNextAsync(cn, appId) ?? await Milestone.CreateNextAsync(cn, appId);
+                            NextSoonestMilestone = await Milestone.GetSoonestNextAsync(cn, teamId) ?? await Milestone.CreateNextAsync(cn, teamId);
                         }                        
                     }
 

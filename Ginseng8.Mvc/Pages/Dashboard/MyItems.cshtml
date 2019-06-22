@@ -89,7 +89,7 @@
                 { "applicationId", Html.CurrentAppId() },
                 { Model.UserIdColumnName, Model.UserId },
                 { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
-            }))
+            }) { Dropdowns = Model.Dropdowns, UseApplications = Model.CurrentOrgUser.CurrentTeam.UseApplications })
         }
         else
         {
