@@ -92,6 +92,17 @@ updateFields.forEach(function (e) {
                     var successImg = document.getElementById('update-success-' + number);
                     $(successImg).show();
                     $(successImg).fadeOut();
+                    var numberBadge = $('#work-item-number-' + number);
+                    numberBadge.css('background-color', result.backgroundColor);
+                    numberBadge.removeClass('badge-secondary');
+                    if (result.className) numberBadge.addClass(result.className);
+
+                    var missingEstimateModifier = $('#' + result.missingEstimateModifierId);
+                    if (result.showMissingEstimateModifier) {
+                        missingEstimateModifier.show();
+                    } else {
+                        missingEstimateModifier.hide();
+                    }
                 } else {
                     $(failImg).show();
                     failImg.setAttribute('title', result.message);

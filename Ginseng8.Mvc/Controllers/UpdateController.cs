@@ -43,7 +43,7 @@ namespace Ginseng.Mvc.Controllers
         public async Task<JsonResult> WorkItem(WorkItem fields)
         {
             try
-            {
+            {                
                 var workItem = await _data.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, fields.Number });
 
                 if (fields.TeamId != workItem.TeamId)
@@ -53,6 +53,12 @@ namespace Ginseng.Mvc.Controllers
                     workItem.ProjectId = null;
                     workItem.MilestoneId = null;
                 }
+
+                string backgroundColor = string.Empty;
+                string className = string.Empty;                
+                bool getColor = (fields.SizeId != workItem.SizeId);
+                bool showMissingEstimateModifier = !fields.SizeId.HasValue;
+                string missingEstimateModifierId = $"mod-{workItem.Number}-{OpenWorkItemsResult.UnestimatedModifier}";
 
                 workItem.TeamId = fields.TeamId;
                 workItem.ApplicationId = fields.ApplicationId;
@@ -65,7 +71,26 @@ namespace Ginseng.Mvc.Controllers
                 await _data.TryUpdateAsync(workItem,
                     r => r.TeamId, r => r.ApplicationId, r => r.ProjectId, r => r.MilestoneId, r => r.SizeId, r => r.CloseReasonId,
                     r => r.ModifiedBy, r => r.DateModified);
-                return Json(new { success = true });
+
+                if (getColor)
+                {
+                    if (fields.SizeId.HasValue)
+                    {
+                        using (var cn = _data.GetConnection())
+                        {
+                            var item = await new OpenWorkItems() { Id = workItem.Id, OrgId = _data.CurrentOrg.Id }.ExecuteSingleAsync(cn);
+                            backgroundColor = HtmlHelpers.WeightedColorToHex(item.ColorGradientPosition);
+                            className = string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        backgroundColor = string.Empty;
+                        className = "badge-secondary";
+                    }
+                }
+                
+                return Json(new { success = true, backgroundColor, className, showMissingEstimateModifier, missingEstimateModifierId });
             }
             catch (Exception exc)
             {

@@ -33,6 +33,11 @@ namespace Ginseng.Mvc.Queries
         public const string TicketIcon = "fas fa-ticket-alt";
         public const string TicketColor = "#1a7172";
 
+        public const string ImpedimentModifier = "impediment";
+        public const string UnestimatedModifier = "unestimated";
+        public const string StoppedModifier = "stopped";
+        public const string TicketModifier = "ticket";
+
         public int Id { get; set; }
 		public int Number { get; set; }
 		public string Title { get; set; }
@@ -134,10 +139,10 @@ namespace Ginseng.Mvc.Queries
 
 		public IEnumerable<Modifier> GetModifiers()
 		{
-			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
-			if (EstimateHours == 0) yield return new Modifier() { Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
-			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };
-            if (IsHelpdeskTicket) yield return new Modifier() { Icon = TicketIcon, Color = TicketColor, Description = "Item was generated from a Freshdesk ticket" };
+			if (HasImpediment) yield return new Modifier() { Key = ImpedimentModifier, Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
+			if (EstimateHours == 0) yield return new Modifier() { Key = UnestimatedModifier, Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
+			if (IsStopped()) yield return new Modifier() { Key = StoppedModifier, Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };
+            if (IsHelpdeskTicket) yield return new Modifier() { Key = TicketModifier, Icon = TicketIcon, Color = TicketColor, Description = "Item was generated from a Freshdesk ticket" };
 		}
 
 		public string ActivityStatus()
@@ -158,6 +163,7 @@ namespace Ginseng.Mvc.Queries
 
 		public class Modifier
 		{
+            public string Key { get; set; }
 			public string Icon { get; set; }
 			public string Color { get; set; }
 			public string Description { get; set; }
@@ -288,6 +294,9 @@ namespace Ginseng.Mvc.Queries
 		}
 
 		public int OrgId { get; set; }
+
+        [Where("[wi].[Id]=@id")]
+        public int? Id { get; set; }
 
         [Where("[wi].[TeamId]=@teamId")]
         public int? TeamId { get; set; }

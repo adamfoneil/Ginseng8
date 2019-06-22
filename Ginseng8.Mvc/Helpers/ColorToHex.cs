@@ -46,6 +46,12 @@ namespace Ginseng.Mvc.Helpers
 			return ColorToHex(html, WeightedColor(startGradient, endGradient, position));
 		}
 
+        public static string WeightedColorToHex(decimal position)
+        {
+            var color = WeightedColor(StartColor, EndColor, position);
+            return ColorTranslator.ToHtml(color);
+        }
+
 		public static Color WeightedColor(Color startGradient, Color endGradient, decimal position)
 		{
 			// help from http://jsfiddle.net/vksn3yLL/
