@@ -35,12 +35,12 @@ namespace Ginseng.Mvc.Pages.Dashboard
                     AppId = CurrentOrgUser.CurrentAppId
                 }.ExecuteAsync(cn);
 
-                MonthCells = Append(months, 4);
+                MonthCells = AppendMonths(months, 4);
             }
         }
 
 
-        private IEnumerable<YearMonth> Append(IEnumerable<YearMonth> months, int count)
+        private IEnumerable<YearMonth> AppendMonths(IEnumerable<YearMonth> months, int count)
         {
             var last = months.Last();
             var list = months.ToList();
