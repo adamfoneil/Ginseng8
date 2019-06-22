@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Dashboard\Items\_MilestoneCards.cshtml" />
+    <Content Remove="Pages\Dashboard\Items\_MilestoneDetail.cshtml" />
     <Content Remove="Pages\EmailContent\JoinRequest.cshtml" />
     <Content Remove="Pages\EmailContent\Notification.cshtml" />
     <Content Remove="Pages\EmailContent\_Layout.cshtml" />

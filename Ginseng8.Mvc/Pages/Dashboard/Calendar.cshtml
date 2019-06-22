@@ -4,19 +4,26 @@
     ViewData["Title"] = "Calendar";
 }
 
-@if (!Model.Id.HasValue)
+@foreach (var yearGrp in Model.MonthCells.GroupBy(row => row.Year))
 {
-    <partial name="Items/_MilestoneCards" model="Model" />
-}
-else
-{
-    <partial name="Items/_MilestoneDetail" model="Model" />
+    <h4>@yearGrp.Key</h4>
+    <div class="row">
+        @foreach (var month in yearGrp)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-4 mb-4">
+                <div class="card p-2 js-calendar-month-with-milestone-list-droppable" data-month="@month.Month" data-year="@month.Year">
+                    <h6 class="card-title text-right text-muted">@month.ToString()</h6>
+                    <div class="card-body pt-0 mt-2">
+                        <div class="row js-calendar-month-with-milestone-list">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }
 
-@if (Model.CurrentOrgUser.CurrentTeamId.HasValue)
-{
-    <partial name="Dashboard/Items/_CreateMilestone" model="@(new CreateMilestoneView() { ProjectSelect = Model.ProjectSelect })" />
-}
 
 @section Scripts {
     <script src="~/js/Milestone.js"></script>
