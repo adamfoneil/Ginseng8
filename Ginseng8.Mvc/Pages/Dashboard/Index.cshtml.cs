@@ -99,9 +99,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             var project = new Project() { Name = name, ApplicationId = applicationId, TeamId = teamId };
             await Data.TrySaveAsync(project);
-            return (applicationId.HasValue) ?
-                Redirect($"/Dashboard/Index?appId={applicationId}") :
-                Redirect($"/Dashboard/Index?teamId={teamId}");
+            return Redirect($"/Dashboard/Projects/{project.Id}");
         }
     }
 }
