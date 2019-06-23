@@ -44,6 +44,7 @@ namespace Ginseng.Mvc.Pages.Setup
             var apps = NewItemApps[labelId];
             return new MultiSelector<ISelectable>()
             {
+                IdPrefix = "apps",
                 Prompt = "Apps:",
                 PrimaryFieldName = "ApplicationId",
                 RelatedFieldName = "LabelId",

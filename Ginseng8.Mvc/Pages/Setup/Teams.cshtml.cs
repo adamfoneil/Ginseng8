@@ -41,6 +41,7 @@ namespace Ginseng.Mvc.Pages.Setup
             var labels = TeamLabels[teamId];
             return new MultiSelector<ISelectable>()
             {
+                IdPrefix = "teams",
                 Prompt = "Labels:",
                 PrimaryFieldName = "LabelId",
                 RelatedFieldName = "TeamId",
