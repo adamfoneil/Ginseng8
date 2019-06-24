@@ -32,8 +32,7 @@ namespace Ginseng.Mvc
         public ILookup<int, Comment> Comments { get; set; }
         public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
         public IEnumerable<WorkDaysResult> WorkDays { get; set; }
-        public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }
-        public string TeamUseApps { get; private set; } // this enables JS show-hides of app dropdown based on team selection
+        public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }        
 
         /// <summary>
         /// triggers display of partial to offer to move items to soonest upcoming or new milestone
@@ -85,9 +84,6 @@ namespace Ginseng.Mvc
             {
                 var redirect = await GetRedirectAsync(cn);
                 if (redirect != null) return redirect;
-
-                var teams = await new Teams() { OrgId = OrgId }.ExecuteAsync(cn);
-                TeamUseApps = JsonConvert.SerializeObject(teams.ToDictionary(row => row.Id, row => row.UseApplications));
 
                 var query = GetQuery();
                 if (query != null)
