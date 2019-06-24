@@ -32,7 +32,7 @@ namespace Ginseng.Mvc.Pages.Setup
             {
                 TeamSelect = await new TeamSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, TeamId);
                 AppSelect = await new AppSelect() { OrgId = OrgId, TeamId = TeamId }.ExecuteSelectListAsync(cn, AppId);
-                Milestones = await new Milestones() { OrgId = OrgId, TeamId = TeamId, AppId = AppId }.ExecuteAsync(cn);
+                Milestones = await new Milestones() { OrgId = OrgId, TeamId = TeamId, AppId = AppId, IsSelectable = null, MinDate = null }.ExecuteAsync(cn);
             }
         }
 

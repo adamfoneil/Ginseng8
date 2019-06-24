@@ -153,6 +153,12 @@
                 integrity="sha256-E/V4cWE4qvAeO5MOhjtGtqDzPndRO1LBk8lJ/PR7CA4=">
         </script>
     </environment>
+    @if (Model is AppPageModel)
+    {
+        <script>
+            var teamUseApps = @Html.Raw((Model as AppPageModel).TeamUseApps);
+        </script>
+    }
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/lib/jqueryui/jquery-ui.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
