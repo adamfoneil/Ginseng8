@@ -31,7 +31,7 @@
     }
 }
 
-<select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass" id="MilestoneId-@Model.WorkItem.Number" style="max-width:150px">
+<select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem, withIndirectOptions:  true)" class="form-control-sm mr-2 @itemUpdateClass" id="MilestoneId-@Model.WorkItem.Number" style="max-width:150px">
     <option value="">- milestone -</option>
 </select>
 
