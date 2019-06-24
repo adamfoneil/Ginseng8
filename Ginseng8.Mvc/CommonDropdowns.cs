@@ -26,7 +26,8 @@ namespace Ginseng.Mvc
         public ILookup<int, SelectListItem> ProjectsByTeam { get; set; }
 		public IEnumerable<SelectListItem> Sizes { get; set; }
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }		
-        public ILookup<int, SelectListItem> AllMilestones { get; set; } // keyed to applications
+        public ILookup<int, SelectListItem> MilestonesByApp { get; set; }
+        public ILookup<int, SelectListItem> MilestonesByTeam { get; set; }        
 		public ILookup<int, SelectListItem> AllDataModels { get; set; } // keyed to projects
 		public IEnumerable<Label> Labels { get; set; }
 
@@ -64,7 +65,7 @@ namespace Ginseng.Mvc
 
 		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
 		{
-            return (item.UseApplications) ?
+            return (item?.UseApplications ?? true) ?
                 new SelectList(ProjectsByApp[item?.ApplicationId ?? 0], "Value", "Text", item?.ProjectId) :
                 new SelectList(ProjectsByTeam[item?.TeamId ?? 0], "Value", "Text", item?.ProjectId);            
 		}
@@ -91,16 +92,18 @@ namespace Ginseng.Mvc
 			return new SelectList(CloseReasons, "Value", "Text", item?.CloseReasonId);
 		}
 
-		public SelectList MilestoneSelect(int appId, int? milestoneId, bool withNoneOption = false)
+		public SelectList MilestoneSelect(int teamId, int appId, int? milestoneId, bool withNoneOption = false)
 		{
-			var items = AllMilestones[appId].ToList();
+            var items = ((appId != 0) ? MilestonesByApp[appId] : MilestonesByTeam[teamId]).ToList();
 			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no milestone -" });
 			return new SelectList(items, "Value", "Text", milestoneId);
 		}
 
 		public SelectList MilestoneSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(AllMilestones[item?.ApplicationId ?? 0], "Value", "Text", item?.MilestoneId);
+            return (item?.UseApplications ?? true) ?
+                new SelectList(MilestonesByApp[item?.ApplicationId ?? 0], "Value", "Text", item?.MilestoneId) :
+                new SelectList(MilestonesByTeam[item?.TeamId ?? 0], "Value", "Text", item?.MilestoneDate);
 		}
 
 		public IEnumerable<Label> LabelItems(IEnumerable<Label> selectedLabels)
@@ -135,7 +138,8 @@ namespace Ginseng.Mvc
             result.ProjectsByTeam = allProjects.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
 
             var allMilestones = await new AllMilestones() { OrgId = orgId }.ExecuteAsync(connection);
-            result.AllMilestones = allMilestones.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
+            result.MilestonesByApp = allMilestones.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
+            result.MilestonesByTeam = allMilestones.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
                        
 			var allModels = await new DataModels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 			result.AllDataModels = allModels.ToLookup(row => row.ApplicationId, row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
