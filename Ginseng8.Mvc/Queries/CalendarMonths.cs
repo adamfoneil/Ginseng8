@@ -17,8 +17,10 @@ namespace Ginseng.Mvc.Queries
             FROM
                 [dbo].[Milestone] [ms]
                 INNER JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]
+                LEFT JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id] AND [app].[IsActive]=1
             WHERE
                 [t].[OrganizationId]=@orgId AND
+                [t].[IsActive]=1 AND
                 ([ms].[Date]>getdate() OR ([ms].[Date]<getdate() AND (EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL))))
                 {andWhere}
             GROUP BY

@@ -14,8 +14,26 @@
                 <div class="card p-2 js-calendar-month-with-milestone-list-droppable" data-month="@month.Month" data-year="@month.Year">
                     <h6 class="card-title text-right text-muted">@month.ToString()</h6>
                     <div class="card-body pt-0 mt-2">
-                        <div class="row js-calendar-month-with-milestone-list">
-
+                        <div>                            
+                            @foreach (var teamGrp in Model.Projects[month].GroupBy(row => row.TeamId))
+                            {
+                                foreach (var appGrp in teamGrp.GroupBy(row => row.ApplicationId))
+                                {
+                                    if (appGrp.Key != 0)
+                                    {
+                                        <h6>@appGrp.First().ApplicationName</h6>
+                                    }
+                                    <ul>
+                                        @foreach  (var prj in appGrp)
+                                        {
+                                            <li class="pb-1">
+                                                <button class="btn btn-sm btn-info">@prj.ProjectName</button>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                                
+                            }                            
                         </div>
                     </div>
                 </div>
@@ -23,7 +41,6 @@
         }
     </div>
 }
-
 
 @section Scripts {
     <script src="~/js/Milestone.js"></script>

@@ -23,22 +23,23 @@ namespace Ginseng.Mvc.Pages.Dashboard
         }
 
         public IEnumerable<YearMonth> MonthCells { get; set; }
+        public ILookup<YearMonth, CalendarProjectsResult> Projects { get; set; }
 
         public async Task OnGetAsync()
         {
             using (var cn = Data.GetConnection())
             {
-                var months = await new MilestoneMonths()
+                var projects = await new CalendarProjects()
                 {
                     OrgId = OrgId,
                     TeamId = CurrentOrgUser.CurrentTeamId,
                     AppId = CurrentOrgUser.CurrentAppId
                 }.ExecuteAsync(cn);
+                Projects = projects.ToLookup(row => new YearMonth(row.Year, row.Month));
 
-                MonthCells = AppendMonths(months, 4);
+                MonthCells = AppendMonths(Projects.Select(grp => grp.Key), 4);
             }
         }
-
 
         private IEnumerable<YearMonth> AppendMonths(IEnumerable<YearMonth> months, int count)
         {
@@ -46,18 +47,6 @@ namespace Ginseng.Mvc.Pages.Dashboard
             var list = months.ToList();
             list.AddRange(Enumerable.Range(1, count).Select(i => last + i));
             return list;
-        }
-
-        private IEnumerable<YearMonth> GetYearMonthRange(YearMonth start, YearMonth end)
-        {
-            List<YearMonth> results = new List<YearMonth>();
-            YearMonth add = start;
-            while (add <= end)
-            {
-                results.Add(add);
-                add += 1;
-            }
-            return results;
         }
     }
 }
