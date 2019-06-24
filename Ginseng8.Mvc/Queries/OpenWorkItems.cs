@@ -408,6 +408,12 @@ namespace Ginseng.Mvc.Queries
         [Case(true, "[wit].[Id] IS NOT NULL")]
         public bool? IsFreshdeskTicket { get; set; }        
 
+        [Where("YEAR([ms].[Date])=@milestoneYear")]
+        public int? MilestoneYear { get; set; }
+
+        [Where("MONTH([ms].[Date])=@milestoneMonth")]
+        public int? MilestoneMonth { get; set; }
+
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
 		{
 			return TestExecuteHelper(connection);

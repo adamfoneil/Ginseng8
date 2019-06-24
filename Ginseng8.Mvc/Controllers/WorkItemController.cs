@@ -476,12 +476,14 @@ namespace Ginseng.Mvc.Controllers
             return PartialView("List", vm);
         }
 
-        public async Task<PartialViewResult> ListInProject(int id)
+        public async Task<PartialViewResult> ListInProject(int id, int? year, int? month)
         {
             var vm = await ListInnerAsync(new OpenWorkItems()
             {
                 OrgId = _data.CurrentOrg.Id,
-                ProjectId = id
+                ProjectId = id,
+                MilestoneYear = year,
+                MilestoneMonth = month
             });
 
             return PartialView("List", vm);

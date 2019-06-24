@@ -99,10 +99,15 @@ $('.project-work-items').tooltip({
         // close any lingering tooltips
         var $id = $(ui.tooltip).attr('id');
         $('div.ui-tooltip').not('#' + $id).remove();
-
+        
         var projectId = $(ui.tooltip).find('[data-project-id]').data('project-id');
+        var url = '/WorkItem/ListInProject/' + projectId;
 
-        fetch('/WorkItem/ListInProject/' + projectId, {
+        var year = $(this).data('year');
+        var month = $(this).data('month');
+        if (year & month) url += '?year=' + year + '&month=' + month;
+
+        fetch(url, {
             method: 'get'
         }).then(function (response) {
             return response.text();

@@ -29,7 +29,8 @@
                                         {
                                             var prjItem = prjGrp.First();
                                             <li class="pb-1">
-                                                <a class="btn btn-sm btn-info" asp-page="/Dashboard/Projects" asp-route-id="@prjItem.ProjectId">@prjItem.ProjectName</a>                                                
+                                                <a class="btn btn-sm btn-info project-work-items" asp-page="/Dashboard/Projects" asp-route-id="@prjItem.ProjectId" 
+                                                    data-project-id="@prjItem.ProjectId" data-month="@month.Month" data-year="@month.Year">@prjItem.ProjectName</a>
                                                 @foreach (var dev in prjGrp)
                                                 {
                                                     <br/><span class="small">@dev.DeveloperName | @dev.EstimateHours hrs</span>
@@ -37,8 +38,7 @@
                                             </li>
                                         }
                                     </ul>
-                                }
-                                
+                                }                                
                             }                            
                         </div>
                     </div>
@@ -50,6 +50,7 @@
 
 @section Scripts {
     <script src="~/js/Milestone.js"></script>
+    <script src="~/js/Projects.js"></script>
     <script>
         $(document).ready(function () {
             $(".datepicker").datepicker();

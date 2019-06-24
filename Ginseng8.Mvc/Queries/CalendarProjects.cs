@@ -15,6 +15,7 @@ namespace Ginseng.Mvc.Queries
         public string ProjectName { get; set; }
         public int ProjectId { get; set; }
         public string DeveloperName { get; set; }
+        public int DeveloperUserId { get; set; }
         public int WorkItemCount { get; set; }
         public int EstimateHours { get; set; }
         public int Month { get; set; }
@@ -32,6 +33,7 @@ namespace Ginseng.Mvc.Queries
                 [prj].[Name] AS [ProjectName],
                 [wi].[ProjectId],
                 COALESCE([ou].[DisplayName], [u].[UserName], '- unassigned -') AS [DeveloperName],
+                COALESCE([wi].[DeveloperUserId], 0) AS [DeveloperUserId],
                 COUNT(1) AS [WorkItemCount],
                 SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours])) AS [EstimateHours],
                 MONTH([ms].[Date]) AS [Month],
@@ -63,6 +65,7 @@ namespace Ginseng.Mvc.Queries
                 [wi].[ProjectId],
                 [prj].[Name],
                 COALESCE([ou].[DisplayName], [u].[UserName], '- unassigned -'),
+                COALESCE([wi].[DeveloperUserId], 0),
                 MONTH([ms].[Date]),
                 YEAR([ms].[Date])")
         {
