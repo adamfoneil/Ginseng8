@@ -17,7 +17,10 @@
                         <div>                            
                             @foreach (var teamGrp in Model.Projects[month].GroupBy(row => row.TeamId))
                             {
-                                <h5>@teamGrp.First().TeamName</h5>
+                                if (Model.ShowTeams)
+                                {
+                                    <h5>@teamGrp.First().TeamName</h5>
+                                }                                
                                 foreach (var appGrp in teamGrp.GroupBy(row => row.ApplicationId))
                                 {
                                     if (appGrp.Key != 0)

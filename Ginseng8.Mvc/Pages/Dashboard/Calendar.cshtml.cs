@@ -18,6 +18,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<YearMonth> MonthCells { get; set; }
         public ILookup<YearMonth, CalendarProjectsResult> Projects { get; set; }
 
+        public bool ShowTeams
+        {
+            get { return !CurrentOrgUser.CurrentTeamId.HasValue && !CurrentOrgUser.CurrentAppId.HasValue; }
+        }
+
         public async Task OnGetAsync()
         {
             using (var cn = Data.GetConnection())
