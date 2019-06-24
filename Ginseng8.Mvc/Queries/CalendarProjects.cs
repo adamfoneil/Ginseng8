@@ -67,7 +67,10 @@ namespace Ginseng.Mvc.Queries
                 COALESCE([ou].[DisplayName], [u].[UserName], '- unassigned -'),
                 COALESCE([wi].[DeveloperUserId], 0),
                 MONTH([ms].[Date]),
-                YEAR([ms].[Date])")
+                YEAR([ms].[Date])
+            ORDER BY
+                YEAR([ms].[Date]),
+                MONTH([ms].[Date])")
         {
         }
 
