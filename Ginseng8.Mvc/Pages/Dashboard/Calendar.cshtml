@@ -17,17 +17,18 @@
                         <div>                            
                             @foreach (var teamGrp in Model.Projects[month].GroupBy(row => row.TeamId))
                             {
+                                <h5>@teamGrp.First().TeamName</h5>
                                 foreach (var appGrp in teamGrp.GroupBy(row => row.ApplicationId))
                                 {
                                     if (appGrp.Key != 0)
                                     {
                                         <h6>@appGrp.First().ApplicationName</h6>
                                     }
-                                    <ul>
+                                    <ul style="list-style:none">
                                         @foreach  (var prj in appGrp)
                                         {
                                             <li class="pb-1">
-                                                <button class="btn btn-sm btn-info">@prj.ProjectName</button>
+                                                <a class="btn btn-sm btn-info" asp-page="/Dashboard/Projects" asp-route-id="@prj.ProjectId">@prj.ProjectName</a>
                                             </li>
                                         }
                                     </ul>

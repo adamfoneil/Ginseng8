@@ -43,6 +43,12 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         private IEnumerable<YearMonth> AppendMonths(IEnumerable<YearMonth> months, int count)
         {
+            if (!months.Any())
+            {
+                var start = new YearMonth();
+                return Enumerable.Range(1, count).Select(i => start + i);
+            }
+
             var last = months.Last();
             var list = months.ToList();
             list.AddRange(Enumerable.Range(1, count).Select(i => last + i));
