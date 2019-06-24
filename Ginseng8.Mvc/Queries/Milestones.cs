@@ -23,11 +23,7 @@ namespace Ginseng.Mvc.Queries
                 INNER JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]
                 LEFT JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
             WHERE
-                [t].[OrganizationId]=@orgId AND
-                (
-                    [ms].[Date]>getdate() OR 
-                    ([ms].[Date]<getdate() AND EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL))
-                )
+                [t].[OrganizationId]=@orgId                 
                 {andWhere}            
 			ORDER BY 
 				[Date]")
@@ -44,6 +40,12 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[ms].[Date]>=@minDate")]
 		public DateTime? MinDate { get; set; } = DateTime.Today.AddDays(-5);
+
+        [Case(true, @"(
+                    [ms].[Date]>getdate() OR 
+                    ([ms].[Date]<getdate() AND EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL))
+                )")]
+        public bool? IsSelectable { get; set; } = true;
 
         [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] [wi] INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id] WHERE [ProjectId]=@projectId AND [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL AND [app].[IsActive]=1)")]
         public int? ProjectId { get; set; }
@@ -63,6 +65,7 @@ namespace Ginseng.Mvc.Queries
         {
             yield return new Milestones() { AppId = 0 };
             yield return new Milestones() { OrgId = 0 };
+            yield return new Milestones() { OrgId = 0, IsSelectable = true };
         }
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)

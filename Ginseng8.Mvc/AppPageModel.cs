@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Postulate.Base.Classes;
 using System;
 using System.Collections.Generic;
@@ -33,6 +34,8 @@ namespace Ginseng.Mvc
         public int UserId { get { return CurrentUser?.UserId ?? 0; } }
         public int OrgId { get { return CurrentUser?.OrganizationId ?? 0; } }
         public DateTime LocalTime { get { return CurrentUser.LocalTime; } }
+
+        public string TeamUseApps { get; private set; } // this enables JS show-hides of app dropdown based on team selection
 
         public IEnumerable<SelectListItem> AssignToUsers { get; set; }
 
@@ -95,6 +98,9 @@ namespace Ginseng.Mvc
                 {
                     SwitchOrgs = new MySwitchOrgs() { CurrentOrgId = OrgId, UserId = UserId }.Execute(cn);
                     AssignToUsers = new UserSelect() { OrgId = OrgId, IsEnabled = true }.ExecuteItems(cn);
+
+                    var teams = new Teams() { OrgId = OrgId }.Execute(cn);
+                    TeamUseApps = JsonConvert.SerializeObject(teams.ToDictionary(row => row.Id, row => row.UseApplications));
                 }
             }
         }
