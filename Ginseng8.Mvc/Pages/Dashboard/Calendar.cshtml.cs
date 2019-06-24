@@ -1,15 +1,8 @@
-﻿using Ginseng.Models;
-using Ginseng.Mvc.Classes;
+﻿using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
-using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
-using Postulate.SqlServer.IntKey;
-using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,7 +12,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
     public class CalendarModel : AppPageModel
     {
         public CalendarModel(IConfiguration config) : base(config)
-        {            
+        {
         }
 
         public IEnumerable<YearMonth> MonthCells { get; set; }

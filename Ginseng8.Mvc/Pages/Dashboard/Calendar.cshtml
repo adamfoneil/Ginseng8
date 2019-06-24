@@ -25,10 +25,15 @@
                                         <h6>@appGrp.First().ApplicationName</h6>
                                     }
                                     <ul style="list-style:none">
-                                        @foreach  (var prj in appGrp)
+                                        @foreach (var prjGrp in appGrp.GroupBy(row => row.ProjectId))
                                         {
+                                            var prjItem = prjGrp.First();
                                             <li class="pb-1">
-                                                <a class="btn btn-sm btn-info" asp-page="/Dashboard/Projects" asp-route-id="@prj.ProjectId">@prj.ProjectName</a>
+                                                <a class="btn btn-sm btn-info" asp-page="/Dashboard/Projects" asp-route-id="@prjItem.ProjectId">@prjItem.ProjectName</a>                                                
+                                                @foreach (var dev in prjGrp)
+                                                {
+                                                    <br/><span class="small">@dev.DeveloperName | @dev.EstimateHours hrs</span>
+                                                }                                                
                                             </li>
                                         }
                                     </ul>
