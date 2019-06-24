@@ -118,8 +118,9 @@ namespace Ginseng.Models
 
             return await EventLog.WriteAsync(connection, new EventLog()
             {
-                DateCreated = comment.DateCreated,
+                DateCreated = comment.DateCreated,                
                 OrganizationId = comment.OrganizationId,
+                TeamId = workItem.TeamId,
                 ApplicationId = workItem.ApplicationId,
                 WorkItemId = workItem.Id,
                 EventId = SystemEvent.UserMentioned,
