@@ -33,8 +33,7 @@ namespace Ginseng.Mvc.Classes
         {
             public int Value { get; set; }
             public string Text { get; set; }
-            public Func<DateTime> GetDate { get; set; }
-            public Func<string> GetName { get; set; }
+            public Func<DateTime> GetDate { get; set; }            
 
             public async Task<int> GetMilestoneIdAsync(IDbConnection cn, IUser currentUser, int teamId, int? appId)
             {
