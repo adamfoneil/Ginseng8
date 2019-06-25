@@ -32,11 +32,22 @@
                                         {
                                             var prjItem = prjGrp.First();
                                             <li class="pb-1">
-                                                <a class="btn btn-sm btn-info project-work-items" asp-page="/Dashboard/Projects" asp-route-id="@prjItem.ProjectId" 
+                                                <a class="btn btn-info project-work-items" asp-page="/Dashboard/Projects" asp-route-id="@prjItem.ProjectId" 
                                                     data-project-id="@prjItem.ProjectId" data-month="@month.Month" data-year="@month.Year">@prjItem.ProjectName</a>
                                                 @foreach (var dev in prjGrp)
                                                 {
-                                                    <br/><span class="small">@dev.DeveloperName | @dev.EstimateHours hrs</span>
+                                                    var balance = Model.GetBalance(month, appGrp.Key, dev.DeveloperUserId);
+                                                    var backColor = Model.GetBalanceBackColor(balance);
+                                                    var foreColor = Model.GetBalanceForeColor(balance);
+                                                    <br/>
+                                                    @if (dev.DeveloperUserId != 0)
+                                                    {
+                                                        <span class="small">@dev.DeveloperName | <span style="background-color:@backColor;color:@foreColor" title="@dev.EstimateHours est hrs">@balance hrs left</span></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="small">@dev.DeveloperName | <span style="background-color:@backColor;color:@foreColor">@dev.EstimateHours est hrs</span></span>
+                                                    }
                                                 }                                                
                                             </li>
                                         }

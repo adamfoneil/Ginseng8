@@ -174,7 +174,7 @@ namespace Testing
         [TestMethod]
         public void CalendarProjectsQuery()
         {
-            TestQuery<CalendarProjects>();
+            TestQuery<DevCalendarProjects>();
         }
     }
 }

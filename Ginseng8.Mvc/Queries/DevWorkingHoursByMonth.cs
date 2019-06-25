@@ -7,7 +7,7 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
-    public class WorkingHoursByMonthResult
+    public class DevWorkingHoursByMonthResult
     {
         public string UserName { get; set; }
         public int UserId { get; set; }
@@ -16,9 +16,9 @@ namespace Ginseng.Mvc.Queries
         public int WorkingHours { get; set; }
     }
 
-    public class WorkingHoursByMonth : Query<WorkingHoursByMonthResult>, ITestableQuery
+    public class DevWorkingHoursByMonth : Query<DevWorkingHoursByMonthResult>, ITestableQuery
     {
-        public WorkingHoursByMonth() : base(
+        public DevWorkingHoursByMonth() : base(
             @"SELECT
                 COALESCE([ou].[DisplayName], [u].[UserName]) AS [UserName],
                 [wd].[UserId],
@@ -46,7 +46,7 @@ namespace Ginseng.Mvc.Queries
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {
-            yield return new WorkingHoursByMonth() { OrgId = 1, EndDate = new DateTime(2019, 12, 31) };
+            yield return new DevWorkingHoursByMonth() { OrgId = 1, EndDate = new DateTime(2019, 12, 31) };
         }
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)
