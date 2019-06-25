@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using Postulate.Base;
 using Postulate.Base.Attributes;
@@ -20,6 +21,8 @@ namespace Ginseng.Mvc.Queries
         public int EstimateHours { get; set; }
         public int Month { get; set; }
         public int Year { get; set; }
+
+        public DateTime GetMonthEndDate() => new DateTime(Year, Month, DateTime.DaysInMonth(Year, Month));
     }
 
     public class CalendarProjects : Query<CalendarProjectsResult>, ITestableQuery

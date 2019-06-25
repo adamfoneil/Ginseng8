@@ -2,6 +2,7 @@
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,6 +18,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         public IEnumerable<YearMonth> MonthCells { get; set; }
         public ILookup<YearMonth, CalendarProjectsResult> Projects { get; set; }
+        public ILookup<YearMonth, WorkingHoursByMonthResult> WorkingHours { get; set; }
 
         public bool ShowTeams
         {
@@ -35,6 +37,19 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 }.ExecuteAsync(cn);
                 Projects = projects.ToLookup(row => new YearMonth(row.Year, row.Month));
 
+                if (projects.Any())
+                {
+                    var userIds = projects.GroupBy(row => row.DeveloperUserId).Select(grp => grp.Key).ToArray();
+
+                    DateTime endDate = projects.Max(row => row.GetMonthEndDate());
+                    var workingHours = await new WorkingHoursByMonth()
+                    {
+                        OrgId = OrgId,
+                        EndDate = endDate,
+                        UserIds = userIds
+                    }.ExecuteAsync(cn);
+                }
+                
                 MonthCells = AppendMonths(Projects.Select(grp => grp.Key), 4);
             }
         }
