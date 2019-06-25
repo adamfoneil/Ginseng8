@@ -5,6 +5,7 @@ namespace Ginseng.Mvc.Queries
 {
     public class AllMilestonesResult
     {
+        public int TeamId { get; set; }
         public int ApplicationId { get; set; }
         public int Value { get; set; }
         public string Text { get; set; }
@@ -19,12 +20,12 @@ namespace Ginseng.Mvc.Queries
     {
         public AllMilestones() : base(
             @"SELECT
-                [ms].[ApplicationId], [ms].[Id] AS [Value], [ms].[Name] + ': ' + FORMAT([ms].[Date], 'ddd M/d') AS [Text]
+                [ms].[TeamId], [ms].[ApplicationId], [ms].[Id] AS [Value], [ms].[Name] + ': ' + FORMAT([ms].[Date], 'ddd M/d') AS [Text]
             FROM
 				[dbo].[Milestone] [ms]
-                INNER JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
+                INNER JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]                
 			WHERE
-				[app].[OrganizationId]=@orgId AND
+				[t].[OrganizationId]=@orgId AND
 				[ms].[Date]>DATEADD(d, -7, getdate())
 			ORDER BY
 				[Date]")
