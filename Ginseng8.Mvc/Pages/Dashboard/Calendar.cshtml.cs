@@ -20,9 +20,14 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public ILookup<YearMonth, DevCalendarProjectsResult> Projects { get; set; }
         public ILookup<YearMonth, DevMilestoneWorkingHoursResult> WorkingHours { get; set; }
 
-        public bool ShowTeams
+        public bool ShowTeamNames
         {
             get { return !CurrentOrgUser.CurrentTeamId.HasValue && !CurrentOrgUser.CurrentAppId.HasValue; }
+        }
+
+        public bool ShowAppNames
+        {
+            get { return !CurrentOrgUser.CurrentAppId.HasValue; }
         }
 
         public int? GetBalance(YearMonth month, int appId, int developerId)
