@@ -1,0 +1,19 @@
+﻿@page
+@{
+    ViewData["Title"] = "Calendar";
+}
+
+<h3>Calendar</h3>
+
+<p>Use the <a asp-page="/Dashboard/Calendar">Calendar</a> to see project info and metrics grouped into months.
+    To make the calendar show stuff:</p>
+
+<ul>
+    <li>Create projects that represent your deliverables. You can do this from the <a asp-page="/Dashboard/Index">Dashboard</a> page.</li>
+    <li>Create future milestones that represent deadlines. You can do this from <a asp-page="/Setup/Milestones">Setup &gt; Milestones</a>.</li>
+    <li>Enter work items with projects and milestones selected. As well as you can, select sizes (estimates) on your work items.</li>
+    <li>To show developer availability, create <a asp-page="/Setup/DevMilestones">Developer Milestones</a>. Make sure developers
+    have setup their daily schedule from <a asp-page="/Setup/OrgUser">My Settings</a>.</li>
+</ul>
+
+<p>Note that the Calendar page automatically appends four months to your last milestone.</p>
