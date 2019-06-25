@@ -17,6 +17,7 @@
                         <div>                            
                             @foreach (var teamGrp in Model.Projects[month].GroupBy(row => row.TeamId))
                             {
+                                var metrics = Model.Metrics[month].ToDictionary(row => row.ProjectId);
                                 if (Model.ShowTeamNames)
                                 {
                                     <h5>@teamGrp.First().TeamName</h5>
@@ -48,10 +49,12 @@
                                                     {
                                                         <span class="small">@dev.DeveloperName <span style="background-color:@backColor;color:@foreColor">@dev.EstimateHours est hrs</span></span>
                                                     }
-                                                }                                                
+                                                }    
+                                                <br/>
+                                                <partial name="Items/_ItemInfo" model="metrics[prjGrp.Key]"/>
                                             </li>
-                                        }
-                                    </ul>
+                                        }                                        
+                                    </ul>                                    
                                 }                                
                             }                            
                         </div>

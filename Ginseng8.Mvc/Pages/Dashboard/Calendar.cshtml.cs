@@ -19,6 +19,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<YearMonth> MonthCells { get; set; }
         public ILookup<YearMonth, DevCalendarProjectsResult> Projects { get; set; }
         public ILookup<YearMonth, DevMilestoneWorkingHoursResult> WorkingHours { get; set; }
+        public ILookup<YearMonth, CalendarProjectMetricsResult> Metrics { get; set; }
 
         public bool ShowTeamNames
         {
@@ -84,6 +85,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
                         EndMilestoneDate = endDate
                     }.ExecuteAsync(cn);
                     WorkingHours = workingHours.ToLookup(row => new YearMonth(row.Year, row.Month));
+
+                    var metrics = await new CalendarProjectMetrics() { OrgId = OrgId }.ExecuteAsync(cn);
+                    Metrics = metrics.ToLookup(row => new YearMonth(row.Year, row.Month));
                 }
                 
                 MonthCells = AppendMonths(Projects.Select(grp => grp.Key), 4);
