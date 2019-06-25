@@ -22,6 +22,7 @@ namespace Ginseng.Mvc.Queries
         public int Month { get; set; }
         public int Year { get; set; }
 
+        public DateTime GetMonthStartDate() => new DateTime(Year, Month, 1);
         public DateTime GetMonthEndDate() => new DateTime(Year, Month, DateTime.DaysInMonth(Year, Month));
     }
 

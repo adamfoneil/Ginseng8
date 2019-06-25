@@ -18,7 +18,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         public IEnumerable<YearMonth> MonthCells { get; set; }
         public ILookup<YearMonth, DevCalendarProjectsResult> Projects { get; set; }
-        public ILookup<YearMonth, DevWorkingHoursByMonthResult> WorkingHours { get; set; }
+        public ILookup<YearMonth, DevMilestoneWorkingHoursResult> WorkingHours { get; set; }
 
         public bool ShowTeams
         {
@@ -28,10 +28,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public int? GetBalance(YearMonth month, int appId, int developerId)
         {
             try
-            {
-                var estimates = Projects[month].Where(row => row.ApplicationId == appId).ToDictionary(row => row.DeveloperUserId);
-                var work = WorkingHours[month].ToDictionary(row => row.UserId);
-                return work[developerId].WorkingHours - estimates[developerId].EstimateHours;
+            {                
+                var work = WorkingHours[month].Where(row => row.ApplicationId == appId).ToLookup(row => row.DeveloperId);
+                return work[developerId].Sum(row => row.AvailableHours);
             }
             catch 
             {
@@ -70,12 +69,14 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 {
                     var userIds = projects.GroupBy(row => row.DeveloperUserId).Select(grp => grp.Key).ToArray();
 
+                    DateTime startDate = projects.Min(row => row.GetMonthStartDate());
                     DateTime endDate = projects.Max(row => row.GetMonthEndDate());
-                    var workingHours = await new DevWorkingHoursByMonth()
+
+                    var workingHours = await new DevMilestoneWorkingHours()
                     {
                         OrgId = OrgId,
-                        EndDate = endDate,
-                        UserIds = userIds
+                        StartMilestoneDate = startDate,
+                        EndMilestoneDate = endDate
                     }.ExecuteAsync(cn);
                     WorkingHours = workingHours.ToLookup(row => new YearMonth(row.Year, row.Month));
                 }
