@@ -120,6 +120,7 @@ namespace Ginseng.Models
                     var prj = await connection.FindAsync<Project>(comment.ObjectId);
                     return new PendingHoursLink()
                     {
+                        TeamId = prj.TeamId,
                         OrganizationId = prj.Application.OrganizationId,
                         ApplicationId = prj.ApplicationId,
                         ProjectId = comment.ObjectId,
@@ -130,6 +131,7 @@ namespace Ginseng.Models
                     var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);
                     return new PendingHoursLink()
                     {
+                        TeamId = workItem.TeamId,
                         OrganizationId = workItem.OrganizationId,
                         ApplicationId = workItem.ApplicationId,
                         ProjectId = workItem.ProjectId,
