@@ -158,6 +158,7 @@ namespace Ginseng.Models
         {
             var labelMatches = Regex.Matches(Title, @"#\w*");
             var labelNames = labelMatches.Cast<Match>().Select(m => m.Value.Substring(1)).ToArray();
+            string nameCriteria = string.Join(" OR ", labelNames.Select(label => $"[Name] LIKE '%{label}%'"));
 
             if (labelNames.Any())
             {
@@ -168,9 +169,8 @@ namespace Ginseng.Models
 						@workItemId, [Id], @userName, @dateCreated
 					FROM
 						[dbo].[Label]
-					WHERE
-						[Name] IN @labelNames AND
-						[OrganizationId]=@orgId",
+					WHERE						
+						[OrganizationId]=@orgId AND (" + nameCriteria + ")",
                     new { workItemId = Id, orgId = OrganizationId, labelNames, userName = CreatedBy, dateCreated = DateCreated });
             }
         }
