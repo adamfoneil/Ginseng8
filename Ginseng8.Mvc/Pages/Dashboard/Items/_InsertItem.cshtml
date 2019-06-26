@@ -20,7 +20,7 @@
                     @if (Model.Dropdowns != null)
                     {
                         <div class="mb-2">
-                            <partial name="/Pages/Dashboard/Items/_ItemFields.cshtml" model="new WorkItemCardView() { Dropdowns = Model.Dropdowns, WorkItem = Model.GetDefaultWorkItem(), UpdatesEnabled = false }"/>
+                            <partial name="/Pages/Dashboard/Items/_ItemFields.cshtml" model="new WorkItemCardView() { Dropdowns = Model.Dropdowns, WorkItem = Model.GetDefaultWorkItem(), UpdatesEnabled = false, AssignToUsers = Model.AssignToUsers }"/>                            
                         </div>
                     }
                     <textarea name="HtmlBody" class="htmlEditor"></textarea>

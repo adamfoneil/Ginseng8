@@ -99,6 +99,9 @@ namespace Ginseng.Models
         [NotMapped]
         public int LabelId { get; set; }
 
+        [NotMapped]
+        public int? AssignToUserId { get; set; }
+
         public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
         {
             if (action == SaveAction.Insert)
