@@ -17,10 +17,10 @@ namespace Ginseng.Mvc.Classes
         {
             return new Option[]
             {
-                new Option() { Value = -1, Text = "End of Week", GetDate = () => DateExtensions.NextDayOfWeek(DateTime.Today, DayOfWeek.Friday) },
-                new Option() { Value = -2, Text = "Start of Next Week", GetDate = () => DateExtensions.NextDayOfWeek(DateTime.Today, DayOfWeek.Monday, 1) },
-                new Option() { Value = -3, Text = "End of Next Week", GetDate = () => DateExtensions.NextDayOfWeek(DateTime.Today, DayOfWeek.Saturday, 1) },
-                new Option() { Value = -4, Text = "End of Month", GetDate = () => DateExtensions.EndOfMonth(DateTime.Today) }
+                new Option() { Value = -1, Text = "End of Week", GetDate = () => DateTime.Today.NextDayOfWeek(DayOfWeek.Friday) },
+                new Option() { Value = -2, Text = "Start of Next Week", GetDate = () => DateTime.Today.NextDayOfWeek(DayOfWeek.Monday, 1) },
+                new Option() { Value = -3, Text = "End of Next Week", GetDate = () => DateTime.Today.NextDayOfWeek(DayOfWeek.Saturday, 1) },
+                new Option() { Value = -4, Text = "End of Month", GetDate = () => DateTime.Today.EndOfMonth() }
             };
         }
 

@@ -12,7 +12,7 @@ namespace Ginseng.Models.Extensions
             return date.AddDays(addDays + (Math.Abs(weekOffset) * 7));
         }
 
-        public static DateTime EndOfMonth(DateTime today)
+        public static DateTime EndOfMonth(this DateTime today)
         {
             int year = today.Year;
             int month = today.Month;
