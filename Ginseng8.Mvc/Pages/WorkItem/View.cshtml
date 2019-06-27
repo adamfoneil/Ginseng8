@@ -20,6 +20,7 @@
         <h2><span class="editable" id="title-@Model.Item.Number" data-url="/Update/WorkItemTitle">@Model.Item.Title</span></h2>
     </div>
 </div>
+
 <div class="row mb-2">
     <div class="col-2"></div>
     <div class="col-8">
@@ -67,6 +68,15 @@
             <input type="hidden" name="FolderName" value="WorkItems" />
         </form>
         <hr />
+    </div>
+</div>
+
+<div class="row mb-2">
+    <div class="col-2"></div>
+    <div class="col-10">
+        <span class="text-muted small">
+            Created by @Model.Item.CreatedByName on @Model.Item.DateCreated            
+        </span>
     </div>
 </div>
 
