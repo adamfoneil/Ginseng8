@@ -5,6 +5,12 @@
     ViewData["Title"] = "New Tickets";
 }
 
+@if (!Model.CurrentOrgUser.CurrentTeamId.HasValue)
+{
+    <p>Please choose a team above.</p>
+    return;
+}
+
 <p>Use this to generate work items, or route elsewhere as needed.</p>
 
 @{ int index = 0; }
