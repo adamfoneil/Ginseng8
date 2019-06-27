@@ -29,7 +29,7 @@ namespace Ginseng.Mvc.Queries
 		public int EstimateHours { get; set; }
 		public decimal ColorGradientPosition { get; set; }
 		public int ProjectId { get; set; }
-		public string ProjectName { get; set; }
+		public string DisplayProjectName { get; set; }
 		public string Title { get; set; }
 		public int? ProjectPriority { get; set; }
         public string TeamName { get; set; }
@@ -54,7 +54,7 @@ namespace Ginseng.Mvc.Queries
                 [wi].[ApplicationId],
                 [app].[Name] AS [ApplicationName],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId],
-				[p].[Name] AS [ProjectName], [p].[Priority] AS [ProjectPriority],				
+				COALESCE([p].[Nickname], [p].[Name]) AS [DisplayProjectName], [p].[Priority] AS [ProjectPriority],				
 				[wi].[Title],
 				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
 				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition],

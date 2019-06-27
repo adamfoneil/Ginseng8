@@ -51,7 +51,8 @@ namespace Ginseng.Mvc.Queries
         public string TeamName { get; set; }
 		public bool HasImpediment { get; set; }
 		public int ProjectId { get; set; }
-		public string ProjectName { get; set; }
+        public string ProjectName { get; set; }
+		public string DisplayProjectName { get; set; }          
 		public int? ProjectPriority { get; set; }
 		public string PriorityTier { get; set; }
 		public int? DataModelId { get; set; }
@@ -194,6 +195,7 @@ namespace Ginseng.Mvc.Queries
 				[wi].[HasImpediment],
 				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
+                COALESCE([p].[Nickname], [p].[Name]) AS [DisplayProjectName],
 				[p].[Priority] AS [ProjectPriority],				
 				COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
 				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],

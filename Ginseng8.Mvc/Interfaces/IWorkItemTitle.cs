@@ -7,7 +7,7 @@
         int ApplicationId { get; }
         string ApplicationName { get; }
         int ProjectId { get; }
-        string ProjectName { get; }
+        string DisplayProjectName { get; }
 		string Title { get; }
 		bool IsEditable(string userName);
 	}

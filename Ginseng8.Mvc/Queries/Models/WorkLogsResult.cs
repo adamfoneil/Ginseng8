@@ -32,7 +32,7 @@ namespace Ginseng.Mvc.Queries.Models
         public int? InvoiceId { get; set; }
 
         public int Number => WorkItemNumber ?? 0;
-        public string ProjectName => Title;
+        public string DisplayProjectName => Title;
         public int? ProjectPriority => null;
         public int EstimateHours { get; set; }
         public decimal ColorGradientPosition { get; set; }

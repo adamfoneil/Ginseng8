@@ -283,7 +283,7 @@ namespace Ginseng.Mvc.Controllers
         {
             int projectId = IntFromText(elementId);
             var project = await _data.FindAsync<Project>(projectId);
-            if (project.Application.OrganizationId != _data.CurrentOrg.Id) throw new Exception("Application is in a different organization.");
+            if (project.Team.OrganizationId != _data.CurrentOrg.Id) throw new Exception("Application is in a different organization.");
             project.Name = newName;
             await _data.TryUpdateAsync(project, r => r.Name);
             return Content(newName);
