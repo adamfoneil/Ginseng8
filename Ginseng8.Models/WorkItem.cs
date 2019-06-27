@@ -157,11 +157,11 @@ namespace Ginseng.Models
         private async Task ParseLabelsAsync(IDbConnection connection)
         {
             var labelMatches = Regex.Matches(Title, @"#\w*");
-            var labelNames = labelMatches.Cast<Match>().Select(m => m.Value.Substring(1)).ToArray();
-            string nameCriteria = string.Join(" OR ", labelNames.Select(label => $"[Name] LIKE '%{label}%'"));
+            var labelNames = labelMatches.Cast<Match>().Select(m => m.Value.Substring(1)).Where(s => s.Length >=2).ToArray();
 
             if (labelNames.Any())
             {
+                string nameCriteria = " AND (" + string.Join(" OR ", labelNames.Select(label => $"[Name] LIKE '%{label}%'")) + ")";
                 await connection.ExecuteAsync(
                     @"INSERT INTO [dbo].[WorkItemLabel] (
 						[WorkItemId], [LabelId], [CreatedBy], [DateCreated]
@@ -170,8 +170,8 @@ namespace Ginseng.Models
 					FROM
 						[dbo].[Label]
 					WHERE						
-						[OrganizationId]=@orgId AND (" + nameCriteria + ")",
-                    new { workItemId = Id, orgId = OrganizationId, labelNames, userName = CreatedBy, dateCreated = DateCreated });
+						[OrganizationId]=@orgId" + nameCriteria,
+                    new { workItemId = Id, orgId = OrganizationId, userName = CreatedBy, dateCreated = DateCreated });
             }
         }
 
