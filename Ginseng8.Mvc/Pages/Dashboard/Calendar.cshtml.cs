@@ -105,7 +105,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 MilestoneName = ms.Name
             });
 
-            var load = await new DevMilestoneWorkingHours() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+            var load = await new DevMilestoneWorkingHours() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId, LocalDate = CurrentUser.LocalTime }.ExecuteAsync(connection);
             DevLoad = load.ToLookup(row => row.MilestoneId);
 
             NextSoonest = await Milestone.GetSoonestNextAsync(connection, OrgId);
