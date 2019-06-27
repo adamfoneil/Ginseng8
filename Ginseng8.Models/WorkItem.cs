@@ -157,11 +157,11 @@ namespace Ginseng.Models
         private async Task ParseLabelsAsync(IDbConnection connection)
         {
             var labelMatches = Regex.Matches(Title, @"#\w*");
-            var labelNames = labelMatches.Cast<Match>().Select(m => m.Value.Substring(1)).Where(s => s.Length >=2).ToArray();
+            var labelNames = labelMatches.Cast<Match>().Select(m => m.Value.Substring(1)).Where(s => s.Length >= 2).ToArray();
 
             if (labelNames.Any())
             {
-                string nameCriteria = " AND (" + string.Join(" OR ", labelNames.Select(label => $"[Name] LIKE '%{label}%'")) + ")";
+                string nameCriteria = string.Join(" OR ", labelNames.Select(label => $"[Name] LIKE '%{label}%'"));
                 await connection.ExecuteAsync(
                     @"INSERT INTO [dbo].[WorkItemLabel] (
 						[WorkItemId], [LabelId], [CreatedBy], [DateCreated]
@@ -170,8 +170,14 @@ namespace Ginseng.Models
 					FROM
 						[dbo].[Label]
 					WHERE						
-						[OrganizationId]=@orgId" + nameCriteria,
+						[OrganizationId]=@orgId AND [IsActive]=1 AND (" + nameCriteria + ")",
                     new { workItemId = Id, orgId = OrganizationId, userName = CreatedBy, dateCreated = DateCreated });
+
+                string newTitle = Title;
+                foreach (var label in labelNames) newTitle = newTitle.Replace("#" + label, string.Empty);
+                await connection.ExecuteAsync(
+                    "UPDATE [wi] SET [Title]=@title FROM [dbo].[WorkItem] [wi] WHERE [Id]=@id AND [OrganizationId]=@orgId",
+                    new { id = Id, orgId = OrganizationId, title = newTitle.Trim() });
             }
         }
 
