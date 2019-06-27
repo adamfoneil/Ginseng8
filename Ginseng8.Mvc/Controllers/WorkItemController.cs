@@ -67,6 +67,11 @@ namespace Ginseng.Mvc.Controllers
                 await workItem.SetNumberAsync(cn);
                 if (await _data.TrySaveAsync(cn, workItem))
                 {
+                    if (workItem.AssignToUserId.HasValue)
+                    {
+                        await AssignToInnerAsync(cn, workItem.AssignToUserId.Value, workItem);
+                    }
+
                     return Redirect(returnUrl + $"#{workItem.Number}");
                 }
                 else
@@ -233,25 +238,30 @@ namespace Ginseng.Mvc.Controllers
                 using (var cn = _data.GetConnection())
                 {
                     var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
-                    var orgUser = await _data.FindWhereAsync<OrganizationUser>(cn, new { OrganizationId = _data.CurrentOrg.Id, UserId = userId });
-
-                    workItem.DeveloperUserId = userId;
-                    workItem.ActivityId = orgUser.DefaultActivityId ?? _data.CurrentOrg.DeveloperActivityId.Value;
-
-                    if (await _data.TrySaveAsync(cn, workItem, new string[]
-                    {
-                        nameof(WorkItem.DeveloperUserId),
-                        nameof(WorkItem.ActivityId)
-                    }))
-                    {
-                        // send email
-                    }
+                    await AssignToInnerAsync(cn, userId, workItem);
                 }
                 return Json(new { success = true });
             }
             catch (Exception exc)
             {
                 return Json(new { success = false, message = exc.Message });
+            }
+        }
+
+        private async Task AssignToInnerAsync(SqlConnection cn, int userId, WorkItem workItem)
+        {
+            var orgUser = await _data.FindWhereAsync<OrganizationUser>(cn, new { OrganizationId = _data.CurrentOrg.Id, UserId = userId });
+
+            workItem.DeveloperUserId = userId;
+            workItem.ActivityId = orgUser.DefaultActivityId ?? _data.CurrentOrg.DeveloperActivityId.Value;
+
+            if (await _data.TrySaveAsync(cn, workItem, new string[]
+            {
+                nameof(WorkItem.DeveloperUserId),
+                nameof(WorkItem.ActivityId)
+            }))
+            {
+                // send email
             }
         }
 

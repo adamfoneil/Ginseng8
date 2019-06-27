@@ -21,6 +21,7 @@ namespace Ginseng.Mvc.ViewModels
 
         public CommonDropdowns Dropdowns { get; set; }
         public bool UseApplications { get; set; }
+        public IEnumerable<SelectListItem> AssignToUsers { get; set; }
 
         public Dictionary<string, int> ContextValues { get; }
 

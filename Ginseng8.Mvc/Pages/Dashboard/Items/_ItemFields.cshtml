@@ -45,3 +45,10 @@
 <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass">
     <option value="">- size -</option>
 </select>
+
+@if  (Model.WorkItem.Number < 0 && (Model.AssignToUsers?.Any() ?? false))
+{
+    <select name="AssignToUserId" asp-items="Model.AssignToUsers" class="form-control-sm">
+        <option value="">- assign to -</option>
+    </select>
+}

@@ -56,7 +56,7 @@ namespace Ginseng.Mvc.Queries
                 [dbo].[DeveloperMilestone] [dm]
                 INNER JOIN [dbo].[Milestone] [ms] ON [dm].[MilestoneId]=[ms].[Id]
                 INNER JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
-                CROSS APPLY [dbo].[FnWorkingDays](@orgId, [dm].[StartDate], [ms].[Date]) [wd]
+                CROSS APPLY [dbo].[FnWorkingDays](@orgId, dbo.MaxDate([dm].[StartDate], @localDate), [ms].[Date]) [wd]
                 LEFT JOIN [estimates] [e] ON 
                     [dm].[DeveloperId]=[e].[DeveloperUserId] AND
                     [dm].[MilestoneId]=[e].[MilestoneId] AND
@@ -79,6 +79,11 @@ namespace Ginseng.Mvc.Queries
         }
 
         public int OrgId { get; set; }
+
+        /// <summary>
+        /// User's local date for calculating correct working days
+        /// </summary>
+        public DateTime LocalDate { get; set; } = DateTime.Today;
 
         [Where("[dm].[MilestoneId]=@milestoneId")]
         public int? MilestoneId { get; set; }

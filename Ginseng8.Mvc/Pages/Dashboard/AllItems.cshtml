@@ -15,7 +15,7 @@
     {
         { "teamId", Html.CurrentTeamId() },
         { "applicationId", Html.CurrentAppId() }
-    }))
+    }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.CurrentOrgUser?.CurrentTeam?.UseApplications ?? true })
 }
 
 <form method="get">
