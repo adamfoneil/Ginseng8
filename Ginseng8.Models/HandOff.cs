@@ -66,6 +66,7 @@ namespace Ginseng.Models
 
                 int eventLogId = await EventLog.WriteAsync(connection, new EventLog(WorkItemId, user)
                 {
+                    TeamId = workItem.TeamId,
                     EventId = (IsForward) ? SystemEvent.HandOffForward : SystemEvent.HandOffBackward,
                     IconClass = GetIconClass(IsForward),
                     IconColor = GetColor(IsForward),
