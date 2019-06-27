@@ -202,7 +202,7 @@ namespace Ginseng.Mvc.Controllers
                 }
 
                 var labels = await new TeamLabelsInUseByTeam() { OrgId = _data.CurrentOrg.Id, TeamId = teamId }.ExecuteAsync(cn);
-                return Content(string.Join(", ", labels.Select(a => a.Name)));
+                return Content(labels.Count().ToString());
             }
         }
 
@@ -222,7 +222,7 @@ namespace Ginseng.Mvc.Controllers
                 }
 
                 var apps = await new NewItemAppLabelsInUse() { OrgId = _data.CurrentOrg.Id, LabelId = labelId }.ExecuteAsync(cn);
-                return Content(string.Join(", ", apps.Select(a => a.Name)));
+                return Content(apps.Count().ToString());
             }
         }
 

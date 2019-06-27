@@ -4,10 +4,7 @@
     <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span class="mr-1">@Model.Prompt</span>
         <span id="teams-@Model.RelatedId">
-        @foreach (var item in Model.Items.Where(row => row.Selected))
-        {
-            <span class="mr-1">@item.Name</span>
-        }
+            @Model.Items.Count(row => row.Selected)        
         </span>
     </button>
     <div class="dropdown-menu scrollable-menu">
