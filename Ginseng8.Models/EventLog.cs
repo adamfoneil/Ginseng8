@@ -98,6 +98,8 @@ namespace Ginseng.Models
                 eventLog.ApplicationId = orgAndApp.ApplicationId;
             }
 
+            if (eventLog.ApplicationId == 0) eventLog.ApplicationId = null;
+
             await connection.InsertAsync(eventLog);
 
             await Notification.CreateFromEventSubscriptions(connection, eventLog.Id);
