@@ -82,6 +82,14 @@ namespace Ginseng.Models
             // todo: app notifications
         }
 
+        public static async Task CreateFromWorkItemAssignment(IDbConnection connection, int eventLogId)
+        {
+            await new InsertAssignmentDevEmailNotification() { Id = eventLogId }.ExecuteAsync(connection);
+            await new InsertAssignmentBizEmailNotification() { Id = eventLogId }.ExecuteAsync(connection);
+
+            // todo: text and app notifications
+        }
+
         internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, string senderName, OrganizationUser mentionUser)
         {
             if (mentionUser.SendEmail)

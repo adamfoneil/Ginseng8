@@ -262,7 +262,7 @@ namespace Ginseng.Mvc.Controllers
             }))
             {
                 string body = $"{_data.CurrentOrgUser.GetDisplayName()} assigned {workItem.Number} to {orgUser.GetDisplayName()}";
-                await EventLog.WriteAsync(cn, new EventLog()
+                int eventLogId = await EventLog.WriteAsync(cn, new EventLog()
                 {
                     EventId = SystemEvent.WorkItemAssigned,
                     IconClass = WorkItem.IconAssigned,
@@ -274,6 +274,7 @@ namespace Ginseng.Mvc.Controllers
                     HtmlBody = body,
                     TextBody = body
                 }, _data.CurrentUser);
+                await Notification.CreateFromWorkItemAssignment(cn, eventLogId);
             }
         }
 
