@@ -170,5 +170,11 @@ namespace Testing
         {
             TestQuery<LabelSubscriptionUsers>();
         }
+
+        [TestMethod]
+        public void CalendarProjectsQuery()
+        {
+            TestQuery<DevCalendarProjects>();
+        }
     }
 }

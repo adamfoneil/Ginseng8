@@ -1,4 +1,5 @@
-﻿using Ginseng.Models;
+﻿using Dapper;
+using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc;
@@ -43,9 +44,22 @@ namespace Ginseng.Mvc.Pages.Setup
 
         public async Task<ActionResult> OnPostDelete(int id)
         {
-            var ms = await Data.FindAsync<Milestone>(id);
-            await Data.TryDeleteAsync<Milestone>(id);
-            return Redirect($"/Setup/Milestones?teamId={ms.TeamId}&appId={ms.ApplicationId}");
+            using (var cn = Data.GetConnection())
+            {
+                await cn.ExecuteAsync(
+                    @"UPDATE [wi] SET [MilestoneId]=NULL FROM [dbo].[WorkItem] [wi] 
+                    WHERE [MilestoneId]=@msId AND [OrganizationId]=@orgId", new { msId = id, orgId = OrgId });
+
+                await cn.ExecuteAsync(
+                    @"DELETE [dm] FROM [dbo].[DeveloperMilestone] [dm] 
+                    INNER JOIN [dbo].[Milestone] [ms] ON [dm].[MilestoneId]=[ms].[Id] 
+                    INNER JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]
+                    WHERE [dm].[MilestoneId]=@msId AND [t].[OrganizationId]=@orgId", new { msId = id, orgId = OrgId });
+
+                var ms = await Data.FindAsync<Milestone>(cn, id);
+                await Data.TryDeleteAsync<Milestone>(cn, id);
+                return Redirect($"/Setup/Milestones?teamId={ms.TeamId}&appId={ms.ApplicationId}");
+            }                            
         }
     }
 }

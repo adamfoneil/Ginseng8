@@ -63,11 +63,28 @@ namespace Ginseng.Mvc.Controllers
                 workItem.TeamId = fields.TeamId;
                 workItem.ApplicationId = fields.ApplicationId;
                 workItem.ProjectId = fields.ProjectId;
-                workItem.MilestoneId = fields.MilestoneId;
+
+                if (fields.MilestoneId.HasValue)
+                {
+                    if (fields.MilestoneId > 0)
+                    {
+                        workItem.MilestoneId = fields.MilestoneId;
+                    }
+                    else if (fields.MilestoneId < 0)
+                    {
+                        using (var cn = _data.GetConnection())
+                        {
+                            var indirectMilestones = new IndirectMilestones();
+                            workItem.MilestoneId = await indirectMilestones.Options[fields.MilestoneId.Value].GetMilestoneIdAsync(cn, _data.CurrentUser, fields.TeamId, fields.ApplicationId);
+                        }
+                    }
+                }
+
                 workItem.SizeId = fields.SizeId;
                 workItem.CloseReasonId = fields.CloseReasonId;
                 workItem.ModifiedBy = User.Identity.Name;
                 workItem.DateModified = _data.CurrentUser.LocalTime;
+
                 await _data.TryUpdateAsync(workItem,
                     r => r.TeamId, r => r.ApplicationId, r => r.ProjectId, r => r.MilestoneId, r => r.SizeId, r => r.CloseReasonId,
                     r => r.ModifiedBy, r => r.DateModified);

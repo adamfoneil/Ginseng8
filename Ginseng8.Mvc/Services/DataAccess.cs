@@ -166,22 +166,29 @@ namespace Ginseng.Mvc.Services
 			}
 		}
 
-		public async Task<bool> TryDeleteAsync<T>(int id, string successMessage = null)
-		{
-			try
+        public async Task<bool> TryDeleteAsync<T>(SqlConnection connection, int id, string successMessage = null)
+        {
+            try
+            {
+                await connection.DeleteAsync<T>(id, CurrentUser);
+                SetSuccessMessage(successMessage);
+                return true;
+
+            }
+            catch (Exception exc)
+            {
+                SetErrorMessage(exc);
+                return false;
+            }
+        }
+
+
+        public async Task<bool> TryDeleteAsync<T>(int id, string successMessage = null)
+		{			
+			using (var cn = GetConnection())
 			{
-				using (var cn = GetConnection())
-				{
-					await cn.DeleteAsync<T>(id, CurrentUser);
-					SetSuccessMessage(successMessage);
-					return true;
-				}
-			}
-			catch (Exception exc)
-			{
-				SetErrorMessage(exc);
-				return false;
-			}
+                return await TryDeleteAsync<T>(cn, id, successMessage);
+			}			
 		}
 
 		/// <summary>

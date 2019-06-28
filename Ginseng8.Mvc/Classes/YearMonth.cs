@@ -8,7 +8,7 @@ namespace Ginseng.Mvc.Classes
         public int Month { get; set; }
         public int Index { get; set; }
 
-        public YearMonth()
+        public YearMonth() : this(DateTime.Today)
         {
         }
 

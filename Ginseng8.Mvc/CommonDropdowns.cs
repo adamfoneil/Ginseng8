@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -99,11 +100,15 @@ namespace Ginseng.Mvc
 			return new SelectList(items, "Value", "Text", milestoneId);
 		}
 
-		public SelectList MilestoneSelect(OpenWorkItemsResult item = null)
+		public SelectList MilestoneSelect(OpenWorkItemsResult item = null, bool withIndirectOptions = false)
 		{
-            return (item?.UseApplications ?? true) ?
-                new SelectList(MilestonesByApp[item?.ApplicationId ?? 0], "Value", "Text", item?.MilestoneId) :
-                new SelectList(MilestonesByTeam[item?.TeamId ?? 0], "Value", "Text", item?.MilestoneDate);
+            var items = ((item?.UseApplications ?? true) ?
+                MilestonesByApp[item?.ApplicationId ?? 0] :
+                MilestonesByTeam[item?.TeamId ?? 0]).ToList();
+
+            if (withIndirectOptions) items.InsertRange(0, new IndirectMilestones().GetSelectListItems());
+
+            return new SelectList(items, "Value", "Text", item?.MilestoneId);
 		}
 
 		public IEnumerable<Label> LabelItems(IEnumerable<Label> selectedLabels)

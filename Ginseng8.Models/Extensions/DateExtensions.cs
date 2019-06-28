@@ -11,5 +11,12 @@ namespace Ginseng.Models.Extensions
             if (addDays < 0 && weekOffset == 0) weekOffset++; // go to next week if you asked for this week, but the day you want has passed
             return date.AddDays(addDays + (Math.Abs(weekOffset) * 7));
         }
+
+        public static DateTime EndOfMonth(this DateTime today)
+        {
+            int year = today.Year;
+            int month = today.Month;
+            return new DateTime(year, month, DateTime.DaysInMonth(year, month));
+        }
     }
 }

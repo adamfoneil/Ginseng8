@@ -16,6 +16,8 @@ namespace Ginseng.Mvc.Queries
         public int WorkingHours { get; set; }
         public int EstimateHours { get; set; }
         public int AvailableHours { get; set; }
+        public int Year { get; set; }
+        public int Month { get; set; }
     }
 
     public class DevMilestoneWorkingHours : Query<DevMilestoneWorkingHoursResult>, ITestableQuery
@@ -25,7 +27,7 @@ namespace Ginseng.Mvc.Queries
                 SELECT
                     [wi].[ApplicationId],
                     [wi].[DeveloperUserId],
-                    [wi].[MilestoneId],
+                    [wi].[MilestoneId],                    
                     SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours])) AS [EstimateHours]
                 FROM
                     [dbo].[WorkItem] [wi]
@@ -47,7 +49,9 @@ namespace Ginseng.Mvc.Queries
                 COALESCE([ou].[DisplayName], [u].[UserName]) AS [DeveloperName],
                 SUM([wd].[Hours]) AS [WorkingHours],
                 [e].[EstimateHours],
-                SUM([wd].[Hours]) - [e].[EstimateHours] AS [AvailableHours]
+                SUM([wd].[Hours]) - [e].[EstimateHours] AS [AvailableHours],
+                YEAR([ms].[Date]) AS [Year],
+                MONTH([ms].[Date]) AS [Month]
             FROM 
                 [dbo].[DeveloperMilestone] [dm]
                 INNER JOIN [dbo].[Milestone] [ms] ON [dm].[MilestoneId]=[ms].[Id]
@@ -68,7 +72,9 @@ namespace Ginseng.Mvc.Queries
                 [dm].[MilestoneId],
                 [dm].[DeveloperId],
                 [ou].[DisplayName], [u].[UserName],
-                [e].[EstimateHours]")
+                [e].[EstimateHours],
+                YEAR([ms].[Date]),
+                MONTH([ms].[Date])")
         {
         }
 
@@ -87,6 +93,12 @@ namespace Ginseng.Mvc.Queries
 
         [Where("[dm].[DeveloperId]=@userId")]
         public int? UserId { get; set; }
+
+        [Where("[ms].[Date]>=@startMilestoneDate")]
+        public DateTime? StartMilestoneDate { get; set; }
+
+        [Where("[ms].[Date]<=@endMilestoneDate")]
+        public DateTime? EndMilestoneDate { get; set; }
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {
