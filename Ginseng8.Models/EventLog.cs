@@ -95,6 +95,7 @@ namespace Ginseng.Models
             {
                 var orgAndApp = await WorkItem.GetOrgAndAppIdAsync(connection, eventLog.WorkItemId);
                 eventLog.OrganizationId = orgAndApp.OrganizationId;
+                eventLog.TeamId = orgAndApp.TeamId;
                 eventLog.ApplicationId = orgAndApp.ApplicationId;
             }
 
