@@ -190,5 +190,10 @@ namespace Ginseng.Models
         {
             return (OrganizationId + UserId).GetHashCode();
         }
+
+        public bool AllowNotification()
+        {
+            return IsEnabled && NotifyOptionsImplementation.AllowNotification(this);
+        }
     }
 }

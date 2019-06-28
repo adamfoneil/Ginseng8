@@ -116,13 +116,13 @@ namespace Ginseng.Models
             if (workItem.DeveloperUserId.HasValue && workItem.DeveloperUserId != sender.UserId)
             {
                 var devUser = await connection.FindWhereAsync<OrganizationUser>(new { workItem.OrganizationId, UserId = workItem.DeveloperUserId.Value });
-                if (!mentionedUsers.Contains(devUser)) await AddMentionEventInnerAsync(connection, comment, senderName, devUser);                
+                if (!mentionedUsers.Contains(devUser) && devUser.AllowNotification()) await AddMentionEventInnerAsync(connection, comment, senderName, devUser);                
             }
 
             if (workItem.BusinessUserId.HasValue && workItem.BusinessUserId != sender.UserId)
             {
                 var bizUser = await connection.FindWhereAsync<OrganizationUser>(new { workItem.OrganizationId, UserId = workItem.BusinessUserId.Value });
-                if (!mentionedUsers.Contains(bizUser)) await AddMentionEventInnerAsync(connection, comment, senderName, bizUser);
+                if (!mentionedUsers.Contains(bizUser) && bizUser.AllowNotification()) await AddMentionEventInnerAsync(connection, comment, senderName, bizUser);
             }
         }
 

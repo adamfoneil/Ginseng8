@@ -25,5 +25,10 @@ namespace Ginseng.Models
         public bool SendText { get; set; }
 
         public bool InApp { get; set; }
+
+        public bool AllowNotification()
+        {
+            return NotifyOptionsImplementation.AllowNotification(this);
+        }
     }
 }
