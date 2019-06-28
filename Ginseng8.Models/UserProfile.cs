@@ -1,8 +1,11 @@
-﻿using Postulate.Base.Attributes;
+﻿using Dapper;
+using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Data;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
@@ -42,6 +45,11 @@ namespace Ginseng.Models
         private int GetDaylightSavingOffset()
         {
             return (!DateTime.UtcNow.IsDaylightSavingTime() && AdjustForDaylightSaving) ? 1 : 0;
+        }
+
+        internal static async Task<int> GetUserIdAsync(IDbConnection connection, string userName)
+        {
+            return await connection.QuerySingleOrDefaultAsync<int>("SELECT [UserId] FROM [dbo].[AspNetUsers] WHERE [UserName]=@userName", new { userName });
         }
     }
 }
