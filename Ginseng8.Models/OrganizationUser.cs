@@ -143,6 +143,11 @@ namespace Ginseng.Models
             Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
         }
 
+        public string GetDisplayName()
+        {
+            return DisplayName ?? Email;
+        }
+
         public static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)
         {
             var orgUser = await connection.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });

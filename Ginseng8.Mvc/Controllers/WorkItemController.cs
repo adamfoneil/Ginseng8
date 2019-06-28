@@ -261,7 +261,19 @@ namespace Ginseng.Mvc.Controllers
                 nameof(WorkItem.ActivityId)
             }))
             {
-                // send email
+                string body = $"{_data.CurrentOrgUser.GetDisplayName()} assigned {workItem.Number} to {orgUser.GetDisplayName()}";
+                await EventLog.WriteAsync(cn, new EventLog()
+                {
+                    EventId = SystemEvent.WorkItemAssigned,
+                    IconClass = WorkItem.IconAssigned,
+                    IconColor = "auto",
+                    OrganizationId = workItem.OrganizationId,
+                    TeamId = workItem.TeamId,
+                    ApplicationId = workItem.ApplicationId,
+                    WorkItemId = workItem.Id,
+                    HtmlBody = body,
+                    TextBody = body
+                }, _data.CurrentUser);
             }
         }
 

@@ -27,6 +27,7 @@ namespace Ginseng.Models
     {
         public const string IconCreated = "far fa-plus-hexagon";
         public const string IconClosed = "far fa-clipboard-check";
+        public const string IconAssigned = "far fa-clipboard-list";
 
         [References(typeof(Organization))]
         [PrimaryKey]
