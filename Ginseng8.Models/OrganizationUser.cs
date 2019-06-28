@@ -122,6 +122,7 @@ namespace Ginseng.Models
             }
 
             UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
+            Email = UserProfile.Email;
             Organization = commandProvider.Find<Organization>(connection, OrganizationId);
         }
 
@@ -138,6 +139,7 @@ namespace Ginseng.Models
             }
 
             UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
+            Email = UserProfile.Email;
             Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
         }
 
