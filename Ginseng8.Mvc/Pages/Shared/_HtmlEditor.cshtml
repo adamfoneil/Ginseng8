@@ -24,9 +24,9 @@
     
     @if (Model.CopyWorkItemLink)
     {
-        <a class="btn btn-sm btn-light clipboard no-propagation" href="#" data-clipboard-action="copy" data-clipboard-text="@Url.Action("View", "WorkItem", new { id = Model.OverrideId }, Html.ViewContext.HttpContext.Request.Scheme)" title="Copy work item URL">
+        <button class="btn btn-sm btn-light clipboard" data-clipboard-action="copy" data-clipboard-text="@Url.Action("View", "WorkItem", new { id = Model.OverrideId }, Html.ViewContext.HttpContext.Request.Scheme)" title="Copy work item URL">
             <i class="far fa-copy"></i>
-        </a>
+        </button>
     }
 
     @if (Model.AllowComments)
