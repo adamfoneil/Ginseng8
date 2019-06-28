@@ -177,5 +177,16 @@ namespace Ginseng.Models
         {
             return await Task.FromResult(OrganizationId);
         }
+
+        public override bool Equals(object obj)
+        {
+            OrganizationUser test = obj as OrganizationUser;
+            return (test != null) ? test.OrganizationId == OrganizationId && test.UserId == UserId : false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (OrganizationId + UserId).GetHashCode();
+        }
     }
 }
