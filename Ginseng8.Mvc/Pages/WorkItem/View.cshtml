@@ -2,7 +2,7 @@
 @model Ginseng.Mvc.Pages.WorkItem.ViewModel
 @{
     ViewData["Title"] = "Work Item";
-    var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id], ShowDetailsButton = false };
+    var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id], ShowDetailsButton = false, AssignToUsers = Model.AssignToUsers };
 }
 
 @section Head {
@@ -42,7 +42,6 @@
 <div class="row">
     <div class="col-2"></div>
     <div class="col-10">
-
         @if (Model.Attachments.Any())
         {
             <ul>
