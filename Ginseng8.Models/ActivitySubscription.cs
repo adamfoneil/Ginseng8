@@ -49,5 +49,10 @@ namespace Ginseng.Models
         public string ActivityName { get; set; }
 
         public string TableName => nameof(ActivitySubscription);
+
+        public bool AllowNotification()
+        {
+            return NotifyOptionsImplementation.AllowNotification(this);
+        }
     }
 }

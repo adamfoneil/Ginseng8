@@ -95,8 +95,11 @@ namespace Ginseng.Models
             {
                 var orgAndApp = await WorkItem.GetOrgAndAppIdAsync(connection, eventLog.WorkItemId);
                 eventLog.OrganizationId = orgAndApp.OrganizationId;
+                eventLog.TeamId = orgAndApp.TeamId;
                 eventLog.ApplicationId = orgAndApp.ApplicationId;
             }
+
+            if (eventLog.ApplicationId == 0) eventLog.ApplicationId = null;
 
             await connection.InsertAsync(eventLog);
 

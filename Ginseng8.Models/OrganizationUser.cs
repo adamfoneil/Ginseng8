@@ -122,6 +122,7 @@ namespace Ginseng.Models
             }
 
             UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
+            Email = UserProfile.Email;
             Organization = commandProvider.Find<Organization>(connection, OrganizationId);
         }
 
@@ -138,6 +139,7 @@ namespace Ginseng.Models
             }
 
             UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
+            Email = UserProfile.Email;
             Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
         }
 
@@ -176,6 +178,22 @@ namespace Ginseng.Models
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
             return await Task.FromResult(OrganizationId);
+        }
+
+        public override bool Equals(object obj)
+        {
+            OrganizationUser test = obj as OrganizationUser;
+            return (test != null) ? test.OrganizationId == OrganizationId && test.UserId == UserId : false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (OrganizationId + UserId).GetHashCode();
+        }
+
+        public bool AllowNotification()
+        {
+            return IsEnabled && NotifyOptionsImplementation.AllowNotification(this);
         }
     }
 }

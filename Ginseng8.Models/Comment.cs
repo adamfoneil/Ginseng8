@@ -6,6 +6,7 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
@@ -92,24 +93,44 @@ namespace Ginseng.Models
         {
             // for now, can do mentions only on work item comments because EventLog.WorkItemId is required
             if (comment.ObjectType != ObjectType.WorkItem) return;
-
+            
             var names = Regex.Matches(comment.TextBody, "@([a-zA-Z][a-zA-Z0-9_]*)").OfType<Match>();
-            if (!names.Any()) return;
 
-            string senderName = await OrganizationUser.GetUserDisplayNameAsync(connection, comment.OrganizationId, userProfile.UserId, userProfile);
+            var sender = await connection.FindWhereAsync<OrganizationUser>(new { comment.OrganizationId, userProfile.UserId });
+            string senderName = sender.DisplayName ?? userProfile.UserName;
 
+            var mentionedUsers = new HashSet<OrganizationUser>();
             foreach (var name in names)
             {
                 var users = await new OrgUserByName() { OrgId = comment.OrganizationId, SearchName = name.Value.Substring(1) }.ExecuteAsync(connection);
                 if (users.Any())
                 {
                     var mentionedUser = users.First();
-                    string mentionName = mentionedUser.DisplayName ?? mentionedUser.Email;
+                    mentionedUsers.Add(mentionedUser);
                     await ReplaceMentionNameAsync(connection, comment, name.Value, mentionedUser);
-                    int eventLogId = await CreateEventLogFromMentionAsync(connection, comment, senderName, mentionName);
-                    await Notification.CreateFromMentionAsync(connection, eventLogId, comment, senderName, mentionedUser);
+                    await AddMentionEventInnerAsync(connection, comment, senderName, mentionedUser);
                 }
             }
+
+            var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);
+            if (workItem.DeveloperUserId.HasValue && workItem.DeveloperUserId != sender.UserId)
+            {
+                var devUser = await connection.FindWhereAsync<OrganizationUser>(new { workItem.OrganizationId, UserId = workItem.DeveloperUserId.Value });
+                if (!mentionedUsers.Contains(devUser) && devUser.AllowNotification()) await AddMentionEventInnerAsync(connection, comment, senderName, devUser);                
+            }
+
+            if (workItem.BusinessUserId.HasValue && workItem.BusinessUserId != sender.UserId)
+            {
+                var bizUser = await connection.FindWhereAsync<OrganizationUser>(new { workItem.OrganizationId, UserId = workItem.BusinessUserId.Value });
+                if (!mentionedUsers.Contains(bizUser) && bizUser.AllowNotification()) await AddMentionEventInnerAsync(connection, comment, senderName, bizUser);
+            }
+        }
+
+        private async Task AddMentionEventInnerAsync(IDbConnection connection, Comment comment, string senderName, OrganizationUser mentionedUser)
+        {
+            string mentionName = mentionedUser.DisplayName ?? mentionedUser.Email;            
+            int eventLogId = await CreateEventLogFromMentionAsync(connection, comment, senderName, mentionName);
+            await Notification.CreateFromMentionAsync(connection, eventLogId, comment, senderName, mentionedUser);
         }
 
         private async Task<int> CreateEventLogFromMentionAsync(IDbConnection connection, Comment comment, string senderName, string mentionName)

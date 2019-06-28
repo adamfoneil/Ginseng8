@@ -43,5 +43,10 @@ namespace Ginseng.Models
         public bool InApp { get; set; }
 
         public string TableName => nameof(EventSubscription);
+
+        public bool AllowNotification()
+        {
+            return NotifyOptionsImplementation.AllowNotification(this);
+        }
     }
 }
