@@ -1,6 +1,8 @@
 ﻿using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -20,6 +22,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public ILookup<YearMonth, DevCalendarProjectsResult> Projects { get; set; }
         public ILookup<YearMonth, DevMilestoneWorkingHoursResult> WorkingHours { get; set; }
         public ILookup<YearMonth, CalendarProjectMetricsResult> Metrics { get; set; }
+
+        public SelectList ProjectSelect { get; set; }
 
         public bool ShowTeamNames
         {
@@ -63,6 +67,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             using (var cn = Data.GetConnection())
             {
+                ProjectSelect = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteSelectListAsync(cn);
+
                 var projects = await new DevCalendarProjects()
                 {
                     OrgId = OrgId,
