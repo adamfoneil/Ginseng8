@@ -14,6 +14,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Ginseng.Models.Extensions;
 using System.Data;
+using Dapper;
 
 namespace Ginseng.Mvc.Pages.Dashboard
 {
@@ -133,15 +134,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             using (var cn = Data.GetConnection())
             {
-                var milestones = await GetMilestonesAsync(cn, projectId, dates);
-                foreach (var ms in milestones)
-                {
-
-                }
-
+                var milestones = await GetMilestonesAsync(cn, projectId, dates); 
+                if (milestones.Any()) await CreatePlaceholderItemAsync(cn, projectId, milestones.First());
             }
 
-            return Redirect("/Calendar");
+            return Redirect("/Dashboard/Calendar");
         }
 
         private IEnumerable<DateTime> GetMilestoneDates(int year, int month)
@@ -175,7 +172,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                         ProjectId = prj.Id
                     };
 
-                if (ms.Id == 0) await connection.SaveAsync(ms);
+                if (ms.Id == 0) await connection.SaveAsync(ms, CurrentUser);
 
                 results.Add(ms);
             }
@@ -183,19 +180,26 @@ namespace Ginseng.Mvc.Pages.Dashboard
             return results;
         }
 
-        private async Task CreatePlaceholderItemAsync(SqlConnection cn, Milestone record)
+        private async Task CreatePlaceholderItemAsync(SqlConnection cn, int projectId, Milestone milestone)
         {
+            // if there's already at least one open work item in this milestone, don't create a placeholder
+            var workItems = await cn.QueryAsync<int>(
+                "SELECT [Id] FROM [dbo].[WorkItem] WHERE [ProjectId]=@projectId AND [MilestoneId]=@msId AND [CloseReasonId] IS NULL",
+                new { projectId, msId = milestone.Id });
+            if (workItems.Any()) return;
+
             const string text = @"Placeholder item created with milestone. This enables you to filter for this project on the milestone dashboard. This will automatically close when you add another work item to this milestone.";
 
-            var team = await cn.FindAsync<Team>(record.TeamId);
+            var team = await cn.FindAsync<Team>(milestone.TeamId);
+            var prj = await cn.FindAsync<Project>(projectId);
 
             var workItem = new Ginseng.Models.WorkItem()
             {
                 OrganizationId = team.OrganizationId,
                 TeamId = team.Id,
-                ApplicationId = record.ApplicationId,
-                MilestoneId = record.Id,
-                ProjectId = record.ProjectId,
+                ApplicationId = milestone.ApplicationId ?? prj.ApplicationId,
+                MilestoneId = milestone.Id,
+                ProjectId = projectId,
                 Title = "Placeholder item created with milestone",
                 HtmlBody = $"<p>{text}</p>",
                 TextBody = text

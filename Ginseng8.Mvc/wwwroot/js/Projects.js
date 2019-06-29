@@ -105,7 +105,7 @@ $('.project-work-items').tooltip({
 
         var year = $(this).data('year');
         var month = $(this).data('month');
-        if (year & month) url += '?year=' + year + '&month=' + month;
+        if (year !== undefined & month !== undefined) url += '?year=' + year + '&month=' + month;
 
         fetch(url, {
             method: 'get'

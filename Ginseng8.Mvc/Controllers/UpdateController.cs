@@ -56,7 +56,7 @@ namespace Ginseng.Mvc.Controllers
 
                 string backgroundColor = string.Empty;
                 string className = "badge-secondary";                
-                bool getColor = (fields.SizeId != workItem.SizeId);
+                bool getColor = (fields.SizeId != workItem.SizeId || workItem.SizeId.HasValue);
                 bool showMissingEstimateModifier = !fields.SizeId.HasValue;
                 string missingEstimateModifierId = $"mod-{workItem.Number}-{OpenWorkItemsResult.UnestimatedModifier}";
 
@@ -79,6 +79,10 @@ namespace Ginseng.Mvc.Controllers
                         }
                     }
                 }
+                else
+                {
+                    workItem.MilestoneId = null;
+                }
 
                 workItem.SizeId = fields.SizeId;
                 workItem.CloseReasonId = fields.CloseReasonId;
@@ -91,18 +95,19 @@ namespace Ginseng.Mvc.Controllers
 
                 if (getColor)
                 {
-                    if (fields.SizeId.HasValue)
+                    using (var cn = _data.GetConnection())
                     {
-                        using (var cn = _data.GetConnection())
+                        var item = await new OpenWorkItems() { Id = workItem.Id, OrgId = _data.CurrentOrg.Id }.ExecuteSingleAsync(cn);
+                        if (item.SizeId.HasValue)
                         {
-                            var item = await new OpenWorkItems() { Id = workItem.Id, OrgId = _data.CurrentOrg.Id }.ExecuteSingleAsync(cn);
                             backgroundColor = HtmlHelpers.WeightedColorToHex(item.ColorGradientPosition);
                             className = string.Empty;
                         }
-                    }
-                    else
-                    {
-                        backgroundColor = string.Empty;                        
+                        else
+                        {
+                            backgroundColor = string.Empty;
+                            className = "badge-secondary";
+                        }                        
                     }
                 }
                 

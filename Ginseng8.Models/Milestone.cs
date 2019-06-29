@@ -27,6 +27,8 @@ namespace Ginseng.Models
 
         public Milestone(DateTime date)
         {
+            Date = date;
+
             var dtfi = DateTimeFormatInfo.CurrentInfo;
             var cal = dtfi.Calendar;
             int weekNumber = cal.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
@@ -117,15 +119,10 @@ namespace Ginseng.Models
                 latest?.Date.NextDayOfWeek(nextDayOfWeek, team.Organization.IterationWeeks) ??
                 DateTime.Today.NextDayOfWeek(nextDayOfWeek, team.Organization.IterationWeeks);
 
-            DateTimeFormatInfo dtfi = DateTimeFormatInfo.CurrentInfo;
-            var cal = dtfi.Calendar;
-            int weekNumber = cal.GetWeekOfYear(nextDate, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
-
-            return new Milestone()
+            return new Milestone(nextDate)
             {
                 TeamId = team.Id,                
-                Date = nextDate,
-                Name = $"week {weekNumber}"
+                Date = nextDate                
             };
         }
 

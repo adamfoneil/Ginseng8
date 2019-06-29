@@ -22,7 +22,7 @@
     {
         var unestimatedClass = (Model.NeedsEstimate) ? "btn-dark" : "btn-light";
         <li class="list-inline-item small">
-            <a asp-page="/Dashboard/Index" class="btn btn-sm @unestimatedClass" asp-route-needsEstimate="true" title="Needs estimate">
+            <a asp-page="/Dashboard/MyItems" class="btn btn-sm @unestimatedClass" asp-route-needsEstimate="true" title="Needs estimate">
                 <i class="@OpenWorkItemsResult.UnestimatedIcon" style="color:@OpenWorkItemsResult.UnestimatedColor"></i>
                 <sup>@Model.UnestimatedItemCount</sup>
             </a>
@@ -30,6 +30,6 @@
     }
 
     <li class="list-inline-item small">
-        <a asp-page="/Dashboard/Index" class="btn btn-sm btn-light">Show all</a>
+        <a asp-page="/Dashboard/MyItems" class="btn btn-sm btn-light">Show all</a>
     </li>
 </ul>
