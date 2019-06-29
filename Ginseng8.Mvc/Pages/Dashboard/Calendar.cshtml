@@ -35,6 +35,7 @@
                                             <li class="pb-1">
                                                 <a class="btn btn-info project-work-items" asp-page="/Dashboard/Projects" asp-route-id="@prjItem.ProjectId" 
                                                     data-project-id="@prjItem.ProjectId" data-month="@month.Month" data-year="@month.Year">@prjItem.ProjectName</a>
+                                                
                                                 @foreach (var dev in prjGrp)
                                                 {
                                                     var balance = Model.GetBalance(month, appGrp.Key, dev.DeveloperUserId);
@@ -51,7 +52,8 @@
                                                     }
                                                 }    
                                                 <br/>
-                                                <partial name="Items/_ItemInfo" model="metrics[prjGrp.Key]"/>
+                                                <partial name="Items/_ItemInfo" model="metrics[prjGrp.Key]"/>                                                
+                                                <hr/>
                                             </li>
                                         }                                        
                                     </ul>                                    
