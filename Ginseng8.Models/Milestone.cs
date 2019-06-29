@@ -21,6 +21,18 @@ namespace Ginseng.Models
     [DereferenceId("SELECT [Name] + ' ' + FORMAT([Date], 'ddd M/d') AS [Name] FROM [dbo].[Milestone] WHERE [Id]=@id")]
     public class Milestone : BaseTable, IOrgSpecific, IFindRelated<int>
     {
+        public Milestone()
+        {
+        }
+
+        public Milestone(DateTime date)
+        {
+            var dtfi = DateTimeFormatInfo.CurrentInfo;
+            var cal = dtfi.Calendar;
+            int weekNumber = cal.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
+            Name = $"week {weekNumber}";
+        }
+
         [PrimaryKey]
         [References(typeof(Team))]
         public int TeamId { get; set; }

@@ -275,7 +275,8 @@ namespace Ginseng.Models
         {
             if (!milestoneId.HasValue) return;
 
-            int? placeholderLabelId = await connection.QuerySingleOrDefaultAsync<int?>("SELECT [Id] FROM [dbo].[Label] WHERE [OrganizationId]=@orgId AND [Name]=@name", new { orgId, name = Label.PlaceholderLabel });
+            int? placeholderLabelId = await connection.QuerySingleOrDefaultAsync<int?>(
+                "SELECT [Id] FROM [dbo].[Label] WHERE [OrganizationId]=@orgId AND [Name]=@name", new { orgId, name = Label.PlaceholderLabel });
             if (!placeholderLabelId.HasValue) return;
 
             var parameters = new { orgId, msId = milestoneId, labelId = placeholderLabelId };

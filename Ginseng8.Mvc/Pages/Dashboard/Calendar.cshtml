@@ -61,7 +61,7 @@
                             <form method="post" asp-page-handler="AddProject">
                                 <input type="hidden" name="Year" value="@month.Year"/>
                                 <input type="hidden" name="Month" value="@month.Month"/>
-                                <select name="ProjectId" asp-items="@Model.GetProjectSelect(Model.Projects[month])" class="form-control-sm" required="required">
+                                <select name="ProjectId" asp-items="@Model.GetProjectSelect(Model.Projects[month])" class="form-control-sm" required="required" onchange="this.form.submit();">
                                     <option value="">- add project -</option>
                                 </select>
                             </form>

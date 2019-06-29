@@ -45,17 +45,12 @@ namespace Ginseng.Mvc.Classes
 
                 if (ms == null)
                 {
-                    var dtfi = DateTimeFormatInfo.CurrentInfo;
-                    var cal = dtfi.Calendar;
-                    int weekNumber = cal.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
 
-                    ms = new Milestone()
+                    ms = new Milestone(date)
                     {
-                        TeamId = teamId,
-                        Date = date,
-                        Name = $"week {weekNumber}"
-                    };
-                    if (appId.HasValue) ms.ApplicationId = appId;
+                        TeamId = teamId,                        
+                        ApplicationId = appId                        
+                    };                    
 
                     await cn.SaveAsync(ms, currentUser);
                 }
