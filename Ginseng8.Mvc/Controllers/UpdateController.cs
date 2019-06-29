@@ -55,7 +55,7 @@ namespace Ginseng.Mvc.Controllers
                 }
 
                 string backgroundColor = string.Empty;
-                string className = string.Empty;                
+                string className = "badge-secondary";                
                 bool getColor = (fields.SizeId != workItem.SizeId);
                 bool showMissingEstimateModifier = !fields.SizeId.HasValue;
                 string missingEstimateModifierId = $"mod-{workItem.Number}-{OpenWorkItemsResult.UnestimatedModifier}";
@@ -102,8 +102,7 @@ namespace Ginseng.Mvc.Controllers
                     }
                     else
                     {
-                        backgroundColor = string.Empty;
-                        className = "badge-secondary";
+                        backgroundColor = string.Empty;                        
                     }
                 }
                 
