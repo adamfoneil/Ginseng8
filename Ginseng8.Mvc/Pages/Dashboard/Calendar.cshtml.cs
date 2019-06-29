@@ -23,7 +23,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public ILookup<YearMonth, DevMilestoneWorkingHoursResult> WorkingHours { get; set; }
         public ILookup<YearMonth, CalendarProjectMetricsResult> Metrics { get; set; }
 
-        public SelectList ProjectSelect { get; set; }
+        public IEnumerable<SelectListItem> ProjectItems { get; set; }
 
         public bool ShowTeamNames
         {
@@ -67,7 +67,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             using (var cn = Data.GetConnection())
             {
-                ProjectSelect = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteSelectListAsync(cn);
+                ProjectItems = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId, TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteItemsAsync(cn);
 
                 var projects = await new DevCalendarProjects()
                 {
@@ -112,6 +112,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
             var list = months.ToList();
             list.AddRange(Enumerable.Range(1, count).Select(i => last + i));
             return list;
+        }
+
+        public SelectList GetProjectSelect(IEnumerable<DevCalendarProjectsResult> excludeProjects)
+        {
+            var excludeProjectIds = excludeProjects.Select(prj => prj.ProjectId.ToString());
+            var items = ProjectItems.Where(prj => !excludeProjectIds.Contains(prj.Value));
+            return new SelectList(items, "Value", "Text");
         }
     }
 }
