@@ -6,6 +6,7 @@ using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -44,11 +45,15 @@ namespace Ginseng.Mvc.Classes
 
                 if (ms == null)
                 {
+                    var dtfi = DateTimeFormatInfo.CurrentInfo;
+                    var cal = dtfi.Calendar;
+                    int weekNumber = cal.GetWeekOfYear(date, CalendarWeekRule.FirstDay, DayOfWeek.Sunday);
+
                     ms = new Milestone()
                     {
-                        TeamId = teamId,                        
+                        TeamId = teamId,
                         Date = date,
-                        Name = date.ToString("ddd M/d")
+                        Name = $"week {weekNumber}"
                     };
                     if (appId.HasValue) ms.ApplicationId = appId;
 
