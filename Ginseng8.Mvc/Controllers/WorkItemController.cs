@@ -44,8 +44,13 @@ namespace Ginseng.Mvc.Controllers
         }
 
         [HttpGet]
-        public async Task<PartialViewResult> InfoBanner(int id)
+        public async Task<IActionResult> InfoBanner(int id)
         {
+            if (id == 0)
+            {
+                return Content(string.Empty);
+            }
+
             using (var cn = _data.GetConnection())
             {
                 var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
