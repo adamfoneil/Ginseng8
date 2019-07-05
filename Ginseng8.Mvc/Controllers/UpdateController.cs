@@ -97,7 +97,7 @@ namespace Ginseng.Mvc.Controllers
                 {
                     using (var cn = _data.GetConnection())
                     {
-                        var item = await new OpenWorkItems() { Id = workItem.Id, OrgId = _data.CurrentOrg.Id }.ExecuteSingleAsync(cn);
+                        var item = await new OpenWorkItems() { Id = workItem.Id, OrgId = _data.CurrentOrg.Id, IsOpen = null }.ExecuteSingleAsync(cn);
                         if (item.SizeId.HasValue)
                         {
                             backgroundColor = HtmlHelpers.WeightedColorToHex(item.ColorGradientPosition);
