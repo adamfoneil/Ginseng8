@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Ginseng.Models;
+using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
 using Ginseng.Mvc.Interfaces;
@@ -43,8 +44,13 @@ namespace Ginseng.Mvc.Controllers
         }
 
         [HttpGet]
-        public async Task<PartialViewResult> InfoBanner(int id)
+        public async Task<IActionResult> InfoBanner(int id)
         {
+            if (id == 0)
+            {
+                return Content(string.Empty);
+            }
+
             using (var cn = _data.GetConnection())
             {
                 var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
@@ -63,6 +69,12 @@ namespace Ginseng.Mvc.Controllers
 
             using (var cn = _data.GetConnection())
             {
+                if (workItem.MilestoneId < 0)
+                {
+                    var indirectMilestones = new IndirectMilestones();
+                    workItem.MilestoneId = await indirectMilestones.Options[workItem.MilestoneId.Value].GetMilestoneIdAsync(cn, _data.CurrentUser, workItem.TeamId, workItem.ApplicationId);
+                }
+
                 await workItem.SaveHtmlAsync(_data, cn);
                 await workItem.SetNumberAsync(cn);
                 if (await _data.TrySaveAsync(cn, workItem))

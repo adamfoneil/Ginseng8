@@ -50,7 +50,7 @@ else
             {
                 { "teamId", Model.Application.TeamId ?? 0 },
                 { "applicationId", Model.AppId.Value }
-            }))
+            }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.WorkItems.First().UseApplications })
         </div>
     }
 }
