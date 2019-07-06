@@ -45,7 +45,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
             TeamId = CurrentOrgUser.CurrentTeamId ?? 0;
-            Applications = await new Applications() { OrgId = OrgId, AllowNewItems = true, TeamId = TeamId, IsActive = true }.ExecuteAsync(connection);
+            Applications = await new Applications() { OrgId = OrgId, AllowNewItems = true, TeamId = TeamId, Id = CurrentOrgUser.CurrentAppId, IsActive = true }.ExecuteAsync(connection);
             Teams = await new Teams() { OrgId = OrgId, IsActive = true }.ExecuteAsync(connection);
             TeamInfo = Teams.ToDictionary(row => row.Id); // used to give access to Team.UseApplications for determining whether to show app dropdown in new item form
 
@@ -90,6 +90,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 OrgId = OrgId,
                 TeamId = CurrentOrgUser.CurrentTeamId,
+                AppId = CurrentOrgUser.CurrentAppId,
                 HasProject = false,
                 LabelIds = labelIds,
                 HasAssignedUserId = false,
