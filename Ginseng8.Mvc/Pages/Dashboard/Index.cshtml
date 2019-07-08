@@ -14,6 +14,12 @@
         {
             <h4>@t.Name <span class="text-muted small">Applications</span></h4>
             <partial name="Items/_AppCards" model="Model.AppInfo[t.Id]" />
+            @if (Model.ProjectsWithoutApps[t.Id].Any())
+            {
+                <hr/>
+                <h5>@t.Name Global Projects <span class="small text-muted">Projects not specific to an application</span></h5>                
+                <partial name="Items/_ProjectCardsInner" model="Model.ProjectsWithoutApps[t.Id]" />
+            }
         }
         else
         {

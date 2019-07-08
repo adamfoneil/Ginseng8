@@ -37,7 +37,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         public IEnumerable<Team> Teams { get; set; }
         public ILookup<int, AppInfoResult> AppInfo { get; set; }
-        public ILookup<int, ProjectInfoResult> ProjectInfo { get; set; }
+        public ILookup<int, ProjectInfoResult> ProjectInfo { get; set; } // keyed to teamId
+        public ILookup<int, ProjectInfoResult> ProjectsWithoutApps { get; set; } // keyed to teamId
 
         public Application Application { get; set; }
         public IEnumerable<ProjectInfoResult> AppProjects { get; set; }
@@ -74,6 +75,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
                 var projects = await new ProjectInfo() { OrgId = OrgId, TeamUsesApplications = false, IsActive = FilterIsActive }.ExecuteAsync(connection);
                 ProjectInfo = projects.ToLookup(row => row.TeamId);
+
+                var projectsWithoutApps = await new ProjectInfo() { OrgId = OrgId, IsActive = FilterIsActive, HasApplicationId = false }.ExecuteAsync(connection);
+                ProjectsWithoutApps = projectsWithoutApps.ToLookup(row => row.TeamId);
             }
         }
 
