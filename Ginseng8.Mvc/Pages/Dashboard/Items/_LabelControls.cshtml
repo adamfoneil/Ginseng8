@@ -5,6 +5,10 @@
         <i class="fal fa-tags" title="Labels"></i>
     </button>
     <div class="dropdown-menu scrollable-menu">
+        <div class="px-3 search-box-container">
+            <input type="text" class="form-control form-control-sm search-box" placeholder="Filter">
+        </div>
+
         @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
         {
             <form method="post">

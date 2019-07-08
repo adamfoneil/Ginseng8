@@ -412,6 +412,29 @@ $(document)
             $('#addComment-' + objectId + '-HtmlBody').froalaEditor('events.focus');            
         }
     });
+})
+.on('click', '.search-box-container', function(event) {
+    event.stopPropagation();
+})
+.on('input', '.search-box', function(event) {
+    var $input = $(event.currentTarget);
+    var searchTerm = $input.val();
+    var $dropdownItems = $input.parents('.dropdown-menu').find('.dropdown-item');
+
+    if (!searchTerm.length) {
+        $dropdownItems.show();
+        return;
+    }
+
+    $dropdownItems.hide();
+
+    $dropdownItems.each(function(index, item) {
+        var $item = $(item);
+
+        if (~$item.find('.badge').text().indexOf(searchTerm)) {
+            $item.show();
+        }
+    });
 });
 
 var noPropagateItems = document.querySelectorAll('.no-propagation');
