@@ -60,7 +60,7 @@
 
                             @foreach (var item in Model.GetAppLabelItems(app.Id, label.Id))
                             {
-                                <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
+                                <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers }" />
                             }
                         </div>
 
