@@ -107,5 +107,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             MySchedule = await new MyWorkSchedule() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
         }
+
+        public async Task<RedirectResult> OnPostSetOptionsAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

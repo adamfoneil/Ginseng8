@@ -60,12 +60,14 @@
                 {
                     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                     {
-                        { "teamId", appGrp.First().TeamId },
-                        { "applicationId", appGrp.Key },
+                        { appGrp.First().ProjectParentField, appGrp.Key },
                         { "milestoneId", milestoneGrp.Key },
                         { Model.UserIdColumnName, Model.UserId },
                         { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
-                    }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
+                    }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications, AppendIfMissing = new Dictionary<string, int>()
+                    {
+                        { "teamId", appGrp.First().TeamId }
+                    }})
                 }
                 else
                 {
@@ -101,3 +103,20 @@
         <p>To add work items here, please select a Team above.</p>
     }
 }
+
+<div>
+    <button class="btn btn-sm btn-light mb-3" data-toggle="collapse" data-target="#userOptions" aria-expanded="false" aria-controls="queryTraces">Options</button>
+    <div id="userOptions" class="collapse ml-3">
+        <form method="post" asp-page-handler="SetOptions" class="form-inline">            
+            <div class="form-group">
+                <label class="mr-2">Grouping:</label>
+                <select name="@Option.MyItemsGroupField" asp-items="@Model.MyItemGroupingOption.GetSelectList(Model.Options[Option.MyItemsGroupField].StringValue)" class="form-control mr-2"></select>
+            </div>
+            <div class="form-group">
+                <label class="mr-2">Filter by selected nav bar app:</label>
+                <select name="@Option.MyItemsFilterCurrentApp" asp-items="@SelectListHelper.YesNo(selectedValue: Model.Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true)" class="form-control mr-2"></select>
+            </div>
+            <button class="btn btn-secondary" type="submit">Update</button>            
+        </form>
+    </div>
+</div>

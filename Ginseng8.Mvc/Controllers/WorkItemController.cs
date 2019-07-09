@@ -75,6 +75,24 @@ namespace Ginseng.Mvc.Controllers
                     workItem.MilestoneId = await indirectMilestones.Options[workItem.MilestoneId.Value].GetMilestoneIdAsync(cn, _data.CurrentUser, workItem.TeamId, workItem.ApplicationId);
                 }
 
+                if (workItem.TeamId == 0)
+                {
+                    if (workItem.ApplicationId.HasValue)
+                    {
+                        var app = await cn.FindAsync<Application>(workItem.ApplicationId.Value);
+                        workItem.TeamId = app.TeamId ?? _data.CurrentOrgUser.CurrentTeamId ?? 0;
+                    }
+
+                    if (workItem.TeamId == 0 && workItem.ProjectId.HasValue)
+                    {
+                        var prj = await cn.FindAsync<Project>(workItem.ProjectId.Value);
+                        workItem.TeamId = prj.TeamId;
+                        if (!workItem.ApplicationId.HasValue) workItem.ApplicationId = prj.ApplicationId;
+                    }
+
+                    if (workItem.TeamId == 0) throw new Exception("Couldn't determine the TeamId for the new work item.");
+                }
+
                 await workItem.SaveHtmlAsync(_data, cn);
                 await workItem.SetNumberAsync(cn);
                 if (await _data.TrySaveAsync(cn, workItem))

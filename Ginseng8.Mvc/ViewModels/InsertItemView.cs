@@ -22,6 +22,7 @@ namespace Ginseng.Mvc.ViewModels
         public CommonDropdowns Dropdowns { get; set; }
         public bool UseApplications { get; set; }
         public IEnumerable<SelectListItem> AssignToUsers { get; set; }
+        public Dictionary<string, int> AppendIfMissing { get; set; } // this is so I can get the TeamId in there if Team.UseApplications
 
         public Dictionary<string, int> ContextValues { get; }
 
@@ -43,6 +44,17 @@ namespace Ginseng.Mvc.ViewModels
             foreach (var kp in ContextValues.Where(kp => kp.Value != 0))
             {
                 if (FindProperty(properties, kp.Key, out PropertyInfo property)) property.SetValue(result, kp.Value);
+            }
+
+            if (AppendIfMissing?.Any() ?? false)
+            {
+                foreach (var kp in AppendIfMissing.Where(kp => kp.Value != 0))
+                {
+                    if (FindProperty(properties, kp.Key, out PropertyInfo property) && !ContextValues.ContainsKey(kp.Key))
+                    {
+                        property.SetValue(result, kp.Value);
+                    }
+                }
             }
 
             return result;
