@@ -1,10 +1,17 @@
 ﻿using Ginseng.Models.Conventions;
+using Postulate.Base;
 using Postulate.Base.Attributes;
+using Postulate.Base.Interfaces;
+using Postulate.SqlServer.IntKey;
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-    public class Option : AppTable
+    public class Option : AppTable, IFindRelated<int>
     {
         [PrimaryKey]
         [MaxLength(100)]
@@ -20,7 +27,24 @@ namespace Ginseng.Models
 
         public bool IsActive { get; set; } = true;
 
+        public OptionType OptionType { get; set; }
+
         public const string MyItemsFilterCurrentApp = "MyItems.FilterCurrentApp";
         public const string MyItemsGroupField = "MyItems.GroupField";
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            OptionType = commandProvider.Find<OptionType>(connection, TypeId);
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            OptionType = await commandProvider.FindAsync<OptionType>(connection, TypeId);
+        }
+
+        public static async Task<Option> FindByName(SqlConnection connection, string name)
+        {
+            return await connection.FindWhereAsync<Option>(new { name });            
+        }
     }
 }

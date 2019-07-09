@@ -19,18 +19,18 @@ namespace Ginseng.Mvc.Services
             {
                 Value = "ProjectParentId",
                 Text = "Use Team Settings",
-                GroupFunction = (item) => item.ProjectParentId,
-                NameFunction = (item) => item.ProjectParentName,
-                NewItemFieldName = (item) => item.ProjectParentField
+                GroupValueFunction = (item) => item.ProjectParentId,
+                GroupHeadingFunction = (item) => item.ProjectParentName,
+                FieldNameFunction = (item) => item.ProjectParentField
             };
 
             yield return new Option()
             {
                 Value = "ProjectId",
                 Text = "Project",
-                GroupFunction = (item) => item.ProjectId,
-                NameFunction = (item) => item.ProjectName,
-                NewItemFieldName = (item) => "ProjectId"
+                GroupValueFunction = (item) => item.ProjectId,
+                GroupHeadingFunction = (item) => item.ProjectName,
+                FieldNameFunction = (item) => nameof(item.ProjectId)
             };
         }
 
@@ -61,9 +61,20 @@ namespace Ginseng.Mvc.Services
             /// </summary>
             public string Text { get; set; }
 
-            public Func<OpenWorkItemsResult, int> GroupFunction { get; set; }
-            public Func<OpenWorkItemsResult, string> NameFunction { get; set; }
-            public Func<OpenWorkItemsResult, string> NewItemFieldName { get; set; }
+            /// <summary>
+            /// Function that returns grouping value
+            /// </summary>
+            public Func<OpenWorkItemsResult, int> GroupValueFunction { get; set; }
+
+            /// <summary>
+            /// Function that returns the group heading
+            /// </summary>
+            public Func<OpenWorkItemsResult, string> GroupHeadingFunction { get; set; }
+
+            /// <summary>
+            /// Function that returns the field name to use in the InsertItem form
+            /// </summary>
+            public Func<OpenWorkItemsResult, string> FieldNameFunction { get; set; }
         }
     }
 }

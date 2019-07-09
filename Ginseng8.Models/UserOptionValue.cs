@@ -2,6 +2,8 @@
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
+using Postulate.SqlServer.IntKey;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -34,17 +36,20 @@ namespace Ginseng.Models
 
         [NotMapped]
         public int TypeId { get; set; }
-
+        
         public Option Option { get; set; }
         public OptionType OptionType { get; set; }
 
+        private object _value;
+        [NotMapped]
         public object Value
         {
             get
             {
                 var props = GetType().GetProperties().ToDictionary(pi => pi.Name);
                 return props[StorageColumn].GetValue(this);
-            }
+            }   
+            set { _value = value; }
         }
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
@@ -63,6 +68,36 @@ namespace Ginseng.Models
             StorageColumn = OptionType.StorageColumn;
             OptionName = Option.Name;
             TypeId = Option.TypeId;
+        }
+
+        public override async Task BeforeSaveAsync(IDbConnection connection, SaveAction action, IUser user)
+        {
+            await base.BeforeSaveAsync(connection, action, user);
+            
+            if (OptionId == 0 && !string.IsNullOrEmpty(OptionName))
+            {
+                var opt = await connection.FindWhereAsync<Option>(new { name = OptionName });
+                OptionId = opt.Id;
+                OptionType = opt.OptionType;
+            }
+
+            if (_value != null)
+            {                
+                switch (OptionType.StorageColumn)
+                {
+                    case nameof(StringValue):
+                        StringValue = _value as string;
+                        break;
+
+                    case nameof(IntValue):
+                        IntValue = int.Parse(_value as string);
+                        break;
+
+                    case nameof(BoolValue):
+                        BoolValue = bool.Parse(_value as string);
+                        break;
+                }
+            }
         }
     }
 }

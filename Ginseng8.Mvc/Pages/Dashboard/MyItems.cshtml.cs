@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -110,7 +111,29 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         public async Task<RedirectResult> OnPostSetOptionsAsync()
         {
-            throw new NotImplementedException();
+            string[] fields = new string[]
+            {
+                Option.MyItemsFilterCurrentApp,
+                Option.MyItemsGroupField
+            };
+
+            using (var cn = Data.GetConnection())
+            {
+                foreach (var field in fields)
+                {
+                    var option = await Option.FindByName(cn, field);
+                    var uov = new UserOptionValue()
+                    {
+                        UserId = UserId,
+                        OptionId = option.Id,
+                        OptionType = option.OptionType,
+                        Value = Request.Form[field].First()
+                    };
+                    await cn.MergeAsync(uov, CurrentUser);
+                }
+            }
+
+            return Redirect("/Dashboard/MyItems");
         }
     }
 }
