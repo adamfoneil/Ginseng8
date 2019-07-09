@@ -3,7 +3,7 @@ using Postulate.Base.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ginseng.Models
-{
+{    
     public class Option : AppTable
     {
         [PrimaryKey]
@@ -19,5 +19,8 @@ namespace Ginseng.Models
         public string OptionSource { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        public const string MyItemsFilterCurrentApp = "MyItems:FilterCurrentApp";
+        public const string MyItemsGroupField = "MyItems:GroupField";
     }
 }

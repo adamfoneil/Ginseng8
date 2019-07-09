@@ -62,10 +62,14 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 OrgId = OrgId,
                 AssignedUserId = UserId,
-                TeamId = CurrentOrgUser.CurrentTeamId,
-                AppId = CurrentOrgUser.EffectiveAppId,
+                TeamId = CurrentOrgUser.CurrentTeamId,                
                 LabelId = LabelId
             };
+
+            if (Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true)
+            {
+                result.AppId = CurrentOrgUser.EffectiveAppId;
+            }
 
             if (Date.HasValue)
             {

@@ -34,6 +34,7 @@ namespace Ginseng.Mvc
         public int UserId { get { return CurrentUser?.UserId ?? 0; } }
         public int OrgId { get { return CurrentUser?.OrganizationId ?? 0; } }
         public DateTime LocalTime { get { return CurrentUser.LocalTime; } }
+        public Dictionary<string, UserOptionValue> Options { get; set; }
 
         public string TeamUseApps { get; private set; } // this enables JS show-hides of app dropdown based on team selection
 
@@ -101,6 +102,9 @@ namespace Ginseng.Mvc
 
                     var teams = new Teams() { OrgId = OrgId }.Execute(cn);
                     TeamUseApps = JsonConvert.SerializeObject(teams.ToDictionary(row => row.Id, row => row.UseApplications));
+
+                    var options = new MyOptions() { UserId = UserId }.Execute(cn);
+                    Options = options.ToDictionary(row => row.OptionName);
                 }
             }
         }

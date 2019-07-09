@@ -16,9 +16,8 @@ namespace Ginseng.Models
         [PrimaryKey]
         public int OptionId { get; set; }
 
-        [References(typeof(UserProfile))]
         [PrimaryKey]
-        public int UserId { get; set; }
+        public int UserId { get; set; } // no FK here so that we can use UserId = 0 as default value
 
         [MaxLength(255)]
         public string StringValue { get; set; }
@@ -30,13 +29,22 @@ namespace Ginseng.Models
         [NotMapped]
         public string StorageColumn { get; set; }
 
+        [NotMapped]
+        public string OptionName { get; set; }
+
+        [NotMapped]
+        public int TypeId { get; set; }
+
         public Option Option { get; set; }
         public OptionType OptionType { get; set; }
 
-        public object GetValue()
+        public object Value
         {
-            var props = GetType().GetProperties().ToDictionary(pi => pi.Name);
-            return props[StorageColumn].GetValue(this);
+            get
+            {
+                var props = GetType().GetProperties().ToDictionary(pi => pi.Name);
+                return props[StorageColumn].GetValue(this);
+            }
         }
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
@@ -44,6 +52,8 @@ namespace Ginseng.Models
             Option = commandProvider.Find<Option>(connection, OptionId);
             OptionType = commandProvider.Find<OptionType>(connection, Option.TypeId);
             StorageColumn = OptionType.StorageColumn;
+            OptionName = Option.Name;
+            TypeId = Option.TypeId;
         }
 
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
@@ -51,6 +61,8 @@ namespace Ginseng.Models
             Option = await commandProvider.FindAsync<Option>(connection, OptionId);
             OptionType = await commandProvider.FindAsync<OptionType>(connection, Option.TypeId);
             StorageColumn = OptionType.StorageColumn;
+            OptionName = Option.Name;
+            TypeId = Option.TypeId;
         }
     }
 }
