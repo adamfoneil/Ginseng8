@@ -45,9 +45,9 @@
         <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
     </div>
 
-    @foreach (var appGrp in milestoneGrp.GroupBy(row => row.ProjectParentId))
+    @foreach (var appGrp in milestoneGrp.GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
     {
-        <h5 class="ml-3">@appGrp.First().ProjectParentName</h5>
+        <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
 
         <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
             <div class="ml-3 sortable" data-user-id="@Model.UserId">
@@ -60,13 +60,13 @@
                 {
                     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                     {
-                        { appGrp.First().ProjectParentField, appGrp.Key },
+                        { Model.GroupingOption.FieldNameFunction(appGrp.First()), appGrp.Key },
                         { "milestoneId", milestoneGrp.Key },
                         { Model.UserIdColumnName, Model.UserId },
                         { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
                     }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications, AppendIfMissing = new Dictionary<string, int>()
                     {
-                        { "teamId", appGrp.First().TeamId }
+                        { "teamId", appGrp.First().TeamId }                        
                     }})
                 }
                 else
@@ -106,11 +106,11 @@
 
 <div>
     <button class="btn btn-sm btn-light mb-3" data-toggle="collapse" data-target="#userOptions" aria-expanded="false" aria-controls="queryTraces">Options</button>
-    <div id="userOptions" class="collapse ml-3">
+    <div id="userOptions" class="collapse ml-3 mb-3">
         <form method="post" asp-page-handler="SetOptions" class="form-inline">            
             <div class="form-group">
                 <label class="mr-2">Grouping:</label>
-                <select name="@Option.MyItemsGroupField" asp-items="@Model.MyItemGroupingOption.GetSelectList(Model.Options[Option.MyItemsGroupField].StringValue)" class="form-control mr-2"></select>
+                <select name="@Option.MyItemsGroupField" asp-items="@Model.MyItemGroupingOptions.GetSelectList(Model.Options[Option.MyItemsGroupField].StringValue)" class="form-control mr-2"></select>
             </div>
             <div class="form-group">
                 <label class="mr-2">Filter by selected nav bar app:</label>

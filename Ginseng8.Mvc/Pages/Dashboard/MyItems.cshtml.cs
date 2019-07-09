@@ -90,6 +90,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
             // if you have dev and biz responsibility, then assume dev
             if (responsibilityId == 3 || responsibilityId == 0) responsibilityId = 2;
             UserIdColumnName = Responsibility.WorkItemColumnName[responsibilityId];
+
+            var grouping = Options[Option.MyItemsGroupField].Value as string;
+            GroupingOption = MyItemGroupingOptions[grouping];
         }
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)

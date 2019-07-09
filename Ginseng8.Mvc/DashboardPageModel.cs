@@ -34,7 +34,8 @@ namespace Ginseng.Mvc
         public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
         public IEnumerable<WorkDaysResult> WorkDays { get; set; }
         public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }
-        public MyItemGroupingOption MyItemGroupingOption { get; set; } = new MyItemGroupingOption();
+        public MyItemGroupingOption MyItemGroupingOptions { get; set; } = new MyItemGroupingOption();
+        public MyItemGroupingOption.Option GroupingOption { get; set; }
 
         /// <summary>
         /// triggers display of partial to offer to move items to soonest upcoming or new milestone
