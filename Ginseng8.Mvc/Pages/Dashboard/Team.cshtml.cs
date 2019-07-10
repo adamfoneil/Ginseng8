@@ -28,6 +28,8 @@ namespace Ginseng.Mvc.Pages.Work
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
+            ShowLabelFilter = (FilterUserId != 0);
+
             Users = await new MyOrgUsers()
             {
                 OrgId = OrgId,
@@ -48,6 +50,13 @@ namespace Ginseng.Mvc.Pages.Work
                     UserIdColumn = Responsibility.WorkItemColumnName[responsibilityId]
                 };
             });
+
+            if (FilterUserId != 0)
+            {
+                var userOptions = await new MyOptions() { UserId = FilterUserId }.ExecuteAsync(connection);
+                var optionDictionary = userOptions.ToDictionary(row => row.OptionName);
+                GroupingOption = MyItemGroupingOptions[optionDictionary[Option.MyItemsGroupField].StringValue];
+            }            
         }
 
         protected override OpenWorkItems GetQuery()
