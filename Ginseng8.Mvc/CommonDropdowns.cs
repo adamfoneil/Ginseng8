@@ -68,7 +68,7 @@ namespace Ginseng.Mvc
 		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
 		{
             return (item?.UseApplications ?? true) ?
-                new SelectList(ProjectsByApp[item?.ApplicationId ?? 0].Concat(ProjectsWithoutApps[item?.TeamId ?? 0]), "Value", "Text", item?.ProjectId) :
+                new SelectList(ProjectsByApp[item?.ApplicationId ?? 0].Concat(ProjectsWithoutApps[item?.TeamId ?? 0]).OrderBy(row => row.Text), "Value", "Text", item?.ProjectId) :
                 new SelectList(ProjectsByTeam[item?.TeamId ?? 0], "Value", "Text", item?.ProjectId);            
 		}
 

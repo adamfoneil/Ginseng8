@@ -24,11 +24,16 @@ reloadProjectDropdowns.forEach(function (ele) {
     ele.addEventListener('change', function (ev) {
         var number = ev.target.form.Number.value;
         var teamId = $('#TeamId-' + number).val();
+        var appId = $('#AppId-' + number).val();
         var useApps = teamUseApps[teamId];
-        if (useApps) {            
+        if (useApps & (appId != '')) {            
             FillDropdown(ev, '/WorkItem/GetAppProjects?appId=', '#ProjectId-', '- project -');
         } else {
-            FillDropdown(ev, '/WorkItem/GetTeamProjects?teamId=', '#ProjectId-', '- project -');
+            if (appId == '') {
+                FillDropdown(ev, '/WorkItem/GetTeamProjects?appId=0&teamId=', '#ProjectId-', '- project -', teamId);
+            } else {
+                FillDropdown(ev, '/WorkItem/GetTeamProjects?teamId=', '#ProjectId-', '- project -', teamId);
+            }            
         }        
     });
 });
@@ -40,9 +45,9 @@ reloadMilestoneDropdowns.forEach(function (ele) {
     });
 });
 
-function FillDropdown(ev, url, selectIdPrefix, blankOption) {
+function FillDropdown(ev, url, selectIdPrefix, blankOption, paramValue) {
     var number = ev.target.form.Number.value;
-    var id = $(ev.target).val();
+    var id = (paramValue === undefined) ? $(ev.target).val() : paramValue;
     fetch(url + id, {
         method: 'get'
     }).then(function (response) {

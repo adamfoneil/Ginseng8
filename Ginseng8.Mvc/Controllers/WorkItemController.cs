@@ -441,17 +441,21 @@ namespace Ginseng.Mvc.Controllers
         public async Task<JsonResult> GetAppProjects(int appId)
         {
             using (var cn = _data.GetConnection())
-            {
+            {                
                 var results = await new ProjectSelect() { AppId = appId }.ExecuteAsync(cn);
-                return Json(results);
+
+                var app = await cn.FindAsync<Application>(appId);
+                var globalProjects = await new ProjectSelect() { TeamId = app.TeamId, AppId = 0 }.ExecuteAsync(cn);
+
+                return Json(results.Concat(globalProjects).OrderBy(item => item.Text));
             }
         }
 
-        public async Task<JsonResult> GetTeamProjects(int teamId)
+        public async Task<JsonResult> GetTeamProjects(int teamId, int? appId = null)
         {
             using (var cn = _data.GetConnection())
             {
-                var results = await new ProjectSelect() { TeamId = teamId }.ExecuteAsync(cn);
+                var results = await new ProjectSelect() { TeamId = teamId, AppId = appId }.ExecuteAsync(cn);
                 return Json(results);
             }
         }
