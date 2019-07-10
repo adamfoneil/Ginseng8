@@ -1,4 +1,6 @@
-﻿namespace Ginseng.Mvc.Interfaces
+﻿using Ginseng.Mvc.Services;
+
+namespace Ginseng.Mvc.Interfaces
 {
 	public interface IWorkItemTitle
 	{
@@ -9,6 +11,7 @@
         int ProjectId { get; }
         string DisplayProjectName { get; }
 		string Title { get; }
+        WorkItemTitleViewField TitleViewField { get; }
 		bool IsEditable(string userName);
 	}
 }

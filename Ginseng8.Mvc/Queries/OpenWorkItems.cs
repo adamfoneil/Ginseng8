@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Services;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Classes;
@@ -133,7 +134,9 @@ namespace Ginseng.Mvc.Queries
             get { return (UseApplications) ? ApplicationName : TeamName; }
         }
 
-		public bool IsEditable(string userName)
+        public WorkItemTitleViewField TitleViewField { get; set; }
+
+        public bool IsEditable(string userName)
 		{
 			return CreatedBy.Equals(userName);
 		}
