@@ -44,6 +44,16 @@ namespace Ginseng.Mvc.Services
                 FieldNameFunction = (item) => nameof(item.ProjectId),
                 TitleViewField = WorkItemTitleViewField.Application
             };
+
+            yield return new Option()
+            {
+                Value = "ActivityId",
+                Text = "Activity",
+                GroupValueFunction = (item) => item.ActivityId,
+                GroupHeadingFunction = (item) => item.ActivityName,
+                FieldNameFunction = (item) => nameof(item.ActivityId),
+                TitleViewField = WorkItemTitleViewField.Project
+            };
         }
 
         public SelectList GetSelectList(string currentValue)
