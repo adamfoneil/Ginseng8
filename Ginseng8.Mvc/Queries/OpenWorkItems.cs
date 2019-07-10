@@ -98,6 +98,7 @@ namespace Ginseng.Mvc.Queries
         public string FDContactName { get; set; }
         public TicketStatus FDTicketStatus { get; set; }
         public bool UseApplications { get; set; }
+        public int? MyActivityOrder { get; set; }
 
         /// <summary>
         /// Lets us use a single property to switch between the app or team Id based on whether the team uses applications
@@ -112,6 +113,16 @@ namespace Ginseng.Mvc.Queries
             get { return (UseApplications) ? "applicationId" : "teamId"; }
         }
 
+        public ProjectParentType ProjectParentType
+        {
+            get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }
+        }
+
+        public string ProjectParentName
+        {
+            get { return (UseApplications) ? ApplicationName : TeamName; }
+        }
+
         /// <summary>
         /// Used to create hidden fields for inserting work items.
         /// It varies whether we need an applicationId based on the kind of team
@@ -122,16 +133,6 @@ namespace Ginseng.Mvc.Queries
             result.Add("teamId", TeamId);
             if (UseApplications) result.Add("applicationId", ApplicationId);
             return result;
-        }
-
-        public ProjectParentType ProjectParentType
-        {
-            get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }
-        }
-
-        public string ProjectParentName
-        {
-            get { return (UseApplications) ? ApplicationName : TeamName; }
         }
 
         public WorkItemTitleViewField TitleViewField { get; set; }
@@ -313,12 +314,15 @@ namespace Ginseng.Mvc.Queries
 		public bool InMyActivities { get; set; }
 
 		/// <summary>
-		/// Use this when InMyActivities = true
+		/// Use this when InMyActivities = true or WithMyActivityOrder = true
 		/// </summary>		
 		public int ActivityUserId { get; set; }
 
         [Join("LEFT JOIN [dbo].[FnWorkItemSchedule](@orgId, @scheduleUserId) [wis] ON [wi].[Number]=[wis].[Number]")]
         public bool WithWorkSchedule { get; set; }
+
+        [Join("LEFT JOIN [dbo].[UserActivityOrder] [uao] ON [wi].[ActivityId]=[uao].[ActivityId] AND [uao].[UserId]=@activityUserId")]
+        public bool WithMyActivityOrder { get; set; }
 
         /// <summary>
         /// Use this when WithWorkSchedule = true
@@ -452,6 +456,7 @@ namespace Ginseng.Mvc.Queries
             yield return new OpenWorkItems() { HasFutureMilestone = false };
             yield return new OpenWorkItems() { HasFutureMilestone = true };
             yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };
+            yield return new OpenWorkItems() { WithMyActivityOrder = true, ActivityUserId = 10 };
         }
 	}
 }

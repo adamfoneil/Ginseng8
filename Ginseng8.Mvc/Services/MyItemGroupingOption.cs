@@ -30,6 +30,7 @@ namespace Ginseng.Mvc.Services
                 Value = "ProjectParentId",
                 Text = "Use Team Settings",
                 GroupValueFunction = (item) => item.ProjectParentId,
+                GroupSortFunction = (item) => item.ProjectParentName,
                 GroupHeadingFunction = (item) => item.ProjectParentName,
                 FieldNameFunction = (item) => item.ProjectParentField,
                 TitleViewField = WorkItemTitleViewField.Project
@@ -41,6 +42,7 @@ namespace Ginseng.Mvc.Services
                 Text = "Project",
                 GroupValueFunction = (item) => item.ProjectId,
                 GroupHeadingFunction = (item) => item.ProjectName,
+                GroupSortFunction = (item) => item.ProjectName,
                 FieldNameFunction = (item) => nameof(item.ProjectId),
                 TitleViewField = WorkItemTitleViewField.Application
             };
@@ -51,6 +53,7 @@ namespace Ginseng.Mvc.Services
                 Text = "Activity",
                 GroupValueFunction = (item) => item.ActivityId,
                 GroupHeadingFunction = (item) => item.ActivityName,
+                GroupSortFunction = (item) => item.MyActivityOrder ?? 0,
                 FieldNameFunction = (item) => nameof(item.ActivityId),
                 TitleViewField = WorkItemTitleViewField.Project
             };
@@ -87,6 +90,11 @@ namespace Ginseng.Mvc.Services
             /// Function that returns grouping value
             /// </summary>
             public Func<OpenWorkItemsResult, int> GroupValueFunction { get; set; }
+
+            /// <summary>
+            /// Function that returns the grouping sort order
+            /// </summary>
+            public Func<OpenWorkItemsResult, string> GroupSortFunction { get; set; }
 
             /// <summary>
             /// Function that returns the group heading
