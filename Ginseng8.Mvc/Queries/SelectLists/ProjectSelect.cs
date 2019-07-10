@@ -46,8 +46,5 @@ namespace Ginseng.Mvc.Queries.SelectLists
         [Case(0, "[p].[ApplicationId] IS NULL")]
         [Where("[p].[ApplicationId]=@appId")]
         public int? AppId { get; set; }
-
-        [Where("([p].[ApplicationId]=@appId OR [p].[TeamId]=@teamId)")]
-        public int? TeamWithAppId { get; set; }
 	}
 }
