@@ -87,12 +87,14 @@
         if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
         {
             @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-            {
-                { "teamId", Html.CurrentTeamId() },
-                { "applicationId", Html.CurrentAppId() },
+            {                
                 { Model.UserIdColumnName, Model.UserId },
                 { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
-            }) { Dropdowns = Model.Dropdowns, UseApplications = Model.CurrentOrgUser.CurrentTeam.UseApplications })
+            }) { Dropdowns = Model.Dropdowns, UseApplications = Model.CurrentOrgUser.CurrentTeam.UseApplications, AppendIfMissing = new Dictionary<string, int>()
+            {
+                { "teamId", Html.CurrentTeamId() },
+                { "applicationId", Html.CurrentAppId() }
+            }})
         }
         else
         {
