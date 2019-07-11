@@ -73,7 +73,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 result.AppId = CurrentOrgUser.EffectiveAppId;
             }
 
-            if (Options[Option.MyItemsGroupField].StringValue.Equals(MyItemGroupingOption.ActivityId))
+            if (Options[Option.MyItemsGroupField]?.StringValue.Equals(MyItemGroupingOption.ActivityId) ?? false)
             {
                 result.ActivityUserId = UserId;
             }
