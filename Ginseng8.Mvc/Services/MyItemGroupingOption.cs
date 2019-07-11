@@ -9,6 +9,7 @@ namespace Ginseng.Mvc.Services
     /// <summary>
     /// what do we show after the WI number in card titles?
     /// </summary>
+    [Flags]
     public enum WorkItemTitleViewField
     {
         Project = 1,
@@ -55,7 +56,7 @@ namespace Ginseng.Mvc.Services
                 GroupHeadingFunction = (item) => item.ActivityName,
                 GroupSortFunction = (item) => item.MyActivityOrder ?? 0,
                 FieldNameFunction = (item) => nameof(item.ActivityId),
-                TitleViewField = WorkItemTitleViewField.Project
+                TitleViewField = WorkItemTitleViewField.Project | WorkItemTitleViewField.Application
             };
         }
 

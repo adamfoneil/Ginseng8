@@ -1,16 +1,16 @@
 ﻿@model IWorkItemTitle
 
-@if (Model.ProjectId != 0 && Model.TitleViewField == Services.WorkItemTitleViewField.Project)
-{
-    <span class="badge badge-info">
-        @Model.DisplayProjectName
-    </span>
-}
-
-@if (Model.ApplicationId != 0 && Model.TitleViewField == Services.WorkItemTitleViewField.Application)
+@if (Model.ApplicationId != 0 && (Model.TitleViewField & Services.WorkItemTitleViewField.Application) == Services.WorkItemTitleViewField.Application)
 {
     <span class="badge appButton">
         @Model.ApplicationName
+    </span>
+}
+
+@if (Model.ProjectId != 0 && (Model.TitleViewField & Services.WorkItemTitleViewField.Project) == Services.WorkItemTitleViewField.Project)
+{
+    <span class="badge badge-info">
+        @Model.DisplayProjectName
     </span>
 }
 
