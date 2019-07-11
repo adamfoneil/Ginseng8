@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
@@ -72,7 +73,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 result.AppId = CurrentOrgUser.EffectiveAppId;
             }
 
-            if (Options[Option.MyItemsGroupField].StringValue.Equals("ActivityId"))
+            if (Options[Option.MyItemsGroupField].StringValue.Equals(MyItemGroupingOption.ActivityId))
             {
                 result.ActivityUserId = UserId;
             }

@@ -24,11 +24,15 @@ namespace Ginseng.Mvc.Services
     /// </summary>
     public class MyItemGroupingOption
     {
+        public const string ProjectParentId = "ProjectParentId";
+        public const string ProjectId = "ProjectId";
+        public const string ActivityId = "ActivityId";
+
         public IEnumerable<Option> GetOptions()
         {
             yield return new Option()
             {
-                Value = "ProjectParentId",
+                Value = ProjectParentId,
                 Text = "Use Team Settings",
                 GroupValueFunction = (item) => item.ProjectParentId,
                 GroupSortFunction = (item) => item.ProjectParentName,
@@ -39,7 +43,7 @@ namespace Ginseng.Mvc.Services
 
             yield return new Option()
             {
-                Value = "ProjectId",
+                Value = ProjectId,
                 Text = "Project",
                 GroupValueFunction = (item) => item.ProjectId,
                 GroupHeadingFunction = (item) => item.ProjectName,
@@ -50,7 +54,7 @@ namespace Ginseng.Mvc.Services
 
             yield return new Option()
             {
-                Value = "ActivityId",
+                Value = ActivityId,
                 Text = "Activity",
                 GroupValueFunction = (item) => item.ActivityId,
                 GroupHeadingFunction = (item) => item.ActivityName,
