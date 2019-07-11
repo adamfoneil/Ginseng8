@@ -72,6 +72,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 result.AppId = CurrentOrgUser.EffectiveAppId;
             }
 
+            if (Options[Option.MyItemsGroupField].StringValue.Equals("ActivityId"))
+            {
+                result.ActivityUserId = UserId;
+            }
+
             if (Date.HasValue)
             {
                 result.WithWorkSchedule = true;

@@ -241,7 +241,8 @@ namespace Ginseng.Mvc.Queries
                 [wit].[Subject] AS [FDTicketSubject],
                 [wit].[TicketStatus] AS [FDTicketStatus],
                 [org].[FreshdeskUrl],
-                [t].[UseApplications]
+                [t].[UseApplications],
+                [uao].[Value] AS [MyActivityOrder]
 			FROM
 				[dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]

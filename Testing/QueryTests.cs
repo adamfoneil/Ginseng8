@@ -182,5 +182,11 @@ namespace Testing
         {
             TestQuery<MyOptions>();
         }
+
+        [TestMethod]
+        public void MyActivityOrderQuery()
+        {
+            TestQuery<MyActivityOrder>();
+        }
     }
 }

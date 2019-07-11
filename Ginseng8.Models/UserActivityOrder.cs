@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models.Conventions;
 using Postulate.Base.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {

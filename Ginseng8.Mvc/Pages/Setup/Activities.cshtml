@@ -50,6 +50,44 @@
 </table>
 @grid.HandlerForms("Save", "Delete")
 
+<h5>My Items Activity Order</h5>
+<p>If you use Activity grouping on the My Items page, you can drag and drop the order of activities to your liking.</p>
+
+<ul class="sortable">
+    @foreach (var item in Model.UserOrder)
+    {
+        <li class="item-sortable" data-activity-id="@item.Id">@item.Name</li>
+    }
+</ul>
+
 @section Scripts {
     <script src="~/js/GridEditor.js"></script>
+    <script>
+        $('.sortable').sortable({
+            placeholder: 'ui-state-highlight',
+            update: function (event, ui) {
+                var list = $(ui.item).parents('.sortable');
+                var items = list.find('li');
+                var array = [];
+                $(items).each(function (index, item) {
+                    array.push({
+                        number: $(item).data('activity-id'),
+                        index: index
+                    });                    
+                });
+
+                fetch('/Update/UserActivityOrder', {
+                    method: 'post',
+                    headers: {
+                        "Content-Type": "application/json",
+                        "RequestVerificationToken": getAntiForgeryToken()
+                    },
+                    body: JSON.stringify({ items: array })
+                }).then(function (response) {
+                    // success fail info?
+                    return response.json();
+                });
+            }
+        })
+    </script>
 }
