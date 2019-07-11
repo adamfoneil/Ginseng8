@@ -418,7 +418,7 @@ $(document)
 })
 .on('input', '.search-box', function(event) {
     var $input = $(event.currentTarget);
-    var searchTerm = $input.val();
+    var searchTerm = $input.val().toLowerCase();
     var $dropdownItems = $input.parents('.dropdown-menu').find('.dropdown-item');
 
     if (!searchTerm.length) {
@@ -431,7 +431,7 @@ $(document)
     $dropdownItems.each(function(index, item) {
         var $item = $(item);
 
-        if (~$item.find('.badge').text().indexOf(searchTerm)) {
+        if (~$item.find('.badge').text().toLowerCase().indexOf(searchTerm)) {
             $item.show();
         }
     });
