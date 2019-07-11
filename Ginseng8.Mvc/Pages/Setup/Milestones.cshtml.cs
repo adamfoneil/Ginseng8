@@ -38,6 +38,7 @@ namespace Ginseng.Mvc.Pages.Setup
 
         public async Task<ActionResult> OnPostSave(Milestone record)
         {
+            record.OrganizationId = OrgId;
             await Data.TrySaveAsync(record);
             return Redirect($"/Setup/Milestones?teamId={record.TeamId}&appId={record.ApplicationId}");
         }

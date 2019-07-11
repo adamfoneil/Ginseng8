@@ -19,11 +19,10 @@ namespace Ginseng.Mvc.Queries
                 (SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
                 (SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems]
 			FROM 
-				[dbo].[Milestone] [ms]
-                INNER JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]
+				[dbo].[Milestone] [ms]                
                 LEFT JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
             WHERE
-                [t].[OrganizationId]=@orgId                 
+                [ms].[OrganizationId]=@orgId                 
                 {andWhere}            
 			ORDER BY 
 				[Date]")

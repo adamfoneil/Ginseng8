@@ -188,9 +188,12 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 new { projectId, msId = milestone.Id });
             if (workItems.Any()) return;
 
+            // can't create placeholder without known team
+            if (!milestone.TeamId.HasValue) return;
+
             const string text = @"Placeholder item created with milestone. This enables you to filter for this project on the milestone dashboard. This will automatically close when you add another work item to this milestone.";
 
-            var team = await cn.FindAsync<Team>(milestone.TeamId);
+            var team = await cn.FindAsync<Team>(milestone.TeamId.Value);
             var prj = await cn.FindAsync<Project>(projectId);
 
             var workItem = new Ginseng.Models.WorkItem()
