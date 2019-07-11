@@ -604,6 +604,7 @@ function TaskReorder(data) {
         body: JSON.stringify(data)
     }).then(function (response) {
         // success fail info?
+        // show new ordering in card title (target class .work-item-priority, see Dashboard/Items/_Priority.cshtml)
         return response.json();
     });
 }
