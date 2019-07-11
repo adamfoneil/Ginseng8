@@ -94,7 +94,7 @@ namespace Ginseng.Mvc.Services
             /// <summary>
             /// Function that returns the grouping sort order
             /// </summary>
-            public Func<OpenWorkItemsResult, string> GroupSortFunction { get; set; }
+            public Func<OpenWorkItemsResult, IComparable> GroupSortFunction { get; set; }
 
             /// <summary>
             /// Function that returns the group heading

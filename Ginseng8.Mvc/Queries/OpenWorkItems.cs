@@ -279,6 +279,7 @@ namespace Ginseng.Mvc.Queries
                 LEFT JOIN [dbo].[WorkItemTicket] [wit] ON 
                     [wit].[OrganizationId]=[wi].[OrganizationId] AND
                     [wit].[WorkItemNumber]=[wi].[Number]   
+                LEFT JOIN [dbo].[UserActivityOrder] [uao] ON [wi].[ActivityId]=[uao].[ActivityId] AND [uao].[UserId]=@activityUserId
 				{{join}}
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
@@ -319,10 +320,7 @@ namespace Ginseng.Mvc.Queries
 		public int ActivityUserId { get; set; }
 
         [Join("LEFT JOIN [dbo].[FnWorkItemSchedule](@orgId, @scheduleUserId) [wis] ON [wi].[Number]=[wis].[Number]")]
-        public bool WithWorkSchedule { get; set; }
-
-        [Join("LEFT JOIN [dbo].[UserActivityOrder] [uao] ON [wi].[ActivityId]=[uao].[ActivityId] AND [uao].[UserId]=@activityUserId")]
-        public bool WithMyActivityOrder { get; set; }
+        public bool WithWorkSchedule { get; set; }        
 
         /// <summary>
         /// Use this when WithWorkSchedule = true
@@ -455,8 +453,7 @@ namespace Ginseng.Mvc.Queries
             yield return new OpenWorkItems() { IsFreshdeskTicket = true };
             yield return new OpenWorkItems() { HasFutureMilestone = false };
             yield return new OpenWorkItems() { HasFutureMilestone = true };
-            yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };
-            yield return new OpenWorkItems() { WithMyActivityOrder = true, ActivityUserId = 10 };
+            yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };            
         }
 	}
 }

@@ -4,8 +4,6 @@
     ViewData["Title"] = "Team";
 }
 
-<hr/>
-
 <ul class="nav nav-pills nav-fill nav-justified mb-3">
     @foreach (var user in Model.Users)
     {
@@ -35,7 +33,7 @@
             <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
         </div>
 
-        @foreach (var appGrp in milestoneGrp.GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
+        @foreach (var appGrp in milestoneGrp.OrderBy(row => Model.GroupingOption.GroupSortFunction(row)).GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
         {
 	        <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
             <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">

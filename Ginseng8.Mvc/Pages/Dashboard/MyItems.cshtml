@@ -45,7 +45,7 @@
         <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
     </div>
 
-    @foreach (var appGrp in milestoneGrp.GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
+    @foreach (var appGrp in milestoneGrp.OrderBy(row => Model.GroupingOption.GroupSortFunction(row)).GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
     {
         <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
 
