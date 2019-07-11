@@ -2,6 +2,7 @@
 using Ginseng.Mvc.Helpers;
 using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -35,6 +36,15 @@ namespace Ginseng.Mvc.Pages.WorkItem
                 ToActivityId = activityId,
                 IsForward = isForward // this doesn't render correctly in the form (it comes out as "value" instead of true/false for some reason)
             };
+        }
+
+        public SelectList GetAssignToUsers()
+        {           
+            int userId = (ToActivity.ResponsibilityId == 1) ? 
+                (WorkItem.BusinessUserId ?? 0) : 
+                (WorkItem.DeveloperUserId ?? 0);
+
+            return new SelectList(AssignToUsers, "Value", "Text", userId);
         }
 
         public async Task<IActionResult> OnPostAsync(HandOff handOff)

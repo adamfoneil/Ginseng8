@@ -36,7 +36,7 @@
             <label>Assign to:</label>            
         </div>
         <div class="col-3">
-            <select name="ToUserId" asp-items="@Model.AssignToUsers" class="form-control">
+            <select name="ToUserId" asp-items="@Model.GetAssignToUsers()" class="form-control">
                 <option value="">- optional -</option>
             </select>
         </div>
