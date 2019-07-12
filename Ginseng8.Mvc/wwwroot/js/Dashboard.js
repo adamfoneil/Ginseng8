@@ -423,7 +423,7 @@ $(document)
 })
 .on('input', '.search-box', function(event) {
     var $input = $(event.currentTarget);
-    var searchTerm = $input.val();
+    var searchTerm = $input.val().toLowerCase();
     var $dropdownItems = $input.parents('.dropdown-menu').find('.dropdown-item');
 
     if (!searchTerm.length) {
@@ -436,7 +436,7 @@ $(document)
     $dropdownItems.each(function(index, item) {
         var $item = $(item);
 
-        if (~$item.find('.badge').text().indexOf(searchTerm)) {
+        if (~$item.find('.badge').text().toLowerCase().indexOf(searchTerm)) {
             $item.show();
         }
     });
@@ -541,6 +541,12 @@ function InitWorkItemSortable() {
 function updateSortableList(list, taskObject) {
     var task = taskObject || list.prevObject;
 
+    if (list.length) {
+        list.find('.work-item-card').each(function (taskIndex, workItemElement) {
+            $(workItemElement).find('.work-item-priority').text(taskIndex + 1);
+        });
+    }
+
     if (list.length === 0 || task == null) {
         return;
     }
@@ -596,8 +602,9 @@ function updateSortableList(list, taskObject) {
 }
 
 function TaskReorder(data) {
-    console.log('TaskReorder data json', JSON.stringify(data));
-    console.log('TaskReorder data object', data);
+    console.group('TaskReorder data object');
+    console.log(data);
+    console.groupEnd();
 
     fetch('/WorkItem/SetPriorities', {
         method: 'post',
