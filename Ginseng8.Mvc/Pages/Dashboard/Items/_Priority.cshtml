@@ -1,6 +1,6 @@
 ﻿@model OpenWorkItemsResult
 
-@if (Model.Priority.HasValue && Model.AssignedUserId.HasValue && Model.MilestoneId != 0)
+@if (Model.Priority.HasValue && Model.AssignedUserId.HasValue)
 {
     <sup title="Priority @Model.Priority by @Html.FormatValue(Model.MilestoneDate, "{0:ddd M/d}")" class="work-item-priority">@Model.Priority</sup>
 }
