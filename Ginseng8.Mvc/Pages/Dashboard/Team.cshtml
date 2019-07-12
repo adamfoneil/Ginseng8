@@ -4,7 +4,7 @@
     ViewData["Title"] = "Team";
 }
 
-<ul class="nav nav-pills nav-fill nav-justified mb-3">
+<ul class="nav nav-pills nav-fill nav-justified mb-3 justify-content-center">
     @foreach (var user in Model.Users)
     {
         string activeClass = (user.UserId == Model.FilterUserId) ? "active" : string.Empty;
