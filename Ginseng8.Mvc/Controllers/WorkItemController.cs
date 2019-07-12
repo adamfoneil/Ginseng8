@@ -322,6 +322,12 @@ namespace Ginseng.Mvc.Controllers
                     await UpdateMilestoneAsync(cn, workItem, data.MilestoneId);
                     await UpdateAssignedUserAsync(cn, workItem, data.UserId);
 
+                    if (data.GroupFieldValue != 0 && !string.IsNullOrEmpty(data.GroupFieldName))
+                    {
+                        var customGrouping = new MyItemGroupingOption();
+                        customGrouping[data.GroupFieldName].UpdateWorkItem(cn, _data.CurrentUser, workItem, data.GroupFieldValue);                        
+                    }
+
                     await cn.ExecuteAsync("dbo.UpdateWorkItemPriorities", new
                     {
                         userName = User.Identity.Name,

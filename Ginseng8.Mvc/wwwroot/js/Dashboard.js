@@ -574,6 +574,8 @@ function updateSortableList(list, taskObject) {
     var milestoneId = list.parents('[data-milestone-id]').data('milestone-id'); 
     var userId = list.data('user-id');
     var number = task.data('number');
+    var groupFieldName = list.data('group-field');
+    var groupFieldValue = list.data('group-value');
     var tasksArray = [];
 
     list.find('.work-item-card').each(function (taskIndex, workItemElement) {
@@ -587,6 +589,8 @@ function updateSortableList(list, taskObject) {
         milestoneId: milestoneId,        
         userId: userId,
         number: number,
+        groupFieldName: groupFieldName,
+        groupFieldValue: groupFieldValue,
         items: tasksArray,
     })
 }

@@ -18,6 +18,16 @@
         public int Number { get; set; }
 
         /// <summary>
+        /// Field being updated when work item dragged across custom grouping
+        /// </summary>
+        public string GroupFieldName { get; set; }
+
+        /// <summary>
+        /// Value to set when work item dropped in this group
+        /// </summary>
+        public int GroupFieldValue { get; set; }
+
+        /// <summary>
         /// List of items in the milestone + user combination drop area after drag-dropping
         /// </summary>
         public Item[] Items { get; set; }

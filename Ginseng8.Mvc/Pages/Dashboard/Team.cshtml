@@ -37,7 +37,7 @@
         {
 	        <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
             <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-            <div class="ml-3 sortable" data-user-id="@(Model.FilterUserId)">
+            <div class="ml-3 sortable" data-user-id="@(Model.FilterUserId)" data-group-field="@Model.GroupingOption.FieldNameFunction(appGrp.First())" data-group-value="@appGrp.Key">
                 @foreach (var item in appGrp)
                 {
                     <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, TitleViewField = Model.GroupingOption.TitleViewField }" />

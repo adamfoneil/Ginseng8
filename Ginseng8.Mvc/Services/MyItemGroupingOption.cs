@@ -1,7 +1,11 @@
-﻿using Ginseng.Mvc.Queries;
+﻿using Ginseng.Models;
+using Ginseng.Mvc.Queries;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Postulate.Base.Interfaces;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 
 namespace Ginseng.Mvc.Services
@@ -38,7 +42,20 @@ namespace Ginseng.Mvc.Services
                 GroupSortFunction = (item) => item.ProjectParentName,
                 GroupHeadingFunction = (item) => item.ProjectParentName,
                 FieldNameFunction = (item) => item.ProjectParentField,
-                TitleViewField = WorkItemTitleViewField.Project
+                TitleViewField = WorkItemTitleViewField.Project,
+                UpdateWorkItem = (cn, user, wi, value) =>
+                {
+                    if (wi.Team.UseApplications)
+                    {
+                        wi.ApplicationId = value;
+                        cn.Update(wi, user, r => r.ApplicationId);
+                    }
+                    else
+                    {
+                        wi.TeamId = value;
+                        cn.Update(wi, user, r => r.TeamId);
+                    }
+                }
             };
 
             yield return new Option()
@@ -49,7 +66,12 @@ namespace Ginseng.Mvc.Services
                 GroupHeadingFunction = (item) => item.ProjectName,
                 GroupSortFunction = (item) => item.ProjectName,
                 FieldNameFunction = (item) => nameof(item.ProjectId),
-                TitleViewField = WorkItemTitleViewField.Application
+                TitleViewField = WorkItemTitleViewField.Application,
+                UpdateWorkItem = (cn, user, wi, value) =>
+                {
+                    wi.ProjectId = value;
+                    cn.Update(wi, user, r => r.ProjectId);
+                }
             };
 
             yield return new Option()
@@ -60,7 +82,23 @@ namespace Ginseng.Mvc.Services
                 GroupHeadingFunction = (item) => item.ActivityName,
                 GroupSortFunction = (item) => item.MyActivityOrder ?? 0,
                 FieldNameFunction = (item) => nameof(item.ActivityId),
-                TitleViewField = WorkItemTitleViewField.Project | WorkItemTitleViewField.Application
+                TitleViewField = WorkItemTitleViewField.Project | WorkItemTitleViewField.Application,
+                UpdateWorkItem = (cn, user, wi, value) =>
+                {
+                    wi.ActivityId = value;
+                    var act = cn.Find<Activity>(value);
+                    switch (act.ResponsibilityId)
+                    {
+                        case 1: // biz
+                            if (!wi.BusinessUserId.HasValue) wi.BusinessUserId = wi.DeveloperUserId;
+                            break;
+
+                        case 2: // dev
+                            if (!wi.DeveloperUserId.HasValue) wi.DeveloperUserId = wi.BusinessUserId;
+                            break;
+                    }
+                    cn.Update(wi, user, r => r.ActivityId, r => r.DeveloperUserId, r => r.BusinessUserId);
+                }
             };
         }
 
@@ -110,6 +148,12 @@ namespace Ginseng.Mvc.Services
             /// Function that returns the field name to use in the InsertItem form
             /// </summary>
             public Func<OpenWorkItemsResult, string> FieldNameFunction { get; set; }
+
+            /// <summary>
+            /// Action that updates a field in the work item it's dragged on the My Items or Teams page.
+            /// This should set a field that correspnds to the Value property here
+            /// </summary>
+            public Action<IDbConnection, IUser, WorkItem, int> UpdateWorkItem { get; set; }
 
             public WorkItemTitleViewField TitleViewField { get; set; }
         }
