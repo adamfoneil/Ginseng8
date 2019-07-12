@@ -323,9 +323,12 @@ namespace Ginseng.Mvc.Controllers
                     await UpdateAssignedUserAsync(cn, workItem, data.UserId);
 
                     if (data.GroupFieldValue != 0 && !string.IsNullOrEmpty(data.GroupFieldName))
-                    {
+                    {                        
                         var customGrouping = new MyItemGroupingOption();
-                        customGrouping[data.GroupFieldName].UpdateWorkItem(cn, _data.CurrentUser, workItem, data.GroupFieldValue);                        
+                        if (await DidGroupingChangeAsync(cn, workItem, customGrouping[data.GroupFieldName], data.GroupFieldValue))
+                        {
+                            customGrouping[data.GroupFieldName].UpdateWorkItem(cn, _data.CurrentUser, workItem, data.GroupFieldValue);
+                        }                        
                     }
 
                     await cn.ExecuteAsync("dbo.UpdateWorkItemPriorities", new
@@ -344,6 +347,16 @@ namespace Ginseng.Mvc.Controllers
             {
                 return Json(new { success = false, message = exc.Message });
             }
+        }
+
+        /// <summary>
+        /// We need to know if the grouping actually changed after a drag operation by looking at applicable work item field value
+        /// </summary>
+        private async Task<bool> DidGroupingChangeAsync(SqlConnection cn, WorkItem workItem, MyItemGroupingOption.Option option, int value)
+        {
+            // a regular WorkItem doesn't have everything that the "dto" version has (for custom grouping purposes), so I need to query that
+            var item = await new OpenWorkItems() { IsOpen = null, OrgId = workItem.OrganizationId, Id = workItem.Id }.ExecuteSingleAsync(cn);
+            return !option.GroupValueFunction(item).Equals(value);
         }
 
         [HttpPost]
