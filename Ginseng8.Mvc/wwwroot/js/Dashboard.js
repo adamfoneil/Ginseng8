@@ -536,6 +536,12 @@ function InitWorkItemSortable() {
 function updateSortableList(list, taskObject) {
     var task = taskObject || list.prevObject;
 
+    if (list.length) {
+        list.find('.work-item-card').each(function (taskIndex, workItemElement) {
+            $(workItemElement).find('.work-item-priority').text(taskIndex + 1);
+        });
+    }
+
     if (list.length === 0 || task == null) {
         return;
     }
@@ -587,8 +593,9 @@ function updateSortableList(list, taskObject) {
 }
 
 function TaskReorder(data) {
-    console.log('TaskReorder data json', JSON.stringify(data));
-    console.log('TaskReorder data object', data);
+    console.group('TaskReorder data object');
+    console.log(data);
+    console.groupEnd();
 
     fetch('/WorkItem/SetPriorities', {
         method: 'post',
