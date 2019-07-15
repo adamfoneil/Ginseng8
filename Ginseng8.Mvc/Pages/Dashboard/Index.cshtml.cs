@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -35,13 +36,17 @@ namespace Ginseng.Mvc.Pages.Dashboard
         [BindProperty(SupportsGet = true)]
         public bool? FilterIsActive { get; set; } = true;
 
+        [BindProperty(SupportsGet = true)]
+        public HungReason? FilterHungReason { get; set; }
+
         public IEnumerable<Team> Teams { get; set; }
         public ILookup<int, AppInfoResult> AppInfo { get; set; }
         public ILookup<int, ProjectInfoResult> ProjectInfo { get; set; } // keyed to teamId
         public ILookup<int, ProjectInfoResult> ProjectsWithoutApps { get; set; } // keyed to teamId
+        public IEnumerable<HungItemInfo> HungItems { get; set; }
 
         public Application Application { get; set; }
-        public IEnumerable<ProjectInfoResult> AppProjects { get; set; }
+        public IEnumerable<ProjectInfoResult> AppProjects { get; set; }        
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
@@ -65,6 +70,20 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 Application = await connection.FindAsync<Application>(AppId.Value);
                 AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId, IsActive = FilterIsActive }.ExecuteAsync(connection);
+                HungItems = WorkItems
+                    .Where(wi => wi.IsHung)
+                    .GroupBy(row => row.HungReason)
+                    .Select(grp =>
+                    {
+                        var result = HungItemInfo.Dictionary[grp.Key];
+                        result.Count = grp.Count();
+                        return result;
+                    });
+
+                if (FilterHungReason.HasValue)
+                {
+                    WorkItems = WorkItems.Where(wi => wi.HungReason == FilterHungReason);
+                }
             }
             else
             {

@@ -54,6 +54,14 @@ else
             </div>
         }
 
+        <partial name="Items/_HungItemInfo" model="@Model.HungItems"/>
+        @if (Model.FilterHungReason.HasValue)
+        {
+            <div class="text-center">
+                <a asp-route-filterHungReason="" class="btn btn-sm btn-light mb-2">show all</a>
+            </div>
+        }
+
         <div id="accordion" class="ml-3">
             @foreach (var item in Model.WorkItems)
             {

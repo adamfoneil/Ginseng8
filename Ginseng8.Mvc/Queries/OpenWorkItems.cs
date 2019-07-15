@@ -23,6 +23,14 @@ namespace Ginseng.Mvc.Queries
         Closed = 4
 	}
 
+    public enum HungReason
+    {
+        None = 0,
+        HasImpediment = 1, // technical issue
+        IsPaused = 2, // has activity, but unassigned
+        IsStopped = 3 // has milestone, but unassigned
+    }
+
 	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
 	{
 		public const string ImpedimentIcon = Comment.ImpedimentIcon;
@@ -33,9 +41,11 @@ namespace Ginseng.Mvc.Queries
 		public const string StoppedColor = "orangered";
         public const string TicketIcon = "fas fa-ticket-alt";
         public const string TicketColor = "#1a7172";
+        public const string PausedIcon = "fas fa-pause-circle";
 
         public const string ImpedimentModifier = "impediment";
         public const string UnestimatedModifier = "unestimated";
+
         public const string StoppedModifier = "stopped";
         public const string TicketModifier = "ticket";
 
@@ -133,6 +143,23 @@ namespace Ginseng.Mvc.Queries
             result.Add("teamId", TeamId);
             if (UseApplications) result.Add("applicationId", ApplicationId);
             return result;
+        }
+
+        public bool IsHung
+        {
+            get { return HasImpediment || IsPaused() || IsStopped(); }            
+        }
+
+        public HungReason HungReason
+        {
+            get
+            {
+                return
+                    (HasImpediment) ? HungReason.IsPaused :
+                    (IsPaused()) ? HungReason.IsPaused :
+                    (IsStopped()) ? HungReason.IsStopped :
+                    HungReason.None;
+            }
         }
 
         public WorkItemTitleViewField TitleViewField { get; set; }
