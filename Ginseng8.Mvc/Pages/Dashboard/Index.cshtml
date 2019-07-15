@@ -42,16 +42,17 @@ else
         <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = Model.Application.TeamId.Value, ApplicationId = Model.AppId })" />
     }
 
+    <h5>Work Items without a Project</h5>
+    <div class="ml-3">
+        <form method="get" class="form-inline mb-3">
+            <label class="mr-2">Show:</label>
+            <select name="FilterUnassigned" asp-items="@SelectListHelper.YesNo("Unassigned Only (may be prioritized)", "All", Model.FilterUnassigned ?? false)" class="form-control" onchange="this.form.submit()"></select>                
+        </form>
+    </div>
+
     @if (Model.WorkItems.Any())
-    {
-        <h5>Work Items without a Project</h5>
-
+    {        
         <div class="ml-3">
-            <form method="get" class="form-inline mb-3">
-                <label class="mr-2">Show:</label>
-                <select name="FilterUnassigned" asp-items="@SelectListHelper.YesNo("Unassigned Only (may be prioritized)", "All", Model.FilterUnassigned ?? false)" class="form-control" onchange="this.form.submit()"></select>                
-            </form>
-
             <partial name="Items/_LabelFilter" model="@Model.LabelFilter"/>
             @if (Model.LabelId.HasValue)
             {
@@ -81,6 +82,12 @@ else
                 { "teamId", Model.Application.TeamId ?? 0 },
                 { "applicationId", Model.AppId.Value }
             }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.WorkItems.First().UseApplications })
+        </div>
+    }
+    else
+    {
+        <div class="ml-3">
+            <p>All work items are assigned to projects, or there are no work items.</p>
         </div>
     }
     <hr />
