@@ -46,23 +46,32 @@ else
     {
         <h5>Work Items without a Project</h5>
 
-        <partial name="Items/_LabelFilter" model="@Model.LabelFilter"/>
-        @if (Model.LabelId.HasValue)
-        {
-            <div class="text-center">
-                <a asp-route-labelId="" class="btn btn-sm btn-light mb-2">show all</a>
-            </div>
-        }
+        <div class="ml-3">
+            <form method="get" class="form-inline mb-3">
+                <label class="mr-2">Show:</label>
+                <select name="FilterUnassigned" asp-items="@SelectListHelper.YesNo("Unassigned Only (may be prioritized)", "All", Model.FilterUnassigned ?? false)" class="form-control" onchange="this.form.submit()"></select>                
+            </form>
 
-        <partial name="Items/_HungItemInfo" model="@Model.HungItems"/>
-        @if (Model.FilterHungReason.HasValue)
-        {
-            <div class="text-center">
-                <a asp-route-filterHungReason="" class="btn btn-sm btn-light mb-2">show all</a>
-            </div>
-        }
+            <partial name="Items/_LabelFilter" model="@Model.LabelFilter"/>
+            @if (Model.LabelId.HasValue)
+            {
+                <div class="text-center">
+                    <a asp-route-labelId="" class="btn btn-sm btn-light mb-2">show all</a>
+                </div>
+            }
 
-        <div id="accordion" class="ml-3">
+            <partial name="Items/_HungItemInfo" model="@Model.HungItems"/>
+            @if (Model.FilterHungReason.HasValue)
+            {
+                <div class="text-center">
+                    <a asp-route-filterHungReason="" class="btn btn-sm btn-light mb-2">show all</a>
+                </div>
+            }
+        </div>
+
+        string sortableClass = (Model.FilterUnassigned ?? false) ? "sortable" : string.Empty;
+
+        <div id="accordion" class="ml-3 @sortableClass">
             @foreach (var item in Model.WorkItems)
             {
                 <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers })" />

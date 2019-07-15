@@ -22,6 +22,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
         }
 
         [BindProperty(SupportsGet = true)]
+        public bool? FilterUnassigned { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public int? ParentId { get; set; }
 
         [BindProperty(SupportsGet = true)]
@@ -106,13 +109,20 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             if (AppId.HasValue)
             {
-                return new OpenWorkItems(QueryTraces)
+                var query = new OpenWorkItems(QueryTraces)
                 {
                     OrgId = OrgId,
                     LabelId = LabelId,
                     AppId = AppId,
                     HasProject = false
                 };
+
+                if (FilterUnassigned ?? false)
+                {
+                    query.HasAssignedUserId = false;
+                }
+
+                return query;
             }
 
             return null;
