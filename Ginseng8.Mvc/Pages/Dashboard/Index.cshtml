@@ -45,6 +45,15 @@ else
     @if (Model.WorkItems.Any())
     {
         <h5>Work Items without a Project</h5>
+
+        <partial name="Items/_LabelFilter" model="@Model.LabelFilter"/>
+        @if (Model.LabelId.HasValue)
+        {
+            <div class="text-center">
+                <a asp-route-labelId="" class="btn btn-sm btn-light mb-2">show all</a>
+            </div>
+        }
+
         <div id="accordion" class="ml-3">
             @foreach (var item in Model.WorkItems)
             {
