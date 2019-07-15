@@ -113,7 +113,7 @@ namespace Ginseng.Mvc.Services
             get
             {
                 var dictionary = GetOptions().ToDictionary(item => item.Value);
-                return dictionary[name];
+                return (dictionary.ContainsKey(name)) ? dictionary[name] : dictionary[ProjectParentId];
             }
         }
 
