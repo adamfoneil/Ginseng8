@@ -24,6 +24,7 @@ namespace Ginseng.Mvc
         public IEnumerable<SelectListItem> Teams { get; set; }
 		public ILookup<int, SelectListItem> AllApps { get; set; } // keyed to teams
 		public ILookup<int, SelectListItem> ProjectsByApp { get; set; } 
+        public ILookup<int, SelectListItem> ProjectsWithoutApps { get; set; } // keyed to teams
         public ILookup<int, SelectListItem> ProjectsByTeam { get; set; }
 		public IEnumerable<SelectListItem> Sizes { get; set; }
 		public IEnumerable<SelectListItem> CloseReasons { get; set; }		
@@ -67,7 +68,7 @@ namespace Ginseng.Mvc
 		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
 		{
             return (item?.UseApplications ?? true) ?
-                new SelectList(ProjectsByApp[item?.ApplicationId ?? 0], "Value", "Text", item?.ProjectId) :
+                new SelectList(ProjectsByApp[item?.ApplicationId ?? 0].Concat(ProjectsWithoutApps[item?.TeamId ?? 0]).OrderBy(row => row.Text), "Value", "Text", item?.ProjectId) :
                 new SelectList(ProjectsByTeam[item?.TeamId ?? 0], "Value", "Text", item?.ProjectId);            
 		}
 
@@ -140,6 +141,7 @@ namespace Ginseng.Mvc
             // app-scoped items
             var allProjects = await new AllProjects() { OrgId = orgId }.ExecuteAsync(connection);
 			result.ProjectsByApp = allProjects.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
+            result.ProjectsWithoutApps = allProjects.Where(row => row.ApplicationId == 0).ToLookup(row => row.TeamId, row => row.ToSelectListItem());
             result.ProjectsByTeam = allProjects.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
 
             var allMilestones = await new AllMilestones() { OrgId = orgId }.ExecuteAsync(connection);

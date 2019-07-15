@@ -30,6 +30,18 @@
     <input type="hidden" name="FromUserId" value="@Model.HandOff.FromUserId" />
     <input type="hidden" name="FromActivityId" value="@Model.HandOff.FromActivityId" />
     <input type="hidden" name="ToActivityId" value="@Model.HandOff.ToActivityId" />
+
+    <div class="form-group">
+        <div class="col-3">
+            <label>Assign to:</label>            
+        </div>
+        <div class="col-3">
+            <select name="ToUserId" asp-items="@Model.GetAssignToUsers()" class="form-control">
+                <option value="">- optional -</option>
+            </select>
+        </div>
+    </div>
+
     <textarea name="HtmlBody" id="HtmlBody" class="htmlEditor"></textarea>
     <button type="submit" class="btn btn-primary mt-2">Save</button>
 </form>

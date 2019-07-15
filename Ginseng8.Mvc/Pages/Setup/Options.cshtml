@@ -1,0 +1,18 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Setup.OptionsModel
+@{
+    ViewData["Title"] = "Options";
+}
+
+<h4>Advanced Options</h4>
+
+<div class="ml-3">
+@foreach (var opt in Model.Options)
+{
+    <div>
+        <span>@opt.Value.OptionName</span>
+
+        <hr/>
+    </div>
+}
+</div>

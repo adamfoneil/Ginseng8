@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
         }
 
         [BindProperty(SupportsGet = true)]
+        public bool? FilterUnassigned { get; set; }
+
+        [BindProperty(SupportsGet = true)]
         public int? ParentId { get; set; }
 
         [BindProperty(SupportsGet = true)]
@@ -35,12 +39,17 @@ namespace Ginseng.Mvc.Pages.Dashboard
         [BindProperty(SupportsGet = true)]
         public bool? FilterIsActive { get; set; } = true;
 
+        [BindProperty(SupportsGet = true)]
+        public HungReason? FilterHungReason { get; set; }
+
         public IEnumerable<Team> Teams { get; set; }
         public ILookup<int, AppInfoResult> AppInfo { get; set; }
-        public ILookup<int, ProjectInfoResult> ProjectInfo { get; set; }
+        public ILookup<int, ProjectInfoResult> ProjectInfo { get; set; } // keyed to teamId
+        public ILookup<int, ProjectInfoResult> ProjectsWithoutApps { get; set; } // keyed to teamId
+        public IEnumerable<HungItemInfo> HungItems { get; set; }
 
         public Application Application { get; set; }
-        public IEnumerable<ProjectInfoResult> AppProjects { get; set; }
+        public IEnumerable<ProjectInfoResult> AppProjects { get; set; }        
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
@@ -64,6 +73,20 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 Application = await connection.FindAsync<Application>(AppId.Value);
                 AppProjects = await new ProjectInfo() { OrgId = OrgId, AppId = AppId, IsActive = FilterIsActive }.ExecuteAsync(connection);
+                HungItems = WorkItems
+                    .Where(wi => wi.IsHung)
+                    .GroupBy(row => row.HungReason)
+                    .Select(grp =>
+                    {
+                        var result = HungItemInfo.Dictionary[grp.Key];
+                        result.Count = grp.Count();
+                        return result;
+                    });
+
+                if (FilterHungReason.HasValue)
+                {
+                    WorkItems = WorkItems.Where(wi => wi.HungReason == FilterHungReason);
+                }
             }
             else
             {
@@ -74,6 +97,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
                 var projects = await new ProjectInfo() { OrgId = OrgId, TeamUsesApplications = false, IsActive = FilterIsActive }.ExecuteAsync(connection);
                 ProjectInfo = projects.ToLookup(row => row.TeamId);
+
+                var projectsWithoutApps = await new ProjectInfo() { OrgId = OrgId, IsActive = FilterIsActive, HasApplicationId = false }.ExecuteAsync(connection);
+                ProjectsWithoutApps = projectsWithoutApps.ToLookup(row => row.TeamId);
             }
         }
 
@@ -83,13 +109,20 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             if (AppId.HasValue)
             {
-                return new OpenWorkItems(QueryTraces)
+                var query = new OpenWorkItems(QueryTraces)
                 {
                     OrgId = OrgId,
                     LabelId = LabelId,
                     AppId = AppId,
                     HasProject = false
                 };
+
+                if (FilterUnassigned ?? false)
+                {
+                    query.HasAssignedUserId = false;
+                }
+
+                return query;
             }
 
             return null;

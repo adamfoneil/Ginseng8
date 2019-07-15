@@ -7,13 +7,17 @@
 @if (!Model.AppId.HasValue)
 {
     foreach (var t in Model.Teams)
-    {
-        <hr />
-
+    {        
         if (t.UseApplications)
         {
             <h4>@t.Name <span class="text-muted small">Applications</span></h4>
             <partial name="Items/_AppCards" model="Model.AppInfo[t.Id]" />
+            @if (Model.ProjectsWithoutApps[t.Id].Any())
+            {
+                <hr/>
+                <h5>@t.Name Global Projects <span class="small text-muted">Projects not specific to an application</span></h5>                
+                <partial name="Items/_ProjectCardsInner" model="Model.ProjectsWithoutApps[t.Id]" />
+            }
         }
         else
         {
@@ -21,11 +25,11 @@
             <partial name="Items/_ProjectCardsInner" model="Model.ProjectInfo[t.Id]" />
             <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = t.Id })" />
         }
+        <hr />
     }
 }
 else
-{
-    <hr />
+{    
     <h4>
         <a asp-page="/Dashboard/Index" class="nounderline" title="Back to Organization dashboard">
             <i class="fas fa-arrow-up"></i>
@@ -38,10 +42,37 @@ else
         <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = Model.Application.TeamId.Value, ApplicationId = Model.AppId })" />
     }
 
+    <h5>Work Items without a Project</h5>
+    <div class="ml-3">
+        <form method="get" class="form-inline mb-3">
+            <label class="mr-2">Show:</label>
+            <select name="FilterUnassigned" asp-items="@SelectListHelper.YesNo("Unassigned Only (may be prioritized)", "All", Model.FilterUnassigned ?? false)" class="form-control" onchange="this.form.submit()"></select>                
+        </form>
+    </div>
+
     @if (Model.WorkItems.Any())
-    {
-        <h5>Work Items without a Project</h5>
-        <div id="accordion" class="ml-3">
+    {        
+        <div class="ml-3">
+            <partial name="Items/_LabelFilter" model="@Model.LabelFilter"/>
+            @if (Model.LabelId.HasValue)
+            {
+                <div class="text-center">
+                    <a asp-route-labelId="" class="btn btn-sm btn-light mb-2">show all</a>
+                </div>
+            }
+
+            <partial name="Items/_HungItemInfo" model="@Model.HungItems"/>
+            @if (Model.FilterHungReason.HasValue)
+            {
+                <div class="text-center">
+                    <a asp-route-filterHungReason="" class="btn btn-sm btn-light mb-2">show all</a>
+                </div>
+            }
+        </div>
+
+        string sortableClass = (Model.FilterUnassigned ?? false) ? "sortable" : string.Empty;
+
+        <div id="accordion" class="ml-3 @sortableClass">
             @foreach (var item in Model.WorkItems)
             {
                 <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers })" />
@@ -53,6 +84,13 @@ else
             }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.WorkItems.First().UseApplications })
         </div>
     }
+    else
+    {
+        <div class="ml-3">
+            <p>All work items are assigned to projects, or there are no work items.</p>
+        </div>
+    }
+    <hr />
 }
 
 @section Scripts {

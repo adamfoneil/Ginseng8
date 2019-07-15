@@ -176,5 +176,17 @@ namespace Testing
         {
             TestQuery<DevCalendarProjects>();
         }
+
+        [TestMethod]
+        public void MyOptionsQuery()
+        {
+            TestQuery<MyOptions>();
+        }
+
+        [TestMethod]
+        public void MyActivityOrderQuery()
+        {
+            TestQuery<MyActivityOrder>();
+        }
     }
 }

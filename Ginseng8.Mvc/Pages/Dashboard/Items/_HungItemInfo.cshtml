@@ -1,0 +1,18 @@
+﻿@model IEnumerable<HungItemInfo>
+
+@if (!Model?.Any() ?? true)
+{
+    return;
+}
+
+<ul class="list-inline text-center">
+    @foreach (var item in Model)
+    {        
+        <li class="list-inline-item">
+            <a asp-route-filterHungReason="@item.Reason" class="btn btn-sm btn-secondary" title="@item.Description">
+                <i class="@item.Icon"></i>
+                @item.Text - @item.Count
+            </a>
+        </li>
+    }
+</ul>

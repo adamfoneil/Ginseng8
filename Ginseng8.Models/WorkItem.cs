@@ -91,7 +91,7 @@ namespace Ginseng.Models
         public bool UseDefaultHistoryTable => true;
 
         public WorkItemTicket WorkItemTicket { get; set; }
-
+        public Team Team { get; set; }
         public Organization Organization { get; set; }
 
         /// <summary>
@@ -323,12 +323,14 @@ namespace Ginseng.Models
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {
+            Team = connection.Find<Team>(TeamId);
             WorkItemTicket = connection.FindWhere<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
             Organization = connection.Find<Organization>(OrganizationId);
         }
 
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
+            Team = await connection.FindAsync<Team>(TeamId);
             WorkItemTicket = await connection.FindWhereAsync<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
             Organization = await connection.FindAsync<Organization>(OrganizationId);
         }

@@ -29,6 +29,8 @@
     </li>
 </ul>
 
+<hr/>
+
 @Html.ActionAlert(TempData)
 
 <div id="infoBanner"></div>
@@ -60,8 +62,8 @@
 }
 
 @section Scripts {    
-    <script src="~/js/MultiSelect.js"></script>
-    <script src="~/js/Dashboard.js"></script>
-    <script src="~/js/Sortable.js"></script>
+    <script src="~/js/MultiSelect.js" asp-append-version="true"></script>
+    <script src="~/js/Dashboard.js" asp-append-version="true"></script>
+    <script src="~/js/Sortable.js" asp-append-version="true"></script>
     @RenderSection("Scripts", false)
 }
