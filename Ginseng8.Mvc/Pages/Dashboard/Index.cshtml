@@ -7,9 +7,7 @@
 @if (!Model.AppId.HasValue)
 {
     foreach (var t in Model.Teams)
-    {
-        <hr />
-
+    {        
         if (t.UseApplications)
         {
             <h4>@t.Name <span class="text-muted small">Applications</span></h4>
@@ -27,11 +25,11 @@
             <partial name="Items/_ProjectCardsInner" model="Model.ProjectInfo[t.Id]" />
             <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = t.Id })" />
         }
+        <hr />
     }
 }
 else
-{
-    <hr />
+{    
     <h4>
         <a asp-page="/Dashboard/Index" class="nounderline" title="Back to Organization dashboard">
             <i class="fas fa-arrow-up"></i>
@@ -59,6 +57,7 @@ else
             }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.WorkItems.First().UseApplications })
         </div>
     }
+    <hr />
 }
 
 @section Scripts {
