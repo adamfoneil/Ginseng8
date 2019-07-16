@@ -75,8 +75,7 @@ namespace Ginseng.Models
         public int ProjectId { get; set; }
 
         public Organization Organization { get; set; }
-        public Team Team { get; set; }
-        public Application Application { get; set; }
+        public Team Team { get; set; }        
 
         public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int teamId)
         {

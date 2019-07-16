@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Extensions;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Postulate.Base;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
@@ -40,20 +41,33 @@ namespace Ginseng.Mvc.Classes
             {
                 var date = GetDate();
                 var ms = 
-                    await cn.FindWhereAsync<Milestone>(new { OrganizationId = orgId, TeamId = teamId, Date = date }) ??
-                    await cn.FindWhereAsync<Milestone>(new { OrganizationId = orgId, Date = date });                
+                    await cn.FindWhereAsync<Milestone>(new { OrganizationId = orgId, TeamId = teamId, Date = date }, method: FindWhereMethod.First) ??
+                    await cn.FindWhereAsync<Milestone>(new { OrganizationId = orgId, Date = date }, method: FindWhereMethod.First);                
 
                 if (ms == null)
                 {
                     ms = new Milestone(date)
                     {
                         OrganizationId = orgId                                            
-                    };                    
+                    };
+
+                    int increment = 0;
+                    string baseName = ms.Name;
+                    while (await IsDuplicateNameAsync(cn, ms))
+                    {
+                        increment++;
+                        ms.Name = baseName + "." + increment.ToString();
+                    }
 
                     await cn.SaveAsync(ms, currentUser);
                 }
 
                 return ms.Id;
+            }
+
+            private async Task<bool> IsDuplicateNameAsync(IDbConnection cn, Milestone ms)
+            {
+                return await cn.ExistsWhereAsync<Milestone>(new { ms.OrganizationId, ms.Name });
             }
         }
     }

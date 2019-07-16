@@ -75,7 +75,7 @@ namespace Ginseng.Mvc.Controllers
                         using (var cn = _data.GetConnection())
                         {
                             var indirectMilestones = new IndirectMilestones();
-                            workItem.MilestoneId = await indirectMilestones.Options[fields.MilestoneId.Value].GetMilestoneIdAsync(cn, _data.CurrentUser, fields.OrganizationId, fields.TeamId);
+                            workItem.MilestoneId = await indirectMilestones.Options[fields.MilestoneId.Value].GetMilestoneIdAsync(cn, _data.CurrentUser, _data.CurrentOrg.Id, fields.TeamId);
                         }
                     }
                 }
@@ -324,7 +324,7 @@ namespace Ginseng.Mvc.Controllers
         {
             int milestoneId = IntFromText(elementId);
             var ms = await _data.FindAsync<Milestone>(milestoneId);
-            if (ms.Application.OrganizationId != _data.CurrentOrg.Id) throw new Exception("Application is in a different organization.");
+            if (ms.OrganizationId != _data.CurrentOrg.Id) throw new Exception("Application is in a different organization.");
             ms.Name = newName;
             await _data.TryUpdateAsync(ms, r => r.Name);
             return Content(newName);
