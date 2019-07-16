@@ -108,20 +108,23 @@ namespace Ginseng.Models
         /// <summary>
         /// Used during BeforeSave event, replaces checkbox token [] with html checkbox inputs
         /// </summary>
-        public async Task ParseNestedTasksAsync(IDbConnection connection)
+        public async Task<string> ParseNestedTasksAsync(IDbConnection connection)
         {
+            string result = HtmlBody;
             NestedTasks = new List<NestedTask>();
-            var checkboxes = Regex.Matches(HtmlBody, @"\[\]").OfType<Match>().ToArray();
+            var checkboxes = Regex.Matches(result, @"\[\]").OfType<Match>().ToArray();
             for (int i = 0; i < checkboxes.Length; i++)
             {
-                var nestedTask = 
-                    await connection.FindWhereAsync<NestedTask>(new { WorkItemId = Id, Index = i + 1 }) ?? 
+                var nestedTask =
+                    await connection.FindWhereAsync<NestedTask>(new { WorkItemId = Id, Index = i + 1 }) ??
                     new NestedTask() { WorkItemId = Id, Index = i + 1 };
 
-                HtmlBody = HtmlBody.ReplaceAtIndexOf(i, "[]", $"<input type=\"checkbox\" value=\"true\" name=\"nestedTask\" id=\"nestedTask-{Id}-{i}\" data-workitem-id=\"{Id}\" data-index=\"{i}\"/>");
+                result = result.ReplaceAtIndexOf(0, "[]", $"<input type=\"checkbox\" data-index=\"{i}\" class=\"nestedTask\"/>");
 
                 NestedTasks.Add(nestedTask);
             }
+            HtmlBody = result;
+            return result;
         }
 
         /// <summary>
@@ -167,7 +170,8 @@ namespace Ginseng.Models
                 }, user);
             }
             
-            await ClosePlaceholderItemsAsync(connection, OrganizationId, MilestoneId, user);            
+            await ClosePlaceholderItemsAsync(connection, OrganizationId, MilestoneId, user);
+            await SaveNestedTasksAsync(connection, user);
         }
 
         private async Task ParseProjectAsync(IDbConnection connection)

@@ -211,7 +211,7 @@ htmlSaveButtons.forEach(function (e) {
                 return response.json();
             }).then(function (result) {
                 if (result.success) {
-                    var updatedContent = $('#' + idPrefix + '-content-' + id).val();
+                    var updatedContent = (result.content === undefined) ? $('#' + idPrefix + '-content-' + id).val() : result.content;
                     $('#' + idPrefix + '-view-' + id).html(updatedContent);
                     $('#' + idPrefix + '-view-' + id).show();
                     $('#' + idPrefix + '-edit-' + id).hide();
@@ -745,3 +745,23 @@ function SetMilestoneDate(milestoneId, dateText) {
         $(".ms-datepicker[data-milestone-id='" + milestoneId + "']").html(text);
     });
 }
+
+
+var nestedTasks = document.querySelectorAll('input.nestedTask');
+nestedTasks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var data = {
+            number: $(this).parents('div.work-item-card').data('number'),
+            index: $(this).data('index'),
+            isChecked: $(this).is(':checked')
+        }
+        fetch('/Update/NestedTask', {
+            method: 'post',
+            body: getFormData(data)
+        }).then(function (response) {
+            return response.json();
+        }).then(function (result) {
+
+        });
+    });
+});

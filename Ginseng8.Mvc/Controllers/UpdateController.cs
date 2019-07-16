@@ -149,10 +149,11 @@ namespace Ginseng.Mvc.Controllers
             using (var cn = _data.GetConnection())
             {
                 workItem = await _data.FindAsync<WorkItem>(cn, id);
-                await workItem.ParseNestedTasksAsync(cn);
+                workItem.HtmlBody = htmlBody;
+                htmlBody = await workItem.ParseNestedTasksAsync(cn);
             }
 
-            return await UpdateInnerAsync(workItem, htmlBody, async (cn, wi) =>
+            return await UpdateHtmlBodyInnerAsync(workItem, htmlBody, async (cn, wi) =>
             {
                 await wi.SaveNestedTasksAsync(cn, _data.CurrentUser);
             });
@@ -161,17 +162,17 @@ namespace Ginseng.Mvc.Controllers
         public async Task<JsonResult> ModelClassBody(int id, string htmlBody)
         {
             var mc = await _data.FindAsync<ModelClass>(id);
-            return await UpdateInnerAsync(mc, htmlBody);
+            return await UpdateHtmlBodyInnerAsync(mc, htmlBody);
         }
 
         [HttpPost]
         public async Task<JsonResult> ProjectBody(int id, string htmlBody)
         {
             var project = await _data.FindAsync<Project>(id);
-            return await UpdateInnerAsync(project, htmlBody);
+            return await UpdateHtmlBodyInnerAsync(project, htmlBody);
         }
 
-        private async Task<JsonResult> UpdateInnerAsync<T>(T record, string htmlBody, Func<IDbConnection, T, Task> afterSave = null) where T : BaseTable, IBody
+        private async Task<JsonResult> UpdateHtmlBodyInnerAsync<T>(T record, string htmlBody, Func<IDbConnection, T, Task> afterSave = null) where T : BaseTable, IBody
         {
             try
             {
@@ -186,7 +187,7 @@ namespace Ginseng.Mvc.Controllers
                     await afterSave?.Invoke(cn, record);
                 }
                 
-                return Json(new { success = true });
+                return Json(new { success = true, content = htmlBody });
             }
             catch (Exception exc)
             {
@@ -523,6 +524,31 @@ namespace Ginseng.Mvc.Controllers
                     }, commandType: CommandType.StoredProcedure);
                 }
 
+                return Json(new { success = true });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
+        }
+
+        public async Task<JsonResult> NestedTask(int number, int index, bool isChecked)
+        {
+            try
+            {
+                using (var cn = _data.GetConnection())
+                {
+                    var workItem = await cn.FindWhereAsync<WorkItem>(new { OrganizationId = _data.CurrentOrg.Id, Number = number });
+                    if (workItem?.CreatedBy.Equals(_data.CurrentUser.UserName) ?? false)
+                    {
+                        var nestedTask = await cn.FindWhereAsync<NestedTask>(new { WorkItemId = workItem.Id, Index = index });
+                        nestedTask.IsChecked = isChecked;
+                        nestedTask.ModifiedBy = User.Identity.Name;
+                        nestedTask.DateModified = _data.CurrentUser.LocalTime;
+                        await cn.UpdateAsync(nestedTask, _data.CurrentUser, r => r.IsChecked, r => r.ModifiedBy, r => r.DateModified);
+                    }
+                }
+                
                 return Json(new { success = true });
             }
             catch (Exception exc)

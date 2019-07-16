@@ -94,9 +94,11 @@ namespace Ginseng.Mvc.Controllers
                 }
 
                 await workItem.SaveHtmlAsync(_data, cn);
-                await workItem.SetNumberAsync(cn);
+                await workItem.ParseNestedTasksAsync(cn);
+                await workItem.SetNumberAsync(cn);                
                 if (await _data.TrySaveAsync(cn, workItem))
                 {
+                    await workItem.SaveNestedTasksAsync(cn, _data.CurrentUser);
                     if (workItem.AssignToUserId.HasValue)
                     {
                         await AssignToInnerAsync(cn, workItem.AssignToUserId.Value, workItem);
