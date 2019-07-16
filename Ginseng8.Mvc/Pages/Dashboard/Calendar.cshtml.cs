@@ -42,11 +42,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
             get { return !CurrentOrgUser.CurrentAppId.HasValue; }
         }
 
-        public int? GetBalance(YearMonth month, int appId, int developerId)
+        public int? GetBalance(YearMonth month, int developerId)
         {
             try
             {                
-                var work = WorkingHours[month].Where(row => row.ApplicationId == appId).ToLookup(row => row.DeveloperId);
+                var work = WorkingHours[month].ToLookup(row => row.DeveloperId);
                 return work[developerId].Sum(row => row.AvailableHours);
             }
             catch 

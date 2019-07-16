@@ -8,8 +8,7 @@ using Postulate.Base.Interfaces;
 namespace Ginseng.Mvc.Queries
 {
     public class DevMilestoneWorkingHoursResult
-    {
-        public int ApplicationId { get; set; }
+    {        
         public int MilestoneId { get; set; }
         public int DeveloperId { get; set; }
         public string DeveloperName { get; set; }
@@ -24,8 +23,7 @@ namespace Ginseng.Mvc.Queries
     {
         public DevMilestoneWorkingHours() : base(
             @"WITH [estimates] AS (
-                SELECT
-                    [wi].[ApplicationId],
+                SELECT                    
                     [wi].[DeveloperUserId],
                     [wi].[MilestoneId],                    
                     SUM(COALESCE([wid].[EstimateHours], [sz].[EstimateHours])) AS [EstimateHours]
@@ -38,12 +36,10 @@ namespace Ginseng.Mvc.Queries
                     [wi].[MilestoneId] IS NOT NULL AND
                     COALESCE([wid].[EstimateHours], [sz].[EstimateHours]) IS NOT NULL AND
                     [wi].[CloseReasonId] IS NULL
-                GROUP BY
-                    [wi].[ApplicationId],
+                GROUP BY                    
                     [wi].[DeveloperUserId],
                     [wi].[MilestoneId]    
-            ) SELECT
-                [ms].[ApplicationId],
+            ) SELECT                
                 [dm].[MilestoneId],
                 [dm].[DeveloperId], 
                 COALESCE([ou].[DisplayName], [u].[UserName]) AS [DeveloperName],
@@ -54,21 +50,18 @@ namespace Ginseng.Mvc.Queries
                 MONTH([ms].[Date]) AS [Month]
             FROM 
                 [dbo].[DeveloperMilestone] [dm]
-                INNER JOIN [dbo].[Milestone] [ms] ON [dm].[MilestoneId]=[ms].[Id]
-                INNER JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
+                INNER JOIN [dbo].[Milestone] [ms] ON [dm].[MilestoneId]=[ms].[Id]                
                 CROSS APPLY [dbo].[FnWorkingDays](@orgId, dbo.MaxDate([dm].[StartDate], @localDate), [ms].[Date]) [wd]
                 LEFT JOIN [estimates] [e] ON 
                     [dm].[DeveloperId]=[e].[DeveloperUserId] AND
-                    [dm].[MilestoneId]=[e].[MilestoneId] AND
-                    [ms].[ApplicationId]=[e].[ApplicationId]
+                    [dm].[MilestoneId]=[e].[MilestoneId]                    
                 INNER JOIN [dbo].[OrganizationUser] [ou] ON
                     [dm].[DeveloperId]=[ou].[UserId] AND [ou].[OrganizationId]=@orgId                    
                 INNER JOIN [dbo].[AspNetUsers] [u] ON [ou].[UserId]=[u].[UserId]
             WHERE 
                 [wd].[UserId]=[dm].[DeveloperId] AND
-                [app].[OrganizationId]=@orgId {andWhere}
-            GROUP BY
-                [ms].[ApplicationId],
+                [ms].[OrganizationId]=@orgId {andWhere}
+            GROUP BY                
                 [dm].[MilestoneId],
                 [dm].[DeveloperId],
                 [ou].[DisplayName], [u].[UserName],

@@ -41,7 +41,7 @@ namespace Ginseng.Mvc.Classes
                 var date = GetDate();
                 var ms = 
                     await cn.FindWhereAsync<Milestone>(new { OrganizationId = orgId, TeamId = teamId, Date = date }) ??
-                    await cn.FindWhereAsync<Milestone>(new { OrganiationId = orgId, Date = date });
+                    await cn.FindWhereAsync<Milestone>(new { OrganizationId = orgId, Date = date });                
 
                 if (ms == null)
                 {

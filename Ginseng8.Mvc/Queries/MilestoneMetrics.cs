@@ -66,8 +66,7 @@ namespace Ginseng.Mvc.Queries
 					(SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL AND [HasImpediment]=1) AS [ImpededWorkItems]
                 FROM
                     [dbo].[Milestone] [ms]
-                    INNER JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]
-                    LEFT JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
+                    LEFT JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]                    
                 WHERE
                     [t].[OrganizationId]=@orgId AND
                     [ms].[Date] > DATEADD(d, -7, getdate())
@@ -88,9 +87,6 @@ namespace Ginseng.Mvc.Queries
         [Where("[ms].[TeamId]=@teamId")]
         public int? TeamId { get; set; }
 
-        [Where("[ms].[ApplicationId]=@appId")]
-        public int? AppId { get; set; }
-
         [Where("[ms].[Id] IN @milestoneIds")]
         public int[] MilestoneIds { get; set; }
 
@@ -99,7 +95,7 @@ namespace Ginseng.Mvc.Queries
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {
-            yield return new MilestoneMetrics() { AppId = 0, MilestoneIds = new int[] { 1, 2, 3 } };
+            yield return new MilestoneMetrics() { TeamId = 0, MilestoneIds = new int[] { 1, 2, 3 } };
         }
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)

@@ -37,7 +37,7 @@ namespace Ginseng.Mvc.Pages.Setup
         {
             using (var cn = Data.GetConnection())
             {                
-                MilestoneSelect = await new MilestoneSelect() { OrgId = AppId ?? 0 }.ExecuteSelectListAsync(cn, MilestoneId);
+                MilestoneSelect = await new MilestoneSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn, MilestoneId);
                 UserSelect = await new UserSelect() { OrgId = OrgId, IsEnabled = true }.ExecuteSelectListAsync(cn);
 
                 if (MilestoneId.HasValue)

@@ -13,21 +13,15 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Milestone>(this, Xsrf, defaults: new { TeamId = Model.TeamId });
+    var grid = new GridEditor<Milestone>(this, Xsrf, defaults: new { TeamId = Model.TeamId ?? 0 });
 }
 
 <form method="get" class="form-inline mb-3">
     <label class="mr-2">Team:</label>
     <select name="TeamId" class="form-control mr-2" asp-items="Model.TeamSelect" onchange="this.form.submit();">
-        <option>(select)</option>
+        <option>(all teams)</option>
     </select>
 </form>
-
-@if (Model.TeamId == 0)
-{
-    <p>Please select a team above.</p>
-    return;
-}
 
 <table class="table">
     <tr>

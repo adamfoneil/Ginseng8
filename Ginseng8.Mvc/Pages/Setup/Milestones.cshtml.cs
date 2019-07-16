@@ -17,7 +17,7 @@ namespace Ginseng.Mvc.Pages.Setup
         }
 
         [BindProperty(SupportsGet = true)]
-        public int TeamId { get; set; }
+        public int? TeamId { get; set; }
 
         public SelectList TeamSelect { get; set; }        
         public IEnumerable<Milestone> Milestones { get; set; }
@@ -34,6 +34,7 @@ namespace Ginseng.Mvc.Pages.Setup
         public async Task<ActionResult> OnPostSave(Milestone record)
         {
             record.OrganizationId = OrgId;
+            if (record.TeamId == 0) record.TeamId = null;
             await Data.TrySaveAsync(record);
             return Redirect($"/Setup/Milestones?teamId={record.TeamId}");
         }

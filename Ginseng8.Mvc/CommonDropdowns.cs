@@ -26,8 +26,8 @@ namespace Ginseng.Mvc
 		public ILookup<int, SelectListItem> ProjectsByApp { get; set; } 
         public ILookup<int, SelectListItem> ProjectsByTeam { get; set; }
 		public IEnumerable<SelectListItem> Sizes { get; set; }
-		public IEnumerable<SelectListItem> CloseReasons { get; set; }		
-        public ILookup<int, SelectListItem> MilestonesByApp { get; set; }
+		public IEnumerable<SelectListItem> CloseReasons { get; set; }		        
+        public IEnumerable<SelectListItem> AllMilestones { get; set; }
         public ILookup<int, SelectListItem> MilestonesByTeam { get; set; }        
 		public ILookup<int, SelectListItem> AllDataModels { get; set; } // keyed to projects
 		public IEnumerable<Label> Labels { get; set; }
@@ -93,18 +93,16 @@ namespace Ginseng.Mvc
 			return new SelectList(CloseReasons, "Value", "Text", item?.CloseReasonId);
 		}
 
-		public SelectList MilestoneSelect(int teamId, int appId, int? milestoneId, bool withNoneOption = false)
+		public SelectList MilestoneSelect(int? milestoneId, bool withNoneOption = false)
 		{
-            var items = ((appId != 0) ? MilestonesByApp[appId] : MilestonesByTeam[teamId]).ToList();
+            var items = AllMilestones.ToList();
 			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no milestone -" });
 			return new SelectList(items, "Value", "Text", milestoneId);
 		}
 
 		public SelectList MilestoneSelect(OpenWorkItemsResult item = null, bool withIndirectOptions = false)
 		{
-            var items = ((item?.UseApplications ?? true) ?
-                MilestonesByApp[item?.ApplicationId ?? 0] :
-                MilestonesByTeam[item?.TeamId ?? 0]).ToList();
+            var items = AllMilestones.ToList();
 
             if (withIndirectOptions) items.InsertRange(0, new IndirectMilestones().GetSelectListItems());
 
@@ -143,8 +141,8 @@ namespace Ginseng.Mvc
             result.ProjectsByTeam = allProjects.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
 
             var allMilestones = await new AllMilestones() { OrgId = orgId }.ExecuteAsync(connection);
-            result.MilestonesByApp = allMilestones.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
-            result.MilestonesByTeam = allMilestones.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
+            result.AllMilestones = allMilestones.Select(item => item.ToSelectListItem());
+            result.MilestonesByTeam = allMilestones.ToLookup(row => row.TeamId ?? 0, row => row.ToSelectListItem());
                        
 			var allModels = await new DataModels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 			result.AllDataModels = allModels.ToLookup(row => row.ApplicationId, row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });

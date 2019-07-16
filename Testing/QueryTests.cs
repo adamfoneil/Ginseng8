@@ -176,5 +176,11 @@ namespace Testing
         {
             TestQuery<DevCalendarProjects>();
         }
+
+        [TestMethod]
+        public void AllMilestonesQuery()
+        {
+            TestQuery<AllMilestones>();
+        }
     }
 }

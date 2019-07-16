@@ -38,7 +38,7 @@
                                                 
                                                 @foreach (var dev in prjGrp)
                                                 {
-                                                    var balance = Model.GetBalance(month, appGrp.Key, dev.DeveloperUserId);
+                                                    var balance = Model.GetBalance(month, dev.DeveloperUserId);
                                                     var backColor = Model.GetBalanceBackColor(balance);
                                                     var foreColor = Model.GetBalanceForeColor(balance);
                                                     <br/>

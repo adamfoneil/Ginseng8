@@ -30,7 +30,7 @@
         <select name="FilterProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.CurrentOrgUser.CurrentAppId ?? 0, Model.FilterProjectId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all projects)</option>
         </select>
-        <select name="FilterMilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.CurrentOrgUser.CurrentTeamId ?? 0, Model.CurrentOrgUser.CurrentAppId ?? 0, Model.FilterMilestoneId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
+        <select name="FilterMilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.FilterMilestoneId, true)" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all milestones)</option>
         </select>
     </div>
