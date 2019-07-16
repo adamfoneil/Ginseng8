@@ -145,8 +145,17 @@ namespace Ginseng.Mvc.Controllers
         [HttpPost]
         public async Task<JsonResult> WorkItemBody(int id, string htmlBody)
         {
-            var workItem = await _data.FindAsync<WorkItem>(id);
-            return await UpdateInnerAsync(workItem, htmlBody);
+            WorkItem workItem = null;
+            using (var cn = _data.GetConnection())
+            {
+                workItem = await _data.FindAsync<WorkItem>(cn, id);
+                await workItem.ParseNestedTasksAsync(cn);
+            }
+
+            return await UpdateInnerAsync(workItem, htmlBody, async (cn, wi) =>
+            {
+                await wi.SaveNestedTasksAsync(cn, _data.CurrentUser);
+            });
         }
 
         public async Task<JsonResult> ModelClassBody(int id, string htmlBody)
@@ -162,16 +171,21 @@ namespace Ginseng.Mvc.Controllers
             return await UpdateInnerAsync(project, htmlBody);
         }
 
-        private async Task<JsonResult> UpdateInnerAsync<T>(T record, string htmlBody) where T : BaseTable, IBody
+        private async Task<JsonResult> UpdateInnerAsync<T>(T record, string htmlBody, Func<IDbConnection, T, Task> afterSave = null) where T : BaseTable, IBody
         {
             try
             {
                 record.HtmlBody = htmlBody;
                 record.ModifiedBy = User.Identity.Name;
                 record.DateModified = _data.CurrentUser.LocalTime;
-                await record.SaveHtmlAsync(_data);
 
-                await _data.TryUpdateAsync(record, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
+                using (var cn = _data.GetConnection())
+                {
+                    await record.SaveHtmlAsync(_data, cn);
+                    await _data.TryUpdateAsync(record, r => r.HtmlBody, r => r.TextBody, r => r.ModifiedBy, r => r.DateModified);
+                    await afterSave?.Invoke(cn, record);
+                }
+                
                 return Json(new { success = true });
             }
             catch (Exception exc)

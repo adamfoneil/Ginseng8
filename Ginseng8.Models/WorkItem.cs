@@ -103,6 +103,44 @@ namespace Ginseng.Models
         [NotMapped]
         public int? AssignToUserId { get; set; }
 
+        public List<NestedTask> NestedTasks { get; private set; }
+
+        /// <summary>
+        /// Used during BeforeSave event, replaces checkbox token [] with html checkbox inputs
+        /// </summary>
+        public async Task ParseNestedTasksAsync(IDbConnection connection)
+        {
+            NestedTasks = new List<NestedTask>();
+            var checkboxes = Regex.Matches(HtmlBody, @"\[\]").OfType<Match>().ToArray();
+            for (int i = 0; i < checkboxes.Length; i++)
+            {
+                var nestedTask = 
+                    await connection.FindWhereAsync<NestedTask>(new { WorkItemId = Id, Index = i + 1 }) ?? 
+                    new NestedTask() { WorkItemId = Id, Index = i + 1 };
+
+                HtmlBody = HtmlBody.ReplaceAtIndexOf(i, "[]", $"<input type=\"checkbox\" value=\"true\" name=\"nestedTask\" id=\"nestedTask-{Id}-{i}\" data-workitem-id=\"{Id}\" data-index=\"{i}\"/>");
+
+                NestedTasks.Add(nestedTask);
+            }
+        }
+
+        /// <summary>
+        /// Use in AfterSave event to create nested task records in database
+        /// </summary>
+        public async Task SaveNestedTasksAsync(IDbConnection connection, IUser user)
+        {
+            foreach (var nestedTask in NestedTasks.Where(t => t.Id == 0))
+            {
+                await connection.SaveAsync(nestedTask, user);
+            }
+        }
+
+        public override async Task BeforeSaveAsync(IDbConnection connection, SaveAction action, IUser user)
+        {
+            await base.BeforeSaveAsync(connection, action, user);
+            await ParseNestedTasksAsync(connection);
+        }
+
         public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
         {
             if (action == SaveAction.Insert)
@@ -128,8 +166,8 @@ namespace Ginseng.Models
                     IconClass = IconCreated
                 }, user);
             }
-
-            await ClosePlaceholderItemsAsync(connection, OrganizationId, MilestoneId, user);
+            
+            await ClosePlaceholderItemsAsync(connection, OrganizationId, MilestoneId, user);            
         }
 
         private async Task ParseProjectAsync(IDbConnection connection)
