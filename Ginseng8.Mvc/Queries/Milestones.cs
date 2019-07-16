@@ -13,14 +13,12 @@ namespace Ginseng.Mvc.Queries
 		public Milestones() : base(
             @"SELECT 
 				[ms].*,
-                [app].[Name] AS [ApplicationName],
 				DATEDIFF(d, getdate(), [ms].[Date]) AS [DaysAway],
                 (SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id]) AS [TotalWorkItems],
                 (SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL) AS [OpenWorkItems],
                 (SELECT COUNT(1) FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NOT NULL) AS [ClosedWorkItems]
 			FROM 
 				[dbo].[Milestone] [ms]                
-                LEFT JOIN [dbo].[Application] [app] ON [ms].[ApplicationId]=[app].[Id]
             WHERE
                 [ms].[OrganizationId]=@orgId                 
                 {andWhere}            
@@ -34,9 +32,6 @@ namespace Ginseng.Mvc.Queries
         [Where("[ms].[TeamId]=@teamId")]
         public int? TeamId { get; set; }
 
-        [Where("[ms].[ApplicationId]=@appId")]
-		public int? AppId { get; set; }
-
 		[Where("[ms].[Date]>=@minDate")]
 		public DateTime? MinDate { get; set; } = DateTime.Today.AddDays(-5);
 
@@ -46,7 +41,7 @@ namespace Ginseng.Mvc.Queries
                 )")]
         public bool? IsSelectable { get; set; } = true;
 
-        [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] [wi] INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id] WHERE [ProjectId]=@projectId AND [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL AND [app].[IsActive]=1)")]
+        [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] [wi] INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id] WHERE [wi].[ProjectId]=@projectId AND [wi].[MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL AND [app].[IsActive]=1)")]
         public int? ProjectId { get; set; }
 
 		[Case(false, "NOT EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id])")]
@@ -61,10 +56,11 @@ namespace Ginseng.Mvc.Queries
         public int? Id { get; set; }
 
         public IEnumerable<ITestableQuery> GetTestCases()
-        {
-            yield return new Milestones() { AppId = 0 };
+        {            
             yield return new Milestones() { OrgId = 0 };
             yield return new Milestones() { OrgId = 0, IsSelectable = true };
+            yield return new Milestones() { OrgId = 0, TeamId = 0 };
+            yield return new Milestones() { OrgId = 1, ProjectId = 1 };
         }
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)

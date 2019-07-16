@@ -13,18 +13,13 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Milestone>(this, Xsrf, defaults: new { TeamId = Model.TeamId, ApplicationId = Model.AppId ?? 0 });
+    var grid = new GridEditor<Milestone>(this, Xsrf, defaults: new { TeamId = Model.TeamId });
 }
 
 <form method="get" class="form-inline mb-3">
     <label class="mr-2">Team:</label>
     <select name="TeamId" class="form-control mr-2" asp-items="Model.TeamSelect" onchange="this.form.submit();">
         <option>(select)</option>
-    </select>
-
-    <label class="mr-2">Application:</label>
-    <select name="AppId" class="form-control" asp-items="Model.AppSelect" onchange="this.form.submit();">
-        <option>(any)</option>
     </select>
 </form>
 
@@ -36,8 +31,7 @@
 
 <table class="table">
     <tr>
-        <th>Team</th>
-        <th>Application</th>
+        <th>Team</th>        
         <th>Milestone Name</th>
         <th>Date</th>
         <th>Work Items</th>
@@ -46,8 +40,7 @@
     @foreach (var item in Model.Milestones)
     {
         <tr id="@grid.RowId(item)">
-            <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>
-            <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
+            <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>            
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
             <td>
@@ -69,8 +62,7 @@
         </tr>
     }
     <tr id="@grid.NewRowId()">
-        <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>
-        <td>@grid.DropDownList(m => m.ApplicationId, Model.AppSelect, new { @class = "form-control" })</td>
+        <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>        
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
         <td></td>

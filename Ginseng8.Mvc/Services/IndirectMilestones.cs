@@ -36,20 +36,18 @@ namespace Ginseng.Mvc.Classes
             public string Text { get; set; }
             public Func<DateTime> GetDate { get; set; }            
 
-            public async Task<int> GetMilestoneIdAsync(IDbConnection cn, IUser currentUser, int teamId, int? appId)
+            public async Task<int> GetMilestoneIdAsync(IDbConnection cn, IUser currentUser, int orgId, int teamId)
             {
                 var date = GetDate();
-                var ms = (appId.HasValue) ?
-                    await cn.FindWhereAsync<Milestone>(new { TeamId = teamId, ApplicationId = appId, Date = date }) :
-                    await cn.FindWhereAsync<Milestone>(new { TeamId = teamId, Date = date });
+                var ms = 
+                    await cn.FindWhereAsync<Milestone>(new { OrganizationId = orgId, TeamId = teamId, Date = date }) ??
+                    await cn.FindWhereAsync<Milestone>(new { OrganiationId = orgId, Date = date });
 
                 if (ms == null)
                 {
-
                     ms = new Milestone(date)
                     {
-                        TeamId = teamId,                        
-                        ApplicationId = appId                        
+                        OrganizationId = orgId                                            
                     };                    
 
                     await cn.SaveAsync(ms, currentUser);

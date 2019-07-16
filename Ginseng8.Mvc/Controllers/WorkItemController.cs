@@ -72,7 +72,7 @@ namespace Ginseng.Mvc.Controllers
                 if (workItem.MilestoneId < 0)
                 {
                     var indirectMilestones = new IndirectMilestones();
-                    workItem.MilestoneId = await indirectMilestones.Options[workItem.MilestoneId.Value].GetMilestoneIdAsync(cn, _data.CurrentUser, workItem.TeamId, workItem.ApplicationId);
+                    workItem.MilestoneId = await indirectMilestones.Options[workItem.MilestoneId.Value].GetMilestoneIdAsync(cn, _data.CurrentUser, workItem.OrganizationId, workItem.TeamId);
                 }
 
                 await workItem.SaveHtmlAsync(_data, cn);
@@ -442,7 +442,7 @@ namespace Ginseng.Mvc.Controllers
         {
             using (var cn = _data.GetConnection())
             {
-                var results = await new MilestoneSelect() { AppId = appId }.ExecuteAsync(cn);
+                var results = await new MilestoneSelect() { OrgId = appId }.ExecuteAsync(cn);
                 return Json(results);
             }
         }

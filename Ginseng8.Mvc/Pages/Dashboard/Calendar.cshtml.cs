@@ -164,11 +164,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
             foreach (var date in dates)
             {
                 var ms = 
-                    await connection.FindWhereAsync<Milestone>(new { TeamId = prj.TeamId, Date = date }) ??
+                    await connection.FindWhereAsync<Milestone>(new { OrganizationId = OrgId, Date = date }) ??
                     new Milestone(date)
                     {
-                        TeamId = prj.TeamId,
-                        ApplicationId = prj.ApplicationId,
+                        OrganizationId = OrgId,
+                        TeamId = prj.TeamId,                        
                         ProjectId = prj.Id
                     };
 
@@ -200,7 +200,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 OrganizationId = team.OrganizationId,
                 TeamId = team.Id,
-                ApplicationId = milestone.ApplicationId ?? prj.ApplicationId,
+                ApplicationId = prj.ApplicationId,
                 MilestoneId = milestone.Id,
                 ProjectId = projectId,
                 Title = "Placeholder item created with milestone",

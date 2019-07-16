@@ -38,11 +38,7 @@ namespace Ginseng.Models
         [PrimaryKey]
         [References(typeof(Organization))]
         public int OrganizationId { get; set; }
-
-        [PrimaryKey]
-        [References(typeof(Team))]
-        public int? TeamId { get; set; }
-
+        
         [MaxLength(50)]
         [PrimaryKey]
         public string Name { get; set; }
@@ -51,8 +47,8 @@ namespace Ginseng.Models
         [DisplayFormat(DataFormatString = "{0:M/d/yy}")]
         public DateTime Date { get; set; }
 
-        [References(typeof(Application))]
-        public int? ApplicationId { get; set; }
+        [References(typeof(Team))]
+        public int? TeamId { get; set; }
 
         [NotMapped]
         public int? DaysAway { get; set; }
@@ -139,15 +135,13 @@ namespace Ginseng.Models
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             Organization = commandProvider.Find<Organization>(connection, OrganizationId);
-            if (TeamId.HasValue) Team = commandProvider.Find<Team>(connection, TeamId.Value);
-            if (ApplicationId.HasValue) Application = commandProvider.Find<Application>(connection, ApplicationId.Value);
+            if (TeamId.HasValue) Team = commandProvider.Find<Team>(connection, TeamId.Value);            
         }
 
         public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
         {
             Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
-            if (TeamId.HasValue) Team = await commandProvider.FindAsync<Team>(connection, TeamId.Value);
-            if (ApplicationId.HasValue) Application = await commandProvider.FindAsync<Application>(connection, ApplicationId.Value);
+            if (TeamId.HasValue) Team = await commandProvider.FindAsync<Team>(connection, TeamId.Value);            
         }
     }
 }

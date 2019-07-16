@@ -18,11 +18,6 @@
 }
 
 <form method="get" class="form-inline mb-3">
-    <label class="mr-2">Application:</label>
-    <select name="appId" asp-items="Model.AppSelect" onchange="this.form.submit()" class="form-control mr-2">
-        <option value="">(select)</option>
-    </select>
-
     <label class="mr-2">Milestone:</label>
     <select name="milestoneId" asp-items="Model.MilestoneSelect" onchange="this.form.submit()" class="form-control">
         <option value="">(select)</option>

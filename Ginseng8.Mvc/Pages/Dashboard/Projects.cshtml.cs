@@ -143,7 +143,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 if (View == ProjectViewOptions.Crosstab)
                 {
                     // crosstab columns
-                    var milestones = await new Milestones() { AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteAsync(connection);
+                    var milestones = await new Milestones() { OrgId = OrgId }.ExecuteAsync(connection);
 
                     // crosstab cells
                     var workItems = await new OpenWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
