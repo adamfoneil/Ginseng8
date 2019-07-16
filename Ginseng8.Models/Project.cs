@@ -112,7 +112,14 @@ namespace Ginseng.Models
         public async Task SyncWorkItemsToProjectAsync(IDbConnection connection)
         {
             await connection.ExecuteAsync(
-                @"UPDATE [dbo].[WorkItem] SET [ApplicationId]=@appId WHERE [ProjectId]=@projectId",
+                @"UPDATE [wi] SET 
+                    [ApplicationId]=@appId 
+                FROM
+                    [dbo].[WorkItem] [wi]
+                    INNER JOIN [dbo].[Project] [prj] ON [wi].[ProjectId=[prj].[Id]
+                WHERE 
+                    [wi].[ProjectId]=@projectId AND
+                    [prj].[ApplicationId]=@appId",
                 new { appId = ApplicationId, projectId = Id });
         }
     }

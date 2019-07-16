@@ -2,6 +2,7 @@
 using Ginseng.Models;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Services;
 using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,9 @@ namespace Ginseng.Mvc
         public ILookup<int, Comment> Comments { get; set; }
         public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
         public IEnumerable<WorkDaysResult> WorkDays { get; set; }
-        public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }        
+        public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }
+        public MyItemGroupingOption MyItemGroupingOptions { get; set; } = new MyItemGroupingOption();
+        public MyItemGroupingOption.Option GroupingOption { get; set; }
 
         /// <summary>
         /// triggers display of partial to offer to move items to soonest upcoming or new milestone

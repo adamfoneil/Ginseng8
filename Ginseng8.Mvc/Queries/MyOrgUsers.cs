@@ -32,7 +32,9 @@ namespace Ginseng.Mvc.Queries
 				INNER JOIN [dbo].[Organization] [org] ON [ou].[OrganizationId]=[org].[Id]
 				INNER JOIN [dbo].[AspNetUsers] [u] ON [ou].[UserId]=[u].[UserId]
                 LEFT JOIN [hours] [h] ON [ou].[UserId]=[h].[UserId]
-			{where}")
+			{where}
+            ORDER BY
+                COALESCE([ou].[DisplayName], [u].[UserName])")
 		{
 		}
 
@@ -60,6 +62,15 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[ou].[UserId]<>@excludeUserId")]
 		public int? ExcludeUserId { get; set; }
+
+        [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [TeamId]=@teamId AND [CloseReasonId] IS NULL AND ([DeveloperUserId]=[ou].[UserId] OR [BusinessUserId]=[ou].[UserId]))")]
+        public int? TeamId { get; set; }
+
+        [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [ApplicationId]=@appId AND [CloseReasonId] IS NULL AND ([DeveloperUserId]=[ou].[UserId] OR [BusinessUserId]=[ou].[UserId]))")]
+        public int? AppId { get; set; }
+
+        [Case(true, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE ([DeveloperUserId]=[ou].[UserId] OR [BusinessUserId]=[ou].[UserId]) AND [CloseReasonId] IS NULL)")]
+        public bool? HasWorkItems { get; set; }
 
         protected override async Task OnQueryExecutedAsync(QueryTrace queryTrace)
         {

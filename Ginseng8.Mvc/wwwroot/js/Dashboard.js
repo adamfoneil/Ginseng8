@@ -24,11 +24,16 @@ reloadProjectDropdowns.forEach(function (ele) {
     ele.addEventListener('change', function (ev) {
         var number = ev.target.form.Number.value;
         var teamId = $('#TeamId-' + number).val();
+        var appId = $('#AppId-' + number).val();
         var useApps = teamUseApps[teamId];
-        if (useApps) {            
+        if (useApps & (appId != '')) {            
             FillDropdown(ev, '/WorkItem/GetAppProjects?appId=', '#ProjectId-', '- project -');
         } else {
-            FillDropdown(ev, '/WorkItem/GetTeamProjects?teamId=', '#ProjectId-', '- project -');
+            if (appId == '') {
+                FillDropdown(ev, '/WorkItem/GetTeamProjects?appId=0&teamId=', '#ProjectId-', '- project -', teamId);
+            } else {
+                FillDropdown(ev, '/WorkItem/GetTeamProjects?teamId=', '#ProjectId-', '- project -', teamId);
+            }            
         }        
     });
 });
@@ -40,9 +45,9 @@ reloadMilestoneDropdowns.forEach(function (ele) {
     });
 });
 
-function FillDropdown(ev, url, selectIdPrefix, blankOption) {
+function FillDropdown(ev, url, selectIdPrefix, blankOption, paramValue) {
     var number = ev.target.form.Number.value;
-    var id = $(ev.target).val();
+    var id = (paramValue === undefined) ? $(ev.target).val() : paramValue;
     fetch(url + id, {
         method: 'get'
     }).then(function (response) {
@@ -418,7 +423,7 @@ $(document)
 })
 .on('input', '.search-box', function(event) {
     var $input = $(event.currentTarget);
-    var searchTerm = $input.val();
+    var searchTerm = $input.val().toLowerCase();
     var $dropdownItems = $input.parents('.dropdown-menu').find('.dropdown-item');
 
     if (!searchTerm.length) {
@@ -431,7 +436,7 @@ $(document)
     $dropdownItems.each(function(index, item) {
         var $item = $(item);
 
-        if (~$item.find('.badge').text().indexOf(searchTerm)) {
+        if (~$item.find('.badge').text().toLowerCase().indexOf(searchTerm)) {
             $item.show();
         }
     });
@@ -536,6 +541,12 @@ function InitWorkItemSortable() {
 function updateSortableList(list, taskObject) {
     var task = taskObject || list.prevObject;
 
+    if (list.length) {
+        list.find('.work-item-card').each(function (taskIndex, workItemElement) {
+            $(workItemElement).find('.work-item-priority').text(taskIndex + 1);
+        });
+    }
+
     if (list.length === 0 || task == null) {
         return;
     }
@@ -569,6 +580,8 @@ function updateSortableList(list, taskObject) {
     var milestoneId = list.parents('[data-milestone-id]').data('milestone-id'); 
     var userId = list.data('user-id');
     var number = task.data('number');
+    var groupFieldName = list.data('group-field');
+    var groupFieldValue = list.data('group-value');
     var tasksArray = [];
 
     list.find('.work-item-card').each(function (taskIndex, workItemElement) {
@@ -582,13 +595,16 @@ function updateSortableList(list, taskObject) {
         milestoneId: milestoneId,        
         userId: userId,
         number: number,
+        groupFieldName: groupFieldName,
+        groupFieldValue: groupFieldValue,
         items: tasksArray,
     })
 }
 
 function TaskReorder(data) {
-    console.log('TaskReorder data json', JSON.stringify(data));
-    console.log('TaskReorder data object', data);
+    console.group('TaskReorder data object');
+    console.log(data);
+    console.groupEnd();
 
     fetch('/WorkItem/SetPriorities', {
         method: 'post',

@@ -7,7 +7,9 @@
 
     @if (Model.SelectedProject.Team.UseApplications)
     {
-        <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject)" class="form-control-sm mr-2 projectUpdate"></select>
+        <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.SelectedProject)" class="form-control-sm mr-2 projectUpdate">
+            <option value="">- no app -</option>
+        </select>
 
         @if (Model.SelectedProject.DataModelId.HasValue)
         {

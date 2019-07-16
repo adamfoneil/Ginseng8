@@ -55,7 +55,7 @@ namespace Ginseng.Mvc.Controllers
                     foreach (var msg in emails)
                     {
                         string content = await this.RenderViewAsync("Notification", msg);
-                        await _email.SendAsync(msg.SendTo, $"{msg.ParentName} {msg.EventName} - {msg.WorkItemNumber}: {msg.WorkItemTitle}", content);
+                        await _email.SendAsync(msg.SendTo, $"{msg.WorkItemNumber}: {msg.WorkItemTitle} - {msg.ParentName} {msg.EventName}", content);
                         await msg.MarkDeliveredAsync(cn);
                     }
                 }

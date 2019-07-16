@@ -488,5 +488,33 @@ namespace Ginseng.Mvc.Controllers
                 return Json(new { success = false, message = exc.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<JsonResult> UserActivityOrder()
+        {
+            try
+            {
+                string body = await Request.ReadStringAsync();
+                var data = JsonConvert.DeserializeObject<ProjectPriorityUpdate>(body);
+
+                using (var cn = _data.GetConnection())
+                {
+                    await cn.ExecuteAsync("dbo.UpdateUserActivityOrder", new
+                    {
+                        userName = User.Identity.Name,
+                        localTime = _data.CurrentUser.LocalTime,
+                        orgId = _data.CurrentOrg.Id,
+                        userId = _data.CurrentUser.UserId,
+                        priorities = data.Items.AsTableValuedParameter("dbo.WorkItemPriority", "Number", "Index")
+                    }, commandType: CommandType.StoredProcedure);
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
+        }
     }
 }

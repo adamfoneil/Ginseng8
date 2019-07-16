@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Services;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Classes;
@@ -22,6 +23,14 @@ namespace Ginseng.Mvc.Queries
         Closed = 4
 	}
 
+    public enum HungReason
+    {
+        None = 0,
+        HasImpediment = 1, // technical issue
+        IsPaused = 2, // has activity, but unassigned
+        IsStopped = 3 // has milestone, but unassigned
+    }
+
 	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
 	{
 		public const string ImpedimentIcon = Comment.ImpedimentIcon;
@@ -32,9 +41,11 @@ namespace Ginseng.Mvc.Queries
 		public const string StoppedColor = "orangered";
         public const string TicketIcon = "fas fa-ticket-alt";
         public const string TicketColor = "#1a7172";
+        public const string PausedIcon = "fas fa-pause-circle";
 
         public const string ImpedimentModifier = "impediment";
         public const string UnestimatedModifier = "unestimated";
+
         public const string StoppedModifier = "stopped";
         public const string TicketModifier = "ticket";
 
@@ -97,6 +108,7 @@ namespace Ginseng.Mvc.Queries
         public string FDContactName { get; set; }
         public TicketStatus FDTicketStatus { get; set; }
         public bool UseApplications { get; set; }
+        public int? MyActivityOrder { get; set; }
 
         /// <summary>
         /// Lets us use a single property to switch between the app or team Id based on whether the team uses applications
@@ -111,6 +123,16 @@ namespace Ginseng.Mvc.Queries
             get { return (UseApplications) ? "applicationId" : "teamId"; }
         }
 
+        public ProjectParentType ProjectParentType
+        {
+            get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }
+        }
+
+        public string ProjectParentName
+        {
+            get { return (UseApplications) ? ApplicationName : TeamName; }
+        }
+
         /// <summary>
         /// Used to create hidden fields for inserting work items.
         /// It varies whether we need an applicationId based on the kind of team
@@ -123,17 +145,26 @@ namespace Ginseng.Mvc.Queries
             return result;
         }
 
-        public ProjectParentType ProjectParentType
+        public bool IsHung
         {
-            get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }
+            get { return HasImpediment || IsPaused() || IsStopped(); }            
         }
 
-        public string ProjectParentName
+        public HungReason HungReason
         {
-            get { return (UseApplications) ? ApplicationName : TeamName; }
+            get
+            {
+                return
+                    (HasImpediment) ? HungReason.IsPaused :
+                    (IsPaused()) ? HungReason.IsPaused :
+                    (IsStopped()) ? HungReason.IsStopped :
+                    HungReason.None;
+            }
         }
 
-		public bool IsEditable(string userName)
+        public WorkItemTitleViewField TitleViewField { get; set; }
+
+        public bool IsEditable(string userName)
 		{
 			return CreatedBy.Equals(userName);
 		}
@@ -237,7 +268,8 @@ namespace Ginseng.Mvc.Queries
                 [wit].[Subject] AS [FDTicketSubject],
                 [wit].[TicketStatus] AS [FDTicketStatus],
                 [org].[FreshdeskUrl],
-                [t].[UseApplications]
+                [t].[UseApplications],
+                [uao].[Value] AS [MyActivityOrder]
 			FROM
 				[dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
@@ -275,6 +307,7 @@ namespace Ginseng.Mvc.Queries
                 LEFT JOIN [dbo].[WorkItemTicket] [wit] ON 
                     [wit].[OrganizationId]=[wi].[OrganizationId] AND
                     [wit].[WorkItemNumber]=[wi].[Number]   
+                LEFT JOIN [dbo].[UserActivityOrder] [uao] ON [wi].[ActivityId]=[uao].[ActivityId] AND [uao].[UserId]=@activityUserId
 				{{join}}
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
@@ -310,12 +343,12 @@ namespace Ginseng.Mvc.Queries
 		public bool InMyActivities { get; set; }
 
 		/// <summary>
-		/// Use this when InMyActivities = true
+		/// Use this when InMyActivities = true or WithMyActivityOrder = true
 		/// </summary>		
 		public int ActivityUserId { get; set; }
 
         [Join("LEFT JOIN [dbo].[FnWorkItemSchedule](@orgId, @scheduleUserId) [wis] ON [wi].[Number]=[wis].[Number]")]
-        public bool WithWorkSchedule { get; set; }
+        public bool WithWorkSchedule { get; set; }        
 
         /// <summary>
         /// Use this when WithWorkSchedule = true
@@ -448,7 +481,7 @@ namespace Ginseng.Mvc.Queries
             yield return new OpenWorkItems() { IsFreshdeskTicket = true };
             yield return new OpenWorkItems() { HasFutureMilestone = false };
             yield return new OpenWorkItems() { HasFutureMilestone = true };
-            yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };
+            yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };            
         }
 	}
 }

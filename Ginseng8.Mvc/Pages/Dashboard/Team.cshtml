@@ -1,65 +1,75 @@
-﻿@page
+﻿@page "/Dashboard/Team/{id?}"
 @model Ginseng.Mvc.Pages.Work.TeamModel
 @{
     ViewData["Title"] = "Team";
 }
 
-<div id="accordion">
-    <ul class="nav nav-tabs" id="assignedUserTab" role="tablist">
-        @foreach (var userGrp in Model.WorkItems.OrderBy(row => row.AssignedUserName).GroupBy(row => row.AssignedUserId))
+<ul class="nav nav-pills nav-fill nav-justified mb-3 justify-content-center">
+    @foreach (var user in Model.Users)
+    {
+        string activeClass = (user.UserId == Model.FilterUserId) ? "active" : string.Empty;
+        <li>
+            <a asp-page="/Dashboard/Team" asp-route-id="@user.UserId" class="nav-link @activeClass">@user.UserName</a>            
+        </li>
+    }
+</ul>
+
+@if (Model.FilterUserId == 0)
+{
+    <div>
+        <p class="text-center">Please click on someone's name to view their work.</p>
+    </div>
+    return;
+}
+
+<div id="accordion">    
+    @foreach (var milestoneGrp in Model.WorkItems.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
+    {
+        var milestoneItem = milestoneGrp.First();
+
+        <partial name="Items/_MilestoneHeader" model="milestoneItem" />
+
+        <div class="ml-3">
+            <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
+        </div>
+
+        @foreach (var appGrp in milestoneGrp.OrderBy(row => Model.GroupingOption.GroupSortFunction(row)).GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
         {
-            <li class="nav-item">
-                <a href="#user@(userGrp.Key ?? 0)" data-user-group-id="@(userGrp.Key ?? 0)" data-toggle="tab" id="tab-@userGrp.Key" class="nav-link sortable">@(userGrp.First().AssignedUserName ?? "(unassigned)")</a>
-            </li>
-        }
-    </ul>
-    <div class="tab-content my-3" id="tabContent">
-        @foreach (var userGrp in Model.WorkItems.GroupBy(row => row.AssignedUserId ?? 0))
-        {
-            <div class="tab-pane fade" id="user@(userGrp.Key)" role="tabpanel" data-tab-id="tab-@userGrp.Key">
-                @foreach (var milestoneGrp in userGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
+	        <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
+            <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+            <div class="ml-3 sortable" data-user-id="@(Model.FilterUserId)" data-group-field="@Model.GroupingOption.FieldNameFunction(appGrp.First())" data-group-value="@appGrp.Key">
+                @foreach (var item in appGrp)
                 {
-                    var milestoneItem = milestoneGrp.First();
-
-                    <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-
-                    <div class="ml-3">
-                        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
-                    </div>
-
-                    @foreach (var appGrp in milestoneGrp.GroupBy(row => row.ApplicationId))
-                    {
-	                    <h5 class="ml-3">@appGrp.First().ApplicationName</h5>
-                        <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-                        <div class="ml-3 sortable" data-user-id="@(userGrp.Key)">
-                            @foreach (var item in appGrp)
-                            {
-                                <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
-                            }
-                            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-                            {
-                                { "teamId", Html.CurrentTeamId() },
-                                { "applicationId", appGrp.Key },
-                                { "milestoneId", milestoneGrp.Key },
-                                { Model.UserIdColumns[userGrp.Key].UserIdColumn, userGrp.Key },
-                                { "activityId", Model.UserIdColumns[userGrp.Key].ActivityId }
-                            }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
-                            </div>
-                        </div>
-                    }
+                    <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, TitleViewField = Model.GroupingOption.TitleViewField }" />
                 }
-
-                <p class="text-center">@userGrp.Count() work items shown</p>
-
-                @{
-                    var recentlyClosed = Model.ClosedItems[userGrp.Key].Take(10);
-                }
-
-                @if (recentlyClosed.Any())
+                @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                 {
-                    <partial name="Items/_RecentlyClosed" model="recentlyClosed" />
-                }
+                    { Model.GroupingOption.FieldNameFunction(appGrp.First()), appGrp.Key },                    
+                    { "milestoneId", milestoneGrp.Key },
+                    { Model.UserIdColumns[Model.FilterUserId].UserIdColumn, Model.FilterUserId },
+                    { "activityId", Model.UserIdColumns[Model.FilterUserId].ActivityId }
+                }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications, AppendIfMissing = new Dictionary<string, int>()
+                {
+                    { "teamId", appGrp.First().TeamId },
+                    { "applicationId", appGrp.First().ApplicationId }
+                }})
+                </div>
             </div>
         }
-    </div>
+    }
+
+    <p class="text-center">@Model.WorkItems.Count() work items shown</p>
+                    
+    @{ var recentlyClosed = Model.ClosedItems[Model.FilterUserId].Take(10); }
+
+    @if (recentlyClosed.Any())
+    {
+        <partial name="Items/_RecentlyClosed" model="recentlyClosed" />
+    }
 </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        showFirstTab = false;
+    </script>
+}

@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Models;
 using Ginseng.Mvc.Queries;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -16,14 +17,29 @@ namespace Ginseng.Mvc.Pages.Work
         {
         }
 
+        [BindProperty(SupportsGet = true, Name = "Id")]
+        public int FilterUserId { get; set; }
+
+        public IEnumerable<OrganizationUser> Users { get; set; }
+
         public Dictionary<int, DefaultActivity> UserIdColumns { get; set; }
 
         protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (item) => item.DeveloperUserId ?? 0;
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
         {
-            var orgUsers = await new MyOrgUsers() { OrgId = OrgId }.ExecuteAsync(connection);
-            UserIdColumns = orgUsers.ToDictionary(row => row.UserId, row =>
+            ShowLabelFilter = (FilterUserId != 0);
+
+            Users = await new MyOrgUsers()
+            {
+                OrgId = OrgId,
+                TeamId = CurrentOrgUser.CurrentTeamId,
+                AppId = CurrentOrgUser.EffectiveAppId,
+                HasWorkItems = true,
+                IsEnabled = true
+            }.ExecuteAsync(connection);
+
+            UserIdColumns = Users.ToDictionary(row => row.UserId, row =>
             {
                 int responsibilityId = row.Responsibilities;
                 // if you have dev and biz responsibility, then assume dev
@@ -34,6 +50,13 @@ namespace Ginseng.Mvc.Pages.Work
                     UserIdColumn = Responsibility.WorkItemColumnName[responsibilityId]
                 };
             });
+
+            if (FilterUserId != 0)
+            {
+                var userOptions = await new MyOptions() { UserId = FilterUserId }.ExecuteAsync(connection);
+                var optionDictionary = userOptions.ToDictionary(row => row.OptionName);
+                GroupingOption = MyItemGroupingOptions[optionDictionary[Option.MyItemsGroupField].StringValue];
+            }            
         }
 
         protected override OpenWorkItems GetQuery()
@@ -44,7 +67,7 @@ namespace Ginseng.Mvc.Pages.Work
                 TeamId = CurrentOrgUser.CurrentTeamId,
                 AppId = CurrentOrgUser.EffectiveAppId,
                 LabelId = LabelId,
-                HasAssignedUserId = true
+                AssignedUserId = FilterUserId
             };
         }
     }

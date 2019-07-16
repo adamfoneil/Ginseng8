@@ -35,7 +35,7 @@ namespace Ginseng.Mvc.Pages.Work
         protected override void OnGetInternal(SqlConnection connection)
         {
             base.OnGetInternal(connection);
-            HungWorkItems = WorkItems.Where(wi => wi.HasImpediment || wi.IsPaused() || wi.IsStopped()).ToArray();
+            HungWorkItems = WorkItems.Where(wi => wi.IsHung).ToArray();
         }
 
         protected override OpenWorkItems GetQuery()

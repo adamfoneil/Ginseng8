@@ -178,6 +178,18 @@ namespace Testing
         }
 
         [TestMethod]
+        public void MyOptionsQuery()
+        {
+            TestQuery<MyOptions>();
+        }
+
+        [TestMethod]
+        public void MyActivityOrderQuery()
+        {
+            TestQuery<MyActivityOrder>();
+        }
+
+        [TestMethod]
         public void AllMilestonesQuery()
         {
             TestQuery<AllMilestones>();

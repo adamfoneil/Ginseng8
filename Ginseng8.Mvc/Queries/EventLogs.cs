@@ -1,4 +1,5 @@
 ﻿using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Services;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Classes;
@@ -34,6 +35,7 @@ namespace Ginseng.Mvc.Queries
 		public int? ProjectPriority { get; set; }
         public string TeamName { get; set; }
         public string ApplicationName { get; set; }
+        public WorkItemTitleViewField TitleViewField { get; set; }
 
         public bool IsEditable(string userName)
 		{

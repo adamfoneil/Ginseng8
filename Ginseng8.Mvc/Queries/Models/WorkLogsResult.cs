@@ -1,4 +1,5 @@
 ﻿using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Services;
 using System;
 
 namespace Ginseng.Mvc.Queries.Models
@@ -39,6 +40,9 @@ namespace Ginseng.Mvc.Queries.Models
         public string TeamName { get; set; }
         public int ApplicationId { get; set; }
         public string ApplicationName { get; set; }
+
+        public WorkItemTitleViewField TitleViewField => WorkItemTitleViewField.Project;
+
         int IWorkItemTitle.ProjectId => ProjectId ?? 0;
         int IWorkItemNumber.Number { get { return WorkItemNumber ?? 0; } set { WorkItemNumber = value; } }
 

@@ -1,9 +1,11 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -62,10 +64,19 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 OrgId = OrgId,
                 AssignedUserId = UserId,
-                TeamId = CurrentOrgUser.CurrentTeamId,
-                AppId = CurrentOrgUser.EffectiveAppId,
+                TeamId = CurrentOrgUser.CurrentTeamId,                
                 LabelId = LabelId
             };
+
+            if (Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true)
+            {
+                result.AppId = CurrentOrgUser.EffectiveAppId;
+            }
+
+            if (Options[Option.MyItemsGroupField]?.StringValue.Equals(MyItemGroupingOption.ActivityId) ?? false)
+            {
+                result.ActivityUserId = UserId;
+            }
 
             if (Date.HasValue)
             {
@@ -85,6 +96,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
             // if you have dev and biz responsibility, then assume dev
             if (responsibilityId == 3 || responsibilityId == 0) responsibilityId = 2;
             UserIdColumnName = Responsibility.WorkItemColumnName[responsibilityId];
+
+            var grouping = Options[Option.MyItemsGroupField].Value as string;
+            GroupingOption = MyItemGroupingOptions[grouping];
         }
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
@@ -102,6 +116,33 @@ namespace Ginseng.Mvc.Pages.Dashboard
             HandOffComments = comments.ToLookup(row => row.ObjectId);
 
             MySchedule = await new MyWorkSchedule() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
+        }
+
+        public async Task<RedirectResult> OnPostSetOptionsAsync()
+        {
+            string[] fields = new string[]
+            {
+                Option.MyItemsFilterCurrentApp,
+                Option.MyItemsGroupField
+            };
+
+            using (var cn = Data.GetConnection())
+            {
+                foreach (var field in fields)
+                {
+                    var option = await Option.FindByName(cn, field);
+                    var uov = new UserOptionValue()
+                    {
+                        UserId = UserId,
+                        OptionId = option.Id,
+                        OptionType = option.OptionType,
+                        Value = Request.Form[field].First()
+                    };
+                    await cn.MergeAsync(uov, CurrentUser);
+                }
+            }
+
+            return Redirect("/Dashboard/MyItems");
         }
     }
 }

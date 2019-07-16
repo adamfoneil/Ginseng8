@@ -137,6 +137,10 @@ namespace Ginseng.Mvc.Queries
         [Where("[p].[ApplicationId]=@appId")]
         public int? AppId { get; set; }
 
+        [Case(true, "[p].[ApplicationId] IS NOT NULL")]
+        [Case(false, "[p].[ApplicationId] IS NULL")]
+        public bool? HasApplicationId { get; set; }
+
         [Where("[p].[IsActive]=@isActive")]
         public bool? IsActive { get; set; }
 
