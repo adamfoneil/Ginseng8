@@ -5,7 +5,7 @@
         <form class="form-inline">
             <partial name="/Pages/Dashboard/Items/_ItemFields.cshtml" model="Model"/>
 
-            <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
+            <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" title="Close reason">
                 <option value="">- open -</option>
             </select>
 

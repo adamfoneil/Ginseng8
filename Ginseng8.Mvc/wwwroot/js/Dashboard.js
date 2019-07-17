@@ -307,12 +307,16 @@ closeLinks.forEach(function (ele) {
                 id: e.getAttribute('data-number'),
                 reasonId: e.getAttribute('data-reason-id')
             };
-        });
-        var card = $(ev.target).parents('.work-item-card');
-        var number = $(card).data('number');
-        $('#card-' + number).slideUp();
+        });   
+        RemoveWorkItem(ev);
     });
 });
+
+function RemoveWorkItem(ev) {
+    var card = $(ev.target).parents('.work-item-card');
+    var number = $(card).data('number');
+    $('#card-' + number).slideUp();
+}
 
 var resumeWorkLinks = document.querySelectorAll('.resume-work-item');
 resumeWorkLinks.forEach(function (ele) {
@@ -332,7 +336,8 @@ var unassignWorkLinks = document.querySelectorAll('.unassign-work-item');
 unassignWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
         AssignActionEventHandler(ev, '/WorkItem/UnassignMe');
-    });
+        RemoveWorkItem(ev);
+    });    
 });
 
 var workOnNextLinks = document.querySelectorAll('.work-on-next');
