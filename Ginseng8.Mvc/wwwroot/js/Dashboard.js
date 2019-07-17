@@ -299,6 +299,18 @@ selfStartLinks.forEach(function (ele) {
     });
 });
 
+var closeLinks = document.querySelectorAll('.close-item');
+closeLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        AssignActionEventHandler(ev, '/WorkItem/Close', function (e) {
+            return {
+                id: e.getAttribute('data-number'),
+                reasonId: e.getAttribute('data-reason-id')
+            };
+        });
+    });
+});
+
 var resumeWorkLinks = document.querySelectorAll('.resume-work-item');
 resumeWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {

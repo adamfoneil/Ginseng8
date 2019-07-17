@@ -53,7 +53,7 @@ namespace Ginseng.Mvc.Controllers
 
             using (var cn = _data.GetConnection())
             {
-                var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                var workItem = await _data.FindWorkItemAsync(cn, id);
                 return PartialView(workItem);
             }
         }
@@ -119,7 +119,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     var activity = await _data.FindAsync<Activity>(cn, activityId);
                     workItem.ActivityId = activityId;
                     Responsibility.SetWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem, _data.CurrentUser.UserId);
@@ -140,7 +140,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     var activity = await _data.FindAsync<Activity>(cn, workItem.ActivityId.Value);
                     Responsibility.SetWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem, _data.CurrentUser.UserId);
                     await _data.TrySaveAsync(cn, workItem);
@@ -159,7 +159,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     workItem.ActivityId = null;
                     await _data.TrySaveAsync(cn, workItem);
                     return Json(new { success = true });
@@ -178,7 +178,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
 
                     if (workItem.ActivityId.HasValue)
                     {
@@ -208,7 +208,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
 
                     // work item can have just one priority, so we look to see if there's one existing
                     if (!(await cn.ExistsWhereAsync<WorkItemPriority>(new { WorkItemId = workItem.Id })))
@@ -246,7 +246,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     var wip = await _data.FindWhereAsync<WorkItemPriority>(cn, new { WorkItemId = workItem.Id });
                     if (wip != null)
                     {
@@ -267,7 +267,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     await AssignToInnerAsync(cn, userId, workItem);
                 }
                 return Json(new { success = true });
@@ -563,6 +563,26 @@ namespace Ginseng.Mvc.Controllers
             });
 
             return PartialView("List", vm);
+        }
+
+        public async Task<JsonResult> Close(int id, int reasonId)
+        {
+            try
+            {
+                using (var cn = _data.GetConnection())
+                {
+                    var wi = await _data.FindWorkItemAsync(cn, id);
+                    wi.CloseReasonId = reasonId;
+                    wi.ModifiedBy = User.Identity.Name;
+                    wi.DateModified = _data.CurrentUser.LocalTime;
+                    await cn.UpdateAsync(wi, _data.CurrentUser, r => r.CloseReasonId, r => r.ModifiedBy, r => r.DateModified);
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
         }
     }
 }

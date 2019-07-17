@@ -64,6 +64,11 @@ namespace Ginseng.Mvc.Services
 			}
 		}
 
+        public async Task<WorkItem> FindWorkItemAsync(SqlConnection connection, int number)
+        {
+            return await FindWhereAsync<WorkItem>(connection, new { OrganizationId = CurrentOrg.Id, Number = number });
+        }
+
 		public async Task<T> FindWhereAsync<T>(SqlConnection connection, object criteria)
 		{
 			return await connection.FindWhereAsync<T>(criteria, CurrentUser);
