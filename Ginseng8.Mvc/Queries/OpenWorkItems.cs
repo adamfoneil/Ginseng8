@@ -64,8 +64,6 @@ namespace Ginseng.Mvc.Queries
 		public int ProjectId { get; set; }
         public string ProjectName { get; set; }
 		public string DisplayProjectName { get; set; }          
-		public int? ProjectPriority { get; set; }
-		public string PriorityTier { get; set; }
 		public int? DataModelId { get; set; }
 		public int MilestoneId { get; set; }
 		public string MilestoneName { get; set; }
@@ -226,8 +224,7 @@ namespace Ginseng.Mvc.Queries
 				[wi].[HasImpediment],
 				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
-                COALESCE([p].[Nickname], [p].[Name]) AS [DisplayProjectName],
-				[p].[Priority] AS [ProjectPriority],				
+                COALESCE([p].[Nickname], [p].[Name]) AS [DisplayProjectName],					
 				COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
 				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
 				COALESCE([wi].[ActivityId], 0) AS [ActivityId],
@@ -269,7 +266,9 @@ namespace Ginseng.Mvc.Queries
                 [wit].[TicketStatus] AS [FDTicketStatus],
                 [org].[FreshdeskUrl],
                 [t].[UseApplications],
-                [uao].[Value] AS [MyActivityOrder]
+                [uao].[Value] AS [MyActivityOrder],
+                COALESCE([wiup].[WorkDay], 1000) AS [WorkDay],
+                [wiup].[Value] AS [UserPriority]
 			FROM
 				[dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
@@ -308,6 +307,7 @@ namespace Ginseng.Mvc.Queries
                     [wit].[OrganizationId]=[wi].[OrganizationId] AND
                     [wit].[WorkItemNumber]=[wi].[Number]   
                 LEFT JOIN [dbo].[UserActivityOrder] [uao] ON [wi].[ActivityId]=[uao].[ActivityId] AND [uao].[UserId]=@activityUserId
+                LEFT JOIN [dbo].[WorkItemUserPriority] [wiup] ON [wi].[Id]=[wiup].[WorkItemId] AND [wiup].[UserId]={AssignedUserExpression}
 				{{join}}
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
