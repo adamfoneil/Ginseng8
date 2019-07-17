@@ -308,6 +308,9 @@ closeLinks.forEach(function (ele) {
                 reasonId: e.getAttribute('data-reason-id')
             };
         });
+        var card = $(ev.target).parents('.work-item-card');
+        var number = $(card).data('number');
+        $('#card-' + number).slideUp();
     });
 });
 
