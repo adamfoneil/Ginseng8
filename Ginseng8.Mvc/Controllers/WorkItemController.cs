@@ -58,6 +58,16 @@ namespace Ginseng.Mvc.Controllers
             }
         }
 
+        public async Task<PartialViewResult> GetBody(int id)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var workItem = await new OpenWorkItems() { IsOpen = null, Number = id, OrgId = _data.CurrentOrg.Id }.ExecuteSingleAsync(cn);
+            }
+
+            throw new NotImplementedException();
+        }
+
         [HttpPost]
         public async Task<RedirectResult> Create(WorkItem workItem, string returnUrl)
         {

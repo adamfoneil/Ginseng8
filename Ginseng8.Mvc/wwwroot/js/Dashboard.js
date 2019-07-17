@@ -765,3 +765,15 @@ function SetMilestoneDate(milestoneId, dateText) {
         $(".ms-datepicker[data-milestone-id='" + milestoneId + "']").html(text);
     });
 }
+
+$('.card-body-container').on('show.bs.collapse', function (ev) {
+    var div = $(ev.target).parents('.work-item-card');
+    var number = $(div).data('number');
+    fetch('/WorkItem/GetBody/' + number, {
+        method: 'get',
+    }).then(function (response) {
+        return response.text();
+    }).then(function (html) {
+        $(div).first('.card-body').html(html);
+    });
+});
