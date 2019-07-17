@@ -8,12 +8,12 @@
 
 @if (Model.WorkItem.UseApplications)
 {
-    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass fillProjects fillMilestones" style="max-width:200px" id="AppId-@Model.WorkItem.Number">
+    <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass fillProjects fillMilestones" style="max-width:200px" id="AppId-@Model.WorkItem.Number" title="Application">
         <option value="">- application -</option>
     </select>
 }
 
-<select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass" id="ProjectId-@Model.WorkItem.Number" style="max-width:200px">
+<select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass" id="ProjectId-@Model.WorkItem.Number" style="max-width:200px" title="Project">
     <option value="">- project -</option>
 </select>
 
@@ -31,7 +31,7 @@
     }
 }
 
-<select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem, withIndirectOptions:  true)" class="form-control-sm mr-2 @itemUpdateClass" id="MilestoneId-@Model.WorkItem.Number" style="max-width:150px">
+<select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem, withIndirectOptions:  true)" class="form-control-sm mr-2 @itemUpdateClass" id="MilestoneId-@Model.WorkItem.Number" style="max-width:150px" title="Milestone">
     <option value="">- milestone -</option>
 </select>
 
@@ -42,13 +42,13 @@
     </a>
 }
 
-<select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass">
+<select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 @itemUpdateClass" title="Estimated hours">
     <option value="">- size -</option>
 </select>
 
 @if  (Model.WorkItem.Number < 0 && (Model.AssignToUsers?.Any() ?? false))
 {
-    <select name="AssignToUserId" asp-items="Model.AssignToUsers" class="form-control-sm">
+    <select name="AssignToUserId" asp-items="Model.AssignToUsers" class="form-control-sm" title="Assign to">
         <option value="">- assign to -</option>
     </select>
 }
