@@ -103,6 +103,9 @@ namespace Ginseng.Models
         [NotMapped]
         public int? AssignToUserId { get; set; }
 
+        [NotMapped]
+        public int? WorkDay { get; set; }
+
         public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
         {
             if (action == SaveAction.Insert)

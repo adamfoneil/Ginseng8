@@ -107,6 +107,9 @@ namespace Ginseng.Mvc.Queries
         public TicketStatus FDTicketStatus { get; set; }
         public bool UseApplications { get; set; }
         public int? MyActivityOrder { get; set; }
+        public int WorkDay { get; set; }
+        public DateTime WorkDayDate { get; set; }
+        public int? UserPriority { get; set; }
 
         /// <summary>
         /// Lets us use a single property to switch between the app or team Id based on whether the team uses applications
@@ -208,6 +211,8 @@ namespace Ginseng.Mvc.Queries
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
+        public const int UnscheduledWorkDay = 10000;
+
 		private const string AssignedUserExpression = 
 			"(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
 
@@ -273,7 +278,8 @@ namespace Ginseng.Mvc.Queries
                 [org].[FreshdeskUrl],
                 [t].[UseApplications],
                 [uao].[Value] AS [MyActivityOrder],
-                COALESCE([wiup].[WorkDay], 1000) AS [WorkDay],
+                COALESCE([wiup].[WorkDay], {UnscheduledWorkDay}) AS [WorkDay],
+                DATEADD(d, COALESCE([wiup].[WorkDay], 0), getdate()) AS [WorkDayDate],
                 [wiup].[Value] AS [UserPriority]
 			FROM
 				[dbo].[WorkItem] [wi]

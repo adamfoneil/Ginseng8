@@ -322,22 +322,22 @@ namespace Ginseng.Mvc.Controllers
                     await UpdateMilestoneAsync(cn, workItem, data.MilestoneId);
                     await UpdateAssignedUserAsync(cn, workItem, data.UserId);
 
-                    if (data.GroupFieldValue != 0 && !string.IsNullOrEmpty(data.GroupFieldName))
-                    {                        
-                        var customGrouping = new MyItemGroupingOption();
-                        if (await DidGroupingChangeAsync(cn, workItem, customGrouping[data.GroupFieldName], data.GroupFieldValue))
+                    var myGrouping = new MyItemGroupingOption()[data.GroupFieldName];
+                    if (data.GroupFieldValue != myGrouping.ChangeDetectIgnoreValue && !string.IsNullOrEmpty(data.GroupFieldName))
+                    {                                                
+                        if (await DidGroupingChangeAsync(cn, workItem, myGrouping, data.GroupFieldValue))
                         {
-                            customGrouping[data.GroupFieldName].UpdateWorkItem(cn, _data.CurrentUser, workItem, data.GroupFieldValue);
+                            myGrouping.UpdateWorkItem(cn, _data.CurrentUser, workItem, data.GroupFieldValue);
                         }                        
                     }
 
-                    await cn.ExecuteAsync("dbo.UpdateWorkItemPriorities", new
+                    await cn.ExecuteAsync(myGrouping.PriorityUpdateProcedure, new
                     {
                         userName = User.Identity.Name,
                         localTime = _data.CurrentUser.LocalTime,
                         userId = data.UserId,
                         orgId = _data.CurrentOrg.Id,
-                        milestoneId = data.MilestoneId,
+                        milestoneId = (myGrouping.MilestoneArgumentSource == MilestoneArgumentSource.MilestoneId) ? data.MilestoneId : data.GroupFieldValue,
                         priorities = data.Items.AsTableValuedParameter("dbo.WorkItemPriority", "Number", "Index")
                     }, commandType: CommandType.StoredProcedure);
                 }

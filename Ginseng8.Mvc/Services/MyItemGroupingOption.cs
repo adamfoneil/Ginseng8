@@ -18,8 +18,18 @@ namespace Ginseng.Mvc.Services
     {
         Project = 1,
         Application = 2
-    }
+    }    
 
+    /// <summary>
+    /// What do we pass as the milestoneId to our proc that update WI prioerties?
+    /// Normally this is the milestoneId itself. However when grouping by work day, we treat
+    /// the work day index as the milestoneId instead
+    /// </summary>
+    public enum MilestoneArgumentSource
+    {
+        MilestoneId,
+        GroupValue
+    }
 
     /// <summary>
     /// Provides functionality for changing the grouping of work items on the Team and MyItems pages
@@ -31,6 +41,7 @@ namespace Ginseng.Mvc.Services
         public const string ProjectParentId = "ProjectParentId";
         public const string ProjectId = "ProjectId";
         public const string ActivityId = "ActivityId";
+        public const string WorkDay = "WorkDay";
 
         public IEnumerable<Option> GetOptions()
         {
@@ -103,6 +114,39 @@ namespace Ginseng.Mvc.Services
                     cn.Update(wi, user, r => r.ActivityId, r => r.DeveloperUserId, r => r.BusinessUserId);
                 }
             };
+
+            yield return new Option()
+            {
+                Value = WorkDay,
+                Text = "Work Day",
+                GroupValueFunction = (item) => item.WorkDay,
+                GroupSortFunction = (item) => item.WorkDay,
+                GroupHeadingFunction = (item) => (item.WorkDay == OpenWorkItems.UnscheduledWorkDay) ? "Unscheduled" : $"{item.WorkDay}: {item.WorkDayDate.ToString("ddd M/d")}",
+                FieldNameFunction = (item) => nameof(item.WorkDay),
+                PriorityUpdateProcedure = "dbo.UpdateWorkItemUserPriorities",
+                ChangeDetectIgnoreValue = -1,
+                UpdateWorkItem = (cn, user, wi, value) =>
+                {
+                    var userProfile = cn.FindWhere<UserProfile>(new { user.UserName });
+                    var wiup =
+                        cn.FindWhere<WorkItemUserPriority>(new { WorkItemId = wi.Id, userProfile.UserId }) ??
+                        new WorkItemUserPriority() { WorkItemId = wi.Id, UserId = userProfile.UserId };
+
+                    if (value != OpenWorkItems.UnscheduledWorkDay)
+                    {
+                        wiup.Value = value;
+                        cn.Save(wiup, user);
+                    }
+                    else
+                    {
+                        // deleting the work item user priority is how you send something to your "Unscheduled" group
+                        if (wiup.Id != 0) cn.Delete<WorkItemUserPriority>(wiup.Id);
+                    }                    
+                },
+                WorkItemQuerySort = OpenWorkItemsSortOptions.WorkDay,
+                TitleViewField = WorkItemTitleViewField.Application | WorkItemTitleViewField.Project,
+                MilestoneArgumentSource = MilestoneArgumentSource.GroupValue
+            };
         }
 
         public SelectList GetSelectList(string currentValue)
@@ -116,6 +160,8 @@ namespace Ginseng.Mvc.Services
             get
             {
                 var dictionary = GetOptions().ToDictionary(item => item.Value);
+                // this is a hack to deal with the fact that the group field name can be a variable not reflected in the actual dictionary keys,
+                // so I just assume "ProjectParentId" if the key is not present
                 return (dictionary.ContainsKey(name)) ? dictionary[name] : dictionary[ProjectParentId];
             }
         }
@@ -161,6 +207,21 @@ namespace Ginseng.Mvc.Services
             public WorkItemTitleViewField TitleViewField { get; set; }
 
             public OpenWorkItemsSortOptions WorkItemQuerySort { get; set; }
+
+            /// <summary>
+            /// What procedure do we run to capture the new work item priorities?
+            /// By default we update biz priorities with dbo.UpdateWorkItemPriorities,
+            /// but when grouping by work day, we use dbo.UpdateWorkItemUserPriorities
+            /// </summary>
+            public string PriorityUpdateProcedure { get; set; } = "dbo.UpdateWorkItemPriorities";
+
+            /// <summary>
+            /// What value in the group field do we ignore as a change?
+            /// Normally this is left at 0, but WorkDay grouping uses -1 because 0 is a valid value for WorkDay
+            /// </summary>
+            public int ChangeDetectIgnoreValue { get; set; }
+
+            public MilestoneArgumentSource MilestoneArgumentSource { get; set; } = MilestoneArgumentSource.MilestoneId;
         }
     }
 }

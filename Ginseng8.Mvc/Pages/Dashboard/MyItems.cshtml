@@ -35,6 +35,8 @@
     <partial name="Items/_MySchedule" model="Model" />
 }
 
+<img src="~/img/loading.gif" style="display:none" id="UpdateInProgress"/>
+
 <div id="accordion">
 @foreach (var milestoneGrp in Model.WorkItems.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
 {
