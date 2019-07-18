@@ -27,22 +27,28 @@ namespace Testing
             return new SqlConnection(connectionStr);
         }
 
-        private void TestQuery<TQuery>() where TQuery : ITestableQuery, new()
+        private void TestQuery<TQuery>(TQuery query) where TQuery : ITestableQuery
         {
-            var qry = new TQuery();
             using (var cn = GetConnection())
             {
-                foreach (var testCase in qry.GetTestCases())
+                foreach (var testCase in query.GetTestCases())
                 {
                     testCase.TestExecute(cn);
                 }
             }
         }
 
+        private void TestQuery<TQuery>() where TQuery : ITestableQuery, new()
+        {
+            var qry = new TQuery();
+            TestQuery(qry);
+        }
+
         [TestMethod]
         public void WorkItemsQuery()
         {
-            TestQuery<OpenWorkItems>();
+            TestQuery(new OpenWorkItems(OpenWorkItemsSortOptions.Priority));
+            TestQuery(new OpenWorkItems(OpenWorkItemsSortOptions.WorkDay));
         }
 
         [TestMethod]

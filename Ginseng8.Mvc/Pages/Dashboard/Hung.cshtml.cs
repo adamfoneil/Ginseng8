@@ -40,7 +40,7 @@ namespace Ginseng.Mvc.Pages.Work
 
         protected override OpenWorkItems GetQuery()
         {
-            return new OpenWorkItems(QueryTraces)
+            return new OpenWorkItems(OpenWorkItemsSortOptions.Priority, QueryTraces)
             {
                 OrgId = OrgId,
                 AppId = CurrentOrgUser.CurrentAppId,

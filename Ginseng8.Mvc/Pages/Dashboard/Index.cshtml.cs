@@ -109,7 +109,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             if (AppId.HasValue)
             {
-                var query = new OpenWorkItems(QueryTraces)
+                var query = new OpenWorkItems(OpenWorkItemsSortOptions.Priority, QueryTraces)
                 {
                     OrgId = OrgId,
                     LabelId = LabelId,

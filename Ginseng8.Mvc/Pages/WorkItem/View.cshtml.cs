@@ -47,7 +47,7 @@ namespace Ginseng.Mvc.Pages.WorkItem
 
         protected override OpenWorkItems GetQuery()
         {
-            return new OpenWorkItems(QueryTraces) { OrgId = OrgId, Number = Id, IsOpen = null };
+            return new OpenWorkItems(OpenWorkItemsSortOptions.Priority, QueryTraces) { OrgId = OrgId, Number = Id, IsOpen = null };
         }
 
         public async Task<IActionResult> OnPostDeleteAttachmentAsync(int id)

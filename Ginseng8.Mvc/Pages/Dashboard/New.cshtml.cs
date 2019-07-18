@@ -101,7 +101,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 labelIds = NewItemLabels.GroupBy(row => row.Id).Select(grp => grp.Key).ToArray();
             }
 
-            return new OpenWorkItems(QueryTraces)
+            return new OpenWorkItems(OpenWorkItemsSortOptions.Priority, QueryTraces)
             {
                 OrgId = OrgId,
                 TeamId = CurrentOrgUser.CurrentTeamId,

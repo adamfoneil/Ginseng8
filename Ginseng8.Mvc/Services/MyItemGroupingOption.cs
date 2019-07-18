@@ -43,6 +43,7 @@ namespace Ginseng.Mvc.Services
                 GroupHeadingFunction = (item) => item.ProjectParentName,
                 FieldNameFunction = (item) => item.ProjectParentField,
                 TitleViewField = WorkItemTitleViewField.Project,
+                WorkItemQuerySort = OpenWorkItemsSortOptions.Priority,
                 UpdateWorkItem = (cn, user, wi, value) =>
                 {
                     if (wi.Team.UseApplications)
@@ -67,6 +68,7 @@ namespace Ginseng.Mvc.Services
                 GroupSortFunction = (item) => item.ProjectName,
                 FieldNameFunction = (item) => nameof(item.ProjectId),
                 TitleViewField = WorkItemTitleViewField.Application,
+                WorkItemQuerySort = OpenWorkItemsSortOptions.Priority,
                 UpdateWorkItem = (cn, user, wi, value) =>
                 {
                     wi.ProjectId = value;
@@ -83,6 +85,7 @@ namespace Ginseng.Mvc.Services
                 GroupSortFunction = (item) => item.MyActivityOrder ?? 0,
                 FieldNameFunction = (item) => nameof(item.ActivityId),
                 TitleViewField = WorkItemTitleViewField.Project | WorkItemTitleViewField.Application,
+                WorkItemQuerySort = OpenWorkItemsSortOptions.Priority,
                 UpdateWorkItem = (cn, user, wi, value) =>
                 {
                     wi.ActivityId = value;
@@ -156,6 +159,8 @@ namespace Ginseng.Mvc.Services
             public Action<IDbConnection, IUser, WorkItem, int> UpdateWorkItem { get; set; }
 
             public WorkItemTitleViewField TitleViewField { get; set; }
+
+            public OpenWorkItemsSortOptions WorkItemQuerySort { get; set; }
         }
     }
 }

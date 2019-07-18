@@ -60,7 +60,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         protected override OpenWorkItems GetQuery()
         {
-            var result = new OpenWorkItems(QueryTraces)
+            var myGrouping = new MyItemGroupingOption()[Options[Option.MyItemsGroupField].StringValue];
+            var result = new OpenWorkItems(myGrouping.WorkItemQuerySort, QueryTraces)
             {
                 OrgId = OrgId,
                 AssignedUserId = UserId,
@@ -106,7 +107,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             UnestimatedItemCount = WorkItems.Where(wi => wi.EstimateHours == 0).Count();
 
             MyActivitySubscriptions = await new MyHandOffActivities() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
-            MyHandOffItems = await new OpenWorkItems(QueryTraces) { OrgId = OrgId, InMyActivities = true, ActivityUserId = UserId, IsPaused = true, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
+            MyHandOffItems = await new OpenWorkItems(OpenWorkItemsSortOptions.Priority, QueryTraces) { OrgId = OrgId, InMyActivities = true, ActivityUserId = UserId, IsPaused = true, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(connection);
 
             var itemIds = MyHandOffItems.Select(wi => wi.Id).ToArray();
             var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = OrgId }.ExecuteAsync(connection);

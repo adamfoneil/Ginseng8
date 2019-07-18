@@ -200,6 +200,12 @@ namespace Ginseng.Mvc.Queries
 		}
 	}
 
+    public enum OpenWorkItemsSortOptions
+    {
+        Priority,
+        WorkDay
+    }
+
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
 		private const string AssignedUserExpression = 
@@ -210,7 +216,7 @@ namespace Ginseng.Mvc.Queries
 
 		private readonly List<QueryTrace> _traces;
 
-		public OpenWorkItems() : base(
+		public OpenWorkItems(OpenWorkItemsSortOptions sort = OpenWorkItemsSortOptions.Priority) : base(
 			$@"SELECT
 				[wi].[Id],
 				[wi].[Number],
@@ -312,16 +318,28 @@ namespace Ginseng.Mvc.Queries
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
             ORDER BY
-				COALESCE([pri].[Value], 100000),
+				{SortOptions[sort]},
 				[wi].[Number]
 			{{offset}}")
 		{
 		}
 
-		public OpenWorkItems(List<QueryTrace> traces = null) : this()
+		public OpenWorkItems(OpenWorkItemsSortOptions sort, List<QueryTrace> traces = null) : this(sort)
 		{
 			_traces = traces;
 		}
+
+        private static Dictionary<OpenWorkItemsSortOptions, string> SortOptions
+        {
+            get
+            {
+                return new Dictionary<OpenWorkItemsSortOptions, string>()
+                {
+                    { OpenWorkItemsSortOptions.Priority, "COALESCE([pri].[Value], 100000)" },
+                    { OpenWorkItemsSortOptions.WorkDay, "COALESCE([wiup].[WorkDay], 100000), [wiup].[Value], COALESCE([pri].[Value], 100000)" }
+                };
+            }
+        }
 
 		protected override void OnQueryExecuted(QueryTrace queryTrace)
 		{
