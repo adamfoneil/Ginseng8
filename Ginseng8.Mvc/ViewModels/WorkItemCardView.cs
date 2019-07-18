@@ -19,6 +19,7 @@ namespace Ginseng.Mvc.ViewModels
 		public bool ShowDetailsButton { get; set; } = true;
         public IEnumerable<SelectListItem> AssignToUsers { get; set; }
         public WorkItemTitleViewField TitleViewField { get; set; } = WorkItemTitleViewField.Project;
+        public string CssClass { get; set; }
 
         /// <summary>
         /// Indicates whether ajax calls are made to update work items when fields are changed in the UI.
