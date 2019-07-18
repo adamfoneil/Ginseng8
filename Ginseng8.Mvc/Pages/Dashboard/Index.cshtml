@@ -75,7 +75,7 @@ else
         <div id="accordion" class="ml-3 @sortableClass">
             @foreach (var item in Model.WorkItems)
             {
-                <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, CssClass = "whatever" })" />
+                <partial name="Items/_Card" model='@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, CssClass = "js-dashboard-work-item-draggable" })' />
             }
             @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
             {

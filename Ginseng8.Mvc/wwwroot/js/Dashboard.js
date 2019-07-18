@@ -640,14 +640,6 @@ function TaskReorder(data) {
     });
 }
 
-function initDraggableItems() {
-    $('.js-item-draggable').draggable({
-        revert: 'invalid',
-        start: sortableStart,
-        stop: sortableStop
-    });
-}
-
 function InitProjectCrosstabWorkItemDroppable() {
     $('.milestone-work-items-droppable').droppable({
         accept: function(draggable) {

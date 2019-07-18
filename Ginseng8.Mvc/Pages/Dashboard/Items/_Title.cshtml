@@ -18,4 +18,4 @@
     string editable = (Model.IsEditable(User.Identity.Name)) ? "editable" : string.Empty;
 }
 
-<span class="@editable" data-url="/Update/WorkItemTitle" id="title-@Model.Number">@Model.Title</span>
+<span class="@editable js-title" data-url="/Update/WorkItemTitle" id="title-@Model.Number">@Model.Title</span>

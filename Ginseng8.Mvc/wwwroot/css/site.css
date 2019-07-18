@@ -182,3 +182,13 @@ img {
     max-width:100%;
     vertical-align:middle
 }
+
+/*Z-index*/
+.z-index-fixed {
+  z-index: 1030;
+}
+
+/*Backgrounds*/
+.bg-light {
+  background: #f7f7f7 !important;
+}
