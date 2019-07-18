@@ -102,6 +102,11 @@ namespace Ginseng.Mvc.Controllers
                         await AssignToInnerAsync(cn, workItem.AssignToUserId.Value, workItem);
                     }
 
+                    if (workItem.WorkDay.HasValue && workItem.DeveloperUserId.HasValue)
+                    {
+                        await SetUserPriorityAsync(cn, workItem);
+                    }
+
                     return Redirect(returnUrl + $"#{workItem.Number}");
                 }
                 else
@@ -110,6 +115,18 @@ namespace Ginseng.Mvc.Controllers
                     return Redirect(returnUrl);
                 }
             }
+        }
+
+        private async Task SetUserPriorityAsync(SqlConnection cn, WorkItem workItem)
+        {
+            var wiup = new WorkItemUserPriority()
+            {
+                WorkItemId = workItem.Id,
+                WorkDay = workItem.WorkDay.Value,
+                Value = 0,
+                UserId = workItem.DeveloperUserId.Value
+            };
+            await cn.SaveAsync(wiup, _data.CurrentUser);
         }
 
         [HttpPost]
