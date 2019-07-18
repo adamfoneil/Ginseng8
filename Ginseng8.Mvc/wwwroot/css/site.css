@@ -98,6 +98,11 @@ body {
   z-index: 1000;
 }
 
+.ui-draggable-handle.work-item-card {
+  /*Fix for Dashboard/Index work item cards*/
+  z-index: auto;
+}
+
 .editable {
   cursor: pointer;
   position: relative;
