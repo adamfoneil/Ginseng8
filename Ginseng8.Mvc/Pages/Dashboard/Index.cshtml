@@ -84,6 +84,7 @@ else
                 { "applicationId", Model.AppId.Value }
             }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.WorkItems.First().UseApplications })
         </div>
+        <p class="text-center">@Model.WorkItems.Count() work items shown</p>
     }
     else
     {
