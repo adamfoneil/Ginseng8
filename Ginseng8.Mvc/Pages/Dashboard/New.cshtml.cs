@@ -108,8 +108,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 AppId = CurrentOrgUser.CurrentAppId,
                 HasProject = false,
                 LabelIds = labelIds,
-                HasAssignedUserId = false,
-                HasPriority = false
+                HasAssignedUserId = false
             };
         }
     }

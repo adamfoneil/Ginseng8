@@ -45,6 +45,7 @@ else
     <h5>Work Items without a Project</h5>
     <div class="ml-3">
         <form method="get" class="form-inline mb-3">
+            @Request.ToHiddenFields("FilterUnassigned")
             <label class="mr-2">Show:</label>
             <select name="FilterUnassigned" asp-items="@SelectListHelper.YesNo("Unassigned Only (may be prioritized)", "All", Model.FilterUnassigned ?? false)" class="form-control" onchange="this.form.submit()"></select>                
         </form>
@@ -83,6 +84,7 @@ else
                 { "applicationId", Model.AppId.Value }
             }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.WorkItems.First().UseApplications })
         </div>
+        <p class="text-center">@Model.WorkItems.Count() work items shown</p>
     }
     else
     {
