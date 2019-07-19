@@ -41,42 +41,44 @@
     var milestoneItem = milestoneGrp.First();
     <partial name="Items/_MilestoneHeader" model="milestoneItem" />
 
-    <div class="ml-3">
-        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
-    </div>
-
-    @foreach (var appGrp in milestoneGrp.OrderBy(row => Model.GroupingOption.GroupSortFunction(row)).GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
-    {
-        <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
-
-        <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-            <div class="ml-3 sortable" data-user-id="@Model.UserId" data-group-field="@Model.GroupingOption.FieldNameFunction(appGrp.First())" data-group-value="@appGrp.Key">
-                @foreach (var item in appGrp)
-                {
-                    <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, TitleViewField = Model.GroupingOption.TitleViewField }" />
-                }
-
-                @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
-                {
-                    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-                    {
-                        { Model.GroupingOption.FieldNameFunction(appGrp.First()), appGrp.Key },
-                        { "milestoneId", milestoneGrp.Key },
-                        { Model.UserIdColumnName, Model.UserId },
-                        { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
-                    }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications, AppendIfMissing = new Dictionary<string, int>()
-                    {
-                        { "teamId", appGrp.First().TeamId },
-                        { "applicationId", appGrp.First().ApplicationId }
-                    }})
-                }
-                else
-                {
-                    <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
-                }
-            </div>
+    <div class="milestone-content">
+        <div class="ml-3">
+            <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
         </div>
-    }
+
+        @foreach (var appGrp in milestoneGrp.OrderBy(row => Model.GroupingOption.GroupSortFunction(row)).GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
+        {
+            <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
+
+            <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+                <div class="ml-3 sortable" data-user-id="@Model.UserId" data-group-field="@Model.GroupingOption.FieldNameFunction(appGrp.First())" data-group-value="@appGrp.Key">
+                    @foreach (var item in appGrp)
+                    {
+                        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, TitleViewField = Model.GroupingOption.TitleViewField }" />
+                    }
+
+                    @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
+                    {
+                        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                        {
+                            { Model.GroupingOption.FieldNameFunction(appGrp.First()), appGrp.Key },
+                            { "milestoneId", milestoneGrp.Key },
+                            { Model.UserIdColumnName, Model.UserId },
+                            { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
+                        }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications, AppendIfMissing = new Dictionary<string, int>()
+                        {
+                            { "teamId", appGrp.First().TeamId },
+                            { "applicationId", appGrp.First().ApplicationId }
+                        }})
+                    }
+                    else
+                    {
+                        <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
 }
 </div>
 
