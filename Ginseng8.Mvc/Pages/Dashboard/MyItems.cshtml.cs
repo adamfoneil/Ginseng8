@@ -1,4 +1,5 @@
-﻿using Ginseng.Models;
+﻿using Dapper;
+using Ginseng.Models;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -40,6 +41,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public ILookup<int, Comment> HandOffComments { get; set; }
         public IEnumerable<MyWorkScheduleResult> MySchedule { get; set; }
         public int UnestimatedItemCount { get; set; }
+        public IEnumerable<Milestone> HiddenMilestones { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public DateTime? Date { get; set; }
@@ -58,6 +60,32 @@ namespace Ginseng.Mvc.Pages.Dashboard
             return new HtmlString(result);
         }
 
+        protected override async Task InitializeAsync(SqlConnection connection)
+        {
+            await connection.ExecuteAsync(
+                @"INSERT INTO [dbo].[MilestoneUserView] (
+                    [MilestoneId], [UserId], [IsVisible], [DateCreated], [CreatedBy]
+                ) SELECT 
+                    [ms].[Id], @userId, 1, @localDate, @userName
+                FROM 
+                    [dbo].[Milestone] [ms]
+                WHERE 
+                    [ms].[OrganizationId]=@orgId AND 
+                    NOT EXISTS(SELECT 1 FROM [dbo].[MilestoneUserView] WHERE [MilestoneId]=[ms].[Id] AND [UserId]=@userId)",
+                new { orgId = OrgId, userId = UserId, CurrentUser.UserName, localDate = CurrentUser.LocalTime });
+
+            await connection.ExecuteAsync(
+                @"INSERT INTO [dbo].[MilestoneUserView] (
+                    [MilestoneId], [UserId], [IsVisible], [DateCreated], [CreatedBy]
+                ) SELECT 
+                    0, @userId, 1, @localDate, @userName
+                FROM
+                    [dbo].[FnIntRange](0, 0)
+                WHERE
+                    NOT EXISTS(SELECT 1 FROM [dbo].[MilestoneUserView] WHERE [MilestoneId]=0 AND [UserId]=@userId)",
+                new { userId = UserId, CurrentUser.UserName, localDate = CurrentUser.LocalTime });
+        }
+
         protected override OpenWorkItems GetQuery()
         {
             var result = new OpenWorkItems(QueryTraces)
@@ -65,7 +93,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 OrgId = OrgId,
                 AssignedUserId = UserId,
                 TeamId = CurrentOrgUser.CurrentTeamId,                
-                LabelId = LabelId
+                LabelId = LabelId,
+                VisibleToUserId = UserId,
+                VisibleMilestones = true
             };
 
             if (Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true)
@@ -116,6 +146,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             HandOffComments = comments.ToLookup(row => row.ObjectId);
 
             MySchedule = await new MyWorkSchedule() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
+            HiddenMilestones = await new HiddenMilestones() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
         }
 
         public async Task<RedirectResult> OnPostSetOptionsAsync()
@@ -143,6 +174,15 @@ namespace Ginseng.Mvc.Pages.Dashboard
             }
 
             return Redirect("/Dashboard/MyItems");
+        }
+
+        public async Task<RedirectResult> OnPostHideMilestoneAsync(int id)
+        {
+            using (var cn = Data.GetConnection())
+            {
+            }
+
+            throw new NotImplementedException();
         }
     }
 }

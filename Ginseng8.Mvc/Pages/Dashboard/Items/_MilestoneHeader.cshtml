@@ -1,31 +1,46 @@
-﻿@model OpenWorkItemsResult
+﻿@model MilestoneHeaderView
 
-<h5 data-milestone-id="@Model.MilestoneId">
+<h5 data-milestone-id="@Model.Header.MilestoneId">
     <i class="fas fa-flag-checkered"></i>
-    <span class="@((Model.MilestoneId != 0) ? "editable" : string.Empty)" id="milestone-name-@Model.MilestoneId" data-url="/Update/MilestoneName">@Model.MilestoneName</span>
-    @if (Model.MilestoneId != 0)
+    <span class="@((Model.Header.MilestoneId != 0) ? "editable" : string.Empty)" id="milestone-name-@Model.Header.MilestoneId" data-url="/Update/MilestoneName">@Model.Header.MilestoneName</span>
+    @if (Model.Header.MilestoneId != 0)
     {
-        <a href="#" class="ms-datepicker" data-milestone-id="@Model.MilestoneId">@Html.FormatValue(Model.MilestoneDate, "{0:ddd M/d}")</a>
-        <input type="hidden" class="ms-datepicker-input" data-milestone-id="@Model.MilestoneId" />
+        <a href="#" class="ms-datepicker" data-milestone-id="@Model.Header.MilestoneId">@Html.FormatValue(Model.Header.MilestoneDate, "{0:ddd M/d}")</a>
+        <input type="hidden" class="ms-datepicker-input" data-milestone-id="@Model.Header.MilestoneId" />
         <span class="text-muted small">
-            @if (Model.MilestoneDaysAway > 0)
+            @if (Model.Header.MilestoneDaysAway > 0)
             {
-                <text>@Model.MilestoneDaysAway day(s) away</text>
+                <text>@Model.Header.MilestoneDaysAway day(s) away</text>
             }
-            else if (Model.MilestoneDaysAway < 0)
+            else if (Model.Header.MilestoneDaysAway < 0)
             {
-                <text>@Math.Abs(Model.MilestoneDaysAway.Value) day(s) ago</text>
+                <text>@Math.Abs(Model.Header.MilestoneDaysAway.Value) day(s) ago</text>
             }
             else
             {
                 <text>today</text>
             }
         </span>
-    }
-    <button class="btn btn-sm btn-light milestone-expand">
-        <i class="far fa-plus-circle"></i>
-    </button>
-    <button class="btn btn-sm btn-light milestone-collapse">
-        <i class="far fa-minus-circle"></i>
-    </button>
+    }    
 </h5>
+@if (Model.AllowToggle)
+{
+    if (Model.Header.IsMilestoneVisible)
+    {
+        <form method="post" asp-page-handler="HideMilestone">
+            <input type="hidden" name="id" value="@Model.Header.MilestoneId"/>            
+            <button class="btn btn-sm btn-light milestone-collapse" title="Collapse milestone" type="submit">
+                <i class="far fa-minus-circle"></i>
+            </button>
+        </form>
+    }
+    else
+    {
+        <form method="post" asp-page-handler="ShowMilestone">
+            <input type="hidden" name="id" value="@Model.Header.MilestoneId"/>            
+            <button class="btn btn-sm btn-light milestone-expand" title="Expand milestone" type="submit">
+                <i class="far fa-plus-circle"></i>
+            </button>
+        </form>
+    }
+}    

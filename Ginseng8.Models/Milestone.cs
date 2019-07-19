@@ -19,7 +19,7 @@ namespace Ginseng.Models
     /// A due date of some kind, such as a sprint end date or some other event with a known date
     /// </summary>
     [DereferenceId("SELECT [Name] + ' ' + FORMAT([Date], 'ddd M/d') AS [Name] FROM [dbo].[Milestone] WHERE [Id]=@id")]
-    public class Milestone : BaseTable, IOrgSpecific, IFindRelated<int>
+    public class Milestone : BaseTable, IOrgSpecific, IFindRelated<int>, IMilestoneHeader
     {
         public Milestone()
         {
@@ -75,7 +75,17 @@ namespace Ginseng.Models
         public int ProjectId { get; set; }
 
         public Organization Organization { get; set; }
-        public Team Team { get; set; }        
+        public Team Team { get; set; }
+
+        public int MilestoneId => Id;
+        public string MilestoneName => Name;
+        public DateTime? MilestoneDate => Date;
+
+        [NotMapped]
+        public int? MilestoneDaysAway { get; set; }
+
+        [NotMapped]
+        public bool IsMilestoneVisible { get; set; }
 
         public static async Task<Milestone> GetLatestAsync(IDbConnection connection, int teamId)
         {

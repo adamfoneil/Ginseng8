@@ -35,7 +35,7 @@
             @foreach (var milestoneGrp in projectGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
             {
                 var milestoneItem = milestoneGrp.First();
-                <partial name="Items/_MilestoneHeader" model="milestoneItem" />
+                <partial name="Items/_MilestoneHeader" model="@new MilestoneHeaderView(milestoneItem)" />
 
                 <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
 

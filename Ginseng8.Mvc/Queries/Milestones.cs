@@ -52,6 +52,9 @@ namespace Ginseng.Mvc.Queries
 		[Case(true, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] WHERE [MilestoneId]=[ms].[Id] AND [CloseReasonId] IS NULL)")]
 		public bool? HasOpenWorkItems { get; set; }
 
+        [Where("EXISTS(SELECT 1 FROM [dbo].[MilestoneUserView] WHERE [MilestoneId]=[ms].[Id] AND [UserId]=@hiddenForUserId AND [IsVisible]=0)")]
+        public int? HiddenForUserId { get; set; }
+
         [Where("[ms].[Id]=@id")]
         public int? Id { get; set; }
 
@@ -61,6 +64,7 @@ namespace Ginseng.Mvc.Queries
             yield return new Milestones() { OrgId = 0, IsSelectable = true };
             yield return new Milestones() { OrgId = 0, TeamId = 0 };
             yield return new Milestones() { OrgId = 1, ProjectId = 1 };
+            yield return new Milestones() { OrgId = 1, HiddenForUserId = 10 };
         }
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)
