@@ -14,7 +14,7 @@
     }
 </td>
 <td>
-    <a href="@Model.FreshdeskUrl/a/tickets/@Model.Ticket.Id" target="_blank">
+    <a href="@Model.FreshdeskUrl/a/tickets/@Model.Ticket.Id" target="_blank" data-ticket-id="@Model.Ticket.Id" class="fd-ticket-tooltip">
         @if (Model.Ticket.Type != null)
         {
             <span class="badge @Model.PageModel.GetTypeBadge(Model.Ticket.Type)">@Model.Ticket.Type</span>

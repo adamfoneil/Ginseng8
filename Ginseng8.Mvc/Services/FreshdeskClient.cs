@@ -53,8 +53,8 @@ namespace Ginseng.Integration.Services
             => ExecuteAsync<dynamic>($"/tickets/{id}/notes", Method.POST, new AddNoteRequest(comment, userName).ToJson());
 
         /// <inheritdoc />
-        public Task<Ticket> GetTicketAsync(long id)
-            => ExecuteAsync<Ticket>($"/tickets/{id}", Method.GET);
+        public Task<Ticket> GetTicketAsync(long id, bool withConversations = false)
+            => ExecuteAsync<Ticket>($"/tickets/{id}{((withConversations) ? "&include=conversations" : string.Empty)}", Method.GET);
 
         /// <inheritdoc />
         public Task UpdateTicketWorkItemAsync(long id, string value)

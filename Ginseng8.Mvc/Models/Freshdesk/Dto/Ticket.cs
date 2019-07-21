@@ -67,6 +67,9 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
 		public long ProductId { get; set; }
         */
 
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
         [JsonProperty("id")]
         public long Id { get; set; }
 

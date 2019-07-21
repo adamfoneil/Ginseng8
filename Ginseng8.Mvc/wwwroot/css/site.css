@@ -197,3 +197,9 @@ img {
 .bg-light {
   background: #f7f7f7 !important;
 }
+
+.ticket-tooltip {
+    height: auto;    
+    max-height: 300px;
+    overflow-x: hidden
+}

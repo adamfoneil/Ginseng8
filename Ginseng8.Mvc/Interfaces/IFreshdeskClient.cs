@@ -31,7 +31,7 @@ namespace Ginseng.Mvc.Interfaces
         /// </summary>
         /// <param name="id">Ticket id to retrieve</param>
         /// <returns>Ticket</returns>
-        Task<Ticket> GetTicketAsync(long id);
+        Task<Ticket> GetTicketAsync(long id, bool withConversations = false);
 
         /// <summary>
         /// Updates Freshdesk ticket' field that projected Ginseng8 work item

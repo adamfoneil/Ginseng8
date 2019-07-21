@@ -23,22 +23,26 @@ namespace Ginseng.Mvc.Controllers
     /// <summary>
     /// thanks to https://gist.github.com/42degrees/0b8876b77005b51dc4bbe391cfa69670
     /// </summary>
+    [Authorize]
     public class FreshdeskController : Controller
     {
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         private readonly DataAccess _data;
         private readonly IFreshdeskService _freshdeskService;
+        private readonly IFreshdeskClientFactory _freshdeskClientFactory;
 
         public FreshdeskController(
             IConfiguration config,
             IMapper mapper,
-            IFreshdeskService freshdeskService)
+            IFreshdeskService freshdeskService,
+            IFreshdeskClientFactory freshdeskClientFactory)
         {
             _config = config;
             _mapper = mapper;
             _data = new DataAccess(_config);
             _freshdeskService = freshdeskService;
+            _freshdeskClientFactory = freshdeskClientFactory;
         }
 
         public IActionResult Login(string host_url = null)
@@ -162,6 +166,15 @@ namespace Ginseng.Mvc.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<PartialViewResult> TicketBody(long id)
+        {
+            _data.Initialize(User, TempData);
+            var client = _freshdeskClientFactory.CreateClientForOrganization(_data.CurrentOrg);
+            var ticket = await client.GetTicketAsync(id, true);
+            return PartialView(ticket);
         }
     }
 }
