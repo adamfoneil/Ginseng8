@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
@@ -178,11 +179,34 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         public async Task<RedirectResult> OnPostHideMilestoneAsync(int id)
         {
+            return await ShowHideMilestoneAsync(id, false);
+        }
+
+        public async Task<RedirectResult> OnPostShowMilestoneAsync(int id)
+        {
+            return await ShowHideMilestoneAsync(id, true);
+        }
+
+        private async Task<RedirectResult> ShowHideMilestoneAsync(int id, bool isVisible)
+        {
             using (var cn = Data.GetConnection())
             {
+                var muv = await GetMilestoneUserViewAsync(cn, id);
+                muv.IsVisible = isVisible;
+                await cn.SaveAsync(muv, CurrentUser);
+                return Redirect("/Dashboard/MyItems");
             }
+        }
 
-            throw new NotImplementedException();
+        /// <summary>
+        /// Regular Postulate FindWhere  won't work with properties where value == 0, so I needed a dedicated query        
+        /// </summary>
+        private async Task<MilestoneUserView> GetMilestoneUserViewAsync(IDbConnection connection, int milestoneId)
+        {
+            return await connection.QuerySingleOrDefaultAsync<MilestoneUserView>(
+                @"SELECT * FROM [dbo].[MilestoneUserView] WHERE [UserId]=@userId AND [MilestoneId]=@milestoneId",
+                new { UserId, milestoneId }) ??
+                new MilestoneUserView() { MilestoneId = milestoneId, UserId = UserId };
         }
     }
 }

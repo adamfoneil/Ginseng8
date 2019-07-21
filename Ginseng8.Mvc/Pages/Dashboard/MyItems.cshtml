@@ -16,7 +16,7 @@
             @foreach (var milestoneGrp in appGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
             {
                 var milestoneItem = milestoneGrp.First();
-                <partial name="Items/_MilestoneHeader" model="@new MilestoneHeaderView(milestoneItem)" />
+                <partial name="Items/_MilestoneHeader" model="@(new MilestoneHeaderView(milestoneItem))" />
                 <div id="handOff-app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
                     <div class="ml-3" data-user-id="@Model.UserId">
                         @foreach (var item in milestoneGrp)

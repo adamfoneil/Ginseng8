@@ -1,5 +1,6 @@
 ﻿@model MilestoneHeaderView
 
+<div class="row">
 <h5 data-milestone-id="@Model.Header.MilestoneId">
     <i class="fas fa-flag-checkered"></i>
     <span class="@((Model.Header.MilestoneId != 0) ? "editable" : string.Empty)" id="milestone-name-@Model.Header.MilestoneId" data-url="/Update/MilestoneName">@Model.Header.MilestoneName</span>
@@ -44,3 +45,4 @@
         </form>
     }
 }    
+</div>
