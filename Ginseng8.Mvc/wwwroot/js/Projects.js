@@ -151,12 +151,19 @@ function InitDashboardProjectCardLinkButtonsDroppable() {
 function onProjectCardLinkButtonsDrop(draggableElement, droppableElement) {
     var data = {
         projectId: droppableElement.data('project-id'),
-        workItemNumber: draggableElement.data('number'),
+        id: draggableElement.data('number'),
     };
 
     console.group('update');
     console.log(data);
     console.groupEnd();
 
-    // fetch ...
+    fetch('/WorkItem/SetProject', {
+        method: 'post',
+        body: getFormData(data)
+    }).then(function (response) {
+        return response.text();
+    }).then(function (html) {
+        $('#projectInfo-' + data.projectId).html(html);
+    });
 }

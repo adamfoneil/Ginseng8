@@ -584,5 +584,23 @@ namespace Ginseng.Mvc.Controllers
                 return Json(new { success = false, message = exc.Message });
             }
         }
+
+        public async Task<PartialViewResult> SetProject(int id, int projectId)
+        {
+            ProjectInfoResult prj = null;
+
+            using (var cn = _data.GetConnection())
+            {
+                var wi = await _data.FindWorkItemAsync(cn, id);
+                wi.ProjectId = projectId;
+                wi.ModifiedBy = User.Identity.Name;
+                wi.DateModified = _data.CurrentUser.LocalTime;
+                await cn.UpdateAsync(wi, _data.CurrentUser, r => r.ProjectId, r => r.ModifiedBy, r => r.DateModified);
+
+                prj = await new ProjectInfo() { OrgId = _data.CurrentOrg.Id, Id = projectId }.ExecuteSingleAsync(cn);
+            }
+
+            return PartialView("/Pages/Dashboard/Items/_ItemInfo.cshtml", prj);
+        }
     }
 }
