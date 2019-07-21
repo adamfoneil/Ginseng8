@@ -29,3 +29,40 @@ function sortableStop() {
     });
 }
 
+function initDraggableItems(params) {
+    var options = params && params.options ? params.options : {};
+    var selector = params && params.selector ? ', ' + params.selector : '';
+
+    $('.js-item-draggable' + selector)
+    .draggable(Object.assign({
+        revert: 'invalid',
+        start: sortableStart,
+        stop: sortableStop
+    }, options));
+}
+
+function InitDroppable(params, dropCallback) {
+    var options = params && params.options ? params.options : {};
+
+    $(params.selector).droppable(Object.assign({
+        classes: {
+            'ui-droppable-active': 'ui-state-active',
+            'ui-droppable-hover': 'ui-state-highlight'
+        },
+        drop: function(event, ui) {
+            var draggableElement = $(ui.draggable).clone();
+            draggableElement.css({
+                position: 'static',
+                top: 'auto',
+                left: 'auto'
+            });
+            $(ui.draggable).remove();
+            $('.ui-state-active').removeClass('ui-state-active');
+            $('.ui-draggable-dragging').removeClass('ui-draggable-dragging');
+
+            dropCallback && dropCallback(draggableElement, $(this));
+
+            initDraggableItems();
+        }
+    }, options));
+}

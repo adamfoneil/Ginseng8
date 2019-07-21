@@ -13,6 +13,9 @@ viewProjectDetailLinks.forEach(function (e) {
 
 $(document).ready(function () {
     InitProjectSortable();
+
+    InitDashboardWorkItemDraggable();
+    InitDashboardProjectCardLinkButtonsDroppable();
 });
 
 function InitProjectSortable() {
@@ -125,3 +128,42 @@ $('.project-work-items').tooltip({
         });
     }
 });
+
+function InitDashboardWorkItemDraggable() {
+    initDraggableItems({
+        selector: '.js-dashboard-work-item-draggable',
+        options: {
+            helper: function() {
+                return $("<div class='card card-header bg-light z-index-fixed flex-row align-items-center p-2' data-number=" + $(this).data('number') + "></div>")
+                        .append($(this).find('.work-item-number').clone().addClass('mr-1'))
+                        .append($(this).find('.js-title').clone());
+            }
+        }
+    })
+}
+
+function InitDashboardProjectCardLinkButtonsDroppable() {
+    InitDroppable({
+        selector: '.js-droppable-project-card-link-button-container'
+    }, onProjectCardLinkButtonsDrop);
+}
+
+function onProjectCardLinkButtonsDrop(draggableElement, droppableElement) {
+    var data = {
+        projectId: droppableElement.data('project-id'),
+        id: draggableElement.data('number'),
+    };
+
+    console.group('update');
+    console.log(data);
+    console.groupEnd();
+
+    fetch('/WorkItem/SetProject', {
+        method: 'post',
+        body: getFormData(data)
+    }).then(function (response) {
+        return response.text();
+    }).then(function (html) {
+        $('#projectInfo-' + data.projectId).html(html);
+    });
+}
