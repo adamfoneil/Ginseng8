@@ -1,0 +1,11 @@
+﻿@model Ginseng.Models.WorkItem
+
+<div class="alert alert-success" role="alert">
+    Work Item # <strong>@Model.Number</strong>
+    <span>@Model.Title</span>    
+    <span> | </span>
+    <span class="text-muted small">
+        <a href="/WorkItem/View/@Model.Number">Created Successfully</a>
+        <span>but doesn't fit on this page</span>
+    </span>    
+</div>

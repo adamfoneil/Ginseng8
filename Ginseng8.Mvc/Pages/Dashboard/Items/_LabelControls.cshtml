@@ -4,21 +4,25 @@
     <button class="btn btn-light dropdown-toggle btn-sm" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <i class="fal fa-tags" title="Labels"></i>
     </button>
-    <div class="dropdown-menu">
+    <div class="dropdown-menu scrollable-menu">
+        <div class="px-3 search-box-container">
+            <input type="text" class="form-control form-control-sm search-box" placeholder="Filter">
+        </div>
+
         @foreach (var item in Model.Dropdowns.LabelItems(Model.SelectedLabels))
         {
             <form method="post">
-                <input type="hidden" name="WorkItemNumber" value="@Model.WorkItem.Number"/>
-                <input type="hidden" name="LabelId" value="@item.Id"/>
+                <input type="hidden" name="WorkItemNumber" value="@Model.WorkItem.Number" />
+                <input type="hidden" name="LabelId" value="@item.Id" />
                 <a class="dropdown-item labelCheckboxLink">
                     @Html.CheckBox("selected", item.Selected, new { @class = "labelCheckbox" })
                     <span class="badge" style="background-color:@item.BackColor;color:@item.ForeColor">@item.Name</span>
                 </a>
-            </form>                            
+            </form>
         }
     </div>
 </div>
 
 <div id="labels-@Model.WorkItem.Number" style="display:inline-block">
-    <partial name="Dashboard/Items/_Labels" model="Model.SelectedLabels"/>
+    <partial name="Dashboard/Items/_Labels" model="Model.SelectedLabels" />
 </div>

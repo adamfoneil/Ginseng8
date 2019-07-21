@@ -2,10 +2,12 @@
 using Ginseng.Models;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Services;
 using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Postulate.Base;
 using System;
 using System.Collections.Generic;
@@ -31,6 +33,9 @@ namespace Ginseng.Mvc
         public ILookup<int, Comment> Comments { get; set; }
         public ILookup<int, ClosedWorkItemsResult> ClosedItems { get; set; }
         public IEnumerable<WorkDaysResult> WorkDays { get; set; }
+        public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }
+        public MyItemGroupingOption MyItemGroupingOptions { get; set; } = new MyItemGroupingOption();
+        public MyItemGroupingOption.Option GroupingOption { get; set; }
 
         /// <summary>
         /// triggers display of partial to offer to move items to soonest upcoming or new milestone
@@ -52,6 +57,11 @@ namespace Ginseng.Mvc
             get { return null; }
         }
 
+        protected virtual async Task InitializeAsync(SqlConnection connection)
+        {
+            await Task.CompletedTask;
+        }
+
         /// <summary>
         /// Override this to populate additional model properties during the OnGetAsync method
         /// </summary>
@@ -69,7 +79,7 @@ namespace Ginseng.Mvc
         }
 
         /// <summary>
-        /// Override this if you need to redirect from the dashboard page for reason
+        /// Override this if you need to redirect from the dashboard page for some reason (e.g. if a search was done whose results can't display on this page)
         /// </summary>
         protected virtual async Task<RedirectResult> GetRedirectAsync(SqlConnection connection)
         {
@@ -83,15 +93,21 @@ namespace Ginseng.Mvc
                 var redirect = await GetRedirectAsync(cn);
                 if (redirect != null) return redirect;
 
+                await InitializeAsync(cn);
+
                 var query = GetQuery();
                 if (query != null)
                 {
-                    WorkItems = await GetQuery().ExecuteAsync(cn);
+                    WorkItems = await query.ExecuteAsync(cn);
 
                     ItemsInPastMilestone = WorkItems.Where(wi => wi.MilestoneDate < DateTime.Today).ToArray();
                     if (ItemsInPastMilestone.Any())
                     {
-                        NextSoonestMilestone = await Milestone.GetSoonestNextAsync(cn, OrgId) ?? await Milestone.CreateNextAsync(cn, OrgId);
+                        var teamId = CurrentOrgUser.CurrentTeamId ?? 0;
+                        if (teamId != 0)
+                        {
+                            NextSoonestMilestone = await Milestone.GetSoonestNextAsync(cn, teamId) ?? await Milestone.CreateNextAsync(cn, teamId);
+                        }                        
                     }
 
                     int[] itemIds = WorkItems.Select(wi => wi.Id).ToArray();
@@ -109,9 +125,13 @@ namespace Ginseng.Mvc
                         var closedItems = await new ClosedWorkItems() { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId }.ExecuteAsync(cn);
                         ClosedItems = closedItems.ToLookup(row => ClosedItemGrouping(row));
                     }
+
+                    var milestoneIds = WorkItems.GroupBy(row => row.MilestoneId).Select(grp => grp.Key).ToArray();
+                    var milestoneMetrics = await new MilestoneMetrics() { OrgId = OrgId, MilestoneIds = milestoneIds }.ExecuteAsync(cn);
+                    MilestoneMetrics = milestoneMetrics.ToDictionary(row => row.Id);
                 }
 
-                Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId, CurrentOrgUser.Responsibilities);
+                Dropdowns = await CommonDropdowns.FillAsync(cn, OrgId);
 
                 await OnGetInternalAsync(cn);
 
@@ -121,26 +141,25 @@ namespace Ginseng.Mvc
             return Page();
         }
 
-        public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, Func<WorkDaysResult, bool> workDayFilter = null)
+        public LoadView GetLoadView(IGrouping<int, OpenWorkItemsResult> milestoneGrp, MilestoneMetricsResult metrics = null)
         {
             int estimateHours = milestoneGrp.Sum(wi => wi.EstimateHours);
 
-            if (milestoneGrp.First().MilestoneDate.HasValue)
+            LoadView result = new LoadView()
             {
-                DateTime milestoneDate = milestoneGrp.First().MilestoneDate.Value;
-                return new LoadView()
-                {
-                    EstimateHours = estimateHours,
-                    WorkHours = WorkDays.Where(wd => wd.Date <= milestoneDate && (workDayFilter?.Invoke(wd) ?? true)).Sum(wi => wi.Hours)
-                };
-            }
-            else
+                EstimateHours = estimateHours
+            }; 
+
+            if (metrics != null)
             {
-                return new LoadView()
-                {
-                    EstimateHours = estimateHours
-                };
+                result.MilestoneMetrics = metrics;
             }
+            else if (MilestoneMetrics.ContainsKey(milestoneGrp.Key))
+            {
+                result.MilestoneMetrics = MilestoneMetrics[milestoneGrp.Key];
+            }
+
+            return result;
         }
 
         public FileResult OnGetExcelDownload()

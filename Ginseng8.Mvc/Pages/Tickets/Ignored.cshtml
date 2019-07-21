@@ -7,10 +7,10 @@
 
 <table class="table">
     <tr>
-        @if (Model.ResponsibilityId != 0)
+        @if (Model.TeamId != 0)
         {
             <th></th>
-        }        
+        }
         <th>Id</th>
         <th>From</th>
         <th>Subject</th>
@@ -20,11 +20,11 @@
     @foreach (var item in Model.Tickets)
     {
         <tr>
-            <partial name="_TicketRow" model="@(new TicketRowView() { PageModel = Model, Ticket = item, RowIndex = index, FreshdeskUrl = Model.FreshdeskUrl })"/>
+            <partial name="_TicketRow" model="@(new TicketRowView() { PageModel = Model, Ticket = item, RowIndex = index, FreshdeskUrl = Model.FreshdeskUrl })" />
             <td>
                 <form asp-page-handler="Restore">
-                    <input type="hidden" name="TicketId" value="@item.Id"/>
-                    <input type="hidden" name="ResponsibilityId" value="@Model.ResponsibilityId"/>
+                    <input type="hidden" name="TicketId" value="@item.Id" />
+                    <input type="hidden" name="ResponsibilityId" value="@Model.TeamId" />
                     <button type="submit" class="btn btn-primary">Restore</button>
                 </form>
             </td>
@@ -32,3 +32,5 @@
         index++;
     }
 </table>
+
+<partial name="Shared/_PageControls" model="Model" />

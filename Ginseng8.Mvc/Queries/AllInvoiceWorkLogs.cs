@@ -12,6 +12,9 @@ namespace Ginseng.Mvc.Queries
         public AllInvoiceWorkLogs() : base(
             @"SELECT
 				[iwl].*,
+                [t].[Name] AS [TeamName],
+                [wi].[ApplicationId],
+                [app].[Name] AS [ApplicationName],
                 COALESCE([ou].[DisplayName], [u].[UserName]) AS [DeveloperName],
 				CASE
 					WHEN [iwl].[ProjectId] IS NOT NULL THEN [p].[Name]
@@ -32,6 +35,7 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[WorkItem] [wi] ON [iwl].[WorkItemId]=[wi].[Id]
 				LEFT JOIN [dbo].[Project] [p] ON [iwl].[ProjectId]=[p].[Id]
                 LEFT JOIN [dbo].[Application] [app] ON [iwl].[ApplicationId]=[app].[Id]
+                LEFT JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]
                 INNER JOIN [dbo].[OrganizationUser] [ou] ON [iwl].[UserId]=[ou].[UserId] AND [iwl].[OrganizationId]=[ou].[OrganizationId]
                 INNER JOIN [dbo].[AspNetUsers] [u] ON [iwl].[UserId]=[u].[UserId]
 			WHERE

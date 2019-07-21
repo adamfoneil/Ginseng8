@@ -19,9 +19,20 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Tickets
 {
-    public enum ActionObjectType
+    /// <summary>
+    /// What kind of items are in the action dropdown?
+    /// This depends on whether the current team uses applications and whether a current app is selected
+    /// </summary>
+    public enum ActionItemType
     {
+        /// <summary>
+        /// For teams that don't use apps or if team *does* use apps and one is selected, we show projects
+        /// </summary>
         Project,
+
+        /// <summary>
+        /// If no current app selected, then we show apps
+        /// </summary>
         Application
     }
 
@@ -31,7 +42,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         private IFreshdeskClientFactory _freshdeskClientFactory;
 
         public IndexModel(
-            IConfiguration config,            
+            IConfiguration config,
             IFreshdeskClientFactory freshdeskClientFactory)
             : base(config, freshdeskClientFactory)
         {
@@ -40,14 +51,14 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         public LoadedFrom LoadedFrom { get; set; }
         public DateTime DateQueried { get; set; }
-       
-        public ActionObjectType ActionObjectType { get; set; } // tells us whether the work item action Id is an app or a project
+
+        public ActionItemType ActionObjectType { get; set; } // tells us whether the work item action Id is an app or a project
         public SelectList AppSelect { get; set; } // available when no current app selected
-        public Dictionary<long, SelectList> ProjectByCompanySelect { get; set; } // available when app is current                        
+        public Dictionary<long, SelectList> ProjectByCompanySelect { get; set; } // available when app is current
 
         public SelectList GetActionSelect(long companyId)
         {
-            return (CurrentOrgUser.CurrentAppId.HasValue && ProjectByCompanySelect.ContainsKey(companyId)) ? ProjectByCompanySelect[companyId] : AppSelect;
+            return (ActionObjectType == ActionItemType.Project && ProjectByCompanySelect.ContainsKey(companyId)) ? ProjectByCompanySelect[companyId] : AppSelect;
         }
 
         public string GetWorkItemCreateMessage()
@@ -57,26 +68,25 @@ namespace Ginseng.Mvc.Pages.Tickets
                 "Select app";
         }
 
-        public async Task OnGetAsync(int responsibilityId = 0)
+        public async Task OnGetAsync()
         {
-            await InitializeAsync(responsibilityId);
+            await InitializeAsync();
+
+            int teamId = CurrentOrgUser.CurrentTeamId ?? 0;
 
             using (var cn = Data.GetConnection())
-            {                                
-                var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);                
+            {
+                AppSelect = await BuildAppSelectAsync(cn);
+
+                var assignedTickets = await new AssignedTickets() { OrgId = OrgId }.ExecuteAsync(cn);
                 Tickets = FreshdeskCache.Tickets.Where(t => !IgnoredTickets.Contains(t.Id) && !assignedTickets.Contains(t.Id)).ToArray();
 
-                if (CurrentOrgUser.CurrentAppId.HasValue)
+                if (CurrentOrgUser.CurrentTeamId.HasValue)
                 {
-                    ActionObjectType = ActionObjectType.Project;
-                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, responsibilityId, CurrentOrgUser.CurrentAppId.Value, Tickets);
+                    ActionObjectType = (!CurrentOrgUser.CurrentTeam.UseApplications || (CurrentOrgUser.CurrentAppId.HasValue && CurrentOrgUser.CurrentTeam.UseApplications)) ? ActionItemType.Project : ActionItemType.Application;
+                    ProjectByCompanySelect = await BuildProjectSelectAsync(cn, teamId, CurrentOrgUser.CurrentAppId, Tickets);
                 }
-                else
-                {
-                    ActionObjectType = ActionObjectType.Application;
-                    AppSelect = await BuildAppSelectAsync(cn, responsibilityId);
-                }                
-            }            
+            }
 
             LoadedFrom = FreshdeskCache.TicketCache.LoadedFrom;
             DateQueried = FreshdeskCache.TicketCache.LastApiCallDateTime;
@@ -85,22 +95,22 @@ namespace Ginseng.Mvc.Pages.Tickets
         /// <summary>
         /// Returns a dictionary of SeletLists keyed to Freshdesk Company Ids
         /// </summary>
-        private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int responsibilityId, int appId, IEnumerable<Ticket> tickets)
+        private async Task<Dictionary<long, SelectList>> BuildProjectSelectAsync(SqlConnection cn, int teamId, int? appId, IEnumerable<Ticket> tickets)
         {
             Dictionary<long, SelectList> results = new Dictionary<long, SelectList>();
 
-            var projects = await new ProjectSelectEx() { OrgId = OrgId, AppId = appId }.ExecuteAsync(cn);
+            var projects = await new ProjectSelectEx() { OrgId = OrgId, TeamId = teamId, AppId = appId }.ExecuteAsync(cn);
 
-            var resp = await cn.FindAsync<Responsibility>(responsibilityId);
-            bool companySpecific = resp?.CompanySpecificProjects ?? false;
+            var team = await cn.FindAsync<Team>(teamId);
+            bool companySpecific = team?.CompanySpecificProjects ?? false;
 
             if (companySpecific)
-            {                
+            {
                 var projectsByCompany = projects.GroupBy(row => row.FreshdeskCompanyId ?? 0);
                 foreach (var companyGrp in projectsByCompany)
                 {
                     var items = companyGrp.ToList();
-                    if (responsibilityId != 0) items.Insert(0, new ProjectSelectResult() { Value = 0, Text = "Ignore Ticket" });
+                    if (teamId != 0) items.Insert(0, new ProjectSelectResult() { Value = 0, Text = "Ignore Ticket" });
                     items.Insert(1, new ProjectSelectResult() { Value = -1, Text = "[ new project ]" });
                     var selectItems = items.Select(item => new SelectListItem() { Value = item.Value.ToString(), Text = item.Text });
                     var firstProject = items.FirstOrDefault(p => p.FreshdeskCompanyId == companyGrp.Key);
@@ -114,7 +124,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 if (!results.ContainsKey(companyGrp.Key))
                 {
                     var items = new List<SelectListItem>();
-                    if (responsibilityId != 0) items.Add(new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+                    if (teamId != 0) items.Add(new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
                     items.Add(new SelectListItem() { Value = "-1", Text = "[ new project ]" });
                     if (!companySpecific)
                     {
@@ -126,11 +136,11 @@ namespace Ginseng.Mvc.Pages.Tickets
             return results;
         }
 
-        private async Task<SelectList> BuildAppSelectAsync(SqlConnection cn, int responsibilityId)
+        private async Task<SelectList> BuildAppSelectAsync(SqlConnection cn)
         {
             var appItems = await new AppSelect() { OrgId = OrgId }.ExecuteItemsAsync(cn);
-            // you can ignore tickets only if a responsibility is selected
-            if (responsibilityId != 0) appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
+            // you can ignore tickets only if a team is selected
+            if (CurrentOrgUser.CurrentTeamId.HasValue) appItems.Insert(0, new SelectListItem() { Value = "0", Text = "Ignore Ticket" });
             return new SelectList(appItems, "Value", "Text");
         }
 
@@ -139,7 +149,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             throw new NotImplementedException();
         }
 
-        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int objectId, int responsibilityId, ActionObjectType objectType)
+        public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int objectId, int teamId, ActionItemType objectType)
         {
             var client = await _freshdeskClientFactory.CreateClientForOrganizationAsync(OrgId);
             var ticket = await client.GetTicketAsync(ticketId);
@@ -147,10 +157,10 @@ namespace Ginseng.Mvc.Pages.Tickets
             await FreshdeskCache.InitializeAsync(OrgName);
 
             using (var cn = Data.GetConnection())
-            {                
+            {
                 if (objectId == 0)
                 {
-                    await IgnoreTicketInner(ticketId, responsibilityId, cn);
+                    await IgnoreTicketInner(ticketId, teamId, cn);
                 }
                 else
                 {
@@ -168,46 +178,49 @@ namespace Ginseng.Mvc.Pages.Tickets
                         ContactName = GetContactName(ticket.RequesterId),
                         Subject = ticket.Subject
                     };
-                    
+
                     await client.UpdateTicketWorkItemAsync(ticketId, number.ToString());
                     await Data.TrySaveAsync(cn, wit);
-                }                
+                }
             }
 
-            return Redirect($"Tickets/Index?responsibilityId={responsibilityId}");
+            return Redirect($"Tickets/Index");
         }
 
-        private async Task IgnoreTicketInner(int ticketId, int responsibilityId, SqlConnection cn)
+        private async Task IgnoreTicketInner(int ticketId, int teamId, SqlConnection cn)
         {
             var ignoreTicket = new IgnoredTicket()
             {
                 TicketId = ticketId,
                 OrganizationId = OrgId,
-                ResponsibilityId = responsibilityId
+                TeamId = teamId
             };
             await Data.TrySaveAsync(cn, ignoreTicket);
         }
 
-        private async Task<int> CreateWorkItemFromTicketAsync(SqlConnection cn, IFreshdeskClient client, Ticket ticket, int objectId, ActionObjectType objectType)
+        private async Task<int> CreateWorkItemFromTicketAsync(SqlConnection cn, IFreshdeskClient client, Ticket ticket, int objectId, ActionItemType objectType)
         {
-            int appId = (objectType == ActionObjectType.Application) ? 
-                objectId : 
+            int? appId = (objectType == ActionItemType.Application) ?
+                objectId :
                 (objectId == -1) ?
-                    CurrentOrgUser.CurrentAppId.Value :
+                    CurrentOrgUser.CurrentAppId :
                     await GetAppFromProjectIdAsync(cn, objectId);
 
-            int? projectId = (objectType == ActionObjectType.Project) ? objectId : default(int?);
+            int? projectId = (objectType == ActionItemType.Project) ? objectId : default(int?);
 
             if (projectId == -1 && ticket.CompanyId.HasValue)
-            {                
+            {
                 var company = await client.GetCompanyAsync(ticket.CompanyId.Value);
                 projectId = await CreateNewProjectAsync(cn, CurrentOrgUser.CurrentAppId.Value, company);
             }
+
+            if (projectId == -1) projectId = null;
 
             var workItem = new Ginseng.Models.WorkItem()
             {
                 OrganizationId = OrgId,
                 ApplicationId = appId,
+                TeamId = CurrentOrgUser.CurrentTeamId.Value,
                 ProjectId = projectId,
                 Title = $"FD: {ticket.Subject} (ticket # {ticket.Id})",
                 HtmlBody = $"<p>Created from Freshdesk <a href=\"{CurrentOrg.FreshdeskUrl}/a/tickets/{ticket.Id}\">ticket {ticket.Id}</a></p>"
@@ -226,7 +239,7 @@ namespace Ginseng.Mvc.Pages.Tickets
             return workItem.Number;
         }
 
-        private async Task<int> CreateNewProjectAsync(SqlConnection cn, int appId, Company company)
+        private async Task<int> CreateNewProjectAsync(SqlConnection cn, int? appId, Company company)
         {
             string projectName = company.Name;
             int increment = 0;
@@ -238,6 +251,7 @@ namespace Ginseng.Mvc.Pages.Tickets
 
             var prj = new Project()
             {
+                TeamId = CurrentOrgUser.CurrentTeamId.Value,
                 ApplicationId = appId,
                 Name = projectName,
                 FreshdeskCompanyId = company.Id
@@ -248,20 +262,20 @@ namespace Ginseng.Mvc.Pages.Tickets
             return prj.Id;
         }
 
-        private async Task<int> GetAppFromProjectIdAsync(SqlConnection cn, int projectId)
+        private async Task<int?> GetAppFromProjectIdAsync(SqlConnection cn, int projectId)
         {
             var prj = await cn.FindAsync<Project>(projectId);
             return prj.ApplicationId;
         }
 
-        public async Task<RedirectResult> OnPostIgnoreSelectedAsync(string ticketIds, int responsibilityId)
+        public async Task<RedirectResult> OnPostIgnoreSelectedAsync(string ticketIds, int teamId)
         {
             int[] tickets = ticketIds.Split(',').Select(s => int.Parse(s)).ToArray();
             using (var cn = Data.GetConnection())
             {
-                foreach (int ticketId in tickets) await IgnoreTicketInner(ticketId, responsibilityId, cn);
+                foreach (int ticketId in tickets) await IgnoreTicketInner(ticketId, teamId, cn);
             }
-            return Redirect($"Tickets/Index?responsibilityId={responsibilityId}");
+            return Redirect($"Tickets/Index");
         }
     }
 }

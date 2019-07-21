@@ -1,5 +1,5 @@
-﻿using System;
-using Ginseng.Mvc.Enums.Freshdesk;
+﻿using Ginseng.Mvc.Enums.Freshdesk;
+using System;
 
 namespace Ginseng.Mvc.Models.Freshdesk
 {

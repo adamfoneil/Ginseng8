@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<ClosedWorkItemsResult>
 
-<h5>Recently Closed</h5>                
+<h5>Recently Closed</h5>
 @foreach (var reasonGrp in Model.GroupBy(row => row.CloseReasonId))
 {
     <h6>@reasonGrp.First().CloseReasonName</h6>
@@ -8,9 +8,9 @@
         @foreach (var item in reasonGrp)
         {
             <li>
-                <partial name="Items/_ItemNumber" model="item"/>
+                <partial name="Items/_ItemNumber" model="item" />
                 <a asp-page="/WorkItem/View" asp-route-id="@item.Number">@item.Title</a>
             </li>
         }
     </ul>
-}                
+}

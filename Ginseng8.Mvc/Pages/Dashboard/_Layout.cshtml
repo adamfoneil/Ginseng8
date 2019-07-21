@@ -2,18 +2,21 @@
     Layout = "/Pages/Shared/_Layout.cshtml";
 }
 
-<ul class="nav nav-pills nav-fill mt-3 mb-3">
+<ul class="nav nav-pills nav-fill mt-3 mb-3 nav-justified">
     <li class="nav-item">
-        <activelink page="/Dashboard/Index" text="My Items" />
+        <activelink page="/Dashboard/MyItems" text="My Items" />
     </li>
     <li class="nav-item">
-        <activelink page="/Dashboard/Hung" text="Hung Items"/>
+        <activelink page="/Dashboard/New" text="New Items" />
     </li>
     <li class="nav-item">
-        <activelink page="/Dashboard/Projects" text="Projects" />
+        <activelink page="/Dashboard/Hung" text="Hung Items" />
     </li>
     <li class="nav-item">
-        <activelink page="/Dashboard/Milestones" text="Milestones" />
+        <activelink page="/Dashboard/Index" text="Dashboard" />
+    </li>
+    <li class="nav-item">
+        <activelink page="/Dashboard/Calendar" text="Calendar" />
     </li>
     <li class="nav-item">
         <activelink page="/Dashboard/AllItems" text="All Items" />
@@ -26,25 +29,29 @@
     </li>
 </ul>
 
+<hr/>
+
 @Html.ActionAlert(TempData)
 
-@{ 
+<div id="infoBanner"></div>
+
+@{
     var model = Html.ViewContext.ViewData.Model as DashboardPageModel;
     if (model != null && model.LabelFilter != null && model.ShowLabelFilter)
     {
-        <partial name="Items/_LabelFilter" model="model.LabelFilter"/>
+        <partial name="Items/_LabelFilter" model="model.LabelFilter" />
         @if (model.LabelId.HasValue)
         {
             <div class="text-center">
                 <a asp-route-labelId="" class="btn btn-sm btn-light mb-2">show all</a>
-            </div>            
+            </div>
         }
     }
 }
 
 @if (Model is DashboardPageModel)
 {
-    <partial name="Items/_PastDue" model="Model"/>
+    <partial name="Items/_PastDue" model="Model" />
 }
 
 @RenderBody()
@@ -54,8 +61,9 @@
     <a class="btn btn-light" asp-page-handler="ExcelDownload">Download to Excel</a>
 }
 
-@section Scripts {
+@section Scripts {    
+    <script src="~/js/MultiSelect.js" asp-append-version="true"></script>
+    <script src="~/js/Dashboard.js" asp-append-version="true"></script>
+    <script src="~/js/Sortable.js" asp-append-version="true"></script>
     @RenderSection("Scripts", false)
-    <script src="~/js/Dashboard.js"></script>
-    <script src="~/js/Sortable.js"></script>
 }

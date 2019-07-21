@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.Queries.SelectLists;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -20,34 +21,55 @@ namespace Ginseng.Mvc
 		/// </summary>
 		public IEnumerable<Activity> Activities { get; set; }
 
-		public IEnumerable<SelectListItem> Applications { get; set; }
-		public ILookup<int, SelectListItem> AllProjects { get; set; }
+        public IEnumerable<SelectListItem> Teams { get; set; }
+		public ILookup<int, SelectListItem> AllApps { get; set; } // keyed to teams
+		public ILookup<int, SelectListItem> ProjectsByApp { get; set; } 
+        public ILookup<int, SelectListItem> ProjectsWithoutApps { get; set; } // keyed to teams
+        public ILookup<int, SelectListItem> ProjectsByTeam { get; set; }
 		public IEnumerable<SelectListItem> Sizes { get; set; }
-		public IEnumerable<SelectListItem> CloseReasons { get; set; }
-		public IEnumerable<SelectListItem> Milestones { get; set; }			
-		public ILookup<int, SelectListItem> AllDataModels { get; set; }
+		public IEnumerable<SelectListItem> CloseReasons { get; set; }		        
+        public IEnumerable<SelectListItem> AllMilestones { get; set; }
+        public ILookup<int, SelectListItem> MilestonesByTeam { get; set; }        
+		public ILookup<int, SelectListItem> AllDataModels { get; set; } // keyed to projects
 		public IEnumerable<Label> Labels { get; set; }
 
-		public SelectList AppSelect(int? appId)
+        public SelectList TeamSelect(int? teamId = null)
+        {
+            return new SelectList(Teams, "Value", "Text", teamId);
+        }
+
+        public SelectList TeamSelect(OpenWorkItemsResult item = null)
+        {
+            return new SelectList(Teams, "Value", "Text", item?.TeamId);
+        }
+
+        public SelectList AppSelect(Project project)
+        {
+            return new SelectList(AllApps[project.TeamId], "Value", "Text", project.ApplicationId);
+        }
+
+		public SelectList AppSelect(int teamId, int? appId)
 		{
-			return new SelectList(Applications, "Value", "Text", appId);
+			return new SelectList(AllApps[teamId], "Value", "Text", appId);
 		}
 
 		public SelectList AppSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(Applications, "Value", "Text", item?.ApplicationId);
+			return new SelectList(AllApps[item.TeamId], "Value", "Text", item?.ApplicationId);
 		}
 
 		public SelectList ProjectSelect(int appId, int? projectId, bool withNoneOption = false)
 		{
-			var items = AllProjects[appId].ToList();
+			var items = ProjectsByApp[appId].ToList();
 			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no project -" });
 			return new SelectList(items, "Value", "Text", projectId);
 		}
 
 		public SelectList ProjectSelect(OpenWorkItemsResult item = null)
 		{
-			return new SelectList(AllProjects[item?.ApplicationId ?? 0], "Value", "Text", item?.ProjectId);
+            return (item?.UseApplications ?? true) ?
+                new SelectList(ProjectsByApp[item?.ApplicationId ?? 0].Concat(ProjectsWithoutApps[item?.TeamId ?? 0]).OrderBy(row => row.Text), "Value", "Text", item?.ProjectId) :
+                new SelectList(ProjectsByTeam[item?.TeamId ?? 0], "Value", "Text", item?.ProjectId);            
 		}
 
 		public SelectList DataModelSelect(int appId, int? dataModelId)
@@ -74,14 +96,18 @@ namespace Ginseng.Mvc
 
 		public SelectList MilestoneSelect(int? milestoneId, bool withNoneOption = false)
 		{
-			var items = Milestones.ToList();
+            var items = AllMilestones.ToList();
 			if (withNoneOption) items.Insert(0, new SelectListItem() { Value = "0", Text = "- has no milestone -" });
 			return new SelectList(items, "Value", "Text", milestoneId);
 		}
 
-		public SelectList MilestoneSelect(OpenWorkItemsResult item = null)
+		public SelectList MilestoneSelect(OpenWorkItemsResult item = null, bool withIndirectOptions = false)
 		{
-			return new SelectList(Milestones, "Value", "Text", item?.MilestoneId);
+            var items = AllMilestones.ToList();
+
+            if (withIndirectOptions) items.InsertRange(0, new IndirectMilestones().GetSelectListItems());
+
+            return new SelectList(items, "Value", "Text", item?.MilestoneId);
 		}
 
 		public IEnumerable<Label> LabelItems(IEnumerable<Label> selectedLabels)
@@ -96,21 +122,33 @@ namespace Ginseng.Mvc
 			});
 		}
 
-		public static async Task<CommonDropdowns> FillAsync(SqlConnection connection, int orgId, int responsibilities)
+		public static async Task<CommonDropdowns> FillAsync(SqlConnection connection, int orgId)
 		{
 			var result = new CommonDropdowns();
 
+            // org-scoped items
+            result.Teams = await new TeamSelect() { OrgId = orgId }.ExecuteAsync(connection);
 			result.Activities = await new Activities() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+            result.Sizes = await new SizeSelect() { OrgId = orgId }.ExecuteAsync(connection);
+            result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);            
+            result.Labels = await new Labels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 
-			result.Applications = await new AppSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			var allProjects = await new AllProjects() { OrgId = orgId }.ExecuteAsync(connection);
-			result.AllProjects = allProjects.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
-			result.Sizes = await new SizeSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			result.CloseReasons = await new CloseReasonSelect().ExecuteAsync(connection);
-			result.Milestones = await new MilestoneSelect() { OrgId = orgId }.ExecuteAsync(connection);
-			result.Labels = await new Labels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+            var allApps = await new Applications() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
+            result.AllApps = allApps.ToLookup(row => row.TeamId ?? 0, row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
+
+            // app-scoped items
+            var allProjects = await new AllProjects() { OrgId = orgId }.ExecuteAsync(connection);
+			result.ProjectsByApp = allProjects.ToLookup(row => row.ApplicationId, row => row.ToSelectListItem());
+            result.ProjectsWithoutApps = allProjects.Where(row => row.ApplicationId == 0).ToLookup(row => row.TeamId, row => row.ToSelectListItem());
+            result.ProjectsByTeam = allProjects.ToLookup(row => row.TeamId, row => row.ToSelectListItem());
+
+            var allMilestones = await new AllMilestones() { OrgId = orgId }.ExecuteAsync(connection);
+            result.AllMilestones = allMilestones.Select(item => item.ToSelectListItem());
+            result.MilestonesByTeam = allMilestones.ToLookup(row => row.TeamId ?? 0, row => row.ToSelectListItem());
+                       
 			var allModels = await new DataModels() { OrgId = orgId, IsActive = true }.ExecuteAsync(connection);
 			result.AllDataModels = allModels.ToLookup(row => row.ApplicationId, row => new SelectListItem() { Value = row.Id.ToString(), Text = row.Name });
+
 			return result;
 		}
 	}

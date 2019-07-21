@@ -1,12 +1,12 @@
 ﻿@model InsertItemView
 
-<div class="mb-3">    
+<div class="mb-3">
     <div id="insert-item-area-@Model.Context">
         <form method="post" asp-controller="WorkItem" asp-action="Create">
             @Model.WriteContextFields(Html)
             <div class="form-row mb-2">
                 <div class="col-10">
-                    <input type="text" name="Title" required="required" placeholder="add new item" class="form-control form-control-sm" maxlength="255" />
+                    <input type="text" name="Title" required="required" placeholder="add new item, apply labels with #, enclose projects in [ ]" class="form-control form-control-sm" maxlength="255" autocomplete="off" />
                 </div>
 
                 <div class="col-2">
@@ -14,8 +14,15 @@
                     <button class="btn btn-sm btn-light btn-item-detail" type="button" data-target="item-detail-@Model.Context">Add Detail</button>
                 </div>
             </div>
+
             <div class="form-row">
                 <div class="col-12" style="display:none" id="item-detail-@Model.Context">
+                    @if (Model.Dropdowns != null)
+                    {
+                        <div class="mb-2">
+                            <partial name="/Pages/Dashboard/Items/_ItemFields.cshtml" model="new WorkItemCardView() { Dropdowns = Model.Dropdowns, WorkItem = Model.GetDefaultWorkItem(), UpdatesEnabled = false, AssignToUsers = Model.AssignToUsers }"/>
+                        </div>
+                    }
                     <textarea name="HtmlBody" class="htmlEditor"></textarea>
                 </div>
             </div>

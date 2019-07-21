@@ -8,12 +8,12 @@
 {
     if (Model.View == ProjectViewOptions.Crosstab)
     {
-        <partial name="Items/_ProjectCrosstab" model="Model"/>
+        <partial name="Items/_ProjectCrosstab" model="Model" />
     }
 
     if (Model.View == ProjectViewOptions.Cards)
     {
-        <partial name="Items/_ProjectCards" model="Model"/>
+        <partial name="Items/_ProjectCards" model="Model" />
     }
 }
 else
@@ -22,38 +22,42 @@ else
     {
         @if (Model.SelectedProject != null)
         {
-            <h5><span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span></h5>        
-            <partial name="Items/_ProjectInfo" model="Model.SelectedProjectInfo"/>
+            <h4>
+                <a asp-page="/Dashboard/Index" class="nounderline" title="Back to Application dashboard">
+                    <i class="fas fa-arrow-up"></i>
+                </a>
+                @Model.SelectedProject.ParentName
+            </h4>
+            <h5>
+                <span class="editable" id="project-name-@Model.SelectedProject.Id" data-url="/Update/ProjectName">@Model.SelectedProject.Name</span>
+            </h5>
+            <partial name="Items/_ItemInfo" model="Model.SelectedProjectInfo" />
 
             <div class="ml-3">
-                <partial name="Items/_ProjectControls" model="Model"/>
+                <partial name="Items/_ProjectControls" model="Model" />
                 @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.Id.Value, IdPrefix = "prj", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody, UploadFolderName = "Projects", AllowComments = true })
                 <div id="comments-@Model.SelectedProject.Id-Project-output">
                 @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.ProjectComments, ObjectId = Model.SelectedProject.Id, ObjectType = ObjectType.Project })
                 </div>
             </div>
         }
-    
-        <p>This project has no open work items.</p>
 
-        @if (Model.CurrentAppId.HasValue)
+        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
         {
-            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-            {
-                { "applicationId", Model.CurrentAppId.Value },
-                { "projectId", Model.Id.Value }
-            }))
-        }
+            { "teamId", Model.SelectedProject.TeamId },
+            { "applicationId", Model.SelectedProject.ApplicationId ?? 0 },
+            { "projectId", Model.Id.Value }
+        }) { Dropdowns = Model.Dropdowns, UseApplications = Model.SelectedProject.Team.UseApplications, AssignToUsers = Model.AssignToUsers })
     }
     else
     {
         <partial name="Items/_ProjectWorkItems" model="Model" />
     }
-    
-    var recentlyClosed = Model.ClosedItems[Model.SelectedProject.Id].Take(10);                    
+
+    var recentlyClosed = Model.ClosedItems[Model.SelectedProject.Id].Take(10);
     @if (recentlyClosed.Any())
     {
-        <partial name="Items/_RecentlyClosed" model="recentlyClosed"/>
+        <partial name="Items/_RecentlyClosed" model="recentlyClosed" />
     }
 
     @if (Model.Id.HasValue)
@@ -65,7 +69,6 @@ else
         </p>
     }
 }
-
 
 @section Scripts {
     <script src="~/js/Projects.js"></script>

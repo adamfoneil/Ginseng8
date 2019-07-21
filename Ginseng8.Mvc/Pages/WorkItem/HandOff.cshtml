@@ -6,18 +6,18 @@
 
 <h4>
     <span class="badge" style="background-color:@Html.WeightedColorToHex(Model.WorkItem.ColorGradientPosition)">@Model.WorkItem.Number</span>
-    <span>@Model.WorkItem.Title</span>    
+    <span>@Model.WorkItem.Title</span>
     <span class="small">
         <a href="#" data-toggle="collapse" data-target="#workItemBody">toggle details</a>
     </span>
 </h4>
-<div>    
+<div>
     <div class="collapse" id="workItemBody">
         @Html.Raw(Model.WorkItem.HtmlBody)
-    </div>    
+    </div>
 </div>
 <h3>
-    @(Model.FromActivity?.Name ?? "starting") 
+    @(Model.FromActivity?.Name ?? "starting")
     <i class="@HandOff.GetIconClass(Model.HandOff.IsForward)" style="color:@HandOff.GetColor(Model.HandOff.IsForward)"></i>
     <span>@Model.ToActivity.Name</span>
 </h3>
@@ -25,11 +25,23 @@
 <p>Use this space to list any special instructions or feedback relevant to this action.</p>
 
 <form method="post">
-    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl"/>
-    <input type="hidden" name="WorkItemId" value="@Model.HandOff.WorkItemId"/>
-    <input type="hidden" name="FromUserId" value="@Model.HandOff.FromUserId"/>
-    <input type="hidden" name="FromActivityId" value="@Model.HandOff.FromActivityId"/>
-    <input type="hidden" name="ToActivityId" value="@Model.HandOff.ToActivityId"/>    
+    <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+    <input type="hidden" name="WorkItemId" value="@Model.HandOff.WorkItemId" />
+    <input type="hidden" name="FromUserId" value="@Model.HandOff.FromUserId" />
+    <input type="hidden" name="FromActivityId" value="@Model.HandOff.FromActivityId" />
+    <input type="hidden" name="ToActivityId" value="@Model.HandOff.ToActivityId" />
+
+    <div class="form-group">
+        <div class="col-3">
+            <label>Assign to:</label>            
+        </div>
+        <div class="col-3">
+            <select name="ToUserId" asp-items="@Model.GetAssignToUsers()" class="form-control">
+                <option value="">- optional -</option>
+            </select>
+        </div>
+    </div>
+
     <textarea name="HtmlBody" id="HtmlBody" class="htmlEditor"></textarea>
     <button type="submit" class="btn btn-primary mt-2">Save</button>
 </form>

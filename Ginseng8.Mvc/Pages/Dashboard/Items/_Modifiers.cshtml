@@ -2,5 +2,5 @@
 
 @foreach (var mod in Model.GetModifiers())
 {
-    <i class="@mod.Icon" style="color:@mod.Color" title="@mod.Description"></i>
+    <i class="@mod.Icon" style="color:@mod.Color" title="@mod.Description" id="mod-@Model.Number-@mod.Key"></i>
 }

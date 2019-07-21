@@ -1,0 +1,35 @@
+﻿@model MyItemsModel
+
+@{
+    var dates = Model.MySchedule.GroupBy(row => row.Date);
+}
+<ul class="list-inline text-center">
+    <li class="list-inline-item small">
+        My schedule:
+    </li>
+
+    @foreach (var dateGrp in dates)
+    {
+        <li class="list-inline-item">
+            @{
+                var className = (dateGrp.Key.Equals(Model.Date)) ? "btn-dark" : "btn-light";
+            }
+            <a asp-route-date="@Html.FormatValue(dateGrp.Key, "{0:M/d/yy}")" class="btn btn-sm @className" data-date="@dateGrp.Key">@Html.FormatValue(dateGrp.Key, "{0:ddd M/d}")</a>
+        </li>
+    }
+
+    @if (Model.UnestimatedItemCount > 0)
+    {
+        var unestimatedClass = (Model.NeedsEstimate) ? "btn-dark" : "btn-light";
+        <li class="list-inline-item small">
+            <a asp-page="/Dashboard/MyItems" class="btn btn-sm @unestimatedClass" asp-route-needsEstimate="true" title="Needs estimate">
+                <i class="@OpenWorkItemsResult.UnestimatedIcon" style="color:@OpenWorkItemsResult.UnestimatedColor"></i>
+                <sup>@Model.UnestimatedItemCount</sup>
+            </a>
+        </li>
+    }
+
+    <li class="list-inline-item small">
+        <a asp-page="/Dashboard/MyItems" class="btn btn-sm btn-light">Show all</a>
+    </li>
+</ul>

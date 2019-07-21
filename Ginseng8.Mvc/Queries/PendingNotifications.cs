@@ -26,10 +26,13 @@ namespace Ginseng.Mvc.Queries
 		public int WorkItemNumber { get; set; }
 		public string WorkItemTitle { get; set; }
 		public string OrganizationName { get; set; }
-		public string ApplicationName { get; set; }
+        public string TeamName { get; set; }
+		public string ApplicationName { get; set; }        
 		public string EventName { get; set; }
 
-		public async Task MarkDeliveredAsync(IDbConnection connection)
+        public string ParentName { get { return ApplicationName ?? TeamName; } }
+
+        public async Task MarkDeliveredAsync(IDbConnection connection)
 		{
 			await connection.ExecuteAsync("UPDATE [dbo].[Notification] SET [DateDelivered]=getutcdate() WHERE [Id]=@id", new { Id });
 		}
@@ -45,6 +48,7 @@ namespace Ginseng.Mvc.Queries
 				[wi].[Number] AS [WorkItemNumber],
 				[wi].[Title] AS [WorkItemTitle], 
 				[org].[Name] AS [OrganizationName],
+                [t].[Name] AS [TeamName],
 				[app].[Name] AS [ApplicationName],
 				[e].[Name] AS [EventName]
 			FROM 
@@ -52,7 +56,8 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[EventLog] [el] ON [n].[EventLogId]=[el].[Id]
 				LEFT JOIN [app].[Event] [e] ON [el].[EventId]=[e].[Id]
 				INNER JOIN [dbo].[WorkItem] [wi] ON [el].[WorkItemId]=[wi].[Id]
-				INNER JOIN [dbo].[Application] [app] ON [el].[ApplicationId]=[app].[Id]
+                INNER JOIN [dbo].[Team] [t] ON [el].[TeamId]=[t].[Id]
+				LEFT JOIN [dbo].[Application] [app] ON [el].[ApplicationId]=[app].[Id]
 				INNER JOIN [dbo].[Organization] [org] ON [el].[OrganizationId]=[org].[Id]
 			WHERE
 				[DateDelivered] IS NULL {{andWhere}} 

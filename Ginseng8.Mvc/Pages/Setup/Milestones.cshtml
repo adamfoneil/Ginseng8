@@ -8,29 +8,58 @@
 <h4>Milestones</h4>
 <p>Use Milestones to define deadlines or any kind of due date or event, such as sprint dates, or perhaps customer-imposed deadlines.</p>
 
+<p><strong>Tip</strong> Deleting a milestone will remove it from amy work items referencing it.</p>
+
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Milestone>(this, Xsrf);
+    var grid = new GridEditor<Milestone>(this, Xsrf, defaults: new { TeamId = Model.TeamId ?? 0 });
 }
+
+<form method="get" class="form-inline mb-3">
+    <label class="mr-2">Team:</label>
+    <select name="TeamId" class="form-control mr-2" asp-items="Model.TeamSelect" onchange="this.form.submit();">
+        <option>(all teams)</option>
+    </select>
+</form>
 
 <table class="table">
     <tr>
+        <th>Team</th>        
         <th>Milestone Name</th>
         <th>Date</th>
+        <th>Work Items</th>
         <th></th>
     </tr>
     @foreach (var item in Model.Milestones)
     {
         <tr id="@grid.RowId(item)">
+            <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>            
             <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
             <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
+            <td>
+                @if ((item.OpenWorkItems ?? 0) > 0)
+                {
+                    <a asp-page="/Dashboard/AllItems" asp-route-filterMilestoneId="@item.Id">@item.OpenWorkItems open item</a>
+                    if ((item.ClosedWorkItems ?? 0) > 0)
+                    {
+                        <span> | </span>
+                    }
+                }
+
+                @if ((item.ClosedWorkItems ?? 0) > 0)
+                {
+                    <a asp-page="/Dashboard/AllItems" asp-route-filterMilestoneId="@item.Id" asp-route-filterCloseReasonId="-1">@item.ClosedWorkItems closed items</a>
+                }
+            </td>
             <td>@grid.Controls()</td>
         </tr>
     }
     <tr id="@grid.NewRowId()">
+        <td>@grid.DropDownList(m => m.TeamId, Model.TeamSelect, new { @class = "form-control" })</td>        
         <td>@grid.TextBox(m => m.Name, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.Date, new { @class = "form-control datepicker", autocomplete = "off" })</td>
+        <td></td>
         <td>@grid.Controls()</td>
     </tr>
 </table>

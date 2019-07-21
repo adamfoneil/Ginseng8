@@ -9,14 +9,14 @@
 
 <form method="post" asp-page-handler="SelectOrg">
     <label>
-        Current Organization<sup style="color:darkred">*</sup>        
+        Current Organization<sup style="color:darkred">*</sup>
     </label>
     <select name="orgId" asp-items="Model.MyOrgSelect" class="form-control" onchange="this.form.submit();">
         <option value="" disabled="disabled">(select)</option>
     </select>
 </form>
 
-<hr/>
+<hr />
 
 @Html.ActionAlert(TempData)
 
@@ -57,6 +57,7 @@
                 </li>
                 }
             </ul>
+            <a asp-page="/Setup/AwayHours">Away Hours</a>
         </div>
 
         <div class="col-6">
@@ -65,7 +66,6 @@
                 <input type="number" asp-for="OrgUser.DailyWorkHours" class="form-control" />
             </div>
         </div>
-        
     </div>
 
     <div class="row">
@@ -88,7 +88,7 @@
         <div class="col-3">
             <label>Notify me from comment mentions:<sup style="color:darkred">*</sup></label>
             <div id="notifyOptions-@Model.CurrentOrgUser.Id" class="ml-2">
-                <partial name="Shared/_NotifyOptions" model="Model.OrgUser"/>
+                <partial name="Shared/_NotifyOptions" model="Model.OrgUser" />
             </div>
         </div>
 
@@ -106,10 +106,9 @@
     <span class="text-muted small">Changes take effect immediately without clicking <strong>Save</strong></span>
 </p>
 
+<hr />
 
-<hr/>
-
-<form method="post" asp-page-handler="SetTimeZone" class="form-inline">    
+<form method="post" asp-page-handler="SetTimeZone" class="form-inline">
     <label class="mr-2">Time Zone:</label>
     <select name="TimeZoneOffset" asp-items="Model.TimeZoneSelect" class="form-control mr-2">
         <option value="0">UTC time</option>
@@ -119,7 +118,7 @@
         @Html.CheckBoxFor(m => m.AdjustForDaylightSaving)
         Adjust for daylight saving
     </label>
-    
+
     <button class="btn btn-dark mr-2">Update</button>
 
     <label>Current time: @Model.CurrentUser.LocalTime.ToShortTimeString()</label>

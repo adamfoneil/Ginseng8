@@ -1,0 +1,20 @@
+﻿@model NavOptionsView
+
+@{
+    string returnUrl = UriHelper.GetDisplayUrl(Html.ViewContext.HttpContext.Request);
+}
+
+@if (Model.Options != null)
+{
+<div class="dropdown">
+    <button class="btn btn-light dropdown-toggle mr-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.Text</button>
+    <div class="dropdown-menu" style="z-index:10000">
+        @foreach (var item in Model.Options)
+        {
+            <a asp-action="@Model.UpdateAction" asp-controller="Update" asp-route-id="@item.Value" asp-route-returnUrl="@returnUrl" class="dropdown-item">@item.Text</a>
+        }
+        <div class="dropdown-divider"></div>
+        <a asp-action="@Model.UpdateAction" asp-controller="Update" asp-route-id="0" asp-route-returnUrl="@returnUrl" class="dropdown-item">All @Model.PluralText</a>
+    </div>
+</div>
+}

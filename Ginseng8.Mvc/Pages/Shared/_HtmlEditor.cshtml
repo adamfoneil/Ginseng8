@@ -10,7 +10,7 @@
         {
             foreach (var keyPair in Model.PostFields)
             {
-                <input type="hidden" name="@keyPair.Key" value="@keyPair.Value"/>
+                <input type="hidden" name="@keyPair.Key" value="@keyPair.Value" />
             }
         }
         <textarea name="HtmlBody" id="@(Model.IdPrefix)-content-@(Model.Id)" class="htmlEditor" data-id="@Model.UploadId" data-folder-name="@Model.UploadFolderName">@Model.Content</textarea>
@@ -21,11 +21,19 @@
 
 <div>
     <a class="editHtml btn btn-sm btn-light mr-2" href="#" data-id="@Model.Id" id="editHtmlLink-@Model.IdPrefix-@Model.Id" data-id-prefix="@Model.IdPrefix">Edit</a>
+    
+    @if (Model.CopyWorkItemLink)
+    {
+        <button class="btn btn-sm btn-light clipboard" data-clipboard-action="copy" data-clipboard-text="@Url.Action("View", "WorkItem", new { id = Model.OverrideId }, Html.ViewContext.HttpContext.Request.Scheme)" title="Copy work item URL">
+            <i class="far fa-copy"></i>
+        </button>
+    }
+
     @if (Model.AllowComments)
     {
         <a class="addComment btn btn-sm btn-light" href="#" data-id="@Model.Id" id="addCommentLink-@Model.IdPrefix-@Model.Id" data-target="addComment-@Model.Id" data-id-prefix="@Model.IdPrefix" title="Add comment">
             <i class="far fa-comment-plus"></i>
             Add Comment
         </a>
-    }    
+    }
 </div>

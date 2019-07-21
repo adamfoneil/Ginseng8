@@ -11,15 +11,15 @@
     <p>In Ginseng, you connect to or create an <strong>organization</strong>. An organization is the top-level container of all your data.
     You can belong to more than one organization. To change your organization, use <a asp-page="/Setup/OrgUser">Org Settings</a>.</p>
 
-    <p>Ginseng is built around <strong>projects</strong> and <strong>work items</strong>. The terms &quot;task&quot; and &quot;work item&quot; are 
+    <p>Ginseng is built around <a asp-page="/Help/Projects">projects</a> and <a asp-page="/Help/WorkItems">work items</a>. The terms &quot;task&quot; and &quot;work item&quot; are
         conversationally interchangeable, but Ginseng uses the term &quot;work item&quot;. A project is a group of work items organized
         around a feature or other unifying theme. A work item is a single task within a project that can be estimated and done by one person.
         An <strong>application</strong> is a product your team develops. Projects and work items apply to applications.
         See: <a asp-page="/Setup/Applications">Setup Applications</a></p>
 
     <p>To describe a due date or deadline, use <strong>milestones</strong>. By themselves, projects and work items have no due dates. When
-        you select a milestone for a work item, that becomes its due date. See: <a asp-page="/Setup/Milestones">Setup Milestones</a>, 
-        <a asp-page="/Dashboard/Milestones">Milestone Dashboard</a></p>
+        you select a milestone for a work item, that becomes its due date. See: <a asp-page="/Setup/Milestones">Setup Milestones</a>,
+        <a asp-page="/Dashboard/Calendar">Calendar</a></p>
 
     <p>Use <strong>labels</strong> on work items to describe them in a shorthand way, so people can tell at a glance what their scope or impact might be.
         For example, you will typically have a &quot;bug&quot; label to describe defects, and a &quot;feature&quot; label to describe enhancements.
@@ -32,40 +32,16 @@
     <p>A work item <strong>Card</strong> is the UI of a single work item that expands and collapses when its heading is clicked on.</p>
 </div>
 
-<h4>Workflow</h4>
-<div class="ml-3">
-    <p>Create projects and work items as needed. Create a work item for a single task that one person can roughly estimate and do. Create a project
-    when the work is open-ended, has many distinct tasks, or requires discussion and grooming before starting. 
-    See: <a asp-page="/Help/WorkItems">Work Items</a>, Creating Projects</p>
-
-    <p>Optionally, and as needed, create a schedule of milestones in the future, and assign work items to those milestones. Milestones may represent
-    sprint dates or some other kind of deadline. Work items without a milestone may still be prioritized, but only work items 
-    in a milestone show the priority number in the Card.</p>
-
-    <p>Developers assign themselves work items using the <strong>I'll take this</strong> link on the upper right side of a Card. For the most
-    part, you don't assign work to people; they must pull it into their queue. For urgent work such as bug fixes, you'd typically create
-    a work item to document the bug as much as possible, then reach out to appropriate people and ask for the task to be escalated 
-    or handled as appropriate.</p>
-
-    <p>Use the Dashboard Pages to monitor ongoing work, accept hand-offs, manage priorities, and enter comments.
-    See <a asp-page="DashboardPages">Dashboard Pages</a></p>
-
-    <p>As work is completed, use the Hand Off feature to move a work item to the next activity or to a previous activity as appropriate.
-    See: Hand-offs</p>
-
-    <p>At any time, you can close a work item by expanding its Card and selecting a close reason: Done, Obsolete, or Duplicate. There's
-    no particular rule on who can do this, so use judgement and consensus as to what works best for your team. If you close a work item
-    as Obsolete or Dupliate, it's a good idea to enter a comment explaining. Typically, a work item would be closed by the person doing the
-    last activity in the workflow.</p>
-
-</div>
-
 <h4>Navigating</h4>
 <div class="ml-3">
-    <p>The home page link in the upper left shows the <strong>organization</strong> you're connected to, and takes 
-    you to the <strong>My Items</strong> page, one of several <strong>dashboard</strong> pages. These pages have 
+    <p>The home page link in the upper left shows the <strong>organization</strong> you're connected to, and takes
+    you to the <a asp-page="/Dashboard/Index">My Items</a> page, one of several <a asp-page="/Help/Dashboard">dashboard</a> pages. These pages have
     a menu across the top and are where you'll spend most of your time in Ginseng. See: <a asp-page="DashboardPages">Dashboard Pages</a></p>
 
     <p>The dropdown the right of the home page link shows the current application you're focused on. Selecting an application
     here filters the presentation of all pages to that application.</p>
+
+    <p>In this example, the current organization is <em>aosoftware</em> and the current app is <em>Ginseng</em>:</p>
+
+    <p><img src="~/img/nav-bar.png" /></p>
 </div>

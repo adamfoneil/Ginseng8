@@ -7,19 +7,25 @@
         <div class="dropdown">
             <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 @Model.HandOffButtonText()
-                <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
+                <partial name="Dashboard/Items/_Priority" model="Model.WorkItem" />
             </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                 @foreach (var act in Model.GetActivityOptions())
                 {
-                    <partial name="Dashboard/Items/_Activities" model="act"/>
-                }
+                    <partial name="Dashboard/Items/_Activities" model="act" />
+                }                
                 @if (Model.WorkItem.IsPaused())
                 {
+                    <div class="dropdown-divider"></div>
                     <a href="#" class="dropdown-item no-propagation resume-work-item" data-number="@Model.WorkItem.Number">
                         I'll take this
                         <img src="~/img/loading.gif" style="display:none" />
                     </a>
+                    <div class="success" style="display:none">
+                        <i class="fas fa-check-circle ml-3" style="color:green"></i>
+                        <span class="small pr-2">Updated successfully</span>
+                    </div>
+                    <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>                    
                     <a href="#" class="dropdown-item no-propagation cancel-activity" data-number="@Model.WorkItem.Number">
                         Work canceled
                         <img src="~/img/loading.gif" style="display:none" />
@@ -28,11 +34,23 @@
                         <i class="fas fa-check-circle ml-3" style="color:green"></i>
                         <span class="small pr-2">Updated successfully</span>
                     </div>
-                    <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
-                }
-                <div class="dropdown-divider"></div>
+                    <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>                    
+                }                
                 @if (Model.WorkItem.AssignedUserId.HasValue)
-                {                
+                {
+                    <div class="dropdown-divider"></div>
+                    @foreach (var reason in Model.Dropdowns.CloseReasons)
+                    {
+                        <a href="#" class="dropdown-item no-propagation close-item" data-number="@Model.WorkItem.Number" data-reason-id="@reason.Value">
+                            Closed: @reason.Text
+                            <img src="~/img/loading.gif" style="display:none" />
+                        </a>
+                        <div class="success" style="display:none">
+                            <i class="fas fa-check-circle ml-3" style="color:green"></i>
+                            <span class="small pr-2">Updated successfully</span>
+                        </div>
+                        <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
+                    }
                     <a href="#" class="dropdown-item no-propagation unassign-work-item" data-number="@Model.WorkItem.Number">
                         Remove Me
                         <img src="~/img/loading.gif" style="display:none" />
@@ -86,7 +104,7 @@
                         </div>
                         <i class="error fas fa-exclamation-triangle" style="color:red;display:none"></i>
                     }
-                }                                
+                }
             </div>
         </div>
     }
@@ -94,7 +112,7 @@
     {
         <span>
             @Model.WorkItem.ActivityStatus()
-            <partial name="Dashboard/Items/_Priority" model="Model.WorkItem"/>
+            <partial name="Dashboard/Items/_Priority" model="Model.WorkItem" />
         </span>
     }
 }
@@ -103,4 +121,3 @@ else
     <i class="@WorkItem.IconClosed" style="color:green"></i>
     <span class="ml-2">Closed: @Model.WorkItem.CloseReasonName</span>
 }
-

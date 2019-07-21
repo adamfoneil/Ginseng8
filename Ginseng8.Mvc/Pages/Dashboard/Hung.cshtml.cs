@@ -2,36 +2,50 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace Ginseng.Mvc.Pages.Work
 {
-	[Authorize]
-	public class IndexModel : DashboardPageModel
-	{
-		public IndexModel(IConfiguration config) : base(config)
-		{
-			ShowLabelFilter = false;
-		}
+    [Authorize]
+    public class IndexModel : DashboardPageModel
+    {
+        public IndexModel(IConfiguration config) : base(config)
+        {
+            ShowLabelFilter = false;
+        }
 
-		public IEnumerable<OpenWorkItemsResult> ImpededItems
-		{			
-			get { return WorkItems.Where(wi => wi.HasImpediment); }
-		}
+        public IEnumerable<OpenWorkItemsResult> HungWorkItems { get; private set; }
 
-		public IEnumerable<OpenWorkItemsResult> PausedItems
-		{
-			get { return WorkItems.Where(wi => wi.IsPaused()); }			
-		}
+        public IEnumerable<OpenWorkItemsResult> ImpededItems
+        {
+            get { return HungWorkItems.Where(wi => wi.HasImpediment); }
+        }
 
-		public IEnumerable<OpenWorkItemsResult> StoppedItems
-		{
-			get { return WorkItems.Where(wi => wi.IsStopped()); }			
-		}
+        public IEnumerable<OpenWorkItemsResult> PausedItems
+        {
+            get { return HungWorkItems.Where(wi => wi.IsPaused()); }
+        }
 
-		protected override OpenWorkItems GetQuery()
-		{
-			return new OpenWorkItems(QueryTraces) { OrgId = OrgId, AppId = CurrentOrgUser.CurrentAppId };
-		}
-	}
+        public IEnumerable<OpenWorkItemsResult> StoppedItems
+        {
+            get { return HungWorkItems.Where(wi => wi.IsStopped()); }
+        }
+
+        protected override void OnGetInternal(SqlConnection connection)
+        {
+            base.OnGetInternal(connection);
+            HungWorkItems = WorkItems.Where(wi => wi.IsHung).ToArray();
+        }
+
+        protected override OpenWorkItems GetQuery()
+        {
+            return new OpenWorkItems(QueryTraces)
+            {
+                OrgId = OrgId,
+                AppId = CurrentOrgUser.CurrentAppId,
+                TeamId = CurrentOrgUser.CurrentTeamId
+            };
+        }
+    }
 }

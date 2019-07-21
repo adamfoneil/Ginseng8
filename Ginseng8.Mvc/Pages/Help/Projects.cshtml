@@ -1,0 +1,62 @@
+﻿@page
+@{
+    ViewData["Title"] = "Projects";
+}
+
+<h4>Projects</h4>
+<div class="ml-3">
+    <p>Use projects to group related <a asp-page="/Help/WorkItems">work items</a>, for example to break a large task
+    into manageable work items, or to track work over time on specific features in your applications.</p>
+
+    <p>A work item may belong to one project. When looking at a list of work items on any of the Dashboard pages, the project
+    is shown in bold before the work item title.</p>
+
+    <p><img src="~/img/sample-projects.png" /></p>
+
+    <p>In this example, the projects are <em>Dashboard/AllItems</em>, <em>Search</em>, and <em>Dashboard/Team</em>. These
+    represent feature areas in an application. The superscript number you see after each project name is the <em>project priority</em>.
+    More on this below.</p>
+
+    <p>When you expand a work item card, the project is the second dropdown from the left:</p>
+
+    <p><img src="~/img/project-dropdown.png" /></p>
+
+    <p>Access projects from the <a asp-page="/Dashboard/Projects">Projects dashboard</a>. This page has three views: Cards, Crosstab, and Detail.</p>
+
+    <h5>Card view</h5>
+    <p>Card view is the default on the Projects page, and serves as a high-level roadmap view of work. Here's an example from Ginseng's own Project page.
+    There are few things to note:</p>
+    <ul>
+        <li>Projects are the big teal-colored buttons. The superscript number you see on each button to the right of the project name
+        is the project's priority.</li>
+        <li>Ginseng borrows an aspect of Kanban philosophy using <a asp-page="/Setup/PriorityTiers">Priority Tiers</a>. In this example,
+        you can see <em>High</em> and <em>Medium</em> tiers. Priority tiers let you focus project
+        priorities by limiting the maximum work in process. In this example, I've set a maximum of 3 high priority projects, along with a maximum
+        of 5 medium priority projects. Limiting high priority projects helps prevent spreading my efforts too thinly.</li>
+        <li>Underneath each project button, the number of open work items is shown, the estimate hours (based on <a asp-page="/Setup/Sizes">Sizes</a>), and the percent complete.
+        The percent complete is based on the number of open vs closed work items, not a percentage of effort.</li>
+        <li>Beneath that is a summary of any <a href="/Help/WorkItems#modifiers">modifiers</a> that apply to the project: impediments and missing estimates, for example.
+        Lastly, there's a progress meter that reflects percent complete.</li>
+    </ul>
+    <p>Note that you can drag and drop project buttons to set their priority. This doesn't affect the work items wihtin them, rather only the projects as a whole.</p>
+
+    <p><img src="~/img/project-cards.png" /></p>
+    <p>In this view, you can hover the mouse over a project to see the work item detail within it.</p>
+    <p><img src="~/img/project-items.png" /></p>
+
+    <h5>Crosstab view</h5>
+    <p>Crosstab view shows projects vertically and upcoming milestones horizontally. You can drag items between milestones.</p>
+    <p><img src="~/img/project-crosstab.png" /></p>
+
+    <h5>Detail view</h5>
+    <p>From Card or Crosstab view, click on a project button to reach Detail view. This shows the specific work items in the project, and you
+    can interact with this list exactly as on the other Dashboard pages.</p>
+    <p>Note that you cannot drag and drop priorities from here. In Ginseng, work item priority (aka ranking) is related to a user's order of work.
+    If projects had their own work item ordering in addition, it would contradict the ranking set at the user level.</p>
+
+    <p>Here's a sample view of project detail view:</p>
+
+    <p><img src="~/img/sample-project-detail.png" /></p>
+
+    <p>You can add and work with items on a project exactly as you would elsewhere, minus the priority drag-drop capability.</p>
+</div>

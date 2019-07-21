@@ -6,9 +6,12 @@ namespace Ginseng.Mvc.Queries
 {
 	public class Projects : Query<Project>
 	{
-		public Projects() : base("SELECT * FROM [dbo].[Project] WHERE [IsActive]=@isActive {andWhere} ORDER BY [Priority], [Name]")
+		public Projects() : base("SELECT [p].* FROM [dbo].[Project] [p] WHERE [IsActive]=@isActive {andWhere} ORDER BY [Name]")
 		{
 		}
+
+        [Where("[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 
 		[Where("[ApplicationId]=@appId")]
 		public int? AppId { get; set; }
@@ -20,5 +23,8 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[DataModelId]=@dataModelId")]
 		public int? DataModelId { get; set; }
+
+        [Case(true, "EXISTS(SELECT 1 FROM [dbo].[WorkItem] [wi] INNER JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id] WHERE [ms].[Date]>getdate() AND [wi].[ApplicationId]=@appId AND [wi].[ProjectId]=[p].[Id])")]
+        public bool? HasMilestones { get; set; }
 	}
 }

@@ -4,12 +4,12 @@
     @foreach (var grp in Model)
     {
         var label = grp.First();
-        <li class="list-inline-item">            
+        <li class="list-inline-item">
             <a asp-route-labelId="@grp.Key">
                 <span class="badge" style="background-color:@label.BackColor;color:@label.ForeColor">
                 @label.Name - @grp.Count()
-                </span>            
-            </a>            
+                </span>
+            </a>
         </li>
     }
 </ul>

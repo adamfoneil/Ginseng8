@@ -16,7 +16,13 @@ namespace Ginseng.Mvc.Queries
 		public int OrgId { get; set; }
 		public bool IsActive { get; set; }
 
+        [Where("[AllowNewItems]=@allowNewItems")]
+        public bool? AllowNewItems { get; set; }
+
 		[Where("[Id]=@id")]
 		public int? Id { get; set; }
+
+        [Where("[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
 	}
 }

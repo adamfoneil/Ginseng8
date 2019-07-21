@@ -3,44 +3,9 @@
 <div class="pb-3">
     <div class="d-flex justify-content-between">
         <form class="form-inline">
-            <input type="hidden" name="Number" value="@Model.WorkItem.Number" />
-                    
-            <select name="ApplicationId" asp-items="@Model.Dropdowns.AppSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate fillProjects"></select>
-                    
-            <select name="ProjectId" asp-items="@Model.Dropdowns.ProjectSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" id="ProjectId-@Model.WorkItem.Number">
-                <option value="">- project -</option>
-            </select>
+            <partial name="/Pages/Dashboard/Items/_ItemFields.cshtml" model="Model"/>
 
-            @if (Model.WorkItem.ProjectId != 0)
-            {
-                <a asp-page="/Dashboard/Projects" asp-route-id="@Model.WorkItem.ProjectId" title="Goto project" class="mr-2">
-                    <i class="fas fa-chevron-double-right small"></i>
-                </a>
-
-                @if (Model.WorkItem.DataModelId.HasValue)
-                {
-                    <a asp-page="/Data/Index" asp-route-modelId="@Model.WorkItem.DataModelId">
-                        <i class="far fa-database small mr-2"></i>
-                    </a>
-                }
-            }
-
-            <select name="MilestoneId" asp-items="@Model.Dropdowns.MilestoneSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-                <option value="">- milestone -</option>
-            </select>
-                 
-            @if (Model.WorkItem.MilestoneId != 0)
-            {
-                <a asp-page="/Dashboard/Milestones" asp-route-id="@Model.WorkItem.MilestoneId" class="mr-2" title="Goto milestone">
-                    <i class="fas fa-chevron-double-right small"></i>
-                </a>
-            }
-
-            <select name="SizeId" asp-items="@Model.Dropdowns.SizeSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
-                <option value="">- size -</option>
-            </select>
-                    
-            <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate">
+            <select name="CloseReasonId" asp-items="@Model.Dropdowns.CloseReasonSelect(Model.WorkItem)" class="form-control-sm mr-2 itemUpdate" title="Close reason">
                 <option value="">- open -</option>
             </select>
 
@@ -52,15 +17,14 @@
         <div class="d-flex flex-row-reverse align-items-center">
             @if (Model.ShowDetailsButton)
             {
-                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number">
+                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number" title="Created by @Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated">
                     <i class="far fa-info-circle"></i>
                     Details
                 </a>
             }
-            <span class="text-muted small mr-2">@Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated</span>
         </div>
     </div>
-    
+
     @if (Model.WorkItem.FDTicketId != 0)
     {
         <div class="alert alert-info small p-2 mt-3">
@@ -91,7 +55,7 @@
         </div>
     }
 
-    @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Id, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true, UploadFolderName = "WorkItems", OverrideId = Model.WorkItem.Number })
+    @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Id, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true, UploadFolderName = "WorkItems", OverrideId = Model.WorkItem.Number, CopyWorkItemLink = true })
     <div id="comments-@Model.WorkItem.Id-WorkItem-output">
     @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, ObjectId = Model.WorkItem.Id, ObjectType = ObjectType.WorkItem })
     </div>

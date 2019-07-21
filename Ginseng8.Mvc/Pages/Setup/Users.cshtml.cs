@@ -4,62 +4,68 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Setup
 {
-	public class UsersModel : AppPageModel
-	{
-		public UsersModel(IConfiguration config) : base(config)
-		{
-		}
+    public class UsersModel : AppPageModel
+    {
+        public UsersModel(IConfiguration config) : base(config)
+        {
+        }
 
-		public IEnumerable<OrganizationUser> Users { get; set; }
+        public IEnumerable<OrganizationUser> Users { get; set; }
 
-		public async Task OnGetAsync()
-		{
-			using (var cn = Data.GetConnection())
-			{
-				Users = await new MyOrgUsers() { OrgId = OrgId, ExcludeUserId = UserId, ExcludeOwner = true }.ExecuteAsync(cn);
-			}
-		}
+        public ILookup<int, string> WorkDays { get; set; }
 
-		public async Task<IActionResult> OnPostSave(OrganizationUser record)
-		{
-			var orgUser = await Data.FindAsync<OrganizationUser>(record.Id);
+        public async Task OnGetAsync()
+        {
+            using (var cn = Data.GetConnection())
+            {
+                Users = await new MyOrgUsers(QueryTraces) { OrgId = OrgId, ExcludeUserId = UserId, ExcludeOwner = true, HoursOrgId = OrgId }.ExecuteAsync(cn);
 
-			if (CurrentOrg.OwnerUserId == orgUser.UserId && CurrentOrg.Id == orgUser.OrganizationId)
-			{
-				throw new Exception("Can't modify the organization owner account.");
-			}
+                var workDays = await new UserWorkDays() { OrgId = OrgId }.ExecuteAsync(cn);
+                WorkDays = workDays.ToLookup(row => row.UserId, row => row.Abbreviation);
+            }
+        }
 
-			orgUser.IsEnabled = record.IsEnabled;
+        public async Task<IActionResult> OnPostSave(OrganizationUser record)
+        {
+            var orgUser = await Data.FindAsync<OrganizationUser>(record.Id);
 
-			if (record.IsRequest) orgUser.IsRequest = false;			
+            if (CurrentOrg.OwnerUserId == orgUser.UserId && CurrentOrg.Id == orgUser.OrganizationId)
+            {
+                throw new Exception("Can't modify the organization owner account.");
+            }
 
-			if (await Data.TryUpdateAsync(orgUser, r => r.IsEnabled, r => r.IsRequest))
-			{
-				if (record.IsEnabled && !orgUser.UserProfile.OrganizationId.HasValue)
-				{
-					orgUser.UserProfile.OrganizationId = OrgId;
-					await Data.TryUpdateAsync(orgUser.UserProfile, r => r.OrganizationId);
-				}
-			}
+            orgUser.IsEnabled = record.IsEnabled;
 
-			return RedirectToPage("/Setup/Users");
-		}
+            if (record.IsRequest) orgUser.IsRequest = false;
 
-		public async Task<IActionResult> OnPostDelete(int id)
-		{
-			var orgUser = await Data.FindAsync<OrganizationUser>(id);
+            if (await Data.TryUpdateAsync(orgUser, r => r.IsEnabled, r => r.IsRequest))
+            {
+                if (record.IsEnabled && !orgUser.UserProfile.OrganizationId.HasValue)
+                {
+                    orgUser.UserProfile.OrganizationId = OrgId;
+                    await Data.TryUpdateAsync(orgUser.UserProfile, r => r.OrganizationId);
+                }
+            }
 
-			if (CurrentOrg.OwnerUserId == orgUser.UserId && CurrentOrg.Id == orgUser.OrganizationId)
-			{
-				throw new Exception("Can't modify the organization owner account.");
-			}
+            return RedirectToPage("/Setup/Users");
+        }
 
-			await Data.TryDeleteAsync<OrganizationUser>(id);
-			return RedirectToPage("/Setup/Users");
-		}
-	}
+        public async Task<IActionResult> OnPostDelete(int id)
+        {
+            var orgUser = await Data.FindAsync<OrganizationUser>(id);
+
+            if (CurrentOrg.OwnerUserId == orgUser.UserId && CurrentOrg.Id == orgUser.OrganizationId)
+            {
+                throw new Exception("Can't modify the organization owner account.");
+            }
+
+            await Data.TryDeleteAsync<OrganizationUser>(id);
+            return RedirectToPage("/Setup/Users");
+        }
+    }
 }

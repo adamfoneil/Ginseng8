@@ -1,89 +1,100 @@
 ﻿@page
-@model Ginseng.Mvc.Pages.Dashboard.MyItemsModel
+@model Ginseng.Mvc.Pages.Dashboard.IndexModel
 @{
-    ViewData["Title"] = "My Items";
+    ViewData["Title"] = "Dashboard";
 }
 
-<a asp-page="/Setup/AppActivities" class="btn btn-light btn-sm mb-3 mr-3">My Activities: @Model.MyHandOffActivityList()</a>
-
-@if (Model.MyHandOffItems.Any())
+@if (!Model.AppId.HasValue)
 {
-    <button class="btn btn-sm btn-light mb-3" data-toggle="collapse" data-target="#handOffItems" aria-expanded="false" aria-controls="handOffItems">@Model.MyHandOffItems.Count() Paused Items</button>
-    <div class="collapse" id="handOffItems">
-        @foreach (var appGrp in Model.MyHandOffItems.GroupBy(row => row.ApplicationId))
+    foreach (var t in Model.Teams)
+    {        
+        if (t.UseApplications)
         {
-            <h4>@appGrp.First().ApplicationName</h4>
-            @foreach (var milestoneGrp in appGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
+            <h4>@t.Name <span class="text-muted small">Applications</span></h4>
+            <partial name="Items/_AppCards" model="Model.AppInfo[t.Id]" />
+            @if (Model.ProjectsWithoutApps[t.Id].Any())
             {
-                var milestoneItem = milestoneGrp.First();
-                <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-                <div id="handOff-app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
-                    <div class="ml-3" data-user-id="@Model.UserId">
-                        @foreach (var item in milestoneGrp)
-                        {
-                            <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.HandOffLabels[item.Id], UserId = Model.UserId, Comments = Model.HandOffComments[item.Id], AccordionElement = "handOffItems", AssignToUsers = Model.AssignToUsers })" />
-                        }
-                    </div>
-                </div>
+                <hr/>
+                <h5>@t.Name Global Projects <span class="small text-muted">Projects not specific to an application</span></h5>                
+                <partial name="Items/_ProjectCardsInner" model="Model.ProjectsWithoutApps[t.Id]" />
             }
         }
-    </div>
-}
-
-<div id="accordion">
-@foreach (var milestoneGrp in Model.WorkItems.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
-{
-    var milestoneItem = milestoneGrp.First();
-    <partial name="Items/_MilestoneHeader" model="milestoneItem" />
-   
-    <div class="ml-3">
-        <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp, (wd) => wd.UserId == Model.UserId)"/>
-    </div>
-
-    @foreach (var appGrp in milestoneGrp.GroupBy(row => row.ApplicationId))
-    {
-        <h5 class="ml-3">@appGrp.First().ApplicationName</h5>
-        
-        <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">            
-            <div class="ml-3 sortable" data-user-id="@Model.UserId">
-                @foreach (var item in appGrp)
-                {
-                    <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers }" />
-                }
-
-                @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
-                {
-                    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-                    {
-                        { "applicationId", appGrp.Key },
-                        { "milestoneId", milestoneGrp.Key },
-                        { Model.UserIdColumnName, Model.UserId },
-                        { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
-                    }))
-                }
-                else
-                {
-                    <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
-                }
-            </div>                        
-        </div>
+        else
+        {
+            <h4>@t.Name <span class="text-muted small">Projects</span></h4>
+            <partial name="Items/_ProjectCardsInner" model="Model.ProjectInfo[t.Id]" />
+            <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = t.Id })" />
+        }
+        <hr />
     }
 }
-</div>
-
-@if (!Model.WorkItems.Any() && Html.CurrentAppId() != 0)
-{
-    @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
+else
+{    
+    <h4>
+        <a asp-page="/Dashboard/Index" class="nounderline" title="Back to Organization dashboard">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+        @Model.Application.Team.Name / @Model.Application.Name <span class="small text-muted">Projects</span>
+    </h4>
+    <partial name="Items/_ProjectCardsInner" model="Model.AppProjects" />
+    @if (Model.Application.TeamId.HasValue)
     {
-        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-        {
-            { "applicationId", Html.CurrentAppId() },        
-            { Model.UserIdColumnName, Model.UserId },
-            { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
-        }))
+        <partial name="Items/_ProjectCreate" model="@(new InsertProject() { TeamId = Model.Application.TeamId.Value, ApplicationId = Model.AppId })" />
+    }
+
+    <h5>Work Items without a Project</h5>
+    <div class="ml-3">
+        <form method="get" class="form-inline mb-3">
+            @Request.ToHiddenFields("FilterUnassigned")
+            <label class="mr-2">Show:</label>
+            <select name="FilterUnassigned" asp-items="@SelectListHelper.YesNo("Unassigned Only (may be prioritized)", "All", Model.FilterUnassigned ?? false)" class="form-control" onchange="this.form.submit()"></select>                
+        </form>
+    </div>
+
+    @if (Model.WorkItems.Any())
+    {        
+        <div class="ml-3">
+            <partial name="Items/_LabelFilter" model="@Model.LabelFilter"/>
+            @if (Model.LabelId.HasValue)
+            {
+                <div class="text-center">
+                    <a asp-route-labelId="" class="btn btn-sm btn-light mb-2">show all</a>
+                </div>
+            }
+
+            <partial name="Items/_HungItemInfo" model="@Model.HungItems"/>
+            @if (Model.FilterHungReason.HasValue)
+            {
+                <div class="text-center">
+                    <a asp-route-filterHungReason="" class="btn btn-sm btn-light mb-2">show all</a>
+                </div>
+            }
+        </div>
+
+        string sortableClass = (Model.FilterUnassigned ?? false) ? "sortable" : string.Empty;
+
+        <div id="accordion" class="ml-3 @sortableClass">
+            @foreach (var item in Model.WorkItems)
+            {
+                <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, CssClass = "js-dashboard-work-item-draggable" })" />
+            }
+            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+            {
+                { "teamId", Model.Application.TeamId ?? 0 },
+                { "applicationId", Model.AppId.Value }
+            }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.WorkItems.First().UseApplications })
+        </div>
+        <p class="text-center">@Model.WorkItems.Count() work items shown</p>
     }
     else
     {
-        <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+        <div class="ml-3">
+            <p>All work items are assigned to projects, or there are no work items.</p>
+        </div>
     }
+    <hr />
+}
+
+@section Scripts {
+    <script src="~/js/Projects.js"></script>
 }

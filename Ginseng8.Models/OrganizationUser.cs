@@ -11,142 +11,194 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	public class OrganizationUser : BaseTable, IFindRelated<int>, INotifyOptions, IOrgSpecific
-	{
-		[References(typeof(Organization))]
-		[PrimaryKey]
-		public int OrganizationId { get; set; }
+    public class OrganizationUser : BaseTable, IFindRelated<int>, INotifyOptions, IOrgSpecific
+    {
+        [References(typeof(Organization))]
+        [PrimaryKey]
+        public int OrganizationId { get; set; }
 
-		[References(typeof(UserProfile))]
-		[PrimaryKey]
-		public int UserId { get; set; }
+        [References(typeof(UserProfile))]
+        [PrimaryKey]
+        public int UserId { get; set; }
 
-		[MaxLength(50)]
-		public string DisplayName { get; set; }
+        [MaxLength(50)]
+        public string DisplayName { get; set; }
 
-		/// <summary>
-		/// Responsibility.Flag sum
-		/// </summary>
-		[DefaultExpression("0")]
-		public int Responsibilities { get; set; } = 3;
+        /// <summary>
+        /// Responsibility.Flag sum
+        /// </summary>
+        [DefaultExpression("0")]
+        public int Responsibilities { get; set; } = 3;
 
-		/// <summary>
-		/// WorkDay.Flag sum
-		/// </summary>
-		public int WorkDays { get; set; }
+        /// <summary>
+        /// WorkDay.Flag sum
+        /// </summary>
+        public int WorkDays { get; set; }
 
-		/// <summary>
-		/// Average daily productive work hours
-		/// </summary>
-		[DecimalPrecision(4, 2)]
-		public decimal DailyWorkHours { get; set; }
+        /// <summary>
+        /// Average daily productive work hours
+        /// </summary>
+        [DecimalPrecision(4, 2)]
+        public decimal DailyWorkHours { get; set; }
 
-		/// <summary>
-		/// Max number of work items considered in progress
-		/// </summary>
-		public int? MaxWorkInProgress { get; set; }
+        /// <summary>
+        /// Max number of work items considered in progress
+        /// </summary>
+        public int? MaxWorkInProgress { get; set; }
 
-		/// <summary>
-		/// Application to filter for in Dashboard views
-		/// </summary>
-		[References(typeof(Application))]
-		public int? CurrentAppId { get; set; }
+        /// <summary>
+        /// Application to filter for in Dashboard views
+        /// </summary>
+        [References(typeof(Application))]
+        public int? CurrentAppId { get; set; }
 
-		[References(typeof(Activity))]
-		public int? DefaultActivityId { get; set; }
+        [References(typeof(Team))]
+        public int? CurrentTeamId { get; set; }
 
-		[Column(TypeName = "money")]
-		public decimal? InvoiceRate { get; set; }
+        [References(typeof(Activity))]
+        public int? DefaultActivityId { get; set; }
 
-		/// <summary>
-		/// This is a join request (or invite)
-		/// </summary>
-		public bool IsRequest { get; set; }
+        [Column(TypeName = "money")]
+        public decimal? InvoiceRate { get; set; }
 
-		/// <summary>
-		/// User is allowed into the org (join request accepted)
-		/// </summary>
-		public bool IsEnabled { get; set; }
+        /// <summary>
+        /// This is a join request (or invite)
+        /// </summary>
+        public bool IsRequest { get; set; }
 
-		public Application CurrentApp { get; set; }
+        /// <summary>
+        /// User is allowed into the org (join request accepted)
+        /// </summary>
+        public bool IsEnabled { get; set; }
 
-		public UserProfile UserProfile { get; set; }
-		public Organization Organization { get; set; }
+        public Application CurrentApp { get; set; }
+        public Team CurrentTeam { get; set; }
 
-		[NotMapped]
-		public string OrgName { get; set; }
+        public UserProfile UserProfile { get; set; }
+        public Organization Organization { get; set; }
 
-		[NotMapped]
-		public string UserName { get; set; }
+        public int? EffectiveAppId
+        {
+            get { return (CurrentTeam?.UseApplications ?? true) ? CurrentAppId : null; }
+        }
 
-		[NotMapped]
-		public string Email { get; set; }
+        [NotMapped]
+        public decimal WeeklyHours { get; set; }
 
-		[NotMapped]
-		public string PhoneNumber { get; set; }
+        [NotMapped]
+        public string OrgName { get; set; }
 
-		[DefaultExpression("0")]
-		public bool SendEmail { get; set; }
+        [NotMapped]
+        public string UserName { get; set; }
 
-		[DefaultExpression("0")]
-		public bool SendText { get; set; }
+        [NotMapped]
+        public string Email { get; set; }
 
-		[DefaultExpression("0")]
-		public bool InApp { get; set; }
+        [NotMapped]
+        public string PhoneNumber { get; set; }
 
-		[NotMapped]
-		public string TableName => nameof(OrganizationUser);
+        [DefaultExpression("0")]
+        public bool SendEmail { get; set; }
 
-		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
-		{
-			if (CurrentAppId.HasValue)
-			{
-				CurrentApp = commandProvider.Find<Application>(connection, CurrentAppId.Value);
-			}
+        [DefaultExpression("0")]
+        public bool SendText { get; set; }
 
-			UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
-			Organization = commandProvider.Find<Organization>(connection, OrganizationId);
-		}
+        [DefaultExpression("0")]
+        public bool InApp { get; set; }
 
-		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
-		{
-			if (CurrentAppId.HasValue)
-			{
-				CurrentApp = await commandProvider.FindAsync<Application>(connection, CurrentAppId.Value);
-			}
+        [NotMapped]
+        public string TableName => nameof(OrganizationUser);
 
-			UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
-			Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
-		}
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            if (CurrentAppId.HasValue)
+            {
+                CurrentApp = commandProvider.Find<Application>(connection, CurrentAppId.Value);
+            }
 
-		internal static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)
-		{
-			var orgUser = await connection.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });
-			return (orgUser?.DisplayName != null) ? orgUser.DisplayName : user.UserName;
-		}
+            if (CurrentTeamId.HasValue)
+            {
+                CurrentTeam = commandProvider.Find<Team>(connection, CurrentTeamId.Value);
+            }
 
-		public override bool Validate(IDbConnection connection, out string message)
-		{
-			message = null;
-			if ((MaxWorkInProgress ?? 1) < 1)
-			{
-				message = "Max WIP cannot be less than one.";
-				return false;
-			}
+            UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
+            Email = UserProfile.Email;
+            Organization = commandProvider.Find<Organization>(connection, OrganizationId);
+        }
 
-			return true;
-		}
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            if (CurrentAppId.HasValue)
+            {
+                CurrentApp = await commandProvider.FindAsync<Application>(connection, CurrentAppId.Value);
+            }
 
-		public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
-		{
-			// if this is an accepted join request, then it's no longer a request
-			if (IsEnabled && IsRequest) IsRequest = false;
-			base.BeforeSave(connection, action, user);
-		}
+            if (CurrentTeamId.HasValue)
+            {
+                CurrentTeam = await commandProvider.FindAsync<Team>(connection, CurrentTeamId.Value);
+            }
+
+            UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
+            Email = UserProfile.Email;
+            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
+        }
+
+        public string GetDisplayName()
+        {
+            return DisplayName ?? Email;
+        }
+
+        public static async Task<string> GetUserDisplayNameAsync(IDbConnection connection, int orgId, int userId, IUser user)
+        {
+            var orgUser = await connection.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, UserId = userId });
+            return (orgUser?.DisplayName != null) ? orgUser.DisplayName : user.UserName;
+        }
+
+        public static async Task<string> GetUserDisplayNameAsync(IDbConnection cn, int orgId, string userName)
+        {
+            var user = await cn.FindWhereAsync<UserProfile>(new { userName });
+            var orgUser = await cn.FindWhereAsync<OrganizationUser>(new { OrganizationId = orgId, user.UserId });
+            return (orgUser?.DisplayName != null) ? orgUser.DisplayName : userName;
+        }
+
+        public override bool Validate(IDbConnection connection, out string message)
+        {
+            message = null;
+            if ((MaxWorkInProgress ?? 1) < 1)
+            {
+                message = "Max WIP cannot be less than one.";
+                return false;
+            }
+
+            return true;
+        }
+
+        public override void BeforeSave(IDbConnection connection, SaveAction action, IUser user)
+        {
+            // if this is an accepted join request, then it's no longer a request
+            if (IsEnabled && IsRequest) IsRequest = false;
+            base.BeforeSave(connection, action, user);
+        }
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
             return await Task.FromResult(OrganizationId);
+        }
+
+        public override bool Equals(object obj)
+        {
+            OrganizationUser test = obj as OrganizationUser;
+            return (test != null) ? test.OrganizationId == OrganizationId && test.UserId == UserId : false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (OrganizationId + UserId).GetHashCode();
+        }
+
+        public bool AllowNotification()
+        {
+            return IsEnabled && NotifyOptionsImplementation.AllowNotification(this);
         }
     }
 }

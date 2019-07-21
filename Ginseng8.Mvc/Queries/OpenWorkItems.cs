@@ -1,6 +1,8 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Enums.Freshdesk;
+using Ginseng.Models.Interfaces;
 using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Services;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Classes;
@@ -18,10 +20,19 @@ namespace Ginseng.Mvc.Queries
 	{
 		WorkOnNext = 1,
 		Backlog = 2,
-		Assigned = 3
+		Assigned = 3,
+        Closed = 4
 	}
 
-	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
+    public enum HungReason
+    {
+        None = 0,
+        HasImpediment = 1, // technical issue
+        IsPaused = 2, // has activity, but unassigned
+        IsStopped = 3 // has milestone, but unassigned
+    }
+
+	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle, IMilestoneHeader
 	{
 		public const string ImpedimentIcon = Comment.ImpedimentIcon;
 		public const string ImpedimentColor = "darkred";
@@ -31,6 +42,13 @@ namespace Ginseng.Mvc.Queries
 		public const string StoppedColor = "orangered";
         public const string TicketIcon = "fas fa-ticket-alt";
         public const string TicketColor = "#1a7172";
+        public const string PausedIcon = "fas fa-pause-circle";
+
+        public const string ImpedimentModifier = "impediment";
+        public const string UnestimatedModifier = "unestimated";
+
+        public const string StoppedModifier = "stopped";
+        public const string TicketModifier = "ticket";
 
         public int Id { get; set; }
 		public int Number { get; set; }
@@ -41,9 +59,12 @@ namespace Ginseng.Mvc.Queries
 		public int? DeveloperUserId { get; set; }
 		public int ApplicationId { get; set; }
 		public string ApplicationName { get; set; }
+        public int TeamId { get; set; }
+        public string TeamName { get; set; }
 		public bool HasImpediment { get; set; }
 		public int ProjectId { get; set; }
-		public string ProjectName { get; set; }
+        public string ProjectName { get; set; }
+		public string DisplayProjectName { get; set; }          
 		public int? ProjectPriority { get; set; }
 		public string PriorityTier { get; set; }
 		public int? DataModelId { get; set; }
@@ -87,18 +108,75 @@ namespace Ginseng.Mvc.Queries
         public long FDContactId { get; set; }
         public string FDContactName { get; set; }
         public TicketStatus FDTicketStatus { get; set; }
+        public bool UseApplications { get; set; }
+        public int? MyActivityOrder { get; set; }
+        public bool IsMilestoneVisible { get { return true; } }
 
-		public bool IsEditable(string userName)
+        /// <summary>
+        /// Lets us use a single property to switch between the app or team Id based on whether the team uses applications
+        /// </summary>
+        public int ProjectParentId
+        {
+            get { return (UseApplications) ? ApplicationId : TeamId; }
+        }
+
+        public string ProjectParentField
+        {
+            get { return (UseApplications) ? "applicationId" : "teamId"; }
+        }
+
+        public ProjectParentType ProjectParentType
+        {
+            get { return (UseApplications) ? ProjectParentType.Application : ProjectParentType.Team; }
+        }
+
+        public string ProjectParentName
+        {
+            get { return (UseApplications) ? ApplicationName : TeamName; }
+        }
+
+        /// <summary>
+        /// Used to create hidden fields for inserting work items.
+        /// It varies whether we need an applicationId based on the kind of team
+        /// </summary>        
+        public Dictionary<string, int> ContextFields()
+        {
+            var result = new Dictionary<string, int>();
+            result.Add("teamId", TeamId);
+            if (UseApplications) result.Add("applicationId", ApplicationId);
+            return result;
+        }
+
+        public bool IsHung
+        {
+            get { return HasImpediment || IsPaused() || IsStopped(); }            
+        }
+
+        public HungReason HungReason
+        {
+            get
+            {
+                return
+                    (HasImpediment) ? HungReason.IsPaused :
+                    (IsPaused()) ? HungReason.IsPaused :
+                    (IsStopped()) ? HungReason.IsStopped :
+                    HungReason.None;
+            }
+        }
+
+        public WorkItemTitleViewField TitleViewField { get; set; }
+
+        public bool IsEditable(string userName)
 		{
 			return CreatedBy.Equals(userName);
 		}
 
 		public IEnumerable<Modifier> GetModifiers()
 		{
-			if (HasImpediment) yield return new Modifier() { Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
-			if (EstimateHours == 0) yield return new Modifier() { Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
-			if (IsStopped()) yield return new Modifier() { Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };
-            if (IsHelpdeskTicket) yield return new Modifier() { Icon = TicketIcon, Color = TicketColor, Description = "Item was generated from a Freshdesk ticket" };
+			if (HasImpediment) yield return new Modifier() { Key = ImpedimentModifier, Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
+			if (EstimateHours == 0) yield return new Modifier() { Key = UnestimatedModifier, Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
+			if (IsStopped()) yield return new Modifier() { Key = StoppedModifier, Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };
+            if (IsHelpdeskTicket) yield return new Modifier() { Key = TicketModifier, Icon = TicketIcon, Color = TicketColor, Description = "Item was generated from a Freshdesk ticket" };
 		}
 
 		public string ActivityStatus()
@@ -119,6 +197,7 @@ namespace Ginseng.Mvc.Queries
 
 		public class Modifier
 		{
+            public string Key { get; set; }
 			public string Icon { get; set; }
 			public string Color { get; set; }
 			public string Description { get; set; }
@@ -131,7 +210,7 @@ namespace Ginseng.Mvc.Queries
 			"(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
 
 		private const string PriorityGroupExpression = 
-			"(CASE WHEN [pri].[Id] IS NOT NULL AND " + AssignedUserExpression + " IS NULL AND [wi].[ActivityId] IS NULL THEN 1 WHEN [pri].[Id] IS NULL AND " + AssignedUserExpression + " IS NULL THEN 2 ELSE 3 END)";
+			"(CASE WHEN [wi].[CloseReasonId] IS NOT NULL THEN 4 WHEN [pri].[Id] IS NOT NULL AND " + AssignedUserExpression + " IS NULL AND [wi].[ActivityId] IS NULL THEN 1 WHEN [pri].[Id] IS NULL AND " + AssignedUserExpression + " IS NULL THEN 2 ELSE 3 END)";
 
 		private readonly List<QueryTrace> _traces;
 
@@ -144,12 +223,13 @@ namespace Ginseng.Mvc.Queries
 				[wi].[HtmlBody],
 				[wi].[BusinessUserId],
 				[wi].[DeveloperUserId],
-				[wi].[ApplicationId], [app].[Name] AS [ApplicationName],
+				COALESCE([wi].[ApplicationId], 0) AS [ApplicationId], [app].[Name] AS [ApplicationName],
+                [wi].[TeamId], [t].[Name] AS [TeamName],
 				[wi].[HasImpediment],
 				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
 				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
-				[p].[Priority] AS [ProjectPriority],
-				[ptr].[Name] AS [PriorityTier],
+                COALESCE([p].[Nickname], [p].[Name]) AS [DisplayProjectName],
+				[p].[Priority] AS [ProjectPriority],				
 				COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
 				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
 				COALESCE([wi].[ActivityId], 0) AS [ActivityId],
@@ -189,11 +269,14 @@ namespace Ginseng.Mvc.Queries
                 [wit].[ContactName] AS [FDContactName],
                 [wit].[Subject] AS [FDTicketSubject],
                 [wit].[TicketStatus] AS [FDTicketStatus],
-                [org].[FreshdeskUrl]
+                [org].[FreshdeskUrl],
+                [t].[UseApplications],
+                [uao].[Value] AS [MyActivityOrder]
 			FROM
 				[dbo].[WorkItem] [wi]
-				INNER JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
+                INNER JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]				                
+                LEFT JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]                
 				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
 				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
 				LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
@@ -223,12 +306,10 @@ namespace Ginseng.Mvc.Queries
 				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
 					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
-				LEFT JOIN [dbo].[FnPriorityTierRanges](@orgId) [ptr] ON
-					[p].[Priority] >= [ptr].[MinPriority] AND
-					[p].[Priority] <= [ptr].[MaxPriority]
                 LEFT JOIN [dbo].[WorkItemTicket] [wit] ON 
                     [wit].[OrganizationId]=[wi].[OrganizationId] AND
                     [wit].[WorkItemNumber]=[wi].[Number]   
+                LEFT JOIN [dbo].[UserActivityOrder] [uao] ON [wi].[ActivityId]=[uao].[ActivityId] AND [uao].[UserId]=@activityUserId
 				{{join}}
             WHERE
 				[wi].[OrganizationId]=@orgId {{andWhere}}
@@ -251,6 +332,12 @@ namespace Ginseng.Mvc.Queries
 
 		public int OrgId { get; set; }
 
+        [Where("[wi].[Id]=@id")]
+        public int? Id { get; set; }
+
+        [Where("[wi].[TeamId]=@teamId")]
+        public int? TeamId { get; set; }
+
 		[Offset(30)]
 		public int? Page { get; set; }
 
@@ -258,11 +345,22 @@ namespace Ginseng.Mvc.Queries
 		public bool InMyActivities { get; set; }
 
 		/// <summary>
-		/// Use this when InMyActivities = true
+		/// Use this when InMyActivities = true or WithMyActivityOrder = true
 		/// </summary>		
 		public int ActivityUserId { get; set; }
 
-		[Case(true, "[wi].[CloseReasonId] IS NULL")]
+        [Join("LEFT JOIN [dbo].[FnWorkItemSchedule](@orgId, @scheduleUserId) [wis] ON [wi].[Number]=[wis].[Number]")]
+        public bool WithWorkSchedule { get; set; }        
+
+        /// <summary>
+        /// Use this when WithWorkSchedule = true
+        /// </summary>
+        public int ScheduleUserId { get; set; }
+
+        [Where("[wis].[Date]=@workDate")]
+        public DateTime? WorkDate { get; set; }
+
+        [Case(true, "[wi].[CloseReasonId] IS NULL")]
 		[Case(false, "[wi].[CloseReasonId] IS NOT NULL")]
 		public bool? IsOpen { get; set; } = true;
 
@@ -285,7 +383,26 @@ namespace Ginseng.Mvc.Queries
 		public int? AppId { get; set; }
 
 		[Case(true, "[wi].[MilestoneId] IS NOT NULL")]
+        [Case(false, "[wi].[MilestoneId] IS NULL")]
 		public bool? HasMilestone { get; set; }
+
+        [Case(false, "([wi].[MilestoneId] IS NULL OR [ms].[Date]<getdate())")]
+        [Case(true, "[ms].[Date]>getdate()")]
+        public bool? HasFutureMilestone { get; set; }
+
+        [Case(false, "[wi].[ProjectId] IS NULL")]
+        [Case(true, "[wi].[ProjectId] IS NOT NULL")]
+        public bool? HasProject { get; set; }
+
+        [Where("([app].[AllowNewItems]=@dataEntryApps AND [app].[IsActive]=1)")]
+        public bool? DataEntryApps { get; set; }
+
+        [Case(true, "[pri].[Value] IS NOT NULL")]
+        [Case(false, "[pri].[Value] IS NULL")]
+        public bool? HasPriority { get; set; }
+
+        [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId] IN @labelIds)")]
+        public int[] LabelIds { get; set; }
 
 		[Case(0, "[wi].[ProjectId] IS NULL")]
 		[Where("[wi].[ProjectId]=@projectId")]
@@ -312,7 +429,7 @@ namespace Ginseng.Mvc.Queries
 		[Case(false, AssignedUserExpression + " IS NULL")]
 		[Case(true, AssignedUserExpression + " IS NOT NULL")]
 		public bool? HasAssignedUserId { get; set; }
-
+       
 		[Case(true, "[wi].[ActivityId] IS NOT NULL AND (" + AssignedUserExpression + ") IS NULL")]
 		public bool? IsPaused { get; set; }
 
@@ -326,7 +443,22 @@ namespace Ginseng.Mvc.Queries
 		public bool? IsPastDue { get; set; }
 
         [Case(true, "[wit].[Id] IS NOT NULL")]
-        public bool? IsFreshdeskTicket { get; set; }
+        public bool? IsFreshdeskTicket { get; set; }        
+
+        [Where("YEAR([ms].[Date])=@milestoneYear")]
+        public int? MilestoneYear { get; set; }
+
+        [Where("MONTH([ms].[Date])=@milestoneMonth")]
+        public int? MilestoneMonth { get; set; }
+
+        [Join("INNER JOIN [dbo].[MilestoneUserView] [muv] ON COALESCE([wi].[MilestoneId], 0)=[muv].[MilestoneId]")]
+        public bool VisibleMilestones { get; set; }
+
+        /// <summary>
+        /// Use this when VisibleMilestones == true
+        /// </summary>
+        [Where("([muv].[UserId]=@visibleToUserId AND [muv].[IsVisible]=1)")]
+        public int? VisibleToUserId { get; set; }
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
 		{
@@ -358,6 +490,9 @@ namespace Ginseng.Mvc.Queries
 			yield return new OpenWorkItems() { IsPastDue = true };
 			yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
             yield return new OpenWorkItems() { IsFreshdeskTicket = true };
-		}
+            yield return new OpenWorkItems() { HasFutureMilestone = false };
+            yield return new OpenWorkItems() { HasFutureMilestone = true };
+            yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };            
+        }
 	}
 }

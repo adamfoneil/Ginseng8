@@ -1,0 +1,19 @@
+﻿@model IItemMetrics
+
+<span class="text-muted small mr-2">
+    @Model.OpenWorkItems work items
+    @if (Model.EstimateHours.HasValue)
+    {
+        <span> | @Model.EstimateHours est hrs</span>
+    }
+    @if (Model.OpenWorkItems > 0)
+    {
+        <span> | </span>
+        @Html.FormatValue(Model.PercentComplete, "{0:P0}")<span> complete</span>
+    }
+</span>
+
+<partial name="/Pages/Dashboard/Items/_ItemMetrics.cshtml" model="Model" />
+
+<br />
+<meter value="@Model.PercentComplete" max="1"></meter>

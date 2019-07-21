@@ -29,10 +29,12 @@ namespace Ginseng.Mvc.Mapping
 
             switch (request.Event)
             {
+                case "TicketUpdated":
                 case "{ticket_action:update}":
                     webhook.Event = WebhookEvent.TicketUpdated;
                     break;
 
+                case "TicketDeleted":
                 case "{ticket_action:delete}":
                     webhook.Event = WebhookEvent.TicketDeleted;
                     break;

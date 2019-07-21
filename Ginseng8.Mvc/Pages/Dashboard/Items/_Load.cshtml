@@ -4,5 +4,10 @@
 <span>@Model.EstimateHours estimate hrs</span>
 @if (Model.WorkHours > 0)
 {
-    <span class="text-@Model.WorkHoursStyle">, @Model.WorkHours working hrs</span>
+    <span class="text-@Model.WorkHoursStyle"></span>
+}
+
+@if (Model.MilestoneMetrics != null)
+{
+    <meter value="@Model.MilestoneMetrics.PercentComplete" max="1" title="@Html.FormatValue(Model.MilestoneMetrics.PercentComplete, "{0:p0}") complete"></meter>
 }

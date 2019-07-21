@@ -1,4 +1,5 @@
 ﻿using Ginseng.Mvc.Interfaces;
+using Ginseng.Mvc.Services;
 using System;
 
 namespace Ginseng.Mvc.Queries.Models
@@ -32,10 +33,16 @@ namespace Ginseng.Mvc.Queries.Models
         public int? InvoiceId { get; set; }
 
         public int Number => WorkItemNumber ?? 0;
-        public string ProjectName => Title;
+        public string DisplayProjectName => Title;
         public int? ProjectPriority => null;
         public int EstimateHours { get; set; }
         public decimal ColorGradientPosition { get; set; }
+        public string TeamName { get; set; }
+        public int ApplicationId { get; set; }
+        public string ApplicationName { get; set; }
+
+        public WorkItemTitleViewField TitleViewField => WorkItemTitleViewField.Project;
+
         int IWorkItemTitle.ProjectId => ProjectId ?? 0;
         int IWorkItemNumber.Number { get { return WorkItemNumber ?? 0; } set { WorkItemNumber = value; } }
 

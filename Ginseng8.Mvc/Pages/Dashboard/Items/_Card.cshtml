@@ -2,23 +2,27 @@
 
 <a name="@Model.WorkItem.Number"></a>
 
-<div class="card my-2 work-item-card" data-number="@Model.WorkItem.Number">
+@{ 
+    Model.WorkItem.TitleViewField = Model.TitleViewField;
+}
+
+<div class="card my-2 work-item-card @Model.CssClass" data-number="@Model.WorkItem.Number" id="card-@Model.WorkItem.Number">
     <div class="card card-header p-2" data-toggle="collapse" data-target="#item-@Model.WorkItem.Id">
         <div class="row justify-content-md-between align-items-start">
             <div class="col">
-                <partial name="Dashboard/Items/_ItemNumber" model="Model.WorkItem"/>
-                <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />                
-                <partial name="Dashboard/Items/_LabelControls" model="Model"/>
-                <partial name="Dashboard/Items/_Modifiers" model="Model.WorkItem"/>
+                <partial name="Dashboard/Items/_ItemNumber" model="Model.WorkItem" />
+                <partial name="Dashboard/Items/_Title" model="Model.WorkItem" />
+                <partial name="Dashboard/Items/_LabelControls" model="Model" />
+                <partial name="Dashboard/Items/_Modifiers" model="Model.WorkItem" />
             </div>
-            <div class="col-12 col-md-auto d-flex align-items-center">                
-                <partial name="Dashboard/Items/_Status" model="Model"/>
+            <div class="col-12 col-md-auto d-flex align-items-center">
+                <partial name="Dashboard/Items/_Status" model="Model" />
             </div>
         </div>
     </div>
     <div class="collapse" id="item-@Model.WorkItem.Id" data-parent="#@(Model.AccordionElement)">
         <div class="card card-body">
-            <partial name="Dashboard/Items/_ItemInner" model="Model"/>
+            <partial name="Dashboard/Items/_ItemInner" model="Model" />
         </div>
     </div>
 </div>

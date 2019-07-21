@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,14 @@ namespace Ginseng.Mvc.ViewModels
 		public IEnumerable<Comment> Comments { get; set; }
 		public bool ShowDetailsButton { get; set; } = true;
         public IEnumerable<SelectListItem> AssignToUsers { get; set; }
+        public WorkItemTitleViewField TitleViewField { get; set; } = WorkItemTitleViewField.Project;
+        public string CssClass { get; set; }
+
+        /// <summary>
+        /// Indicates whether ajax calls are made to update work items when fields are changed in the UI.
+        /// Set to false when used from _InsertItem.cshtml because it's a new item that doesn't exist yet
+        /// </summary>
+        public bool UpdatesEnabled { get; set; } = true;
 
 		public string HandOffButtonText()
 		{

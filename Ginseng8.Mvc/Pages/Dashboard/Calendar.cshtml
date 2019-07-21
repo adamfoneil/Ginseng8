@@ -1,0 +1,86 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Dashboard.CalendarModel
+@{
+    ViewData["Title"] = "Calendar";
+}
+
+@foreach (var yearGrp in Model.MonthCells.GroupBy(row => row.Year))
+{
+    <h4>@yearGrp.Key</h4>
+    <div class="row">
+        @foreach (var month in yearGrp)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-4 mb-4">
+                <div class="card p-2 js-calendar-month-with-milestone-list-droppable" data-month="@month.Month" data-year="@month.Year">
+                    <h6 class="card-title text-right text-muted">@month.ToString()</h6>
+                    <div class="card-body pt-0 mt-2">
+                        <div>                            
+                            @foreach (var teamGrp in Model.Projects[month].GroupBy(row => row.TeamId))
+                            {
+                                var metrics = Model.Metrics[month].ToDictionary(row => row.ProjectId);
+                                if (Model.ShowTeamNames)
+                                {
+                                    <h5>@teamGrp.First().TeamName</h5>
+                                }
+                                foreach (var appGrp in teamGrp.GroupBy(row => row.ApplicationId))
+                                {
+                                    if (appGrp.Key != 0 && Model.ShowAppNames)
+                                    {
+                                        <h6>@appGrp.First().ApplicationName</h6>
+                                    }
+                                    <ul style="list-style:none">
+                                        @foreach (var prjGrp in appGrp.GroupBy(row => row.ProjectId))
+                                        {
+                                            var prjItem = prjGrp.First();
+                                            <li class="pb-1">
+                                                <a class="btn btn-info project-work-items" asp-page="/Dashboard/Projects" asp-route-id="@prjItem.ProjectId" 
+                                                    data-project-id="@prjItem.ProjectId" data-month="@month.Month" data-year="@month.Year">@prjItem.ProjectName</a>
+                                                
+                                                @foreach (var dev in prjGrp)
+                                                {
+                                                    var balance = Model.GetBalance(month, dev.DeveloperUserId);
+                                                    var backColor = Model.GetBalanceBackColor(balance);
+                                                    var foreColor = Model.GetBalanceForeColor(balance);
+                                                    <br/>
+                                                    @if (dev.DeveloperUserId != 0)
+                                                    {
+                                                        <span class="small">@dev.DeveloperName <span class="badge" style="background-color:@backColor;color:@foreColor" title="@dev.EstimateHours est hrs">@balance hrs left</span></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="small">@dev.DeveloperName <span class="badge" style="background-color:@backColor;color:@foreColor">@dev.EstimateHours est hrs</span></span>
+                                                    }
+                                                }    
+                                                <br/>
+                                                <partial name="Items/_ItemInfo" model="metrics[prjGrp.Key]"/>                                                
+                                                <hr/>
+                                            </li>
+                                        }                                        
+                                    </ul>                                    
+                                }
+                            } 
+                            
+                            <form method="post" asp-page-handler="AddProject">
+                                <input type="hidden" name="Year" value="@month.Year"/>
+                                <input type="hidden" name="Month" value="@month.Month"/>
+                                <select name="ProjectId" asp-items="@Model.GetProjectSelect(Model.Projects[month])" class="form-control-sm" required="required" onchange="this.form.submit();">
+                                    <option value="">- add project -</option>
+                                </select>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@section Scripts {
+    <script src="~/js/Milestone.js"></script>
+    <script src="~/js/Projects.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".datepicker").datepicker();
+        });
+    </script>
+}

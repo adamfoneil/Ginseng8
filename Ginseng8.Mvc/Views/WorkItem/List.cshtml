@@ -1,0 +1,19 @@
+﻿@model Ginseng.Mvc.ViewModels.WorkItemListView
+
+<div class="scrollable-tooltip">
+@foreach  (var userGrp in Model.WorkItems.OrderBy(row => row.AssignedUserName).GroupBy(row => row.AssignedUserId))
+{
+    <h6>@(userGrp.First().AssignedUserName ?? "(unassigned)")</h6>
+    <ul>
+    @foreach (var item in userGrp)
+    {
+        <li>
+            @await Html.PartialAsync("/Pages/Dashboard/Items/_ItemNumber.cshtml", item)
+            <a href="@Url.Action("View", "WorkItem", new { id = item.Number })">@item.Title</a>
+            @await  Html.PartialAsync("/Pages/Dashboard/Items/_Labels.cshtml", Model.SelectedLabels[item.Id])        
+            @await Html.PartialAsync("/Pages/Dashboard/Items/_Modifiers.cshtml", item)
+        </li>
+    }
+    </ul>
+}
+</div>

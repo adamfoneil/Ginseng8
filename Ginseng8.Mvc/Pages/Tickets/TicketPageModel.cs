@@ -1,12 +1,10 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Models.Freshdesk.Dto;
 using Ginseng.Mvc.Queries;
-using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Pages.Tickets
@@ -18,6 +16,11 @@ namespace Ginseng.Mvc.Pages.Tickets
             IFreshdeskClientFactory freshdeskClientFactory) : base(config)
         {
             FreshdeskCache = new FreshdeskCache(config, freshdeskClientFactory);
+        }
+
+        public int TeamId
+        {
+            get { return CurrentOrgUser.CurrentTeamId ?? 0; }
         }
 
         public Dictionary<string, string> TypeBadges
@@ -41,10 +44,6 @@ namespace Ginseng.Mvc.Pages.Tickets
 
         public string FreshdeskUrl { get; private set; }
 
-        [BindProperty(SupportsGet = true)]
-        public int ResponsibilityId { get; set; }
-
-        public SelectList ResponsibilitySelect { get; set; }
         public IEnumerable<Ticket> Tickets { get; set; }
         public Dictionary<long, Group> Groups { get { return FreshdeskCache.GroupDictionary; } }
 
@@ -61,15 +60,23 @@ namespace Ginseng.Mvc.Pages.Tickets
             return (FreshdeskCache.CompanyDictionary.ContainsKey(companyId)) ? FreshdeskCache.CompanyDictionary[companyId].Name : $"company id {companyId}";
         }
 
-        protected async Task InitializeAsync(int responsibilityId)
+        /// <summary>
+        /// This is virtual because you might want ignored tickets paginated,
+        /// see <see cref="IgnoredModel"/>
+        /// </summary>
+        protected virtual async Task<IEnumerable<long>> GetIgnoredTicketsAsync(IDbConnection connection)
+        {
+            return await new IgnoredTickets() { TeamId = CurrentOrgUser.CurrentTeamId ?? 0, OrgId = OrgId }.ExecuteAsync(connection);
+        }
+
+        protected async Task InitializeAsync()
         {
             FreshdeskUrl = Data.CurrentOrg.FreshdeskUrl;
             await FreshdeskCache.InitializeAsync(Data.CurrentOrg.Name);
 
             using (var cn = Data.GetConnection())
             {
-                ResponsibilitySelect = await new ResponsibilitySelect().ExecuteSelectListAsync(cn, responsibilityId);
-                IgnoredTickets = await new IgnoredTickets() { ResponsibilityId = responsibilityId, OrgId = OrgId }.ExecuteAsync(cn);                
+                IgnoredTickets = await GetIgnoredTicketsAsync(cn);
             }
         }
     }

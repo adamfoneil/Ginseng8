@@ -13,12 +13,13 @@
 {
     @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
     {
+        { "teamId", Html.CurrentTeamId() },
         { "applicationId", Html.CurrentAppId() }
-    }))
+    }) { Dropdowns = Model.Dropdowns, AssignToUsers = Model.AssignToUsers, UseApplications = Model.CurrentOrgUser?.CurrentTeam?.UseApplications ?? true })
 }
 
 <form method="get">
-    <input type="hidden" asp-for="@Model.Query"/>
+    <input type="hidden" asp-for="@Model.Query" />
     <div class="form-row mb-3 justify-content-center">
         <select name="FilterPriorityGroupId" asp-items="Model.PriorityGroupSelect" class="form-control-sm mr-2" onchange="this.form.submit();">
             <option value="">(all groups)</option>
@@ -53,13 +54,11 @@
 </form>
 
 <div id="accordion">
-@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ProjectParentId))
 {
-    <h4>@appGrp.First().ApplicationName</h4>
-    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-    {
-        { "applicationId", appGrp.Key }                        
-    }))
+    <h4>@appGrp.First().ProjectParentName</h4>
+    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(appGrp.First().ContextFields()) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
+
     foreach (var priorityGrp in appGrp.OrderBy(row => row.PriorityGroup).GroupBy(row => row.PriorityGroup))
     {
         var pg = Model.PriorityGroups[priorityGrp.Key];
@@ -74,7 +73,7 @@
         @foreach (var item in priorityGrp)
         {
             <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers }" />
-        }        
+        }
         </div>
     }
 }
@@ -82,22 +81,7 @@
 
 <p class="text-center">@Model.WorkItems.Count() work items shown</p>
 
-<div class="row justify-content-center">
-    @if (Model.PageNumber > 0)
-    {        
-        <form method="get">
-            <input type="hidden" value="@(Model.PageNumber - 1)" name="pageNumber"/>
-            @Request.ToHiddenFields("pageNumber")
-            <button type="submit" class="btn btn-sm btn-light">&lt;&lt; Prev</button>
-        </form>        
-    }
-    
-    <form method="get">
-        <input type="hidden" value="@(Model.PageNumber + 1)" name="pageNumber"/>
-        @Request.ToHiddenFields("pageNumber")
-        <button type="submit" class="btn btn-sm btn-light">Next &gt;&gt;</button>
-    </form>    
-</div>
+<partial name="Shared/_PageControls" model="Model" />
 
 @if (Model.Projects?.Any() ?? false)
 {
@@ -106,7 +90,7 @@
         @foreach  (var prj in Model.Projects)
         {
             <li>
-                <partial name="Dashboard/Items/_ProjectLinkButton" model="prj"/>
+                <partial name="Dashboard/Items/_ProjectLinkButton" model="prj" />
             </li>
         }
     </ul>

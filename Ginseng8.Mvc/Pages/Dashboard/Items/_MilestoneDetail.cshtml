@@ -1,0 +1,76 @@
+﻿@model Ginseng.Mvc.Pages.Dashboard.CalendarModel
+
+<div id="accordion">
+@foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+{
+    <h4>@appGrp.First().ApplicationName</h4>
+
+    <partial name="Items/_MilestoneHeader" model="@appGrp.First()" />
+
+    <partial name="Items/_Load" model="@Model.GetLoadView(appGrp, metrics: Model.Metrics.First().Value)" />
+
+    @if (appGrp.First().MilestoneDate < DateTime.Today)
+    {
+        if (Model.NextSoonest != null)
+        {
+            <form method="post" asp-page-handler="MoveToNextMilestone">
+                <input type="hidden" name="appId" value="@appGrp.Key" />
+                <input type="hidden" name="fromMilestoneId" value="@appGrp.Key" />
+                <input type="hidden" name="toMilestoneId" value="@Model.NextSoonest.Id" />
+                <label>Move to next soonest milestone</label>
+                <button class="btn btn-sm btn-dark" type="submit">@Html.FormatValue(Model.NextSoonest.Date, "{0:ddd M/d}")</button>
+            </form>
+        }
+
+        if (Model.NextGenerated != null)
+        {
+            <form method="post" asp-page-handler="MoveToNewMilestone">
+                <input type="hidden" name="appId" value="@appGrp.Key" />
+                <input type="hidden" name="fromMilestoneId" value="@appGrp.Key" />
+                <input type="hidden" name="toName" value="@Model.NextGenerated.Name" />
+                <input type="hidden" name="toDate" value="@Model.NextGenerated.Date" />
+                <label>Move to new milestone</label>
+                <button class="btn btn-sm btn-dark" type="submit">@Html.FormatValue(Model.NextGenerated.Date, "{0:ddd M/d}")</button>
+                <label>based on your <a asp-page="/Setup/Organization">Org Setup</a></label>
+            </form>
+        }
+    }
+
+    @foreach (var item in appGrp)
+    {
+        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers }" />
+    }
+
+    @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+    {
+        { "teamId", appGrp.First().TeamId },
+        { "applicationId", appGrp.Key },
+        { "milestoneId", Model.Id.Value }
+    }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications })
+
+    var recentlyClosed = Model.ClosedItems[Model.Id.Value].Take(10);
+    @if (recentlyClosed.Any())
+    {
+        <partial name="Items/_RecentlyClosed" model="recentlyClosed" />
+    }
+}
+</div>
+
+@if (Model.SelectedMilestone != null && Model.EmptyMilestones.Any())
+{
+    <div id="emptyMilestones">
+        <span>Tip: Milestones with no work items show here. After they get at least one work item, they display like others.</span>
+        @foreach (var ms in Model.EmptyMilestones)
+        {
+            <partial name="Items/_MilestoneHeader" model="ms" />
+            <div class="ml-3">
+                @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                {
+                    { "teamId", Model.SelectedMilestone.TeamId },
+                    { "applicationId", Model.SelectedMilestone.ApplicationId ?? 0 },
+                    { "milestoneId", ms.MilestoneId }
+                }))
+            </div>
+        }
+    </div>
+}

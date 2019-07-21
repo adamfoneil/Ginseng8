@@ -11,72 +11,116 @@ using System.Threading.Tasks;
 
 namespace Ginseng.Models
 {
-	/// <summary>
-	/// A collection of work items centered around a single goal, feature, or some other unifying idea
-	/// </summary>
-	public class Project : BaseTable, IBody, IFindRelated<int>, IOrgSpecific
-	{
-		[References(typeof(Application))]
-		[PrimaryKey]
-		public int ApplicationId { get; set; }
+    /// <summary>
+    /// A project's parent container varies depending on whether the Team uses apps or not.
+    /// This enum provides a way to navigate the Dashboard/Org
+    /// </summary>
+    public enum ProjectParentType
+    {
+        Team,
+        Application
+    }
 
-		[PrimaryKey]
-		[MaxLength(50)]
-		public string Name { get; set; }
+    /// <summary>
+    /// A collection of work items centered around a single goal, feature, or some other unifying idea or theme
+    /// </summary>
+    public class Project : BaseTable, IBody, IFindRelated<int>, IOrgSpecific
+    {
+        [References(typeof(Team))]
+        [PrimaryKey]
+        public int TeamId { get; set; }
 
-		[MaxLength(255)]
-		public string Description { get; set; }
+        [PrimaryKey]
+        [MaxLength(50)]
+        public string Name { get; set; }
 
-		/// <summary>
-		/// Overall priority of project (lower number = higher priority)
-		/// </summary>
-		public int? Priority { get; set; }
+        [References(typeof(Application))]
+        public int? ApplicationId { get; set; }
 
-		/// <summary>
-		/// Source code location
-		/// </summary>
-		[MaxLength(255)]
-		public string BranchUrl { get; set; }
+        [MaxLength(255)]
+        public string Description { get; set; }
 
-		[References(typeof(DataModel))]
-		public int? DataModelId { get; set; }
+        /// <summary>
+        /// Overall priority of project (lower number = higher priority)
+        /// </summary>
+        public int? Priority { get; set; }
 
-		public string TextBody { get; set; }
+        /// <summary>
+        /// Shown on milestone dashboard
+        /// </summary>
+        [MaxLength(5)]
+        public string Nickname { get; set; }
 
-		public string HtmlBody { get; set; }
+        /// <summary>
+        /// Source code location
+        /// </summary>
+        [MaxLength(255)]
+        public string BranchUrl { get; set; }
+
+        [References(typeof(DataModel))]
+        public int? DataModelId { get; set; }
+
+        public string TextBody { get; set; }
+
+        public string HtmlBody { get; set; }
 
         public long? FreshdeskCompanyId { get; set; }
 
-		public bool IsActive { get; set; } = true;
+        public bool IsActive { get; set; } = true;
 
-		public Application Application { get; set; }
+        public Team Team { get; set; }
+        public Application Application { get; set; }
 
-		public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
-		{
-			if (action == SaveAction.Update) await SyncWorkItemsToProjectAsync(connection);
-		}
+        public string ParentName
+        {
+            get { return Application?.Name ?? Team?.Name; }
+        }
 
-		public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
-		{
-			Application = commandProvider.Find<Application>(connection, ApplicationId);
-		}
+        public int ParentId
+        {
+            get { return (Team?.UseApplications ?? false) ? (ApplicationId ?? 0) : TeamId; }
+        }
 
-		public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
-		{
-			Application = await commandProvider.FindAsync<Application>(connection, ApplicationId);
-		}
+        public ProjectParentType ParentType
+        {
+            get { return (Team?.UseApplications ?? false) ? ProjectParentType.Application : ProjectParentType.Team; }
+        }
+
+        public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
+        {
+            if (action == SaveAction.Update) await SyncWorkItemsToProjectAsync(connection);
+        }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            Team = commandProvider.Find<Team>(connection, TeamId);
+            if (ApplicationId.HasValue) Application = commandProvider.Find<Application>(connection, ApplicationId.Value);
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        {
+            Team = await commandProvider.FindAsync<Team>(connection, TeamId);
+            if (ApplicationId.HasValue) Application = await commandProvider.FindAsync<Application>(connection, ApplicationId.Value);
+        }
 
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
-            var app = await connection.FindAsync<Application>(ApplicationId);
-            return app.OrganizationId;
+            var team = await connection.FindAsync<Team>(TeamId);
+            return team.OrganizationId;
         }
 
         public async Task SyncWorkItemsToProjectAsync(IDbConnection connection)
-		{
-			await connection.ExecuteAsync(
-				@"UPDATE [dbo].[WorkItem] SET [ApplicationId]=@appId WHERE [ProjectId]=@projectId",
-				new { appId = ApplicationId, projectId = Id });
-		}
-	}
+        {
+            await connection.ExecuteAsync(
+                @"UPDATE [wi] SET 
+                    [ApplicationId]=@appId 
+                FROM
+                    [dbo].[WorkItem] [wi]
+                    INNER JOIN [dbo].[Project] [prj] ON [wi].[ProjectId=[prj].[Id]
+                WHERE 
+                    [wi].[ProjectId]=@projectId AND
+                    [prj].[ApplicationId]=@appId",
+                new { appId = ApplicationId, projectId = Id });
+        }
+    }
 }

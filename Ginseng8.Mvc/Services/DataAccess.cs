@@ -64,6 +64,11 @@ namespace Ginseng.Mvc.Services
 			}
 		}
 
+        public async Task<WorkItem> FindWorkItemAsync(SqlConnection connection, int number)
+        {
+            return await FindWhereAsync<WorkItem>(connection, new { OrganizationId = CurrentOrg.Id, Number = number });
+        }
+
 		public async Task<T> FindWhereAsync<T>(SqlConnection connection, object criteria)
 		{
 			return await connection.FindWhereAsync<T>(criteria, CurrentUser);
@@ -166,22 +171,29 @@ namespace Ginseng.Mvc.Services
 			}
 		}
 
-		public async Task<bool> TryDeleteAsync<T>(int id, string successMessage = null)
-		{
-			try
+        public async Task<bool> TryDeleteAsync<T>(SqlConnection connection, int id, string successMessage = null)
+        {
+            try
+            {
+                await connection.DeleteAsync<T>(id, CurrentUser);
+                SetSuccessMessage(successMessage);
+                return true;
+
+            }
+            catch (Exception exc)
+            {
+                SetErrorMessage(exc);
+                return false;
+            }
+        }
+
+
+        public async Task<bool> TryDeleteAsync<T>(int id, string successMessage = null)
+		{			
+			using (var cn = GetConnection())
 			{
-				using (var cn = GetConnection())
-				{
-					await cn.DeleteAsync<T>(id, CurrentUser);
-					SetSuccessMessage(successMessage);
-					return true;
-				}
-			}
-			catch (Exception exc)
-			{
-				SetErrorMessage(exc);
-				return false;
-			}
+                return await TryDeleteAsync<T>(cn, id, successMessage);
+			}			
 		}
 
 		/// <summary>

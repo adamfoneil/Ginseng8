@@ -1,0 +1,138 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Dashboard.MyItemsModel
+@{
+    ViewData["Title"] = "My Items";
+}
+
+<a asp-page="/Setup/AppActivities" class="btn btn-light btn-sm mb-3 mr-3">My Activities: @Model.MyHandOffActivityList()</a>
+
+@if (Model.MyHandOffItems.Any())
+{
+    <button class="btn btn-sm btn-light mb-3" data-toggle="collapse" data-target="#handOffItems" aria-expanded="false" aria-controls="handOffItems">@Model.MyHandOffItems.Count() Paused Items</button>
+    <div class="collapse" id="handOffItems">
+        @foreach (var appGrp in Model.MyHandOffItems.GroupBy(row => row.ProjectParentId))
+        {
+            <h4>@appGrp.First().ProjectParentName</h4>
+            @foreach (var milestoneGrp in appGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
+            {
+                var milestoneItem = milestoneGrp.First();
+                <partial name="Items/_MilestoneHeader" model="@(new MilestoneHeaderView(milestoneItem))" />
+                <div id="handOff-app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+                    <div class="ml-3" data-user-id="@Model.UserId">
+                        @foreach (var item in milestoneGrp)
+                        {
+                            <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.HandOffLabels[item.Id], UserId = Model.UserId, Comments = Model.HandOffComments[item.Id], AccordionElement = "handOffItems", AssignToUsers = Model.AssignToUsers })" />
+                        }
+                    </div>
+                </div>
+            }
+        }
+    </div>
+}
+
+@if (Model.MySchedule?.Any() ?? false)
+{
+    <partial name="Items/_MySchedule" model="Model" />
+}
+
+<div id="accordion">
+@foreach (var milestoneGrp in Model.WorkItems.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
+{
+    var milestoneItem = milestoneGrp.First();
+    <partial name="Items/_MilestoneHeader" model="@new MilestoneHeaderView(milestoneItem, true)" />
+
+    <div class="milestone-content">
+        <div class="ml-3">
+            <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
+        </div>
+
+        @foreach (var appGrp in milestoneGrp.OrderBy(row => Model.GroupingOption.GroupSortFunction(row)).GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
+        {
+            <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
+
+            <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
+                <div class="ml-3 sortable" data-user-id="@Model.UserId" data-group-field="@Model.GroupingOption.FieldNameFunction(appGrp.First())" data-group-value="@appGrp.Key">
+                    @foreach (var item in appGrp)
+                    {
+                        <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, TitleViewField = Model.GroupingOption.TitleViewField }" />
+                    }
+
+                    @if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
+                    {
+                        @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                        {
+                            { Model.GroupingOption.FieldNameFunction(appGrp.First()), appGrp.Key },
+                            { "milestoneId", milestoneGrp.Key },
+                            { Model.UserIdColumnName, Model.UserId },
+                            { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value }
+                        }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications, AppendIfMissing = new Dictionary<string, int>()
+                        {
+                            { "teamId", appGrp.First().TeamId },
+                            { "applicationId", appGrp.First().ApplicationId }
+                        }})
+                    }
+                    else
+                    {
+                        <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <hr/>
+}
+</div>
+
+<div class="hiddenMilestones">
+@foreach  (var ms in Model.HiddenMilestones)
+{
+    <partial name="Items/_MilestoneHeader" model="@new MilestoneHeaderView(ms, true)" />
+}
+</div>
+
+@if (!Model.WorkItems.Any())
+{
+    <div class="mt-4">
+        <hr/>
+        @if (Html.CurrentTeamId() != 0)
+        {
+            if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
+            {
+                @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                {                
+                    { Model.UserIdColumnName, Model.UserId },
+                    { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
+                }) { Dropdowns = Model.Dropdowns, UseApplications = Model.CurrentOrgUser.CurrentTeam.UseApplications, AppendIfMissing = new Dictionary<string, int>()
+                {
+                    { "teamId", Html.CurrentTeamId() },
+                    { "applicationId", Html.CurrentAppId() }
+                }})
+            }
+            else
+            {
+                <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+            }
+        }
+        else
+        {
+            <p>To add work items here, please select a Team above.</p>
+        }
+    </div>
+}
+
+<div>
+    <button class="btn btn-sm btn-light mb-3" data-toggle="collapse" data-target="#userOptions" aria-expanded="false" aria-controls="queryTraces">Options</button>
+    <div id="userOptions" class="collapse ml-3 mb-3">
+        <form method="post" asp-page-handler="SetOptions" class="form-inline">            
+            <div class="form-group">
+                <label class="mr-2">Grouping:</label>
+                <select name="@Option.MyItemsGroupField" asp-items="@Model.MyItemGroupingOptions.GetSelectList(Model.Options[Option.MyItemsGroupField].StringValue)" class="form-control mr-2"></select>
+            </div>
+            <div class="form-group">
+                <label class="mr-2">Filter by selected nav bar app:</label>
+                <select name="@Option.MyItemsFilterCurrentApp" asp-items="@SelectListHelper.YesNo(selectedValue: Model.Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true)" class="form-control mr-2"></select>
+            </div>
+            <button class="btn btn-secondary" type="submit">Update</button>            
+        </form>
+    </div>
+</div>

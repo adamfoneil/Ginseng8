@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace Ginseng.Mvc.Models.Freshdesk.Dto
 {
@@ -26,7 +26,7 @@ namespace Ginseng.Mvc.Models.Freshdesk.Dto
             [Required]
             [JsonProperty("status")]
             public string Status { get; set; }
-           
+
             [JsonProperty("type")]
             public string Type { get; set; }
 

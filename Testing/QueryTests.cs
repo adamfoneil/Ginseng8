@@ -122,5 +122,83 @@ namespace Testing
         {
             TestQuery<Labels>();
         }
+
+        [TestMethod]
+        public void MyWorkScheduleQuery()
+        {
+            TestQuery<MyWorkSchedule>();
+        }
+
+        [TestMethod]
+        public void MilestoneMetricsQuery()
+        {
+            TestQuery<MilestoneMetrics>();
+        }
+
+        [TestMethod]
+        public void InsertDefaultLabelSubscriptionsQuery()
+        {
+            TestQuery<InsertDefaultLabelSubscriptions>();
+        }
+
+        [TestMethod]
+        public void MilestonesQuery()
+        {
+            TestQuery<Milestones>();
+        }
+
+        [TestMethod]
+        public void MyOrgUsersQuery()
+        {
+            TestQuery<MyOrgUsers>();
+        }
+
+        [TestMethod]
+        public void DevMilestoneWorkingHoursQuery()
+        {
+            TestQuery<DevMilestoneWorkingHours>();
+        }
+
+        [TestMethod]
+        public void TeamsQuery()
+        {
+            TestQuery<Teams>();
+        }
+
+        [TestMethod]
+        public void LabelSubscriptionUsersQuery()
+        {
+            TestQuery<LabelSubscriptionUsers>();
+        }
+
+        [TestMethod]
+        public void CalendarProjectsQuery()
+        {
+            TestQuery<DevCalendarProjects>();
+        }
+
+        [TestMethod]
+        public void MyOptionsQuery()
+        {
+            TestQuery<MyOptions>();
+        }
+
+        [TestMethod]
+        public void MyActivityOrderQuery()
+        {
+            TestQuery<MyActivityOrder>();
+        }
+
+        [TestMethod]
+        public void AllMilestonesQuery()
+        {
+            TestQuery<AllMilestones>();
+        }
+
+        [TestMethod]
+        public void HiddenMilestonesQuery()
+        {
+            TestQuery<HiddenMilestones>();
+        }
     }
 }

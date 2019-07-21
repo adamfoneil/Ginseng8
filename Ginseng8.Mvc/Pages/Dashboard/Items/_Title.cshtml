@@ -1,18 +1,21 @@
 ﻿@model IWorkItemTitle
 
-@if (Model.ProjectId != 0)
+@if (Model.ApplicationId != 0 && (Model.TitleViewField & Services.WorkItemTitleViewField.Application) == Services.WorkItemTitleViewField.Application)
 {
-    <span class="font-weight-bold">
-        @Model.ProjectName
-        @if (Model.ProjectPriority.HasValue)
-        {
-            <sup title="Overall project priority" class="font-weight-light">@Model.ProjectPriority</sup>
-        }
+    <span class="badge appButton">
+        @Model.ApplicationName
     </span>
 }
 
-@{ 
+@if (Model.ProjectId != 0 && (Model.TitleViewField & Services.WorkItemTitleViewField.Project) == Services.WorkItemTitleViewField.Project)
+{
+    <span class="badge badge-info">
+        @Model.DisplayProjectName
+    </span>
+}
+
+@{
     string editable = (Model.IsEditable(User.Identity.Name)) ? "editable" : string.Empty;
 }
 
-<span class="@editable" data-url="/Update/WorkItemTitle" id="title-@Model.Number">@Model.Title</span>
+<span class="@editable js-title" data-url="/Update/WorkItemTitle" id="title-@Model.Number">@Model.Title</span>

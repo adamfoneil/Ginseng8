@@ -6,12 +6,16 @@ namespace Ginseng.Mvc.Queries.SelectLists
 	{
 		public MilestoneSelect() : base(
 			@"SELECT 
-				[Id] AS [Value], 
-				[Name] + ': ' + FORMAT([Date], 'ddd M/d') AS [Text]
+				[ms].[Id] AS [Value], 
+				(CASE 
+                    WHEN [ms].[TeamId] IS NULL THEN [ms].[Name]
+                    WHEN [ms].[TeamId] IS NOT NULL THEN [t].[Name] + ': ' + [ms].[Name]
+                END) + ': ' + FORMAT([Date], 'ddd M/d') AS [Text]
 			FROM 
-				[dbo].[Milestone]
+				[dbo].[Milestone] [ms]
+                LEFT JOIN [dbo].[Team] [t] ON [ms].[TeamId]=[t].[Id]
 			WHERE 
-				[OrganizationId]=@orgId AND
+				[ms].[OrganizationId]=@orgId AND
 				[Date]>DATEADD(d, -7, getdate())
 			ORDER BY
 				[Date]")

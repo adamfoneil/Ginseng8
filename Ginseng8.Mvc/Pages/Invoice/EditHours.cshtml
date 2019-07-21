@@ -31,7 +31,7 @@
             <td>@grid.TextBox(m => m.TextBody, new { @class = "form-control" })</td>
             <td>@grid.Controls()</td>
         </tr>
-    }        
+    }
     <tr id="@grid.NewRowId()">
         <td>@grid.DropDownList(m => m.ProjectId, Model.ProjectSelect, new { @class = "form-control" })</td>
         <td>@grid.TextBox(m => m.WorkItemNumber, new { @class = "form-control", style = "width:80px" })</td>

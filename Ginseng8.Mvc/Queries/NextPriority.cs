@@ -22,17 +22,17 @@ namespace Ginseng.Mvc.Queries
 				[wip].[UserId]=0 AND
 				[wip].[MilestoneId]=0 AND
 				[wi].[OrganizationId]=@orgId AND
-				[wi].[ApplicationId]=@appId AND
+				[wi].[TeamId]=@teamId AND
 				[wi].[CloseReasonId] IS NULL")
 		{
 		}
 
 		public int OrgId { get; set; }
-		public int AppId { get; set; }
+		public int TeamId { get; set; }
 
 		public IEnumerable<ITestableQuery> GetTestCases()
 		{
-			yield return new NextPriority() { OrgId = 0, AppId = 0 };
+			yield return new NextPriority() { OrgId = 0, TeamId = 0 };
 		}
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)

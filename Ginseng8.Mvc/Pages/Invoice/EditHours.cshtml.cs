@@ -23,7 +23,7 @@ namespace Ginseng.Mvc.Pages.Invoice
         {
             using (var cn = Data.GetConnection())
             {
-                ProjectSelect = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteSelectListAsync(cn);
+                ProjectSelect = await new ProjectSelect() { TeamId = CurrentOrgUser.CurrentAppId ?? 0 }.ExecuteSelectListAsync(cn);
                 AppSelect = await new AppSelect() { OrgId = OrgId }.ExecuteSelectListAsync(cn);
 
                 WorkLogs = await new PendingWorkLogs()
@@ -31,7 +31,7 @@ namespace Ginseng.Mvc.Pages.Invoice
                     OrgId = OrgId,
                     AppId = CurrentOrgUser.CurrentAppId,
                     UserId = UserId
-                }.ExecuteAsync(cn);                
+                }.ExecuteAsync(cn);
             }
         }
 

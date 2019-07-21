@@ -1,6 +1,6 @@
 ﻿using Dapper;
-using Ginseng.Integration.Services;
 using Ginseng.Models;
+using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Extensions;
 using Ginseng.Mvc.Helpers;
 using Ginseng.Mvc.Interfaces;
@@ -18,6 +18,7 @@ using Postulate.SqlServer.IntKey;
 using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ginseng.Mvc.Controllers
@@ -42,6 +43,21 @@ namespace Ginseng.Mvc.Controllers
             _data.Initialize(User, TempData);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> InfoBanner(int id)
+        {
+            if (id == 0)
+            {
+                return Content(string.Empty);
+            }
+
+            using (var cn = _data.GetConnection())
+            {
+                var workItem = await _data.FindWorkItemAsync(cn, id);
+                return PartialView(workItem);
+            }
+        }
+
         [HttpPost]
         public async Task<RedirectResult> Create(WorkItem workItem, string returnUrl)
         {
@@ -53,10 +69,39 @@ namespace Ginseng.Mvc.Controllers
 
             using (var cn = _data.GetConnection())
             {
+                if (workItem.MilestoneId < 0)
+                {
+                    var indirectMilestones = new IndirectMilestones();
+                    workItem.MilestoneId = await indirectMilestones.Options[workItem.MilestoneId.Value].GetMilestoneIdAsync(cn, _data.CurrentUser, workItem.OrganizationId, workItem.TeamId);
+                }
+
+                if (workItem.TeamId == 0)
+                {
+                    if (workItem.ApplicationId.HasValue)
+                    {
+                        var app = await cn.FindAsync<Application>(workItem.ApplicationId.Value);
+                        workItem.TeamId = app.TeamId ?? _data.CurrentOrgUser.CurrentTeamId ?? 0;
+                    }
+
+                    if (workItem.TeamId == 0 && workItem.ProjectId.HasValue)
+                    {
+                        var prj = await cn.FindAsync<Project>(workItem.ProjectId.Value);
+                        workItem.TeamId = prj.TeamId;
+                        if (!workItem.ApplicationId.HasValue) workItem.ApplicationId = prj.ApplicationId;
+                    }
+
+                    if (workItem.TeamId == 0) throw new Exception("Couldn't determine the TeamId for the new work item.");
+                }
+
                 await workItem.SaveHtmlAsync(_data, cn);
                 await workItem.SetNumberAsync(cn);
                 if (await _data.TrySaveAsync(cn, workItem))
                 {
+                    if (workItem.AssignToUserId.HasValue)
+                    {
+                        await AssignToInnerAsync(cn, workItem.AssignToUserId.Value, workItem);
+                    }
+
                     return Redirect(returnUrl + $"#{workItem.Number}");
                 }
                 else
@@ -74,7 +119,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     var activity = await _data.FindAsync<Activity>(cn, activityId);
                     workItem.ActivityId = activityId;
                     Responsibility.SetWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem, _data.CurrentUser.UserId);
@@ -95,7 +140,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     var activity = await _data.FindAsync<Activity>(cn, workItem.ActivityId.Value);
                     Responsibility.SetWorkItemUserActions[activity.ResponsibilityId].Invoke(workItem, _data.CurrentUser.UserId);
                     await _data.TrySaveAsync(cn, workItem);
@@ -114,7 +159,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     workItem.ActivityId = null;
                     await _data.TrySaveAsync(cn, workItem);
                     return Json(new { success = true });
@@ -133,7 +178,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
 
                     if (workItem.ActivityId.HasValue)
                     {
@@ -163,12 +208,12 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
 
                     // work item can have just one priority, so we look to see if there's one existing
                     if (!(await cn.ExistsWhereAsync<WorkItemPriority>(new { WorkItemId = workItem.Id })))
                     {
-                        var nextPriority = await new NextPriority() { OrgId = _data.CurrentOrg.Id, AppId = workItem.ApplicationId }.ExecuteSingleAsync(cn);
+                        var nextPriority = await new NextPriority() { OrgId = _data.CurrentOrg.Id, TeamId = workItem.TeamId }.ExecuteSingleAsync(cn);
                         var wip = new WorkItemPriority()
                         {
                             WorkItemId = workItem.Id,
@@ -201,7 +246,7 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
                     var wip = await _data.FindWhereAsync<WorkItemPriority>(cn, new { WorkItemId = workItem.Id });
                     if (wip != null)
                     {
@@ -222,26 +267,44 @@ namespace Ginseng.Mvc.Controllers
             {
                 using (var cn = _data.GetConnection())
                 {
-                    var workItem = await _data.FindWhereAsync<WorkItem>(cn, new { OrganizationId = _data.CurrentOrg.Id, Number = id });
-                    var orgUser = await _data.FindWhereAsync<OrganizationUser>(cn, new { OrganizationId = _data.CurrentOrg.Id, UserId = userId });
-
-                    workItem.DeveloperUserId = userId;
-                    workItem.ActivityId = orgUser.DefaultActivityId ?? _data.CurrentOrg.DeveloperActivityId.Value;
-
-                    if (await _data.TrySaveAsync(cn, workItem, new string[] 
-                    {
-                        nameof(WorkItem.DeveloperUserId),
-                        nameof(WorkItem.ActivityId)
-                    }))
-                    {
-                        // send email
-                    }
+                    var workItem = await _data.FindWorkItemAsync(cn, id);
+                    await AssignToInnerAsync(cn, userId, workItem);
                 }
                 return Json(new { success = true });
             }
             catch (Exception exc)
             {
                 return Json(new { success = false, message = exc.Message });
+            }
+        }
+
+        private async Task AssignToInnerAsync(SqlConnection cn, int userId, WorkItem workItem)
+        {
+            var orgUser = await _data.FindWhereAsync<OrganizationUser>(cn, new { OrganizationId = _data.CurrentOrg.Id, UserId = userId });
+
+            workItem.DeveloperUserId = userId;
+            workItem.ActivityId = orgUser.DefaultActivityId ?? _data.CurrentOrg.DeveloperActivityId.Value;
+
+            if (await _data.TrySaveAsync(cn, workItem, new string[]
+            {
+                nameof(WorkItem.DeveloperUserId),
+                nameof(WorkItem.ActivityId)
+            }))
+            {
+                string body = $"{_data.CurrentOrgUser.GetDisplayName()} assigned {workItem.Number} to {orgUser.GetDisplayName()}";
+                int eventLogId = await EventLog.WriteAsync(cn, new EventLog()
+                {
+                    EventId = SystemEvent.WorkItemAssigned,
+                    IconClass = WorkItem.IconAssigned,
+                    IconColor = "auto",
+                    OrganizationId = workItem.OrganizationId,
+                    TeamId = workItem.TeamId,
+                    ApplicationId = workItem.ApplicationId,
+                    WorkItemId = workItem.Id,
+                    HtmlBody = body,
+                    TextBody = body
+                }, _data.CurrentUser);
+                await Notification.CreateFromWorkItemAssignment(cn, eventLogId);
             }
         }
 
@@ -259,6 +322,15 @@ namespace Ginseng.Mvc.Controllers
                     await UpdateMilestoneAsync(cn, workItem, data.MilestoneId);
                     await UpdateAssignedUserAsync(cn, workItem, data.UserId);
 
+                    if (data.GroupFieldValue != 0 && !string.IsNullOrEmpty(data.GroupFieldName))
+                    {                        
+                        var customGrouping = new MyItemGroupingOption();
+                        if (await DidGroupingChangeAsync(cn, workItem, customGrouping[data.GroupFieldName], data.GroupFieldValue))
+                        {
+                            customGrouping[data.GroupFieldName].UpdateWorkItem(cn, _data.CurrentUser, workItem, data.GroupFieldValue);
+                        }                        
+                    }
+
                     await cn.ExecuteAsync("dbo.UpdateWorkItemPriorities", new
                     {
                         userName = User.Identity.Name,
@@ -275,6 +347,16 @@ namespace Ginseng.Mvc.Controllers
             {
                 return Json(new { success = false, message = exc.Message });
             }
+        }
+
+        /// <summary>
+        /// We need to know if the grouping actually changed after a drag operation by looking at applicable work item field value
+        /// </summary>
+        private async Task<bool> DidGroupingChangeAsync(SqlConnection cn, WorkItem workItem, MyItemGroupingOption.Option option, int value)
+        {
+            // a regular WorkItem doesn't have everything that the "dto" version has (for custom grouping purposes), so I need to query that
+            var item = await new OpenWorkItems() { IsOpen = null, OrgId = workItem.OrganizationId, Id = workItem.Id }.ExecuteSingleAsync(cn);
+            return !option.GroupValueFunction(item).Equals(value);
         }
 
         [HttpPost]
@@ -345,6 +427,7 @@ namespace Ginseng.Mvc.Controllers
 
                 var vm = new CommentView();
                 vm.ObjectId = comment.ObjectId;
+                vm.ObjectType = comment.ObjectType;
                 vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, ObjectType = comment.ObjectType, ObjectIds = new int[] { comment.ObjectId } }.ExecuteAsync(cn);
                 return PartialView("/Pages/Dashboard/Items/_Comments.cshtml", vm);
             }
@@ -355,7 +438,9 @@ namespace Ginseng.Mvc.Controllers
             if (comment.ObjectType == ObjectType.WorkItem)
             {
                 var workItem = await cn.FindAsync<WorkItem>(comment.ObjectId);
-                if (workItem.WorkItemTicket?.WorkItemNumber != 0)
+                if (!workItem.Organization.UseFreshdesk()) return;
+
+                if ((workItem.WorkItemTicket?.WorkItemNumber ?? 0) != 0)
                 {
                     var client = await _clientFactory.CreateClientForOrganizationAsync(workItem.OrganizationId);
                     await client.AddNoteAsync(workItem.WorkItemTicket.TicketId, comment, _data.UserDisplayName);
@@ -363,12 +448,43 @@ namespace Ginseng.Mvc.Controllers
             }
         }
 
-        public async Task<JsonResult> GetAppProjects(int appId)
+        public async Task<JsonResult> GetApps(int teamId)
         {
             using (var cn = _data.GetConnection())
             {
-                var projects = await new ProjectSelect() { AppId = appId }.ExecuteAsync(cn);
-                return Json(projects);
+                var results = await new AppSelect() { OrgId = _data.CurrentOrg.Id, TeamId = teamId }.ExecuteAsync(cn);
+                return Json(results);
+            }
+        }
+
+        public async Task<JsonResult> GetAppProjects(int appId)
+        {
+            using (var cn = _data.GetConnection())
+            {                
+                var results = await new ProjectSelect() { AppId = appId }.ExecuteAsync(cn);
+
+                var app = await cn.FindAsync<Application>(appId);
+                var globalProjects = await new ProjectSelect() { TeamId = app.TeamId, AppId = 0 }.ExecuteAsync(cn);
+
+                return Json(results.Concat(globalProjects).OrderBy(item => item.Text));
+            }
+        }
+
+        public async Task<JsonResult> GetTeamProjects(int teamId, int? appId = null)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var results = await new ProjectSelect() { TeamId = teamId, AppId = appId }.ExecuteAsync(cn);
+                return Json(results);
+            }
+        }
+
+        public async Task<JsonResult> GetAppMilestones(int appId)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var results = await new MilestoneSelect() { OrgId = appId }.ExecuteAsync(cn);
+                return Json(results);
             }
         }
 
@@ -409,5 +525,82 @@ namespace Ginseng.Mvc.Controllers
         }
 
         public IActionResult View(int id) => RedirectToPage("/WorkItem/View", new { id });
+
+        private async Task<WorkItemListView> ListInnerAsync(OpenWorkItems query)
+        {
+            var vm = new WorkItemListView();
+
+            using (var cn = _data.GetConnection())
+            {
+                vm.WorkItems = await query.ExecuteAsync(cn);
+                var itemIds = vm.WorkItems.Select(wi => wi.Id).ToArray();
+                var labelsInUse = await new LabelsInUse() { WorkItemIds = itemIds, OrgId = _data.CurrentOrg.Id }.ExecuteAsync(cn);
+                vm.SelectedLabels = labelsInUse.ToLookup(row => row.WorkItemId);
+            }
+
+            return vm;
+        }
+
+        public async Task<PartialViewResult> ListInMilestone(int id)
+        {
+            var vm = await ListInnerAsync(new OpenWorkItems()
+            {
+                OrgId = _data.CurrentOrg.Id,
+                MilestoneId = id
+            });
+
+            return PartialView("List", vm);
+        }
+
+        public async Task<PartialViewResult> ListInProject(int id, int? year, int? month)
+        {
+            var vm = await ListInnerAsync(new OpenWorkItems()
+            {
+                OrgId = _data.CurrentOrg.Id,
+                ProjectId = id,
+                MilestoneYear = year,
+                MilestoneMonth = month
+            });
+
+            return PartialView("List", vm);
+        }
+
+        public async Task<JsonResult> Close(int id, int reasonId)
+        {
+            try
+            {
+                using (var cn = _data.GetConnection())
+                {
+                    var wi = await _data.FindWorkItemAsync(cn, id);
+                    wi.CloseReasonId = reasonId;
+                    wi.ModifiedBy = User.Identity.Name;
+                    wi.DateModified = _data.CurrentUser.LocalTime;
+                    await cn.UpdateAsync(wi, _data.CurrentUser, r => r.CloseReasonId, r => r.ModifiedBy, r => r.DateModified);
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
+        }
+
+        public async Task<PartialViewResult> SetProject(int id, int projectId)
+        {
+            ProjectInfoResult prj = null;
+
+            using (var cn = _data.GetConnection())
+            {
+                var wi = await _data.FindWorkItemAsync(cn, id);
+                wi.ProjectId = projectId;
+                wi.ModifiedBy = User.Identity.Name;
+                wi.DateModified = _data.CurrentUser.LocalTime;
+                await cn.UpdateAsync(wi, _data.CurrentUser, r => r.ProjectId, r => r.ModifiedBy, r => r.DateModified);
+
+                prj = await new ProjectInfo() { OrgId = _data.CurrentOrg.Id, Id = projectId }.ExecuteSingleAsync(cn);
+            }
+
+            return PartialView("/Pages/Dashboard/Items/_ItemInfo.cshtml", prj);
+        }
     }
 }

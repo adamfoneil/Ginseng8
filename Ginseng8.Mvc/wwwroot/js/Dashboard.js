@@ -1,21 +1,70 @@
-﻿var reloadProjectDropdowns = document.querySelectorAll('.fillProjects');
-reloadProjectDropdowns.forEach(function (ele) {
-    ele.addEventListener('change', function (ev) {        
-        var number = ev.target.form.Number.value;
-        fetch('/WorkItem/GetAppProjects?appId=' + $(ev.target).val(), {
-            method: 'get'            
-        }).then(function (response) {
-            return response.json();
-        }).then(function (data) {
-            var select = $('#ProjectId-' + number);
-            select.children().remove();
-            $("<option>").val("").text("- project -").appendTo(select);
-            $(data).each(function () {
-                $("<option>").val(this.value).text(this.text).appendTo(select);
-            });
-        });
+﻿var reloadAppDropdowns = document.querySelectorAll('.fillApps');
+reloadAppDropdowns.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {
+        FillDropdown(ev, '/WorkItem/GetApps?teamId=', '#AppId-', '- application -');
     });
 });
+
+var showHideApps = document.querySelectorAll('.showHideApps');
+showHideApps.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {
+        var teamId = $(ev.target).val();
+        var useApps = teamUseApps[teamId];
+        var number = ev.target.form.Number.value;        
+        if (useApps) {
+            $('#AppId-' + number).show();
+        } else {
+            $('#AppId-' + number).hide();
+        }
+    });
+});
+
+var reloadProjectDropdowns = document.querySelectorAll('.fillProjects');
+reloadProjectDropdowns.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {
+        var number = ev.target.form.Number.value;
+        var teamId = $('#TeamId-' + number).val();
+        var appId = $('#AppId-' + number).val();
+        var useApps = teamUseApps[teamId];
+        if (useApps & (appId != '')) {            
+            FillDropdown(ev, '/WorkItem/GetAppProjects?appId=', '#ProjectId-', '- project -');
+        } else {
+            if (appId == '') {
+                FillDropdown(ev, '/WorkItem/GetTeamProjects?appId=0&teamId=', '#ProjectId-', '- project -', teamId);
+            } else {
+                FillDropdown(ev, '/WorkItem/GetTeamProjects?teamId=', '#ProjectId-', '- project -', teamId);
+            }            
+        }        
+    });
+});
+
+var reloadMilestoneDropdowns = document.querySelectorAll('.fillMilestones');
+reloadMilestoneDropdowns.forEach(function (ele) {
+    ele.addEventListener('change', function (ev) {
+        FillDropdown(ev, '/WorkItem/GetAppMilestones?appId=', '#MilestoneId-', '- milestone -');
+    });
+});
+
+function FillDropdown(ev, url, selectIdPrefix, blankOption, paramValue) {
+    var number = ev.target.form.Number.value;
+    var id = (paramValue === undefined) ? $(ev.target).val() : paramValue;
+    fetch(url + id, {
+        method: 'get'
+    }).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        var select = $(selectIdPrefix + number);
+        FillDropdownItems(data, select, blankOption);
+    });
+}
+
+function FillDropdownItems(data, select, blankOption) {
+    select.children().remove();
+    $("<option>").val("").text(blankOption).appendTo(select);
+    $(data).each(function () {
+        $("<option>").val(this.value).text(this.text).appendTo(select);
+    });
+}
 
 // jQuery UI tooltips
 $('.tooltips').tooltip({
@@ -48,6 +97,16 @@ updateFields.forEach(function (e) {
                     var successImg = document.getElementById('update-success-' + number);
                     $(successImg).show();
                     $(successImg).fadeOut();
+                    var numberBadge = $('#work-item-number-' + number);
+                    numberBadge.css('background-color', result.backgroundColor);
+                    numberBadge.removeClass('badge-secondary');
+                    if (result.className) numberBadge.addClass(result.className);
+                    var missingEstimateModifier = $('#' + result.missingEstimateModifierId);
+                    if (result.showMissingEstimateModifier) {
+                        missingEstimateModifier.show();
+                    } else {
+                        missingEstimateModifier.hide();
+                    }
                 } else {
                     $(failImg).show();
                     failImg.setAttribute('title', result.message);
@@ -187,22 +246,9 @@ labelCheckboxes.forEach(function (e) {
     });
 });
 
-function LabelCheckboxLinkOnClick(ev) {
-    ev.stopPropagation();
-    var checkbox = null;
-    if (ev.target.tagName == 'A') {
-        checkbox = ev.target.getElementsByTagName('input')[0];
-    } else if (ev.target.tagName == 'SPAN') {
-        checkbox = ev.target.parentElement.getElementsByTagName('input')[0];
-    }
-    checkbox.checked = !checkbox.checked;
-    var event = new Event('click');
-    checkbox.dispatchEvent(event);
-}
-
 var labelCheckboxes = document.querySelectorAll('.labelCheckboxLink');
 labelCheckboxes.forEach(function (e) {
-    e.addEventListener('click', LabelCheckboxLinkOnClick);
+    e.addEventListener('click', MultiSelectCheckboxLinkOnClick);
 });
 
 var itemDetailButtons = document.querySelectorAll('.btn-item-detail');
@@ -210,7 +256,12 @@ itemDetailButtons.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
         var divId = ev.target.getAttribute('data-target');
         var div = document.getElementById(divId);
-        $(div).slideToggle();
+        $(div).slideToggle('fast', function () {
+            if ($(this).is(':visible')) {
+                var editor = $(this).find('.htmlEditor');
+                editor.froalaEditor('events.focus');
+            }
+        });        
     });
 });
 
@@ -239,13 +290,33 @@ selfStartLinks.forEach(function (ele) {
             $(loading).hide();
             $(ev.target).hide();
             if (result.success) {
-                $(ev.target).nextAll('.success').show();
+                console.log('next success', $(ev.target).next('.success'));
+                $(ev.target).next('.success').show();
             } else {
                 $(ev.target).next('.error').show();
             }
         });
     });
 });
+
+var closeLinks = document.querySelectorAll('.close-item');
+closeLinks.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        AssignActionEventHandler(ev, '/WorkItem/Close', function (e) {
+            return {
+                id: e.getAttribute('data-number'),
+                reasonId: e.getAttribute('data-reason-id')
+            };
+        });   
+        RemoveWorkItem(ev);
+    });
+});
+
+function RemoveWorkItem(ev) {
+    var card = $(ev.target).parents('.work-item-card');
+    var number = $(card).data('number');
+    $('#card-' + number).slideUp();
+}
 
 var resumeWorkLinks = document.querySelectorAll('.resume-work-item');
 resumeWorkLinks.forEach(function (ele) {
@@ -265,7 +336,8 @@ var unassignWorkLinks = document.querySelectorAll('.unassign-work-item');
 unassignWorkLinks.forEach(function (ele) {
     ele.addEventListener('click', function (ev) {
         AssignActionEventHandler(ev, '/WorkItem/UnassignMe');
-    });
+        RemoveWorkItem(ev);
+    });    
 });
 
 var workOnNextLinks = document.querySelectorAll('.work-on-next');
@@ -330,7 +402,15 @@ $(document)
 .on('click', '.add-comment-submit', function(ev) {
     ev.preventDefault();
     var frm = ev.target.form;
+
+    if (frm.HtmlBody.value == '') {
+        alert('Comment may not be empty.');
+        return;
+    }
+
     let formData = new FormData(frm);
+
+    $(ev.currentTarget).attr('disabled', true);
 
     fetch('/WorkItem/SaveComment', {
         method: 'post',
@@ -340,7 +420,9 @@ $(document)
     }).then(function (html) {
         var objectId = frm.ObjectId.value;
         var objectType = frm.ObjectType.value;
+
         $('#comments-' + objectId + '-' + objectType + '-output').first().html(html);
+        $('#addComment-' + objectId + '-HtmlBody').froalaEditor(GetFroalaSettings());
     });
 })
 .on('click', '.addComment', function(event) {
@@ -351,8 +433,31 @@ $(document)
     var div = document.getElementById(target);
     $(div).slideToggle('fast', function () {
         if ($(div).is(':visible')) {
-            var field = document.getElementById(target + '-HtmlBody');
-            field.focus();
+            var objectId = button.getAttribute('data-id');
+            $('#addComment-' + objectId + '-HtmlBody').froalaEditor('events.focus');            
+        }
+    });
+})
+.on('click', '.search-box-container', function(event) {
+    event.stopPropagation();
+})
+.on('input', '.search-box', function(event) {
+    var $input = $(event.currentTarget);
+    var searchTerm = $input.val().toLowerCase();
+    var $dropdownItems = $input.parents('.dropdown-menu').find('.dropdown-item');
+
+    if (!searchTerm.length) {
+        $dropdownItems.show();
+        return;
+    }
+
+    $dropdownItems.hide();
+
+    $dropdownItems.each(function(index, item) {
+        var $item = $(item);
+
+        if (~$item.find('.badge').text().toLowerCase().indexOf(searchTerm)) {
+            $item.show();
         }
     });
 });
@@ -369,8 +474,18 @@ $(document).ready(function () {
     if (hash) {
         var workItemNum = hash.substring(1);
         var workItemAnchor = $('a[name=' + workItemNum + ']');
-        var tabId = workItemAnchor.parents('.tab-pane').data('tab-id');
-        $('#' + tabId).tab('show');        
+        if (workItemAnchor.length) {
+            var tabId = workItemAnchor.parents('.tab-pane').data('tab-id');
+            $('#' + tabId).tab('show');
+        } else {
+            fetch('/WorkItem/InfoBanner/' + workItemNum, {
+                method: 'get'
+            }).then(function (response) {
+                return response.text();
+            }).then(function (html) {
+                $('#infoBanner').html(html);
+            });
+        }        
     } else {
         // no current work item, so show first tab by default
         $('.nav-tabs li:first-child a').tab('show');
@@ -446,6 +561,12 @@ function InitWorkItemSortable() {
 function updateSortableList(list, taskObject) {
     var task = taskObject || list.prevObject;
 
+    if (list.length) {
+        list.find('.work-item-card').each(function (taskIndex, workItemElement) {
+            $(workItemElement).find('.work-item-priority').text(taskIndex + 1);
+        });
+    }
+
     if (list.length === 0 || task == null) {
         return;
     }
@@ -479,6 +600,8 @@ function updateSortableList(list, taskObject) {
     var milestoneId = list.parents('[data-milestone-id]').data('milestone-id'); 
     var userId = list.data('user-id');
     var number = task.data('number');
+    var groupFieldName = list.data('group-field');
+    var groupFieldValue = list.data('group-value');
     var tasksArray = [];
 
     list.find('.work-item-card').each(function (taskIndex, workItemElement) {
@@ -492,13 +615,16 @@ function updateSortableList(list, taskObject) {
         milestoneId: milestoneId,        
         userId: userId,
         number: number,
+        groupFieldName: groupFieldName,
+        groupFieldValue: groupFieldValue,
         items: tasksArray,
     })
 }
 
 function TaskReorder(data) {
-    console.log('TaskReorder data json', JSON.stringify(data));
-    console.log('TaskReorder data object', data);
+    console.group('TaskReorder data object');
+    console.log(data);
+    console.groupEnd();
 
     fetch('/WorkItem/SetPriorities', {
         method: 'post',
@@ -509,15 +635,8 @@ function TaskReorder(data) {
         body: JSON.stringify(data)
     }).then(function (response) {
         // success fail info?
+        // show new ordering in card title (target class .work-item-priority, see Dashboard/Items/_Priority.cshtml)
         return response.json();
-    });
-}
-
-function initDraggableItems() {
-    $('.js-item-draggable').draggable({
-        revert: 'invalid',
-        start: sortableStart,
-        stop: sortableStop
     });
 }
 
@@ -596,5 +715,45 @@ $(document).ready(function () {
     })
     .on('blur', 'input', function() {
         $(this).parents('.editable').removeClass('active');
+        });
+
+    $('.ms-datepicker-input').datepicker({
+        onSelect: function (dateText, inst) {
+            var msId = $(this).data('milestone-id');
+            SetMilestoneDate(msId, dateText);
+        },
+        beforeShow: function (ele, ui) {
+            var link = $(ele);
+            ui.dpDiv.offset({
+                top: link.offset().top + 10,
+                left: link.offset().left + 10
+            });
+        }
+    });
+
+    $('.ms-datepicker').click(function () {
+        $(this).next('.ms-datepicker-input').datepicker('show');
     });
 });
+
+function SetMilestoneDate(milestoneId, dateText) {
+
+    let data = {
+        milestoneId: milestoneId,
+        dateText: dateText
+    };
+
+    fetch('/Update/MilestoneDate', {
+        method: 'post',
+        headers: {
+            "Content-Type": "application/json",
+            "RequestVerificationToken": getAntiForgeryToken()
+        },
+        body: JSON.stringify(data)
+    }).then(function (response) {
+        // success fail info?
+        return response.text();
+    }).then(function (text) {
+        $(".ms-datepicker[data-milestone-id='" + milestoneId + "']").html(text);
+    });
+}

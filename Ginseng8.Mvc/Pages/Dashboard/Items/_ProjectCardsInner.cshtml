@@ -1,0 +1,13 @@
+﻿@model IEnumerable<ProjectInfoResult>
+
+<div class="row ml-3">
+    @foreach (var prj in Model)
+    {
+        <div
+            class="col-3 p-2 project-card js-droppable-project-card-link-button-container"
+            data-project-id="@prj.Id"
+            data-application-id="@prj.ApplicationId">
+            <partial name="Items/_ProjectLinkButton" model="prj" />
+        </div>
+    }
+</div>

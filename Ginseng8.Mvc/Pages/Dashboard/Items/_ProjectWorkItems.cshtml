@@ -1,51 +1,59 @@
 ﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
 
 <div id="accordion">
-    @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ApplicationId))
+    @foreach (var appGrp in Model.WorkItems.GroupBy(row => row.ProjectParentId))
     {
-        <h4>@appGrp.First().ApplicationName</h4>
+        <h4>
+            <a asp-page="/Dashboard/Index" class="nounderline" title="Back to Organization dashboard">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+            @appGrp.First().ProjectParentName
+        </h4>
         foreach (var projectGrp in appGrp.OrderBy(row => row.ProjectName).GroupBy(row => row.ProjectId))
         {
             var projectItem = projectGrp.First();
-            <h5><span class="editable" id="project-name-@projectGrp.Key" data-url="/Update/ProjectName">@projectItem.ProjectName</span></h5>
+            <h5>
+                <span class="editable" id="project-name-@projectGrp.Key" data-url="/Update/ProjectName">@projectItem.ProjectName</span>
+            </h5>
 
             @if (projectGrp.Key != 0)
             {
                 <div class="ml-3">
                     <div class="row">
-                        <partial name="Items/_ProjectControls" model="Model"/>
+                        <partial name="Items/_ProjectControls" model="Model" />
                         <div class="mr-3 mt-1"></div>
-                        <partial name="Items/_ProjectInfo" model="Model.SelectedProjectInfo"/>                                                
-                    </div>                    
-                    
+                        <partial name="Items/_ItemInfo" model="Model.SelectedProjectInfo" />
+                    </div>
+
                     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "prj", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody, UploadFolderName = "Projects", AllowComments = true })
                     <div id="comments-@Model.SelectedProject.Id-Project-output">
                     @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.ProjectComments, ObjectId = Model.SelectedProject.Id, ObjectType = ObjectType.Project })
                     </div>
-                </div>                
+                </div>
             }
 
             @foreach (var milestoneGrp in projectGrp.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
             {
                 var milestoneItem = milestoneGrp.First();
-                <partial name="Items/_MilestoneHeader" model="milestoneItem" />
+                <partial name="Items/_MilestoneHeader" model="@new MilestoneHeaderView(milestoneItem)" />
 
-                <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)"/>
+                <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />
 
                 <div id="app-@appGrp.Key-project-@projectGrp.Key-milestone-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
                     <div class="ml-3">
                         @foreach (var item in milestoneGrp)
                         {
-                            <partial name="Items/_Card" model="new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id] }" />
+                            <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers })" />
                         }
                         @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                         {
+                            { "teamId", projectItem.TeamId },
                             { "applicationId", appGrp.Key },
                             { "projectId", projectGrp.Key },
                             { "milestoneId", milestoneGrp.Key }
-                        }))
+                        }) { Dropdowns = Model.Dropdowns, UseApplications = appGrp.First().UseApplications, AssignToUsers = Model.AssignToUsers })
                     </div>
-                </div>                
+                </div>
             }
         }
     }

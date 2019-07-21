@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Ginseng.Models;
 using Ginseng.Mvc.Models.Freshdesk;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Ginseng.Mvc.Interfaces
 {
@@ -24,9 +25,14 @@ namespace Ginseng.Mvc.Interfaces
         /// <remarks>
         /// Used of debug purposes
         /// </remarks>
-        /// <param name="stream">Webhook DTO request stream</param>
+        /// <param name="request">Webhook DTO request stream</param>
         /// <returns>Task</returns>
-        Task StoreWebhookPayloadAsync(Stream stream);
+        Task StoreWebhookPayloadAsync(Stream request);
+
+        /// <summary>
+        /// Stores request and result content for troubleshooting failed webhook calls
+        /// </summary>
+        Task StoreWebhookPayloadAsync(Stream request, IActionResult result);
 
         /// <summary>
         /// On webhook received event

@@ -9,6 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Pages\Dashboard\Items\_MilestoneCards.cshtml" />
+    <Content Remove="Pages\Dashboard\Items\_MilestoneDetail.cshtml" />
     <Content Remove="Pages\EmailContent\JoinRequest.cshtml" />
     <Content Remove="Pages\EmailContent\Notification.cshtml" />
     <Content Remove="Pages\EmailContent\_Layout.cshtml" />
@@ -27,14 +29,14 @@
     <PackageReference Include="ClosedXML" Version="0.94.2" />
     <PackageReference Include="ClosedXML.Extensions.Mvc" Version="0.2.2" />
     <PackageReference Include="Html2Markdown" Version="3.2.1.341" />
-    <PackageReference Include="HtmlSanitizer" Version="4.0.210" />
+    <PackageReference Include="HtmlSanitizer" Version="4.0.217" />
     <PackageReference Include="JsonSettings.Library" Version="1.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
     <PackageReference Include="Octokit" Version="0.32.0" />
-    <PackageReference Include="Postulate.Base" Version="1.3.19" />
+    <PackageReference Include="Postulate.Base" Version="1.3.23" />
     <PackageReference Include="RazorLight" Version="2.0.0-beta1" />
     <PackageReference Include="RestSharp" Version="106.6.9" />
     <PackageReference Include="Sendgrid" Version="9.11.0" />

@@ -2,10 +2,10 @@
 
 namespace Ginseng.Mvc.Pages
 {
-	public class PrivacyModel : PageModel
-	{
-		public void OnGet()
-		{
-		}
-	}
+    public class PrivacyModel : PageModel
+    {
+        public void OnGet()
+        {
+        }
+    }
 }

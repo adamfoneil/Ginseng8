@@ -15,12 +15,12 @@ namespace Ginseng.Models
         public long TicketId { get; set; }
 
         [References(typeof(Organization))]
-        [PrimaryKey]        
+        [PrimaryKey]
         public int OrganizationId { get; set; }
 
-        [References(typeof(Responsibility))]
+        [References(typeof(Team))]
         [PrimaryKey]
-        public int ResponsibilityId { get; set; }
+        public int TeamId { get; set; }
 
         public string Comments { get; set; }
     }
