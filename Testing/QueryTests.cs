@@ -194,5 +194,11 @@ namespace Testing
         {
             TestQuery<AllMilestones>();
         }
+
+        [TestMethod]
+        public void HiddenMilestonesQuery()
+        {
+            TestQuery<HiddenMilestones>();
+        }
     }
 }

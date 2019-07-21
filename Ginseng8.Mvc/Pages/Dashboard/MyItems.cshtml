@@ -79,6 +79,7 @@
             </div>
         }
     </div>
+    <hr/>
 }
 </div>
 
@@ -91,29 +92,32 @@
 
 @if (!Model.WorkItems.Any())
 {
-    if (Html.CurrentTeamId() != 0)
-    {
-        if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
+    <div class="mt-4">
+        <hr/>
+        @if (Html.CurrentTeamId() != 0)
         {
-            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
-            {                
-                { Model.UserIdColumnName, Model.UserId },
-                { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
-            }) { Dropdowns = Model.Dropdowns, UseApplications = Model.CurrentOrgUser.CurrentTeam.UseApplications, AppendIfMissing = new Dictionary<string, int>()
+            if (Model.CurrentOrgUser.DefaultActivityId.HasValue)
             {
-                { "teamId", Html.CurrentTeamId() },
-                { "applicationId", Html.CurrentAppId() }
-            }})
+                @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+                {                
+                    { Model.UserIdColumnName, Model.UserId },
+                    { "activityId", Model.CurrentOrgUser.DefaultActivityId ?? 0 }
+                }) { Dropdowns = Model.Dropdowns, UseApplications = Model.CurrentOrgUser.CurrentTeam.UseApplications, AppendIfMissing = new Dictionary<string, int>()
+                {
+                    { "teamId", Html.CurrentTeamId() },
+                    { "applicationId", Html.CurrentAppId() }
+                }})
+            }
+            else
+            {
+                <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+            }
         }
         else
         {
-            <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page.</p>
+            <p>To add work items here, please select a Team above.</p>
         }
-    }
-    else
-    {
-        <p>To add work items here, please select a Team above.</p>
-    }
+    </div>
 }
 
 <div>
