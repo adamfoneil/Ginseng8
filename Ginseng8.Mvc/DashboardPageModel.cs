@@ -57,6 +57,11 @@ namespace Ginseng.Mvc
             get { return null; }
         }
 
+        protected virtual async Task InitializeAsync(SqlConnection connection)
+        {
+            await Task.CompletedTask;
+        }
+
         /// <summary>
         /// Override this to populate additional model properties during the OnGetAsync method
         /// </summary>
@@ -88,10 +93,12 @@ namespace Ginseng.Mvc
                 var redirect = await GetRedirectAsync(cn);
                 if (redirect != null) return redirect;
 
+                await InitializeAsync(cn);
+
                 var query = GetQuery();
                 if (query != null)
                 {
-                    WorkItems = await GetQuery().ExecuteAsync(cn);
+                    WorkItems = await query.ExecuteAsync(cn);
 
                     ItemsInPastMilestone = WorkItems.Where(wi => wi.MilestoneDate < DateTime.Today).ToArray();
                     if (ItemsInPastMilestone.Any())

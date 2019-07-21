@@ -27,7 +27,7 @@
     {
         var milestoneItem = milestoneGrp.First();
 
-        <partial name="Items/_MilestoneHeader" model="milestoneItem" />
+        <partial name="Items/_MilestoneHeader" model="@new MilestoneHeaderView(milestoneItem)" />
 
         <div class="ml-3">
             <partial name="Items/_Load" model="Model.GetLoadView(milestoneGrp)" />

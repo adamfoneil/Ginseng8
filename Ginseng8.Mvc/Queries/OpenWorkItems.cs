@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Enums.Freshdesk;
+using Ginseng.Models.Interfaces;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Services;
 using Postulate.Base;
@@ -31,7 +32,7 @@ namespace Ginseng.Mvc.Queries
         IsStopped = 3 // has milestone, but unassigned
     }
 
-	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle
+	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle, IMilestoneHeader
 	{
 		public const string ImpedimentIcon = Comment.ImpedimentIcon;
 		public const string ImpedimentColor = "darkred";
@@ -109,6 +110,7 @@ namespace Ginseng.Mvc.Queries
         public TicketStatus FDTicketStatus { get; set; }
         public bool UseApplications { get; set; }
         public int? MyActivityOrder { get; set; }
+        public bool IsMilestoneVisible { get { return true; } }
 
         /// <summary>
         /// Lets us use a single property to switch between the app or team Id based on whether the team uses applications
@@ -448,6 +450,15 @@ namespace Ginseng.Mvc.Queries
 
         [Where("MONTH([ms].[Date])=@milestoneMonth")]
         public int? MilestoneMonth { get; set; }
+
+        [Join("INNER JOIN [dbo].[MilestoneUserView] [muv] ON COALESCE([wi].[MilestoneId], 0)=[muv].[MilestoneId]")]
+        public bool VisibleMilestones { get; set; }
+
+        /// <summary>
+        /// Use this when VisibleMilestones == true
+        /// </summary>
+        [Where("([muv].[UserId]=@visibleToUserId AND [muv].[IsVisible]=1)")]
+        public int? VisibleToUserId { get; set; }
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
 		{
