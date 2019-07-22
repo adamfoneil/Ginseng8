@@ -48,26 +48,13 @@ namespace Ginseng.Mvc.Classes
                 {
                     ms = new Milestone(date)
                     {
-                        OrganizationId = orgId                                            
+                        OrganizationId = orgId
                     };
-
-                    int increment = 0;
-                    string baseName = ms.Name;
-                    while (await IsDuplicateNameAsync(cn, ms))
-                    {
-                        increment++;
-                        ms.Name = baseName + "." + increment.ToString();
-                    }
-
+                    await Milestone.EnsureUniqueNameAsync(cn, ms);
                     await cn.SaveAsync(ms, currentUser);
                 }
 
                 return ms.Id;
-            }
-
-            private async Task<bool> IsDuplicateNameAsync(IDbConnection cn, Milestone ms)
-            {
-                return await cn.ExistsWhereAsync<Milestone>(new { ms.OrganizationId, ms.Name });
             }
         }
     }

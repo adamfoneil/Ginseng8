@@ -172,6 +172,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                         ProjectId = prj.Id
                     };
 
+                await Milestone.EnsureUniqueNameAsync(connection, ms);
+
                 if (ms.Id == 0) await connection.SaveAsync(ms, CurrentUser);
 
                 results.Add(ms);

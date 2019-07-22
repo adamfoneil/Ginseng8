@@ -75,6 +75,23 @@ namespace Ginseng.Models
         public int ProjectId { get; set; }
 
         public Organization Organization { get; set; }
+
+        public static async Task EnsureUniqueNameAsync(IDbConnection cn, Milestone ms)
+        {
+            int increment = 0;
+            string baseName = ms.Name;
+            while (await IsDuplicateNameAsync(cn, ms))
+            {
+                increment++;
+                ms.Name = baseName + "." + increment.ToString();
+            }
+        }
+
+        private static async Task<bool> IsDuplicateNameAsync(IDbConnection cn, Milestone ms)
+        {
+            return await cn.ExistsWhereAsync<Milestone>(new { ms.OrganizationId, ms.Name });
+        }
+
         public Team Team { get; set; }
 
         public int MilestoneId => Id;
