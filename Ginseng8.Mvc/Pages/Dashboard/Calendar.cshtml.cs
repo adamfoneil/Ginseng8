@@ -165,12 +165,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 var ms = 
                     await connection.FindWhereAsync<Milestone>(new { OrganizationId = OrgId, Date = date }) ??
-                    new Milestone(date)
-                    {
-                        OrganizationId = OrgId,
-                        TeamId = prj.TeamId,                        
-                        ProjectId = prj.Id
-                    };
+                    new Milestone(date) { OrganizationId = OrgId };
 
                 await Milestone.EnsureUniqueNameAsync(connection, ms);
 
@@ -189,6 +184,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 "SELECT [Id] FROM [dbo].[WorkItem] WHERE [ProjectId]=@projectId AND [MilestoneId]=@msId AND [CloseReasonId] IS NULL",
                 new { projectId, msId = milestone.Id });
             if (workItems.Any()) return;
+            
+            if (!milestone.TeamId.HasValue)
+            {
+                milestone.TeamId = CurrentOrgUser.CurrentTeamId;
+            }
 
             // can't create placeholder without known team
             if (!milestone.TeamId.HasValue) return;
