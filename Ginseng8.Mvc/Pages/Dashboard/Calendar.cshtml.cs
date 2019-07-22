@@ -74,7 +74,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             using (var cn = Data.GetConnection())
             {
-                ProjectItems = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId, TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteItemsAsync(cn);
+                var appProjects = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId, TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteItemsAsync(cn);
+                var globalProjects = await new ProjectSelect() { AppId = 0, TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteItemsAsync(cn);
+                ProjectItems = appProjects.Concat(globalProjects).OrderBy(row => row.Text);
 
                 var projects = await new DevCalendarProjects()
                 {
