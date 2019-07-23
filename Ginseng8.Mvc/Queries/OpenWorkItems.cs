@@ -379,6 +379,9 @@ namespace Ginseng.Mvc.Queries
 		[Where(AssignedUserExpression + "=@assignedUserId")]
 		public int? AssignedUserId { get; set; }
 
+        [Where("[wi].[DeveloperUserId]=@developerUserId")]
+        public int? DeveloperUserId { get; set; }
+
 		[Where("[wi].[ApplicationId]=@appId")]
 		public int? AppId { get; set; }
 
