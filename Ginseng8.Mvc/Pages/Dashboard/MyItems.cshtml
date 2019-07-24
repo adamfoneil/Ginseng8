@@ -36,6 +36,22 @@
 }
 
 <div id="accordion">
+@if  (Model.PinnedItems.Any())
+{
+    <div class="row mt-4">
+        <h5>
+            <i class="fas fa-thumbtack"></i>
+            Pinned Items
+        </h5>
+    </div>
+    <div class="ml-3">
+    @foreach (var item in Model.PinnedItems)
+    {        
+        <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, TitleViewField = Model.GroupingOption.TitleViewField, IsPinned = true })" />
+    }
+    </div>
+}
+
 @foreach (var milestoneGrp in Model.WorkItems.OrderBy(row => row.SortMilestoneDate).GroupBy(row => row.MilestoneId))
 {
     var milestoneItem = milestoneGrp.First();

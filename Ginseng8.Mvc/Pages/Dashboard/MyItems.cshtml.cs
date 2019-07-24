@@ -43,6 +43,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<MyWorkScheduleResult> MySchedule { get; set; }
         public int UnestimatedItemCount { get; set; }
         public IEnumerable<Milestone> HiddenMilestones { get; set; }
+        public IEnumerable<OpenWorkItemsResult> PinnedItems { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public DateTime? Date { get; set; }
@@ -95,7 +96,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 TeamId = CurrentOrgUser.CurrentTeamId,                
                 LabelId = LabelId,
                 VisibleToUserId = UserId,
-                VisibleMilestones = true
+                VisibleMilestones = true,
+                PinnedItems = false
             };
 
             if (Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true)
@@ -151,6 +153,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             MySchedule = await new MyWorkSchedule() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
             HiddenMilestones = await new HiddenMilestones() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
+
+            PinnedItems = await new OpenWorkItems() { OrgId = OrgId, PinnedItems = true }.ExecuteAsync(connection);
         }
 
         public async Task<RedirectResult> OnPostSetOptionsAsync()

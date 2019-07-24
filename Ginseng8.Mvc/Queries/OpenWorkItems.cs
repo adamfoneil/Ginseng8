@@ -454,6 +454,10 @@ namespace Ginseng.Mvc.Queries
         [Where("MONTH([ms].[Date])=@milestoneMonth")]
         public int? MilestoneMonth { get; set; }
 
+        [Case(true, "EXISTS(SELECT 1 FROM [dbo].[PinnedWorkItem] WHERE [WorkItemId]=[wi].[Id] AND [UserId]=" + AssignedUserExpression + ")")]
+        [Case(false, "NOT EXISTS(SELECT 1 FROM [dbo].[PinnedWorkItem] WHERE [WorkItemId]=[wi].[Id] AND [UserId]=" + AssignedUserExpression + ")")]
+        public bool? PinnedItems { get; set; }
+
         [Join("INNER JOIN [dbo].[MilestoneUserView] [muv] ON COALESCE([wi].[MilestoneId], 0)=[muv].[MilestoneId]")]
         public bool VisibleMilestones { get; set; }
 
