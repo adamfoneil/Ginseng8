@@ -30,7 +30,7 @@
     {
         <form method="post" asp-page-handler="HideMilestone">
             <input type="hidden" name="id" value="@Model.Header.MilestoneId"/>            
-            <button class="btn btn-sm btn-light milestone-collapse" title="Collapse milestone" type="submit">
+            <button class="btn btn-sm btn-light milestone-collapse ml-2" title="Collapse milestone" type="submit">
                 <i class="far fa-minus-circle"></i>
             </button>
         </form>
@@ -39,7 +39,7 @@
     {
         <form method="post" asp-page-handler="ShowMilestone">
             <input type="hidden" name="id" value="@Model.Header.MilestoneId"/>            
-            <button class="btn btn-sm btn-light milestone-expand" title="Expand milestone" type="submit">
+            <button class="btn btn-sm btn-light milestone-expand ml-2" title="Expand milestone" type="submit">
                 <i class="far fa-plus-circle"></i>
             </button>
         </form>
