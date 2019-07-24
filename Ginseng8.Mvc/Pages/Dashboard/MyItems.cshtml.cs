@@ -156,6 +156,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             var pinnedItemQry = new OpenWorkItems() { OrgId = OrgId, PinnedItems = true };
             UserIdFieldOption.Criteria.Invoke(pinnedItemQry, UserId);
+            if (Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true) pinnedItemQry.AppId = CurrentOrgUser.EffectiveAppId;
             PinnedItems = await pinnedItemQry.ExecuteAsync(connection);
         }
 
