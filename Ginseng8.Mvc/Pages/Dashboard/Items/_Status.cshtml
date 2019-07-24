@@ -1,9 +1,18 @@
 ﻿@model WorkItemCardView
 
+@{ 
+    bool myTask = Model.UserId == Model.WorkItem.AssignedUserId;
+}
+
 @if (!Model.WorkItem.CloseReasonId.HasValue)
 {
-    if (!Model.WorkItem.AssignedUserId.HasValue || Model.UserId == Model.WorkItem.AssignedUserId)
+    if (!Model.WorkItem.AssignedUserId.HasValue || myTask)
     {
+        if (myTask)
+        {
+            <i class="@Model.PinnedClassName() no-propagation toggle-pin" data-number="@Model.WorkItem.Number"></i>
+        }
+
         <div class="dropdown">
             <button class="btn btn-secondary btn-light dropdown-toggle btn-sm" type="button" id="handoff-@Model.WorkItem.Number" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 @Model.HandOffButtonText()

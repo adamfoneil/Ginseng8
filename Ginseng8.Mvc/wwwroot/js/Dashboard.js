@@ -1,4 +1,21 @@
-﻿var reloadAppDropdowns = document.querySelectorAll('.fillApps');
+﻿var pins = document.querySelectorAll('.toggle-pin');
+pins.forEach(function (ele) {
+    ele.addEventListener('click', function (ev) {
+        var data = {
+            id: $(ev.target).data('number')
+        };
+        fetch('/WorkItem/TogglePin', {
+            method: 'post',
+            body: getFormData(data)
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            $(ev.target).switchClass(data.removeClass, data.addClass);
+        });
+    });
+});
+
+var reloadAppDropdowns = document.querySelectorAll('.fillApps');
 reloadAppDropdowns.forEach(function (ele) {
     ele.addEventListener('change', function (ev) {
         FillDropdown(ev, '/WorkItem/GetApps?teamId=', '#AppId-', '- application -');

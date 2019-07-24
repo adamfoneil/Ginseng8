@@ -602,5 +602,39 @@ namespace Ginseng.Mvc.Controllers
 
             return PartialView("/Pages/Dashboard/Items/_ItemInfo.cshtml", prj);
         }
+
+        public async Task<JsonResult> TogglePin(int id)
+        {
+            try
+            {
+                using (var cn = _data.GetConnection())
+                {
+                    var wi = await _data.FindWorkItemAsync(cn, id);
+                    var pin =
+                        await _data.FindWhereAsync<PinnedWorkItem>(new { _data.CurrentUser.UserId, WorkItemId = wi.Id }) ??
+                        new PinnedWorkItem() { UserId = _data.CurrentUser.UserId, WorkItemId = wi.Id };
+
+                    string addClass = null;
+                    string removeClass = null;
+                    if (pin.Id == 0)
+                    {
+                        addClass = PinnedWorkItem.PinnedIcon;
+                        removeClass = PinnedWorkItem.UnpinnedIcon;
+                        await cn.SaveAsync(pin, _data.CurrentUser);
+                    }
+                    else
+                    {
+                        addClass = PinnedWorkItem.UnpinnedIcon;
+                        removeClass = PinnedWorkItem.PinnedIcon;
+                        await cn.DeleteAsync<PinnedWorkItem>(pin.Id);
+                    }
+                    return Json(new { success = true, addClass, removeClass });
+                }                
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
+        }
     }
 }
