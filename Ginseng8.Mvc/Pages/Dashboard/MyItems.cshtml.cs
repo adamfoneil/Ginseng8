@@ -45,6 +45,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public IEnumerable<Milestone> HiddenMilestones { get; set; }
         public IEnumerable<OpenWorkItemsResult> PinnedItems { get; set; }
         public ILookup<int, Label> PinnedItemLabels { get; set; }
+        public ILookup<int, Comment> PinnedComments { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public DateTime? Date { get; set; }
@@ -163,6 +164,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
             var pinnedItemIds = PinnedItems.Select(wi => wi.Id).ToArray();
             var pinnedLabels = await new LabelsInUse() { WorkItemIds = pinnedItemIds, OrgId = OrgId }.ExecuteAsync(connection);
             PinnedItemLabels = pinnedLabels.ToLookup(row => row.WorkItemId);
+
+            var pinnedComments = await new Comments() { OrgId = OrgId, ObjectIds = pinnedItemIds, ObjectType = ObjectType.WorkItem }.ExecuteAsync(connection);
+            PinnedComments = pinnedComments.ToLookup(row => row.ObjectId);
+
         }
 
         public async Task<RedirectResult> OnPostSetOptionsAsync()
