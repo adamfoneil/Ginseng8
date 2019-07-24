@@ -20,6 +20,8 @@ namespace Ginseng.Mvc.ViewModels
         public IEnumerable<SelectListItem> AssignToUsers { get; set; }
         public WorkItemTitleViewField TitleViewField { get; set; } = WorkItemTitleViewField.Project;
         public string CssClass { get; set; }
+        public bool IsPinnable { get; set; } // true when looking at My Items
+        public bool IsPinned { get; set; }
 
         /// <summary>
         /// Indicates whether ajax calls are made to update work items when fields are changed in the UI.
