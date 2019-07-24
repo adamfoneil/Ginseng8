@@ -44,6 +44,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         public int UnestimatedItemCount { get; set; }
         public IEnumerable<Milestone> HiddenMilestones { get; set; }
         public IEnumerable<OpenWorkItemsResult> PinnedItems { get; set; }
+        public ILookup<int, Label> PinnedItemLabels { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public DateTime? Date { get; set; }
@@ -158,6 +159,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
             UserIdFieldOption.Criteria.Invoke(pinnedItemQry, UserId);
             if (Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true) pinnedItemQry.AppId = CurrentOrgUser.EffectiveAppId;
             PinnedItems = await pinnedItemQry.ExecuteAsync(connection);
+
+            var pinnedItemIds = PinnedItems.Select(wi => wi.Id).ToArray();
+            var pinnedLabels = await new LabelsInUse() { WorkItemIds = pinnedItemIds, OrgId = OrgId }.ExecuteAsync(connection);
+            PinnedItemLabels = pinnedLabels.ToLookup(row => row.WorkItemId);
         }
 
         public async Task<RedirectResult> OnPostSetOptionsAsync()
