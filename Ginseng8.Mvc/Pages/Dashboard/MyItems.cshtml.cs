@@ -154,7 +154,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
             MySchedule = await new MyWorkSchedule() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
             HiddenMilestones = await new HiddenMilestones() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
 
-            PinnedItems = await new OpenWorkItems() { OrgId = OrgId, PinnedItems = true }.ExecuteAsync(connection);
+            var pinnedItemQry = new OpenWorkItems() { OrgId = OrgId, PinnedItems = true };
+            UserIdFieldOption.Criteria.Invoke(pinnedItemQry, UserId);
+            PinnedItems = await pinnedItemQry.ExecuteAsync(connection);
         }
 
         public async Task<RedirectResult> OnPostSetOptionsAsync()
