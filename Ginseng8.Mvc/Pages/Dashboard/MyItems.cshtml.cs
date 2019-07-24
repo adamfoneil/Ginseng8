@@ -91,8 +91,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             var result = new OpenWorkItems(QueryTraces)
             {
-                OrgId = OrgId,
-                AssignedUserId = UserId,
+                OrgId = OrgId,                
                 TeamId = CurrentOrgUser.CurrentTeamId,                
                 LabelId = LabelId,
                 VisibleToUserId = UserId,
@@ -108,6 +107,10 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 result.ActivityUserId = UserId;
             }
+
+            var userIdField = Options[Option.MyItemsUserIdField].Value as string;
+            UserIdFieldOption = MyItemUserIdFieldOption[userIdField];
+            UserIdFieldOption.Criteria.Invoke(result, UserId);
 
             if (Date.HasValue)
             {
@@ -129,7 +132,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             UserIdColumnName = Responsibility.WorkItemColumnName[responsibilityId];
 
             var grouping = Options[Option.MyItemsGroupField].Value as string;
-            GroupingOption = MyItemGroupingOptions[grouping];
+            GroupingOption = MyItemGroupingOptions[grouping];            
         }
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
@@ -155,7 +158,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
             string[] fields = new string[]
             {
                 Option.MyItemsFilterCurrentApp,
-                Option.MyItemsGroupField
+                Option.MyItemsGroupField,
+                Option.MyItemsUserIdField
             };
 
             using (var cn = Data.GetConnection())

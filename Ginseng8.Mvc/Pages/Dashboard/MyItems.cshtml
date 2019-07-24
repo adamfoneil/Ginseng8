@@ -132,6 +132,10 @@
                 <label class="mr-2">Filter by selected nav bar app:</label>
                 <select name="@Option.MyItemsFilterCurrentApp" asp-items="@SelectListHelper.YesNo(selectedValue: Model.Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true)" class="form-control mr-2"></select>
             </div>
+            <div class="form-group">
+                <label class="mr-2">My Items include:</label>
+                <select name="@Option.MyItemsUserIdField" asp-items="@Model.MyItemUserIdFieldOption.GetSelectList(Model.Options[Option.MyItemsUserIdField].StringValue)" class="form-control mr-2"></select>
+            </div>
             <button class="btn btn-secondary" type="submit">Update</button>            
         </form>
     </div>

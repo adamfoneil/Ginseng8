@@ -31,6 +31,7 @@ namespace Ginseng.Models
 
         public const string MyItemsFilterCurrentApp = "MyItems.FilterCurrentApp";
         public const string MyItemsGroupField = "MyItems.GroupField";
+        public const string MyItemsUserIdField = "MyItems.UserIdField";
 
         public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
         {

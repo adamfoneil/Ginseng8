@@ -7,7 +7,6 @@ using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using Postulate.Base;
 using System;
 using System.Collections.Generic;
@@ -35,7 +34,9 @@ namespace Ginseng.Mvc
         public IEnumerable<WorkDaysResult> WorkDays { get; set; }
         public Dictionary<int, MilestoneMetricsResult> MilestoneMetrics { get; set; }
         public MyItemGroupingOption MyItemGroupingOptions { get; set; } = new MyItemGroupingOption();
+        public MyItemUserIdFieldOption MyItemUserIdFieldOption { get; set; } = new MyItemUserIdFieldOption();
         public MyItemGroupingOption.Option GroupingOption { get; set; }
+        public MyItemUserIdFieldOption.Option UserIdFieldOption { get; set; }
 
         /// <summary>
         /// triggers display of partial to offer to move items to soonest upcoming or new milestone

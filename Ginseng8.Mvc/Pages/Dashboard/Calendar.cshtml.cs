@@ -74,7 +74,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             using (var cn = Data.GetConnection())
             {
-                ProjectItems = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId, TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteItemsAsync(cn);
+                var appProjects = await new ProjectSelect() { AppId = CurrentOrgUser.CurrentAppId, TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteItemsAsync(cn);
+                var globalProjects = await new ProjectSelect() { AppId = 0, TeamId = CurrentOrgUser.CurrentTeamId }.ExecuteItemsAsync(cn);
+                ProjectItems = appProjects.Concat(globalProjects).OrderBy(row => row.Text);
 
                 var projects = await new DevCalendarProjects()
                 {
@@ -165,12 +167,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
             {
                 var ms = 
                     await connection.FindWhereAsync<Milestone>(new { OrganizationId = OrgId, Date = date }) ??
-                    new Milestone(date)
-                    {
-                        OrganizationId = OrgId,
-                        TeamId = prj.TeamId,                        
-                        ProjectId = prj.Id
-                    };
+                    new Milestone(date) { OrganizationId = OrgId };
+
+                await Milestone.EnsureUniqueNameAsync(connection, ms);
 
                 if (ms.Id == 0) await connection.SaveAsync(ms, CurrentUser);
 
@@ -187,6 +186,11 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 "SELECT [Id] FROM [dbo].[WorkItem] WHERE [ProjectId]=@projectId AND [MilestoneId]=@msId AND [CloseReasonId] IS NULL",
                 new { projectId, msId = milestone.Id });
             if (workItems.Any()) return;
+            
+            if (!milestone.TeamId.HasValue)
+            {
+                milestone.TeamId = CurrentOrgUser.CurrentTeamId;
+            }
 
             // can't create placeholder without known team
             if (!milestone.TeamId.HasValue) return;
