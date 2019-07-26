@@ -20,9 +20,22 @@
     return;
 }
 
-<div id="accordion">
-@foreach  (var app in Model.Applications)
+@if (Model.AppId == 0)
 {
+    <p>Please select an application below:</p>
+    <ul>
+        @foreach (var appOption in Model.Applications)
+        {
+            <li class="mb-3">
+                <a asp-action="CurrentApp" asp-controller="Update" asp-route-id="@appOption.Id" asp-route-returnUrl="/Dashboard/New" class="btn btn-secondary">@appOption.Name</a>
+            </li>
+        }
+    </ul>
+    return;
+}
+
+@{ var app = Model.SelectedApp; }
+<div id="accordion">
     <h4>@app.Name</h4>
     <div class="ml-3">
         <p>@app.Description</p>
@@ -78,7 +91,5 @@
                 }
             </div>
         }
-    </div>
-    <hr />
-}
+    </div>    
 </div>
