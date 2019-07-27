@@ -103,6 +103,19 @@ namespace Ginseng.Models
         [NotMapped]
         public int? AssignToUserId { get; set; }
 
+        /// <summary>
+        /// this is int instead of bool so it works with InsertItemView, whose initializer accepts ints only
+        /// </summary>
+        [NotMapped]
+        public int? IsPinned { get; set; }
+
+        public override async Task BeforeSaveAsync(IDbConnection connection, SaveAction action, IUser user)
+        {
+            await base.BeforeSaveAsync(connection, action, user);
+
+            // resolve indirect milestone
+        }
+
         public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
         {
             if (action == SaveAction.Insert)
@@ -111,6 +124,15 @@ namespace Ginseng.Models
                 {
                     var wil = new WorkItemLabel() { WorkItemId = Id, LabelId = LabelId };
                     await connection.SaveAsync(wil, user);
+                }
+
+                if ((IsPinned ?? 0) == 1)
+                {
+                    PinnedWorkItem pin = new PinnedWorkItem() { WorkItemId = Id, UserId = DeveloperUserId ?? BusinessUserId ?? 0 };
+                    if (pin.UserId != 0)
+                    {
+                        await connection.SaveAsync(pin, user);
+                    }
                 }
 
                 await ParseLabelsAsync(connection);

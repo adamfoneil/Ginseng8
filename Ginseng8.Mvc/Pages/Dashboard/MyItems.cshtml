@@ -50,6 +50,22 @@
         {        
             <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.PinnedItemLabels[item.Id], UserId = Model.UserId, Comments = Model.PinnedComments[item.Id], AssignToUsers = Model.AssignToUsers, TitleViewField = Services.WorkItemTitleViewField.Project | Services.WorkItemTitleViewField.Application, IsPinned = true })" />
         }
+
+        @if (Model.CurrentOrgUser.DefaultActivityId.HasValue && Model.CurrentOrgUser.CurrentTeamId.HasValue)
+        {
+            @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
+            {
+                { "teamId", Model.CurrentOrgUser.CurrentTeamId.Value },
+                { "applicationId", Model.CurrentOrgUser.EffectiveAppId ?? 0 },
+                { Model.UserIdColumnName, Model.UserId },
+                { "activityId", Model.CurrentOrgUser.DefaultActivityId.Value },
+                { "isPinned", 1 }
+            }) { Dropdowns = Model.Dropdowns, UseApplications = Model.CurrentOrgUser.CurrentTeam.UseApplications })
+        }
+        else
+        {
+            <p>To add work items here, please set your Default Activity on the <a asp-page="/Setup/OrgUser">Org User</a> page, and make sure a team is selected above.</p>
+        }
         </div>
     </div>
 }
