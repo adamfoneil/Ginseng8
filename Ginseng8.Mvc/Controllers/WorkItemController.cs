@@ -411,9 +411,35 @@ namespace Ginseng.Mvc.Controllers
         {
             if ((workItem.MilestoneId ?? 0) != milestoneId)
             {
-                workItem.MilestoneId = (milestoneId == 0) ? default(int?) : milestoneId;
-                await cn.UpdateAsync(workItem, _data.CurrentUser, r => r.MilestoneId);
+                bool isPinned = await IsPinnedWorkItemAsync(cn, workItem.Id);
+                if (milestoneId == -1)
+                {
+                    if (!isPinned) await PinWorkItemAsync(cn, workItem.Id);
+                }
+                else
+                {                    
+                    if (isPinned) await UnpinWorkItemAsync(cn, workItem.Id);
+                    workItem.MilestoneId = (milestoneId == 0) ? default(int?) : milestoneId;
+                    await cn.UpdateAsync(workItem, _data.CurrentUser, r => r.MilestoneId);
+                }
             }
+        }
+
+        private async Task UnpinWorkItemAsync(SqlConnection cn, int id)
+        {
+            var pin = await cn.FindWhereAsync<PinnedWorkItem>(new { WorkItemId = id, _data.CurrentUser.UserId });
+            if (pin != null) await cn.DeleteAsync<PinnedWorkItem>(pin.Id);
+        }
+
+        private async Task PinWorkItemAsync(SqlConnection cn, int id)
+        {
+            var pin = new PinnedWorkItem() { WorkItemId = id, UserId = _data.CurrentUser.UserId };
+            await cn.SaveAsync(pin, _data.CurrentUser);
+        }
+
+        private async Task<bool> IsPinnedWorkItemAsync(SqlConnection cn, int id)
+        {
+            return await cn.ExistsWhereAsync<PinnedWorkItem>(new { WorkItemId = id, _data.CurrentUser.UserId });
         }
 
         [HttpPost]
