@@ -20,6 +20,7 @@ namespace Ginseng.Mvc.ViewModels
         public IEnumerable<SelectListItem> AssignToUsers { get; set; }
         public WorkItemTitleViewField TitleViewField { get; set; } = WorkItemTitleViewField.Project;
         public string CssClass { get; set; }        
+        public bool ShowPins { get; set; }
         public bool IsPinned { get; set; }
 
         public string PinnedClassName()

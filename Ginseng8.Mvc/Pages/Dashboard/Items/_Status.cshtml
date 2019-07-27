@@ -8,7 +8,7 @@
 {
     if (!Model.WorkItem.AssignedUserId.HasValue || myTask)
     {
-        if (myTask)
+        if (myTask && Model.ShowPins)
         {
             <i class="@Model.PinnedClassName() no-propagation toggle-pin" data-number="@Model.WorkItem.Number"></i>
         }
