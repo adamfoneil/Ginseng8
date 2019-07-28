@@ -24,7 +24,7 @@ namespace Ginseng.Mvc.Helpers
         public static bool CurrentOrgUsesFreshdesk(this IHtmlHelper<dynamic> html)
         {
             AppPageModel model = html.ViewContext.ViewData.Model as AppPageModel;
-            return (model != null) ? model.CurrentOrg.UseFreshdesk() : false;
+            return (model != null) ? model?.CurrentOrg?.UseFreshdesk() ?? false : false;
         }
 
 		public static string CurrentOrgNameString(this IHtmlHelper<dynamic> html)

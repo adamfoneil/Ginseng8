@@ -63,6 +63,8 @@ namespace Ginseng.Models.Conventions
 
         private async Task<bool> CheckOrgPermissionAsync(IDbConnection connection, IUser user)
         {
+            if (Id == 0) return true;
+
             var orgSpecific = this as IOrgSpecific;
             if (orgSpecific != null)
             {

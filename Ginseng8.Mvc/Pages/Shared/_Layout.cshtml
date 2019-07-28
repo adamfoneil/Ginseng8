@@ -79,7 +79,7 @@
                 @if (User.Identity.IsAuthenticated)
                 {
                     <partial name="_NavOptions" model="@(new NavOptionsView() { UpdateAction = "CurrentTeam", Text = Html.CurrentTeamNameString(), Options = await Html.TeamFilterOptions(), PluralText = "Teams" })" />
-                    if (Html.CurrentTeam()?.UseApplications ?? true)
+                    if (Html.CurrentTeam()?.UseApplications ?? false)
                     {
                         <partial name="_NavOptions" model="@(new NavOptionsView() { UpdateAction = "CurrentApp", Text = Html.CurrentAppNameString(), Options = await Html.AppFilterOptions(), PluralText = "Apps" })" />
                     }
