@@ -99,7 +99,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 LabelId = LabelId,
                 VisibleToUserId = UserId,
                 VisibleMilestones = true,
-                PinnedItems = false
+                MyPinnedItems = false,
+                MyUserId = UserId
             };
 
             if (Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true)
@@ -156,8 +157,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
             MySchedule = await new MyWorkSchedule() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
             HiddenMilestones = await new HiddenMilestones() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(connection);
 
-            var pinnedItemQry = new OpenWorkItems() { OrgId = OrgId, PinnedItems = true };
-            UserIdFieldOption.Criteria.Invoke(pinnedItemQry, UserId);
+            var pinnedItemQry = new OpenWorkItems() { OrgId = OrgId, MyPinnedItems = true, MyUserId = UserId };
             if (Options[Option.MyItemsFilterCurrentApp]?.BoolValue ?? true) pinnedItemQry.AppId = CurrentOrgUser.EffectiveAppId;
             PinnedItems = await pinnedItemQry.ExecuteAsync(connection);
 
