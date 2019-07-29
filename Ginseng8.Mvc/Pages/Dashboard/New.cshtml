@@ -1,12 +1,13 @@
 ﻿@page
 @model Ginseng.Mvc.Pages.Dashboard.NewModel
 @{
-    ViewData["Title"] = "New";
+    ViewData["Title"] = "New";    
+    bool useApps = Model.CurrentOrgUser?.CurrentTeam?.UseApplications ?? true;
 }
 
 <p>Use this to create new work items for the appropriate team.</p>
 
-@if (!Model.Applications.Any())
+@if (!Model.Applications.Any() && useApps)
 {
     <p>Please select a team above, or click a team button below:</p>
     <ul class="">
@@ -20,7 +21,7 @@
     return;
 }
 
-@if (Model.AppId == 0)
+@if (Model.AppId == 0 && useApps)
 {
     <p>Please select an application below:</p>
     <ul>

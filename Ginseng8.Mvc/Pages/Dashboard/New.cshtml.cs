@@ -57,17 +57,17 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
             if (!Applications.Any() && TeamId != 0)
             {
-                Applications = new Application[]
+                SelectedApp = new Application()
                 {
-                    new Application()
-                    {
-                        Name = $"Enter New {CurrentOrgUser.CurrentTeam.Name} work item"
-                    }
-                };
+                    Name = $"Enter New {CurrentOrgUser.CurrentTeam.Name} work item"
+                };                
             }
 
-            SelectedApp = await Data.FindAsync<Application>(AppId);
-
+            if (AppId != 0 && SelectedApp == null)
+            {
+                SelectedApp = await Data.FindAsync<Application>(AppId);
+            }
+            
             var workItemLabelMap = SelectedLabels
                 .Select(grp => new { WorkItemId = grp.Key, LabelId = GetFilteredLabelId(grp) })
                 .ToDictionary(row => row.WorkItemId, row => row.LabelId);
@@ -107,17 +107,22 @@ namespace Ginseng.Mvc.Pages.Dashboard
             }
 
             TeamId = CurrentOrgUser.CurrentTeamId ?? 0;
-            AppId = CurrentOrgUser.CurrentAppId ?? 0;
-
-            return new OpenWorkItems(QueryTraces)
+            
+            var qry = new OpenWorkItems(QueryTraces)
             {
                 OrgId = OrgId,
-                TeamId = TeamId,
-                AppId = AppId,
+                TeamId = TeamId,                
                 HasProject = false,
                 LabelIds = labelIds,
                 HasAssignedUserId = false
             };
+
+            if (CurrentOrgUser.CurrentTeam.UseApplications)
+            {
+                AppId = CurrentOrgUser.CurrentAppId ?? 0;
+            }
+
+            return qry;
         }
     }
 }
