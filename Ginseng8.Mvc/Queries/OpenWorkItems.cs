@@ -206,7 +206,7 @@ namespace Ginseng.Mvc.Queries
 
 	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
 	{
-		private const string AssignedUserExpression = 
+		public const string AssignedUserExpression = 
 			"(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
 
 		private const string PriorityGroupExpression = 

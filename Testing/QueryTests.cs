@@ -200,5 +200,23 @@ namespace Testing
         {
             TestQuery<HiddenMilestones>();
         }
+
+        [TestMethod]
+        public void NewItemAppLabelsQuery()
+        {
+            TestQuery<NewItemAppLabels>();
+        }
+
+        [TestMethod]
+        public void TeamLabelsQuery()
+        {
+            TestQuery<TeamLabels>();
+        }
+
+        [TestMethod]
+        public void ItemCountsByLabelQuery()
+        {
+            TestQuery<ItemCountsByLabel>();
+        }
     }
 }

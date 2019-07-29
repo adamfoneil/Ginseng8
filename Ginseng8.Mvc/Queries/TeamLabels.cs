@@ -1,9 +1,12 @@
-﻿using Ginseng.Models;
+﻿using System.Collections.Generic;
+using System.Data;
+using Ginseng.Models;
 using Postulate.Base;
+using Postulate.Base.Interfaces;
 
 namespace Ginseng.Mvc.Queries
 {
-    public class TeamLabels : Query<Label>
+    public class TeamLabels : Query<Label>, ITestableQuery
     {
         public TeamLabels() : base(
             @"SELECT
@@ -20,5 +23,15 @@ namespace Ginseng.Mvc.Queries
 
         public int OrgId { get; set; }
         public int TeamId { get; set; }
+
+        public IEnumerable<ITestableQuery> GetTestCases()
+        {
+            yield return new TeamLabels() { OrgId = 1, TeamId = 1 };
+        }
+
+        public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+        {
+            return TestExecuteHelper(connection);
+        }
     }
 }
