@@ -7,7 +7,7 @@
 
 <p>Use this to create new work items for the appropriate team.</p>
 
-@if (!Model.Applications.Any() && useApps)
+@if (!Model.CurrentOrgUser.CurrentTeamId.HasValue)
 {
     <p>Please select a team above, or click a team button below:</p>
     <ul class="">

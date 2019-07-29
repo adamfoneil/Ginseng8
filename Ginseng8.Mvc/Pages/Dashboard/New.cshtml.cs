@@ -117,7 +117,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 HasAssignedUserId = false
             };
 
-            if (CurrentOrgUser.CurrentTeam.UseApplications)
+            if (CurrentOrgUser?.CurrentTeam?.UseApplications ?? false)
             {
                 AppId = CurrentOrgUser.CurrentAppId ?? 0;
             }
