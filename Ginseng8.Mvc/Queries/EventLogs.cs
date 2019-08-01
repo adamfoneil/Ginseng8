@@ -35,7 +35,7 @@ namespace Ginseng.Mvc.Queries
 		public int? ProjectPriority { get; set; }
         public string TeamName { get; set; }
         public string ApplicationName { get; set; }
-        public WorkItemTitleViewField TitleViewField { get; set; }
+        public WorkItemTitleViewField TitleViewField { get; set; } = WorkItemTitleViewField.Application | WorkItemTitleViewField.Project;
 
         public bool IsEditable(string userName)
 		{
