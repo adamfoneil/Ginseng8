@@ -1,4 +1,5 @@
 ﻿using Ginseng.Models;
+using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
 using Ginseng.Mvc.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ using System.Threading.Tasks;
 namespace Ginseng.Mvc.Pages.Dashboard
 {
     [Authorize]
-    public class IndexModel : DashboardPageModel
+    public class IndexModel : DashboardPageModel, IPaged
     {
         public IndexModel(IConfiguration config) : base(config)
         {
@@ -41,6 +42,9 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         [BindProperty(SupportsGet = true)]
         public HungReason? FilterHungReason { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? PageNumber { get; set; } = 0;
 
         public IEnumerable<Team> Teams { get; set; }
         public ILookup<int, AppInfoResult> AppInfo { get; set; }
@@ -114,7 +118,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                     OrgId = OrgId,
                     LabelId = LabelId,
                     AppId = AppId,
-                    HasProject = false
+                    HasProject = false,
+                    Page = PageNumber
                 };
 
                 if (FilterUnassigned ?? false)
