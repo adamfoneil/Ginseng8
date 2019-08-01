@@ -662,5 +662,23 @@ namespace Ginseng.Mvc.Controllers
                 return Json(new { success = false, message = exc.Message });
             }
         }
+
+        public async Task<ContentResult> ReParseMentions(int id)
+        {            
+            using (var cn = _data.GetConnection())
+            {
+                var wi = await _data.FindWorkItemAsync(cn, id);
+                var comments = await new Comments() { OrgId = _data.CurrentOrg.Id, ObjectIds = new int[] { wi.Id }, ObjectType = ObjectType.WorkItem }.ExecuteAsync(cn);
+
+                int count = 0;
+                foreach (var c in comments)
+                {
+                    await c.ParseMentionsAsync(cn, _data.CurrentUser);
+                    count++;
+                }
+
+                return Content($"{count} comments parsed.");
+            }            
+        }
     }
 }

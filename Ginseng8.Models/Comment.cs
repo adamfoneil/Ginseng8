@@ -87,9 +87,17 @@ namespace Ginseng.Models
         }
 
         /// <summary>
+        /// Enables you to re-parse mentions for Aerie #2014
+        /// </summary>
+        public async Task ParseMentionsAsync(IDbConnection connection, UserProfile userProfile)
+        {
+            await ParseMentionsAsync(connection, this, userProfile);
+        }
+
+        /// <summary>
         /// Queues notifications to people from comment text based on @ symbols
         /// </summary>
-        private async Task ParseMentionsAsync(IDbConnection connection, Comment comment, UserProfile userProfile)
+        private static async Task ParseMentionsAsync(IDbConnection connection, Comment comment, UserProfile userProfile)
         {
             // for now, can do mentions only on work item comments because EventLog.WorkItemId is required
             if (comment.ObjectType != ObjectType.WorkItem) return;
@@ -141,14 +149,14 @@ namespace Ginseng.Models
             }            
         }
 
-        private async Task AddMentionEventInnerAsync(IDbConnection connection, Comment comment, string senderName, OrganizationUser mentionedUser)
+        private static async Task AddMentionEventInnerAsync(IDbConnection connection, Comment comment, string senderName, OrganizationUser mentionedUser)
         {
             string mentionName = mentionedUser.DisplayName ?? mentionedUser.Email;            
             int eventLogId = await CreateEventLogFromMentionAsync(connection, comment, senderName, mentionName);
             await Notification.CreateFromMentionAsync(connection, eventLogId, comment, senderName, mentionedUser);
         }
 
-        private async Task<int> CreateEventLogFromMentionAsync(IDbConnection connection, Comment comment, string senderName, string mentionName)
+        private static async Task<int> CreateEventLogFromMentionAsync(IDbConnection connection, Comment comment, string senderName, string mentionName)
         {
             var workItem = await connection.FindAsync<WorkItem>(comment.ObjectId);
 
@@ -169,7 +177,7 @@ namespace Ginseng.Models
             });
         }
 
-        private async Task ReplaceMentionNameAsync(IDbConnection connection, Comment comment, string mentionName, OrganizationUser orgUser)
+        private static async Task ReplaceMentionNameAsync(IDbConnection connection, Comment comment, string mentionName, OrganizationUser orgUser)
         {
             string result = comment.HtmlBody;
             result = result.Replace(mentionName, $"<a href=\"mailto:{orgUser.Email}\">{orgUser.DisplayName ?? orgUser.UserName}</a>");
