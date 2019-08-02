@@ -116,6 +116,18 @@ namespace Ginseng.Models
             // resolve indirect milestone
         }
 
+        public bool ParseFreshdeskTicket(out int number)
+        {
+            number = 0;
+            var match = Regex.Match(Title, @"(FD|FD#|fd|fd)\d+");
+            if (match.Success)
+            {
+                number = match.Value.ParseInt();
+            }
+
+            return (number != 0);
+        }
+
         public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
         {
             if (action == SaveAction.Insert)

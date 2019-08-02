@@ -165,22 +165,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 else
                 {
                     int number = await CreateWorkItemFromTicketAsync(cn, client, ticket, objectId, objectType);
-                    var wit = new WorkItemTicket()
-                    {
-                        TicketId = ticketId,
-                        WorkItemNumber = number,
-                        OrganizationId = OrgId,
-                        TicketStatus = ticket.Status,
-                        TicketType = WebhookRequestToWebhookConverter.TicketTypeFromString(ticket.Type),
-                        CompanyId = ticket.CompanyId,
-                        CompanyName = GetCompanyName(ticket.CompanyId ?? 0),
-                        ContactId = ticket.RequesterId,
-                        ContactName = GetContactName(ticket.RequesterId),
-                        Subject = ticket.Subject
-                    };
-
-                    await client.UpdateTicketWorkItemAsync(ticketId, number.ToString());
-                    await Data.TrySaveAsync(cn, wit);
+                    await FreshdeskCache.LinkWorkItemToTicketAsync(cn, client, OrgId, number, ticket, CurrentUser);                    
                 }
             }
 

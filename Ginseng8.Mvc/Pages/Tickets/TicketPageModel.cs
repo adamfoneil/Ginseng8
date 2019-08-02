@@ -50,16 +50,6 @@ namespace Ginseng.Mvc.Pages.Tickets
         protected FreshdeskCache FreshdeskCache { get; }
         protected IEnumerable<long> IgnoredTickets { get; private set; }
 
-        public string GetContactName(long requesterId)
-        {
-            return (FreshdeskCache.ContactDictionary.ContainsKey(requesterId)) ? FreshdeskCache.ContactDictionary[requesterId].Name : $"requester id {requesterId}";
-        }
-
-        public string GetCompanyName(long companyId)
-        {
-            return (FreshdeskCache.CompanyDictionary.ContainsKey(companyId)) ? FreshdeskCache.CompanyDictionary[companyId].Name : $"company id {companyId}";
-        }
-
         /// <summary>
         /// This is virtual because you might want ignored tickets paginated,
         /// see <see cref="IgnoredModel"/>

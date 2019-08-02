@@ -28,6 +28,7 @@ namespace Ginseng.Mvc.Controllers
     {
         private readonly DataAccess _data;
         private readonly IFreshdeskClientFactory _clientFactory;
+        private readonly FreshdeskCache _freshdeskCache;
 
         public WorkItemController(
             IConfiguration config,
@@ -35,6 +36,7 @@ namespace Ginseng.Mvc.Controllers
         {
             _data = new DataAccess(config);
             _clientFactory = freshdeskClientFactory;
+            _freshdeskCache = new FreshdeskCache(config, _clientFactory);
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -97,6 +99,17 @@ namespace Ginseng.Mvc.Controllers
                 await workItem.SetNumberAsync(cn);
                 if (await _data.TrySaveAsync(cn, workItem))
                 {
+                    if (workItem.ParseFreshdeskTicket(out int number))
+                    {
+                        // what if already linked?
+                        var client = await _clientFactory.CreateClientForOrganizationAsync(_data.CurrentOrg.Id);
+                        var ticket = await client.GetTicketAsync(number, true);
+                        if (ticket != null)
+                        {
+                            await _freshdeskCache.LinkWorkItemToTicketAsync(cn, client, _data.CurrentOrg.Id, workItem.Number, ticket, _data.CurrentUser);
+                        }                        
+                    }
+
                     if (workItem.AssignToUserId.HasValue)
                     {
                         await AssignToInnerAsync(cn, workItem.AssignToUserId.Value, workItem);
