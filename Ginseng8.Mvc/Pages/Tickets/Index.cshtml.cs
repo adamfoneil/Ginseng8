@@ -152,7 +152,7 @@ namespace Ginseng.Mvc.Pages.Tickets
         public async Task<IActionResult> OnPostDoActionAsync(int ticketId, int objectId, int teamId, ActionItemType objectType)
         {
             var client = await _freshdeskClientFactory.CreateClientForOrganizationAsync(OrgId);
-            var ticket = await client.GetTicketAsync(ticketId);
+            var ticket = await client.GetTicketAsync(ticketId, withConversations: true);
 
             await FreshdeskCache.InitializeAsync(OrgName);
 
@@ -214,7 +214,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 projectId = await CreateNewProjectAsync(cn, CurrentOrgUser.CurrentAppId.Value, company);
             }
 
-            if (projectId == -1) projectId = null;
+            if (projectId == -1) projectId = null;            
 
             var workItem = new Ginseng.Models.WorkItem()
             {
@@ -223,7 +223,7 @@ namespace Ginseng.Mvc.Pages.Tickets
                 TeamId = CurrentOrgUser.CurrentTeamId.Value,
                 ProjectId = projectId,
                 Title = $"FD: {ticket.Subject} (ticket # {ticket.Id})",
-                HtmlBody = $"<p>Created from Freshdesk <a href=\"{CurrentOrg.FreshdeskUrl}/a/tickets/{ticket.Id}\">ticket {ticket.Id}</a></p>"
+                HtmlBody = ticket.Description + $"<hr/><p>Created from Freshdesk <a href=\"{CurrentOrg.FreshdeskUrl}/a/tickets/{ticket.Id}\">ticket {ticket.Id}</a></p>"
             };
             await workItem.SetNumberAsync(cn);
             await workItem.SaveHtmlAsync(Data, cn);
