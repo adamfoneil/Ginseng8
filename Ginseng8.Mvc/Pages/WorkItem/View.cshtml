@@ -48,7 +48,7 @@
                 @foreach (var att in Model.Attachments)
                 {
                     <li class="mb-2">
-                        <a href="@att.Url">@att.DisplayName</a>
+                        <a href="@att.Url" target="_blank">@att.DisplayName</a>
                         @if (att.AllowDelete)
                         {
                             <form method="post" asp-page-handler="DeleteAttachment" class="d-inline-block">
