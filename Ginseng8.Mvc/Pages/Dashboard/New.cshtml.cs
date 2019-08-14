@@ -78,7 +78,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 TeamId = CurrentOrgUser.CurrentTeamId ?? 0,
                 AppId = CurrentOrgUser.EffectiveAppId,
                 HasProject = false,
-                HasAssignedUserId = false
+                HasAssignedUserId = false,
+                HasPriority = false
             }.ExecuteAsync(connection);
             OpenItemCounts = labelCounts.ToDictionary(row => row.LabelId, row => row.Count);
 
@@ -137,7 +138,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 AppId = CurrentOrgUser.EffectiveAppId,
                 HasProject = false,
                 LabelId = FilterLabelId,
-                HasAssignedUserId = false
+                HasAssignedUserId = false,
+                HasPriority = false
             };            
 
             return qry;
