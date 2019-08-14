@@ -84,6 +84,26 @@ body {
 .nav-link.sortable .ui-sortable-handle {
   display: none;
 }
+/* ---------------------------------------------- */
+
+/* Project card sortable
+-------------------------------------------------- */
+.project-card .work-item-card {
+  display: none;
+}
+
+.project-card .ui-sortable-placeholder {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100% !important;
+  z-index: 1;
+  border-radius: .25rem;
+  opacity: .5;
+}
+
+/* ---------------------------------------------- */
 
 .milestone-work-items-droppable {
   min-height: 26px;
