@@ -103,7 +103,7 @@ namespace Ginseng.Models
             foreach (var name in names)
             {
                 var users = await new OrgUserByName() { OrgId = comment.OrganizationId, SearchName = name.Value.Substring(1) }.ExecuteAsync(connection);
-                if (users.Any())
+                if (users.Count() == 1)
                 {
                     var mentionedUser = users.First();
                     mentionedUsers.Add(mentionedUser);
