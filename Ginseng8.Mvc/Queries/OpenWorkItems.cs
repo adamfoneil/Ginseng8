@@ -13,16 +13,16 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
-	/// <summary>
-	/// see <see cref="PriorityGroup"/>
-	/// </summary>
-	public enum PriorityGroupOptions
-	{
-		WorkOnNext = 1,
-		Backlog = 2,
-		Assigned = 3,
+    /// <summary>
+    /// see <see cref="PriorityGroup"/>
+    /// </summary>
+    public enum PriorityGroupOptions
+    {
+        WorkOnNext = 1,
+        Backlog = 2,
+        Assigned = 3,
         Closed = 4
-	}
+    }
 
     public enum HungReason
     {
@@ -32,14 +32,14 @@ namespace Ginseng.Mvc.Queries
         IsStopped = 3 // has milestone, but unassigned
     }
 
-	public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle, IMilestoneHeader
-	{
-		public const string ImpedimentIcon = Comment.ImpedimentIcon;
-		public const string ImpedimentColor = "darkred";
-		public const string UnestimatedIcon = "fas fa-question-circle";
-		public const string UnestimatedColor = "mediumpurple";
-		public const string StoppedIcon = "fas fa-stop-circle";
-		public const string StoppedColor = "orangered";
+    public class OpenWorkItemsResult : IWorkItemNumber, IWorkItemTitle, IMilestoneHeader
+    {
+        public const string ImpedimentIcon = Comment.ImpedimentIcon;
+        public const string ImpedimentColor = "darkred";
+        public const string UnestimatedIcon = "fas fa-question-circle";
+        public const string UnestimatedColor = "mediumpurple";
+        public const string StoppedIcon = "fas fa-stop-circle";
+        public const string StoppedColor = "orangered";
         public const string TicketIcon = "fas fa-ticket-alt";
         public const string TicketColor = "#1a7172";
         public const string PausedIcon = "fas fa-pause-circle";
@@ -51,54 +51,54 @@ namespace Ginseng.Mvc.Queries
         public const string TicketModifier = "ticket";
 
         public int Id { get; set; }
-		public int Number { get; set; }
-		public string Title { get; set; }
-		public int? Priority { get; set; }
-		public string HtmlBody { get; set; }
-		public int? BusinessUserId { get; set; }
-		public int? DeveloperUserId { get; set; }
-		public int ApplicationId { get; set; }
-		public string ApplicationName { get; set; }
+        public int Number { get; set; }
+        public string Title { get; set; }
+        public int? Priority { get; set; }
+        public string HtmlBody { get; set; }
+        public int? BusinessUserId { get; set; }
+        public int? DeveloperUserId { get; set; }
+        public int ApplicationId { get; set; }
+        public string ApplicationName { get; set; }
         public int TeamId { get; set; }
         public string TeamName { get; set; }
-		public bool HasImpediment { get; set; }
-		public int ProjectId { get; set; }
+        public bool HasImpediment { get; set; }
+        public int ProjectId { get; set; }
         public string ProjectName { get; set; }
-		public string DisplayProjectName { get; set; }          
-		public int? ProjectPriority { get; set; }
-		public string PriorityTier { get; set; }
-		public int? DataModelId { get; set; }
-		public int MilestoneId { get; set; }
-		public string MilestoneName { get; set; }
-		public DateTime? MilestoneDate { get; set; }
-		public DateTime SortMilestoneDate { get; set; }
-		public int? MilestoneDaysAway { get; set; }
-		public int? CloseReasonId { get; set; }
-		public string CloseReasonName { get; set; }
-		public int ActivityId { get; set; }
-		public string ActivityName { get; set; }
-		public int? ActivityOrder { get; set; }
-		public string BusinessUserName { get; set; }
-		public string DeveloperUserName { get; set; }
-		public int? AssignedUserId { get; set; }
-		public string AssignedUserName { get; set; }
-		public string WorkItemSize { get; set; }
-		public int? SizeId { get; set; }
-		public int? DevEstimateHours { get; set; }
-		public int? SizeEstimateHours { get; set; }
-		public int EstimateHours { get; set; }
-		public string WorkItemUserIdColumn { get; set; }
-		public decimal ColorGradientPosition { get; set; }
-		public int? LastHandOffId { get; set; }
-		public string HandOffUserName { get; set; }
-		public string HandOffBody { get; set; }
-		public bool? IsForward { get; set; }
-		public string FromActivityName { get; set; }
-		public DateTime? HandOffDate { get; set; }
-		public string CreatedByName { get; set; }
-		public DateTime DateCreated { get; set; }
-		public PriorityGroupOptions PriorityGroup { get; set; }
-		public string CreatedBy { get; set; }
+        public string DisplayProjectName { get; set; }
+        public int? ProjectPriority { get; set; }
+        public string PriorityTier { get; set; }
+        public int? DataModelId { get; set; }
+        public int MilestoneId { get; set; }
+        public string MilestoneName { get; set; }
+        public DateTime? MilestoneDate { get; set; }
+        public DateTime SortMilestoneDate { get; set; }
+        public int? MilestoneDaysAway { get; set; }
+        public int? CloseReasonId { get; set; }
+        public string CloseReasonName { get; set; }
+        public int ActivityId { get; set; }
+        public string ActivityName { get; set; }
+        public int? ActivityOrder { get; set; }
+        public string BusinessUserName { get; set; }
+        public string DeveloperUserName { get; set; }
+        public int? AssignedUserId { get; set; }
+        public string AssignedUserName { get; set; }
+        public string WorkItemSize { get; set; }
+        public int? SizeId { get; set; }
+        public int? DevEstimateHours { get; set; }
+        public int? SizeEstimateHours { get; set; }
+        public int EstimateHours { get; set; }
+        public string WorkItemUserIdColumn { get; set; }
+        public decimal ColorGradientPosition { get; set; }
+        public int? LastHandOffId { get; set; }
+        public string HandOffUserName { get; set; }
+        public string HandOffBody { get; set; }
+        public bool? IsForward { get; set; }
+        public string FromActivityName { get; set; }
+        public DateTime? HandOffDate { get; set; }
+        public string CreatedByName { get; set; }
+        public DateTime DateCreated { get; set; }
+        public PriorityGroupOptions PriorityGroup { get; set; }
+        public string CreatedBy { get; set; }
         public bool IsHelpdeskTicket { get; set; }
         public string FreshdeskUrl { get; set; }
         public long FDTicketId { get; set; }
@@ -149,7 +149,7 @@ namespace Ginseng.Mvc.Queries
 
         public bool IsHung
         {
-            get { return HasImpediment || IsPaused() || IsStopped(); }            
+            get { return HasImpediment || IsPaused() || IsStopped(); }
         }
 
         public HungReason HungReason
@@ -167,55 +167,55 @@ namespace Ginseng.Mvc.Queries
         public WorkItemTitleViewField TitleViewField { get; set; }
 
         public bool IsEditable(string userName)
-		{
-			return CreatedBy.Equals(userName);
-		}
+        {
+            return CreatedBy.Equals(userName);
+        }
 
-		public IEnumerable<Modifier> GetModifiers()
-		{
-			if (HasImpediment) yield return new Modifier() { Key = ImpedimentModifier, Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
-			if (EstimateHours == 0) yield return new Modifier() { Key = UnestimatedModifier, Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
-			if (IsStopped()) yield return new Modifier() { Key = StoppedModifier, Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };
+        public IEnumerable<Modifier> GetModifiers()
+        {
+            if (HasImpediment) yield return new Modifier() { Key = ImpedimentModifier, Icon = ImpedimentIcon, Color = ImpedimentColor, Description = "Something is impeding progress, described in comments" };
+            if (EstimateHours == 0) yield return new Modifier() { Key = UnestimatedModifier, Icon = UnestimatedIcon, Color = UnestimatedColor, Description = "Item has no estimate" };
+            if (IsStopped()) yield return new Modifier() { Key = StoppedModifier, Icon = StoppedIcon, Color = StoppedColor, Description = "Item is in a milestone, but has no activity" };
             if (IsHelpdeskTicket) yield return new Modifier() { Key = TicketModifier, Icon = TicketIcon, Color = TicketColor, Description = "Item was generated from a Freshdesk ticket" };
-		}
+        }
 
-		public string ActivityStatus()
-		{
-			string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";
-			return $"{ActivityName ?? "(not started)"} - {assignedTo}";
-		}
+        public string ActivityStatus()
+        {
+            string assignedTo = (AssignedUserId.HasValue) ? AssignedUserName : "paused";
+            return $"{ActivityName ?? "(not started)"} - {assignedTo}";
+        }
 
-		public bool IsPaused()
-		{
-			return (ActivityId != 0 && !AssignedUserId.HasValue);
-		}
+        public bool IsPaused()
+        {
+            return (ActivityId != 0 && !AssignedUserId.HasValue);
+        }
 
-		public bool IsStopped()
-		{
-			return (MilestoneId != 0 && ActivityId == 0);
-		}
+        public bool IsStopped()
+        {
+            return (MilestoneId != 0 && ActivityId == 0);
+        }
 
-		public class Modifier
-		{
+        public class Modifier
+        {
             public string Key { get; set; }
-			public string Icon { get; set; }
-			public string Color { get; set; }
-			public string Description { get; set; }
-		}
-	}
+            public string Icon { get; set; }
+            public string Color { get; set; }
+            public string Description { get; set; }
+        }
+    }
 
-	public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
-	{
-		public const string AssignedUserExpression = 
-			"(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
+    public class OpenWorkItems : Query<OpenWorkItemsResult>, ITestableQuery
+    {
+        public const string AssignedUserExpression =
+            "(CASE [act].[ResponsibilityId] WHEN 1 THEN [wi].[BusinessUserId] WHEN 2 THEN [wi].[DeveloperUserId] END)";
 
-		private const string PriorityGroupExpression = 
-			"(CASE WHEN [wi].[CloseReasonId] IS NOT NULL THEN 4 WHEN [pri].[Id] IS NOT NULL AND " + AssignedUserExpression + " IS NULL AND [wi].[ActivityId] IS NULL THEN 1 WHEN [pri].[Id] IS NULL AND " + AssignedUserExpression + " IS NULL THEN 2 ELSE 3 END)";
+        private const string PriorityGroupExpression =
+            "(CASE WHEN [wi].[CloseReasonId] IS NOT NULL THEN 4 WHEN [pri].[Id] IS NOT NULL AND " + AssignedUserExpression + " IS NULL AND [wi].[ActivityId] IS NULL THEN 1 WHEN [pri].[Id] IS NULL AND " + AssignedUserExpression + " IS NULL THEN 2 ELSE 3 END)";
 
-		private readonly List<QueryTrace> _traces;
+        private readonly List<QueryTrace> _traces;
 
-		public OpenWorkItems() : base(
-			$@"SELECT
+        public OpenWorkItems() : base(
+            $@"SELECT
 				[wi].[Id],
 				[wi].[Number],
 				[pri].[Value] AS [Priority],
@@ -317,20 +317,20 @@ namespace Ginseng.Mvc.Queries
 				COALESCE([pri].[Value], 100000),
 				[wi].[Number]
 			{{offset}}")
-		{
-		}
+        {
+        }
 
-		public OpenWorkItems(List<QueryTrace> traces = null) : this()
-		{
-			_traces = traces;
-		}
+        public OpenWorkItems(List<QueryTrace> traces = null) : this()
+        {
+            _traces = traces;
+        }
 
-		protected override void OnQueryExecuted(QueryTrace queryTrace)
-		{
-			_traces?.Add(queryTrace);
-		}
+        protected override void OnQueryExecuted(QueryTrace queryTrace)
+        {
+            _traces?.Add(queryTrace);
+        }
 
-		public int OrgId { get; set; }
+        public int OrgId { get; set; }
 
         [Where("[wi].[Id]=@id")]
         public int? Id { get; set; }
@@ -338,19 +338,19 @@ namespace Ginseng.Mvc.Queries
         [Where("[wi].[TeamId]=@teamId")]
         public int? TeamId { get; set; }
 
-		[Offset(30)]
-		public int? Page { get; set; }
+        [Offset(30)]
+        public int? Page { get; set; }
 
-		[Join("INNER JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@activityUserId")]
-		public bool InMyActivities { get; set; }
+        [Join("INNER JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@activityUserId")]
+        public bool InMyActivities { get; set; }
 
-		/// <summary>
-		/// Use this when InMyActivities = true or WithMyActivityOrder = true
-		/// </summary>		
-		public int ActivityUserId { get; set; }
+        /// <summary>
+        /// Use this when InMyActivities = true or WithMyActivityOrder = true
+        /// </summary>		
+        public int ActivityUserId { get; set; }
 
         [Join("LEFT JOIN [dbo].[FnWorkItemSchedule](@orgId, @scheduleUserId) [wis] ON [wi].[Number]=[wis].[Number]")]
-        public bool WithWorkSchedule { get; set; }        
+        public bool WithWorkSchedule { get; set; }
 
         /// <summary>
         /// Use this when WithWorkSchedule = true
@@ -361,33 +361,33 @@ namespace Ginseng.Mvc.Queries
         public DateTime? WorkDate { get; set; }
 
         [Case(true, "[wi].[CloseReasonId] IS NULL")]
-		[Case(false, "[wi].[CloseReasonId] IS NOT NULL")]
-		public bool? IsOpen { get; set; } = true;
+        [Case(false, "[wi].[CloseReasonId] IS NOT NULL")]
+        public bool? IsOpen { get; set; } = true;
 
-		[Where("[wi].[Number]=@number")]
-		public int? Number { get; set; }
+        [Where("[wi].[Number]=@number")]
+        public int? Number { get; set; }
 
-		[Case(0, "[wi].[CloseReasonId] IS NULL")]
-		[Case(-1, "[wi].[CloseReasonId] IS NOT NULL")]
-		[Where("[wi].[CloseReasonId]=@closeReasonId")]
-		public int? CloseReasonId { get; set; }
+        [Case(0, "[wi].[CloseReasonId] IS NULL")]
+        [Case(-1, "[wi].[CloseReasonId] IS NOT NULL")]
+        [Where("[wi].[CloseReasonId]=@closeReasonId")]
+        public int? CloseReasonId { get; set; }
 
-		[Where(PriorityGroupExpression + "=@priorityGroupId")]
-		public int? PriorityGroupId { get; set; }
+        [Where(PriorityGroupExpression + "=@priorityGroupId")]
+        public int? PriorityGroupId { get; set; }
 
-		[Case(0, AssignedUserExpression + " IS NULL")]
-		[Where(AssignedUserExpression + "=@assignedUserId")]
-		public int? AssignedUserId { get; set; }
+        [Case(0, AssignedUserExpression + " IS NULL")]
+        [Where(AssignedUserExpression + "=@assignedUserId")]
+        public int? AssignedUserId { get; set; }
 
         [Where("[wi].[DeveloperUserId]=@developerUserId")]
         public int? DeveloperUserId { get; set; }
 
-		[Where("[wi].[ApplicationId]=@appId")]
-		public int? AppId { get; set; }
+        [Where("[wi].[ApplicationId]=@appId")]
+        public int? AppId { get; set; }
 
-		[Case(true, "[wi].[MilestoneId] IS NOT NULL")]
+        [Case(true, "[wi].[MilestoneId] IS NOT NULL")]
         [Case(false, "[wi].[MilestoneId] IS NULL")]
-		public bool? HasMilestone { get; set; }
+        public bool? HasMilestone { get; set; }
 
         [Case(false, "([wi].[MilestoneId] IS NULL OR [ms].[Date]<getdate())")]
         [Case(true, "[ms].[Date]>getdate()")]
@@ -407,46 +407,46 @@ namespace Ginseng.Mvc.Queries
         [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId] IN @labelIds)")]
         public int[] LabelIds { get; set; }
 
-		[Case(0, "[wi].[ProjectId] IS NULL")]
-		[Where("[wi].[ProjectId]=@projectId")]
-		public int? ProjectId { get; set; }
+        [Case(0, "[wi].[ProjectId] IS NULL")]
+        [Where("[wi].[ProjectId]=@projectId")]
+        public int? ProjectId { get; set; }
 
-		[Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId]=@labelId)")]
-		public int? LabelId { get; set; }
+        [Where("EXISTS(SELECT 1 FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=[wi].[Id] AND [LabelId]=@labelId)")]
+        public int? LabelId { get; set; }
 
-		[Case(0, "[wi].[MilestoneId] IS NULL")]
-		[Where("[wi].[MilestoneId]=@milestoneId")]
-		public int? MilestoneId { get; set; }
+        [Case(0, "[wi].[MilestoneId] IS NULL")]
+        [Where("[wi].[MilestoneId]=@milestoneId")]
+        public int? MilestoneId { get; set; }
 
-		[Case(0, "[wi].[SizeId] IS NULL")]
-		[Where("[wi].[SizeId]=@sizeId")]
-		public int? SizeId { get; set; }
+        [Case(0, "[wi].[SizeId] IS NULL")]
+        [Where("[wi].[SizeId]=@sizeId")]
+        public int? SizeId { get; set; }
 
-		[Case(0, "[wi].[ActivityId] IS NULL")]
-		[Where("[wi].[ActivityId]=@activityId")]
-		public int? ActivityId { get; set; }
+        [Case(0, "[wi].[ActivityId] IS NULL")]
+        [Where("[wi].[ActivityId]=@activityId")]
+        public int? ActivityId { get; set; }
 
-		[Where("[wi].[ActivityId] IN @activityIds")]
-		public int[] ActivityIds { get; set; }
+        [Where("[wi].[ActivityId] IN @activityIds")]
+        public int[] ActivityIds { get; set; }
 
-		[Case(false, AssignedUserExpression + " IS NULL")]
-		[Case(true, AssignedUserExpression + " IS NOT NULL")]
-		public bool? HasAssignedUserId { get; set; }
-       
-		[Case(true, "[wi].[ActivityId] IS NOT NULL AND (" + AssignedUserExpression + ") IS NULL")]
-		public bool? IsPaused { get; set; }
+        [Case(false, AssignedUserExpression + " IS NULL")]
+        [Case(true, AssignedUserExpression + " IS NOT NULL")]
+        public bool? HasAssignedUserId { get; set; }
 
-		[Case(true, "[wi].[MilestoneId] IS NOT NULL AND [wi].[ActivityId] IS NULL")]
-		public bool? IsStopped { get; set; }
+        [Case(true, "[wi].[ActivityId] IS NOT NULL AND (" + AssignedUserExpression + ") IS NULL")]
+        public bool? IsPaused { get; set; }
 
-		[Phrase("wi].[Title", "wi].[TextBody")]
-		public string TitleAndBodySearch { get; set; }
+        [Case(true, "[wi].[MilestoneId] IS NOT NULL AND [wi].[ActivityId] IS NULL")]
+        public bool? IsStopped { get; set; }
 
-		[Where("[ms].[Date]<getdate()")]
-		public bool? IsPastDue { get; set; }
+        [Phrase("wi].[Title", "wi].[TextBody")]
+        public string TitleAndBodySearch { get; set; }
+
+        [Where("[ms].[Date]<getdate()")]
+        public bool? IsPastDue { get; set; }
 
         [Case(true, "[wit].[Id] IS NOT NULL")]
-        public bool? IsFreshdeskTicket { get; set; }        
+        public bool? IsFreshdeskTicket { get; set; }
 
         [Where("YEAR([ms].[Date])=@milestoneYear")]
         public int? MilestoneYear { get; set; }
@@ -470,39 +470,39 @@ namespace Ginseng.Mvc.Queries
         [Where("([muv].[UserId]=@visibleToUserId AND [muv].[IsVisible]=1)")]
         public int? VisibleToUserId { get; set; }
 
-		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
-		{
-			return TestExecuteHelper(connection);
-		}
+        public IEnumerable<dynamic> TestExecute(IDbConnection connection)
+        {
+            return TestExecuteHelper(connection);
+        }
 
-		public IEnumerable<ITestableQuery> GetTestCases()
-		{
-			// ideally here, you return instances of your query with each parameter set to get coverage of all the generated SQL combinations.
-			// we don't care what data is returned, only that the SQL compiles
+        public IEnumerable<ITestableQuery> GetTestCases()
+        {
+            // ideally here, you return instances of your query with each parameter set to get coverage of all the generated SQL combinations.
+            // we don't care what data is returned, only that the SQL compiles
 
-			yield return new OpenWorkItems() { OrgId = 0 };
-			yield return new OpenWorkItems() { IsOpen = true };
-			yield return new OpenWorkItems() { Number = 0 };
-			yield return new OpenWorkItems() { AssignedUserId = 0 };
-			yield return new OpenWorkItems() { AppId = 0 };
-			yield return new OpenWorkItems() { HasMilestone = true };
-			yield return new OpenWorkItems() { HasMilestone = false };
-			yield return new OpenWorkItems() { ProjectId = 0 };
-			yield return new OpenWorkItems() { LabelId = 1 };
-			yield return new OpenWorkItems() { MilestoneId = 1 };
-			yield return new OpenWorkItems() { ActivityId = 1 };
-			yield return new OpenWorkItems() { ActivityIds = new int[] { 1, 2, 3, } };
-			yield return new OpenWorkItems() { HasAssignedUserId = true };
-			yield return new OpenWorkItems() { HasAssignedUserId = false };
-			yield return new OpenWorkItems() { IsPaused = true };
-			yield return new OpenWorkItems() { IsStopped = true };
-			yield return new OpenWorkItems() { TitleAndBodySearch = "whatever this that" };
-			yield return new OpenWorkItems() { IsPastDue = true };
-			yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
+            yield return new OpenWorkItems() { OrgId = 0 };
+            yield return new OpenWorkItems() { IsOpen = true };
+            yield return new OpenWorkItems() { Number = 0 };
+            yield return new OpenWorkItems() { AssignedUserId = 0 };
+            yield return new OpenWorkItems() { AppId = 0 };
+            yield return new OpenWorkItems() { HasMilestone = true };
+            yield return new OpenWorkItems() { HasMilestone = false };
+            yield return new OpenWorkItems() { ProjectId = 0 };
+            yield return new OpenWorkItems() { LabelId = 1 };
+            yield return new OpenWorkItems() { MilestoneId = 1 };
+            yield return new OpenWorkItems() { ActivityId = 1 };
+            yield return new OpenWorkItems() { ActivityIds = new int[] { 1, 2, 3, } };
+            yield return new OpenWorkItems() { HasAssignedUserId = true };
+            yield return new OpenWorkItems() { HasAssignedUserId = false };
+            yield return new OpenWorkItems() { IsPaused = true };
+            yield return new OpenWorkItems() { IsStopped = true };
+            yield return new OpenWorkItems() { TitleAndBodySearch = "whatever this that" };
+            yield return new OpenWorkItems() { IsPastDue = true };
+            yield return new OpenWorkItems() { InMyActivities = true, ActivityUserId = 0 };
             yield return new OpenWorkItems() { IsFreshdeskTicket = true };
             yield return new OpenWorkItems() { HasFutureMilestone = false };
             yield return new OpenWorkItems() { HasFutureMilestone = true };
-            yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };            
+            yield return new OpenWorkItems() { LabelIds = new int[] { 1, 2, 3 } };
         }
-	}
+    }
 }
