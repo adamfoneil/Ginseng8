@@ -23,6 +23,7 @@ namespace Ginseng.Mvc.Queries
                 INNER JOIN [dbo].[WorkItemLabel] [wil] ON [wi].[Id]=[wil].[WorkItemId]
                 LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
                 LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
+                LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
             WHERE
                 [wi].[OrganizationId]=@orgId AND
                 [wi].[TeamId]=@teamId AND
@@ -45,6 +46,10 @@ namespace Ginseng.Mvc.Queries
         [Case(false, OpenWorkItems.AssignedUserExpression + " IS NULL")]
         [Case(true, OpenWorkItems.AssignedUserExpression + " IS NOT NULL")]
         public bool? HasAssignedUserId { get; set; }
+
+        [Case(true, "[pri].[Value] IS NOT NULL")]
+        [Case(false, "[pri].[Value] IS NULL")]
+        public bool? HasPriority { get; set; }
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {
