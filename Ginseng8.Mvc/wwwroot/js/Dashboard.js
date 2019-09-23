@@ -202,7 +202,7 @@ function editComment() {
     var submitButton = $(formWrapper.find('.add-comment-submit'));
     var editorElement = $(formWrapper.find('.htmlEditor'));
     var commentId = $(this).attr('data-comment-id')
-    var hiddenInputCommentId = $(formWrapper.find('input[name="Id"'))
+    var hiddenInputCommentId = $(formWrapper.find('input[name="Id"]'))
 
     // Hide commentsList
     commentsList.hide()
