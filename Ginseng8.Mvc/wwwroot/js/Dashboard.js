@@ -172,6 +172,8 @@ projectUpdateFields.forEach(function (ele) {
     });
 });
 
+
+
 $(document)
     .on('click', '.editHtml', function (event) {
         event.preventDefault();
@@ -187,7 +189,63 @@ $(document)
     })
     .on('click', '.cancelHtmlEdit', function (event) {
         event.preventDefault();
-    });
+    })
+    // edit comment button click handler
+    .on('click', '.js-edit-comment', editComment)
+
+
+function editComment() {
+    var commentsList = $(this).parents('.js-comments-list');
+    var commentsListItem = $(this).parents('.js-comment-list-item');
+    var commentHtml = commentsListItem.find('.js-comment-html').html();
+    var formWrapper = commentsList.siblings('.js-comment-form-wrapper');
+    var submitButton = $(formWrapper.find('.add-comment-submit'));
+    var editorElement = $(formWrapper.find('.htmlEditor'));
+
+    // Hide commentsList
+    commentsList.hide()
+
+    // Change 'add comment form' layout to 'edit comment form's
+	editorElement.froalaEditor('html.set', commentHtml) // set comment's html to form textarea
+	submitButton.html('Save') // rename submit button 'Add' -> 'Save'
+    submitButton.before(
+    	'<button class="btn btn-link btn-sm js-cancel-editing mr-1">Cancel</button>'
+    ) // append Cancel button
+
+    var buttonCancel = $(formWrapper.find('.js-cancel-editing'));
+
+    // Bind event listeners
+    buttonCancel.on('click', cancelCommentEditing.bind(this, {
+    	editorElement: editorElement,
+    	formWrapper: formWrapper,
+    	commentsList: commentsList,
+    	submitButton: submitButton,
+    	buttonCancel: buttonCancel
+    }))
+
+
+	// Display form
+	formWrapper.show()
+
+	// Set focus on textarea field
+	editorElement.froalaEditor('events.focus');
+}
+
+function cancelCommentEditing(params) {
+	// Change 'edit comment form' layout to 'add comment form
+	params.editorElement.froalaEditor('html.set', ''); // Reset form textarea
+	params.submitButton.html('Add'); // rename submit button 'Save' to 'Add' 
+	params.buttonCancel.remove(); // remove Cancel button
+
+	// Hide form
+	params.formWrapper.hide()
+
+	// Display commentsList
+	params.commentsList.show()
+}
+
+
+
 
 $('.htmlEditor').on('froalaEditor.image.beforeUpload', function(event, editor, images) {
     console.group('before upload image, update params');
