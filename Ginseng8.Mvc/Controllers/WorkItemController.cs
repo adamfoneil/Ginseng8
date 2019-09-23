@@ -449,7 +449,8 @@ namespace Ginseng.Mvc.Controllers
             {
                 comment.OrganizationId = _data.CurrentOrg.Id;
                 await comment.SaveHtmlAsync(_data, cn);
-                if (await _data.TrySaveAsync(comment)) await AddFreshdeskNoteAsync(comment, cn);
+                bool inserted = (comment.Id == 0);
+                if (await _data.TrySaveAsync(comment) && inserted) await AddFreshdeskNoteAsync(comment, cn);
 
                 var vm = new CommentView();
                 vm.ObjectId = comment.ObjectId;
