@@ -201,6 +201,8 @@ function editComment() {
     var formWrapper = commentsList.siblings('.js-comment-form-wrapper');
     var submitButton = $(formWrapper.find('.add-comment-submit'));
     var editorElement = $(formWrapper.find('.htmlEditor'));
+    var commentId = $(this).attr('data-comment-id')
+    var hiddenInputCommentId = $(formWrapper.find('input[name="Id"'))
 
     // Hide commentsList
     commentsList.hide()
@@ -211,6 +213,7 @@ function editComment() {
     submitButton.before(
     	'<button class="btn btn-link btn-sm js-cancel-editing mr-1">Cancel</button>'
     ) // append Cancel button
+    hiddenInputCommentId.val(commentId) // set comment id to hidden field
 
     var buttonCancel = $(formWrapper.find('.js-cancel-editing'));
 
@@ -220,7 +223,8 @@ function editComment() {
     	formWrapper: formWrapper,
     	commentsList: commentsList,
     	submitButton: submitButton,
-    	buttonCancel: buttonCancel
+    	buttonCancel: buttonCancel,
+        hiddenInputCommentId: hiddenInputCommentId
     }))
 
 
@@ -236,6 +240,7 @@ function cancelCommentEditing(params) {
 	params.editorElement.froalaEditor('html.set', ''); // Reset form textarea
 	params.submitButton.html('Add'); // rename submit button 'Save' to 'Add' 
 	params.buttonCancel.remove(); // remove Cancel button
+    params.hiddenInputCommentId.val('') // reset comment id
 
 	// Hide form
 	params.formWrapper.hide()
