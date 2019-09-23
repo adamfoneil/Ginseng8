@@ -4,6 +4,7 @@
     <form method="post">
         <input type="hidden" name="ObjectId" value="@Model.ObjectId" />
         <input type="hidden" name="ObjectType" value="@Model.ObjectType" />
+        <input type="hidden" name="Id" value=""/>
         <div class="form-row">
             <div class="col-12">
                 <textarea name="HtmlBody" class="form-control form-control-sm htmlEditor" required="required" placeholder="add comment" id="addComment-@Model.ObjectId-HtmlBody" data-folder-name="@(Model.ObjectType.ToString())Comments" data-id="@Model.ObjectId"></textarea>
@@ -34,12 +35,15 @@
                 <strong class="mr-1">@item.DisplayName</strong>
                 <span class="small text-muted mr-1">@Html.FormatValue(item.DateCreated, "{0:ddd M/d}")</span>
             </div>
-            <div class="d-flex">
-                <button class="btn btn-sm bg-transparent text-primary py-0 js-edit-comment">
-                    <i class="fa fa-pencil-alt"></i>
-                    Edit
-                </button>
-            </div>
+            @if  (item.CreatedBy.Equals(User.Identity.Name))
+            {
+                <div class="d-flex">
+                    <button class="btn btn-sm bg-transparent text-primary py-0 js-edit-comment" data-comment-id="@item.Id">
+                        <i class="fa fa-pencil-alt"></i>
+                        Edit
+                    </button>
+                </div>
+            }
         </div>
         <div class="js-comment-html">@Html.Raw(item.HtmlBody)</div>
     </li>
