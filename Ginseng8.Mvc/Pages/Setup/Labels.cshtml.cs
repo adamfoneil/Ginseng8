@@ -62,13 +62,13 @@ namespace Ginseng.Mvc.Pages.Setup
         {
             label.OrganizationId = OrgId;
             await Data.TrySaveAsync(label);
-            return RedirectToPage("/Setup/Labels");
+            return Redirect($"/Setup/Labels#{label.Id}");
         }
 
         public async Task<ActionResult> OnPostDelete(int id)
         {
             await Data.TryDeleteAsync<Label>(id);
-            return RedirectToPage("/Setup/Labels");
+            return Redirect("/Setup/Labels");
         }
     }
 }
