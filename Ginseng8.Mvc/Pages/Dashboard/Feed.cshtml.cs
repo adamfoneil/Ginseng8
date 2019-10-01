@@ -26,12 +26,16 @@ namespace Ginseng.Mvc.Pages.Work
 
         public SelectList UserSelect { get; set; }
         public SelectList EventSelect { get; set; }
+        public SelectList CloseReasonSelect { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public int? FilterUserId { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public int? FilterEventId { get; set; }
+
+        [BindProperty(SupportsGet = true)]
+        public int? FilterCloseReasonId { get; set; }
 
         public async Task OnGetAsync()
         {
@@ -43,12 +47,15 @@ namespace Ginseng.Mvc.Pages.Work
                 var eventItems = Events.Select(ev => new SelectListItem() { Value = ev.Id.ToString(), Text = ev.Name });
                 EventSelect = new SelectList(eventItems, "Value", "Text", FilterEventId);
 
+                CloseReasonSelect = await new CloseReasonSelect().ExecuteSelectListAsync(cn, FilterCloseReasonId);
+
                 var qry = new EventLogs(QueryTraces)
                 {
                     OrgId = OrgId,
                     TeamId = CurrentOrgUser.CurrentTeamId ?? 0,
                     UserId = FilterUserId,
-                    EventId = FilterEventId
+                    EventId = FilterEventId,
+                    CloseReasonId = FilterCloseReasonId
                 };
 
                 if (CurrentOrgUser.CurrentAppId.HasValue)
