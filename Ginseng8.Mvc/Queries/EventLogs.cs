@@ -119,6 +119,9 @@ namespace Ginseng.Mvc.Queries
         [Where("[ou].[UserId]=@userId")]
         public int? UserId { get; set; }
 
+        [Where("[wi].[CloseReasonId]=@closeReasonId")]
+        public int? CloseReasonId { get; set; }
+
 		public IEnumerable<ITestableQuery> GetTestCases()
 		{
 			yield return new EventLogs() { OrgId = 0 };
