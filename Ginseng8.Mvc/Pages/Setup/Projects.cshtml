@@ -12,7 +12,7 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Project>(this, Xsrf, defaults: new { TeamId = Model.TeamId, ApplicationId = Model.AppId ?? 0, IsActive = true });
+    var grid = new GridEditor<Project>(this, Xsrf, (record) => record.Id, defaults: new { TeamId = Model.TeamId, ApplicationId = Model.AppId ?? 0, IsActive = true });
 }
 
 <form method="get" class="form-inline mb-4">
@@ -84,5 +84,5 @@
 @grid.HandlerForms("Save", "Delete")
 
 @section Scripts {
-    <script src="~/js/GridEditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
 }

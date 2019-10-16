@@ -16,7 +16,7 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Activity>(this, Xsrf);
+    var grid = new GridEditor<Activity>(this, Xsrf, (record) => record.Id);
 }
 
 <table class="table">
@@ -61,7 +61,7 @@
 </ul>
 
 @section Scripts {
-    <script src="~/js/GridEditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
     <script>
         $('.sortable').sortable({
             placeholder: 'ui-state-highlight',

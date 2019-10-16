@@ -88,7 +88,7 @@
             </h5>
             @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.Id, IdPrefix = "model-class", PostUrl = "/Update/ModelClassBody", Content = Model.CurrentClass.HtmlBody, UploadFolderName = "DataModels" })
 
-            var grid = new GridEditor<ModelProperty>(this, Xsrf, defaults: new { ModelClassId = Model.CurrentClass.Id, Position = Model.Properties.Count() + 1 });
+            var grid = new GridEditor<ModelProperty>(this, Xsrf, (record) => record.Id, defaults: new { ModelClassId = Model.CurrentClass.Id, Position = Model.Properties.Count() + 1 });
 
             <table class="table mt-2"><tbody class="js-table-body-sortable">
                 <tr>
@@ -168,5 +168,5 @@
 
 @section Scripts {
     <script src="~/js/Dashboard.js"></script>
-    <script src="~/js/GridEditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
 }

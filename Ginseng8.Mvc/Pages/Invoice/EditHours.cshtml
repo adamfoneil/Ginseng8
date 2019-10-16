@@ -11,7 +11,7 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<PendingWorkLog>(this, Xsrf);
+    var grid = new GridEditor<PendingWorkLog>(this, Xsrf, (record) => record.Id);
 }
 
 <h4>My Hours</h4>
@@ -44,5 +44,5 @@
 @grid.HandlerForms("Save", "Delete")
 
 @section Scripts {
-    <script src="~/js/GridEditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
 }

@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Ginseng.Models.Conventions;
+using GridEditor.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Configuration;
 using Postulate.SqlServer.IntKey;
@@ -82,6 +83,16 @@ namespace Ginseng.Mvc.Services
             }
         }
 
+        internal void ClearErrorMessage()
+        {
+            TempData.ClearErrorMessage();
+        }
+
+        internal void SetErrorMessage(string message)
+        {
+            TempData.SetErrorMessage(message);
+        }
+
         public async Task<T> FindAsync<T>(SqlConnection connection, int id)
         {
             return await connection.FindAsync<T>(id, CurrentUser);
@@ -101,12 +112,12 @@ namespace Ginseng.Mvc.Services
             {
                 var update = AuditProperties(record, propertyNames);
                 await connection.SaveAsync(update.Item1, update.Item2);
-                SetSuccessMessage(successMessage);
+                TempData.SetSuccessMessage(successMessage);                
                 return true;
             }
             catch (Exception exc)
             {
-                SetErrorMessage(exc);
+                TempData.SetErrorMessage(exc);
                 return false;
             }
         }
@@ -127,12 +138,12 @@ namespace Ginseng.Mvc.Services
                 beforeSave?.Invoke(connection, record);
                 if (connection.State == ConnectionState.Closed) connection.Open();
                 await connection.SaveAsync(record, CurrentUser);
-                SetSuccessMessage(successMessage);
+                TempData.SetSuccessMessage(successMessage);
                 return true;
             }
             catch (Exception exc)
             {
-                SetErrorMessage(exc);
+                TempData.SetErrorMessage(exc);
                 return false;
             }
         }
@@ -149,7 +160,7 @@ namespace Ginseng.Mvc.Services
             }
             catch (Exception exc)
             {
-                SetErrorMessage(exc);
+                TempData.SetErrorMessage(exc);
                 return false;
             }
         }
@@ -166,7 +177,7 @@ namespace Ginseng.Mvc.Services
             }
             catch (Exception exc)
             {
-                SetErrorMessage(exc);
+                TempData.SetErrorMessage(exc);
                 return false;
             }
         }
@@ -176,13 +187,13 @@ namespace Ginseng.Mvc.Services
             try
             {
                 await connection.DeleteAsync<T>(id, CurrentUser);
-                SetSuccessMessage(successMessage);
+                TempData.SetSuccessMessage(successMessage);
                 return true;
 
             }
             catch (Exception exc)
             {
-                SetErrorMessage(exc);
+                TempData.SetErrorMessage(exc);
                 return false;
             }
         }
@@ -219,30 +230,6 @@ namespace Ginseng.Mvc.Services
             }
 
             return (record, properties.ToArray());
-        }
-
-        public void SetSuccessMessage(string message)
-        {
-            TempData.Remove(AlertCss.Success);
-            if (string.IsNullOrEmpty(message)) return;
-            TempData.Add(AlertCss.Success, message);
-        }
-
-        public void SetErrorMessage(string message)
-        {
-            TempData.Remove(AlertCss.Error);
-            TempData.Add(AlertCss.Error, message);
-        }
-
-        public void SetErrorMessage(Exception exception)
-        {
-            TempData.Remove(AlertCss.Error);
-            TempData.Add(AlertCss.Error, exception.Message);
-        }
-
-        public void ClearErrorMessage()
-        {
-            TempData.Remove(AlertCss.Error);
         }
     }
 }

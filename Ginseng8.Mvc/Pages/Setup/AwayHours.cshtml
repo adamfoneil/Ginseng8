@@ -14,7 +14,7 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<VacationHours>(this, Xsrf);
+    var grid = new GridEditor<VacationHours>(this, Xsrf, (record) => record.Id);
 }
 
 <table class="table">
@@ -43,7 +43,7 @@
 @grid.HandlerForms("Save", "Delete")
 
 @section Scripts {
-    <script src="~/js/GridEditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
     <script>
         $(document).ready(function () {
             $(".datepicker").datepicker();
