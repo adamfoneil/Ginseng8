@@ -208,7 +208,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
         {
             using (var cn = Data.GetConnection())
             {
-                var workItems = await new OpenWorkItems() { ProjectId = sourceProjectId }.ExecuteAsync(cn);
+                var workItems = await new OpenWorkItems() { OrgId = OrgId, ProjectId = sourceProjectId }.ExecuteAsync(cn);
 
                 foreach (var item in workItems)
                 {                    
@@ -227,13 +227,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
                     await cn.ExecuteAsync(
                         @"INSERT INTO [dbo].[WorkItemLabel] (
-                            [WorkItemId], [LabelId], [CreatedBy], [DateCreated])
+                            [WorkItemId], [LabelId], [CreatedBy], [DateCreated]
                         ) SELECT 
                             @destWorkItemId, [wil].[LabelId], [wil].[CreatedBy], getdate()
                         FROM 
-                            [dbo].[WorkItemLabel] 
+                            [dbo].[WorkItemLabel] [wil]
                         WHERE 
-                            [WorkItemId]=@sourceWorkItemId", 
+                            [wil].[WorkItemId]=@sourceWorkItemId", 
                         new { destWorkItemId = newItem.Id, sourceWorkItemId = item.Id });
                 }
             }
