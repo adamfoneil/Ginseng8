@@ -54,6 +54,7 @@ namespace Ginseng.Mvc.Queries
         public int Number { get; set; }
         public string Title { get; set; }
         public int? Priority { get; set; }
+        public string TextBody { get; set; }
         public string HtmlBody { get; set; }
         public int? BusinessUserId { get; set; }
         public int? DeveloperUserId { get; set; }
@@ -220,7 +221,7 @@ namespace Ginseng.Mvc.Queries
 				[wi].[Number],
 				[pri].[Value] AS [Priority],
 				[wi].[Title],
-				[wi].[HtmlBody],
+				[wi].[TextBody], [wi].[HtmlBody],
 				[wi].[BusinessUserId],
 				[wi].[DeveloperUserId],
 				COALESCE([wi].[ApplicationId], 0) AS [ApplicationId], [app].[Name] AS [ApplicationName],

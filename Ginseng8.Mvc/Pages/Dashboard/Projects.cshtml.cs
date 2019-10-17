@@ -1,4 +1,5 @@
-﻿using Ginseng.Models;
+﻿using Dapper;
+using Ginseng.Models;
 using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
@@ -8,11 +9,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
+using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Postulate.Base.Extensions;
 
 namespace Ginseng.Mvc.Pages.Dashboard
 {
@@ -199,6 +202,43 @@ namespace Ginseng.Mvc.Pages.Dashboard
             project.IsActive = isActive;
             await Data.TryUpdateAsync(project, r => r.IsActive);
             return Redirect("Projects");
+        }
+
+        public async Task<RedirectResult> OnPostImportWorkItemsAsync(int sourceProjectId, int destProjectId)
+        {
+            using (var cn = Data.GetConnection())
+            {
+                var workItems = await new OpenWorkItems() { ProjectId = sourceProjectId }.ExecuteAsync(cn);
+
+                foreach (var item in workItems)
+                {                    
+                    var newItem = new Ginseng.Models.WorkItem()
+                    {
+                        OrganizationId = OrgId,
+                        TeamId = item.TeamId,
+                        ProjectId = destProjectId,
+                        Title = item.Title,
+                        TextBody = item.TextBody,
+                        HtmlBody = item.HtmlBody,
+                        SizeId = item.SizeId
+                    };
+                    await newItem.SetNumberAsync(cn);
+                    await cn.SaveAsync(newItem, CurrentUser);
+
+                    await cn.ExecuteAsync(
+                        @"INSERT INTO [dbo].[WorkItemLabel] (
+                            [WorkItemId], [LabelId], [CreatedBy], [DateCreated])
+                        ) SELECT 
+                            @destWorkItemId, [wil].[LabelId], [wil].[CreatedBy], getdate()
+                        FROM 
+                            [dbo].[WorkItemLabel] 
+                        WHERE 
+                            [WorkItemId]=@sourceWorkItemId", 
+                        new { destWorkItemId = newItem.Id, sourceWorkItemId = item.Id });
+                }
+            }
+
+            return Redirect($"/Dashboard/Projects/{destProjectId}");
         }
     }
 }
