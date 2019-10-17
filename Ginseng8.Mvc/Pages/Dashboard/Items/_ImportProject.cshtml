@@ -1,0 +1,11 @@
+﻿@model Ginseng.Mvc.Pages.Dashboard.ProjectsModel
+
+<h5>Import from Project</h5>
+<p>Use this to copy work items from a template project into this project for reuse on this project.</p>
+<form method="post" asp-page-handler="ImportWorkItems" class="form-inline mb-3">
+    <input type="hidden" name="DestProjectId" value="@Model.SelectedProject.Id"/>
+    <select name="SourceProjectId" asp-items="@Model.ImportFromProject" class="form-control form-control-sm mr-2" required="required">
+        <option value="">(select)</option>
+    </select>
+    <button class="btn btn-sm btn-secondary">Import</button>
+</form>

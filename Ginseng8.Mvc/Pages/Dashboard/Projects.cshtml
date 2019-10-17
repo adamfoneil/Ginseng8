@@ -54,6 +54,8 @@ else
         <partial name="Items/_ProjectWorkItems" model="Model" />
     }
 
+    <partial name="Items/_ImportProject" model="Model"/>
+
     var recentlyClosed = Model.ClosedItems[Model.SelectedProject.Id].Take(10);
     @if (recentlyClosed.Any())
     {

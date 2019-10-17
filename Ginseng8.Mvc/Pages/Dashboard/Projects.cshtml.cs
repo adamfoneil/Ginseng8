@@ -2,6 +2,7 @@
 using Ginseng.Mvc.Classes;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Queries;
+using Ginseng.Mvc.Queries.SelectLists;
 using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,8 @@ namespace Ginseng.Mvc.Pages.Dashboard
         protected override Func<ClosedWorkItemsResult, int> ClosedItemGrouping => (ci) => ci.ProjectId ?? 0;
 
         public Dictionary<int, Project> Projects { get; set; }
+
+        public SelectList ImportFromProject { get; set; }
 
         [BindProperty(SupportsGet = true)]
         public int? Id { get; set; }
@@ -127,6 +130,7 @@ namespace Ginseng.Mvc.Pages.Dashboard
                 SelectedProject = await Data.FindAsync<Project>(connection, Id.Value);
                 SelectedProjectInfo = await new ProjectInfo() { Id = Id, OrgId = OrgId }.ExecuteSingleAsync(connection);
                 ProjectComments = await new Comments() { OrgId = OrgId, ObjectType = ObjectType.Project, ObjectIds = new[] { SelectedProject.Id } }.ExecuteAsync(connection);
+                ImportFromProject = await new ProjectSelect() { TeamId = CurrentOrgUser?.CurrentTeamId ?? 0, ExcludeId = Id.Value }.ExecuteSelectListAsync(connection);
 
                 if (CurrentOrg.UseFreshdesk())
                 {
