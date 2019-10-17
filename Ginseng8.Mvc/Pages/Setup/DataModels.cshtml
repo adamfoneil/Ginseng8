@@ -10,7 +10,7 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<DataModel>(this, Xsrf, defaults: new { ApplicationId = Model.AppId });
+    var grid = new GridEditor<DataModel>(this, Xsrf, (record) => record.Id, defaults: new { ApplicationId = Model.AppId });
 }
 
 <form method="get" class="form-inline mb-2">
@@ -43,5 +43,5 @@
 @grid.HandlerForms("Save", "Delete")
 
 @section Scripts {
-    <script src="~/js/GridEditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
 }

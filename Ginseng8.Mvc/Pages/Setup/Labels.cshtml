@@ -15,7 +15,7 @@
 @Html.ActionAlert(TempData)
 
 @{
-    var grid = new GridEditor<Label>(this, Xsrf, defaults: new { IsActive = true });
+    var grid = new GridEditor<Label>(this, Xsrf, (record) => record.Id, defaults: new { IsActive = true });
 }
 
 <table class="table">
@@ -60,7 +60,7 @@
 @grid.HandlerForms("Save", "Delete")
 
 @section Scripts {
-    <script src="~/js/GridEditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
     <script src="~/js/Notification.js"></script>
     <script src="~/js/MultiSelect.js"></script>
 }

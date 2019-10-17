@@ -117,7 +117,7 @@
 </div>
 
 @{
-    var grid = new GridEditor<Organization>(this, Xsrf);
+    var grid = new GridEditor<Organization>(this, Xsrf, (record) => record.Id);
 }
 
 <h5 class="mt-3">My Orgs</h5>
@@ -141,5 +141,5 @@
 @grid.HandlerForms("Save", "Delete")
 
 @section Scripts {
-    <script src="~/js/GridEditor.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/adamosoftware/GridEditor.RazorPages@1.0.3/js/GridEditor.min.js"></script>
 }

@@ -28,6 +28,7 @@
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="6.1.1" />
     <PackageReference Include="ClosedXML" Version="0.94.2" />
     <PackageReference Include="ClosedXML.Extensions.Mvc" Version="0.2.2" />
+    <PackageReference Include="GridEditor.RazorPages" Version="1.0.1-beta" />
     <PackageReference Include="Html2Markdown" Version="3.2.1.341" />
     <PackageReference Include="HtmlSanitizer" Version="4.0.217" />
     <PackageReference Include="JsonSettings.Library" Version="1.0.14" />
