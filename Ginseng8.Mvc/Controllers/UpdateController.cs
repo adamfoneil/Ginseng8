@@ -516,5 +516,23 @@ namespace Ginseng.Mvc.Controllers
                 return Json(new { success = false, message = exc.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<RedirectResult> DeleteComment(int id, string returnUrl)
+        {
+            using (var cn = _data.GetConnection())
+            {
+                var comment = await cn.FindAsync<Comment>(id);
+                if (comment.CreatedBy.Equals(User.Identity.Name))
+                {
+                    await cn.DeleteAsync<Comment>(id);
+                    return Redirect(returnUrl);
+                }
+                else
+                {
+                    throw new Exception("Can't delete someone else's comment");
+                }
+            }
+        }
     }
 }
