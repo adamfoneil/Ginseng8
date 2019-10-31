@@ -20,7 +20,7 @@ namespace Ginseng.Mvc.Queries
 				[c].[ObjectType]=@objectType AND
 				[c].[ObjectId] IN @objectIds
 			ORDER BY
-				[c].[DateCreated] DESC")
+				[c].[DateCreated] ASC")
 		{
 		}
 		
