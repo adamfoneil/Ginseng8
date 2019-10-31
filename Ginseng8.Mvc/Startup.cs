@@ -70,7 +70,7 @@ namespace Ginseng.Mvc
                 .AddSingleton<IViewRenderService, ViewRenderService>();
 
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-            services.AddSignalR().AddAzureSignalR(Configuration["SignalRConnection"]);
+            services.AddSignalR().AddAzureSignalR();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
