@@ -456,6 +456,7 @@ namespace Ginseng.Mvc.Controllers
                 var vm = new CommentView();
                 vm.ObjectId = comment.ObjectId;
                 vm.ObjectType = comment.ObjectType;
+                vm.CommentBoxOpen = comment.CommentBoxOpen;
                 vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, ObjectType = comment.ObjectType, ObjectIds = new int[] { comment.ObjectId } }.ExecuteAsync(cn);
                 return PartialView("/Pages/Dashboard/Items/_Comments.cshtml", vm);
             }

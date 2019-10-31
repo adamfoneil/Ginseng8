@@ -57,6 +57,6 @@
 
     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Id, IdPrefix = "work-item", PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true, UploadFolderName = "WorkItems", OverrideId = Model.WorkItem.Number, CopyWorkItemLink = true })
     <div id="comments-@Model.WorkItem.Id-WorkItem-output">
-    @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, ObjectId = Model.WorkItem.Id, ObjectType = ObjectType.WorkItem })
+    @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, ObjectId = Model.WorkItem.Id, ObjectType = ObjectType.WorkItem, CommentBoxOpen = Model.CommentBoxOpen })
     </div>
 </div>

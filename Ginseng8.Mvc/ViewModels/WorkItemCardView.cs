@@ -21,6 +21,7 @@ namespace Ginseng.Mvc.ViewModels
         public WorkItemTitleViewField TitleViewField { get; set; } = WorkItemTitleViewField.Project;
         public bool ShowPins { get; set; }
         public bool IsPinned { get; set; }
+        public bool CommentBoxOpen { get; set; }
 
         public string PinnedClassName()
         {

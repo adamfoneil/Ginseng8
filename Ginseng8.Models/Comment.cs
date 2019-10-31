@@ -52,6 +52,12 @@ namespace Ginseng.Models
 
         public string HtmlBody { get; set; }
 
+        /// <summary>
+        /// Used to preserve state of comment box expand status (true on WorkItem/View, false everywhere else)
+        /// </summary>
+        [NotMapped]
+        public bool CommentBoxOpen { get; set; }
+
         [NotMapped]
         public string DisplayName { get; set; }
 

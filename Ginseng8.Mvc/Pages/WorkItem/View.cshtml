@@ -2,7 +2,7 @@
 @model Ginseng.Mvc.Pages.WorkItem.ViewModel
 @{
     ViewData["Title"] = "Work Item";
-    var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id], ShowDetailsButton = false, AssignToUsers = Model.AssignToUsers };
+    var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id], ShowDetailsButton = false, AssignToUsers = Model.AssignToUsers, CommentBoxOpen = true };
 }
 
 <div class="row">
