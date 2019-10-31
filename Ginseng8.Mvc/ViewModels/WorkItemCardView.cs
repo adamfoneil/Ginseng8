@@ -23,6 +23,17 @@ namespace Ginseng.Mvc.ViewModels
         public bool IsPinned { get; set; }
         public bool CommentBoxOpen { get; set; }
 
+        public WorkItemCardView()
+        {
+        }
+
+        public WorkItemCardView(IUserInfo userInfo)
+        {
+            LocalTime = userInfo.LocalTime;
+            UserId = userInfo.UserId;
+            OrgId = userInfo.OrgId;
+        }
+
         public string PinnedClassName()
         {
             return (IsPinned) ? PinnedWorkItem.PinnedIcon : PinnedWorkItem.UnpinnedIcon;

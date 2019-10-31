@@ -9,6 +9,11 @@
                 <i class="@item.IconClass mr-1"></i>
                 <strong class="mr-1">@item.DisplayName</strong>
                 <span class="small text-muted mr-1">@Html.FormatValue(item.DateCreated, "{0:ddd M/d}")</span>
+
+                @{ 
+                    var elapsed = Model.LocalTime.Subtract(item.DateCreated).Humanize();
+                }
+                <span class="small text-muted">@elapsed ago</span>
             </div>
             @if  (item.CreatedBy.Equals(User.Identity.Name))
             {
