@@ -70,9 +70,7 @@
 <div class="row mb-2">
     <div class="col-2"></div>
     <div class="col-10">
-        <span class="text-muted small">
-            Created by @Model.Item.CreatedByName on @Model.Item.DateCreated
-        </span>
+        <partial name="/Pages/Shared/_ItemDateStamp.cshtml" model="@(new WorkItemTimeStamp() { WorkItem = Model.Item, LocalTime = Model.LocalTime })"/>
     </div>
 </div>
 
