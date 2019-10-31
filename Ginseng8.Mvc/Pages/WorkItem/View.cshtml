@@ -59,12 +59,14 @@
                     </li>
                 }
             </ul>
-            <a asp-page-handler="DownloadAllAttachments" class="btn btn-light btn-sm">Download All Attachments</a>
+            <a asp-page-handler="DownloadAllAttachments" class="btn btn-light btn-sm mb-4">Download All Attachments</a>
         }
 
-        <form asp-controller="Upload" asp-action="Attachment" method="post" class="dropzone" id="frmDropzone">
+        <form asp-controller="Upload" asp-action="Attachment" method="post" enctype="multipart/form-data">
             <input type="hidden" name="Id" value="@Model.Item.Number" />
             <input type="hidden" name="FolderName" value="WorkItems" />
+            <input type="file" name="file" required="required"/>
+            <button class="btn btn-light" type="submit">Upload</button>
         </form>
         <hr />
     </div>
@@ -74,7 +76,7 @@
     <div class="col-2"></div>
     <div class="col-10">
         <span class="text-muted small">
-            Created by @Model.Item.CreatedByName on @Model.Item.DateCreated            
+            Created by @Model.Item.CreatedByName on @Model.Item.DateCreated
         </span>
     </div>
 </div>
@@ -83,16 +85,5 @@
 
 @section Scripts {
     <script src="~/js/MultiSelect.js"></script>
-    <script src="~/js/Dashboard.js"></script>
-    <script src="~/lib/dropzone/min/dropzone.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            var dz = $('.dropzone');
-            dz.on('success', function (file) {
-                // need some indication that file was uploaded
-                // to trigger refresh of attachment list
-                console.log(file);
-            });
-        })
-    </script>
+    <script src="~/js/Dashboard.js"></script>    
 }

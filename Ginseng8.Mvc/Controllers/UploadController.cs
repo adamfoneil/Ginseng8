@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -64,7 +65,7 @@ namespace Ginseng.Mvc.Controllers
             return blob;
         }
 
-        public async Task<JsonResult> Attachment([FromForm]IFormFile file, string folderName, int id)
+        public async Task<RedirectResult> Attachment([FromForm]IFormFile file, string folderName, int id)
         {
             var blob = await UploadInnerAsync(file, folderName, id);
 
@@ -77,7 +78,12 @@ namespace Ginseng.Mvc.Controllers
             };
             await _data.TrySaveAsync(att);
 
-            return Json(att);
+            Dictionary<string, RedirectResult> redirect = new Dictionary<string, RedirectResult>()
+            {
+                { "WorkItems", new RedirectResult($"/WorkItem/View/{id}") }
+            };
+
+            return redirect[folderName];
         }
 
         /// <summary>
