@@ -26,6 +26,11 @@
 }
 </ul>
 
+<a class="addComment btn btn-sm btn-light" href="#" data-id="@Model.ObjectId" id="addCommentLink-@Model.IdPrefix-@Model.ObjectId" data-target="addComment-@Model.ObjectId" data-id-prefix="@Model.IdPrefix" title="Add comment">
+    <i class="far fa-comment-plus"></i>
+    Add Comment
+</a>
+
 @{ var displayStyle = (Model.CommentBoxOpen) ? string.Empty : "display:none"; }
 
 <div class="mt-2 js-comment-form-wrapper" id="addComment-@Model.ObjectId" style="@displayStyle">
