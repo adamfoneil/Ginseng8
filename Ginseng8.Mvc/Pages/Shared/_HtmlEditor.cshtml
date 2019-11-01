@@ -28,12 +28,4 @@
             <i class="far fa-copy"></i>
         </button>
     }
-
-    @if (Model.AllowComments)
-    {
-        <a class="addComment btn btn-sm btn-light" href="#" data-id="@Model.Id" id="addCommentLink-@Model.IdPrefix-@Model.Id" data-target="addComment-@Model.Id" data-id-prefix="@Model.IdPrefix" title="Add comment">
-            <i class="far fa-comment-plus"></i>
-            Add Comment
-        </a>
-    }
 </div>

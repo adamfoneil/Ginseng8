@@ -27,7 +27,7 @@
 
                     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = projectGrp.Key, IdPrefix = "prj", PostUrl = "/Update/ProjectBody", Content = Model.SelectedProject.HtmlBody, UploadFolderName = "Projects", AllowComments = true })
                     <div id="comments-@Model.SelectedProject.Id-Project-output">
-                    @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.ProjectComments, ObjectId = Model.SelectedProject.Id, ObjectType = ObjectType.Project })
+                    @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.ProjectComments, ObjectId = Model.SelectedProject.Id, ObjectType = ObjectType.Project, LocalTime = Model.LocalTime })
                     </div>
                 </div>
             }
@@ -43,7 +43,7 @@
                     <div class="ml-3">
                         @foreach (var item in milestoneGrp)
                         {
-                            <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers })" />
+                            <partial name="Items/_Card" model="@(new WorkItemCardView() { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, LocalTime = Model.LocalTime })" />
                         }
                         @await Html.PartialAsync("Items/_InsertItem", new InsertItemView(new Dictionary<string, int>()
                         {

@@ -454,8 +454,10 @@ namespace Ginseng.Mvc.Controllers
                 if (await _data.TrySaveAsync(comment) && inserted) await AddFreshdeskNoteAsync(comment, cn);
 
                 var vm = new CommentView();
+                vm.LocalTime = _data.CurrentUser.LocalTime;
                 vm.ObjectId = comment.ObjectId;
                 vm.ObjectType = comment.ObjectType;
+                vm.CommentBoxOpen = comment.CommentBoxOpen;
                 vm.Comments = await new Comments() { OrgId = _data.CurrentOrg.Id, ObjectType = comment.ObjectType, ObjectIds = new int[] { comment.ObjectId } }.ExecuteAsync(cn);
                 return PartialView("/Pages/Dashboard/Items/_Comments.cshtml", vm);
             }
