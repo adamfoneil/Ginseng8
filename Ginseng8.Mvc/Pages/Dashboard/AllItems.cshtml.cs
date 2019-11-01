@@ -76,7 +76,7 @@ namespace Ginseng.Mvc.Pages.Work
         {
             if (int.TryParse(Query, out int number))
             {
-                if (connection.Exists("[dbo].[WorkItem] WHERE [OrganizationId]=@orgId AND [Number]=@number", new { orgId = OrgId, Number = number }))
+                if (connection.RowExists("[dbo].[WorkItem] WHERE [OrganizationId]=@orgId AND [Number]=@number", new { orgId = OrgId, Number = number }))
                 {
                     return new RedirectResult($"/WorkItem/View/{number}");
                 }

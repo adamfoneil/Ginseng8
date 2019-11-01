@@ -4,9 +4,11 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -109,40 +111,6 @@ namespace Ginseng.Models
         [NotMapped]
         public string TableName => nameof(OrganizationUser);
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
-        {
-            if (CurrentAppId.HasValue)
-            {
-                CurrentApp = commandProvider.Find<Application>(connection, CurrentAppId.Value);
-            }
-
-            if (CurrentTeamId.HasValue)
-            {
-                CurrentTeam = commandProvider.Find<Team>(connection, CurrentTeamId.Value);
-            }
-
-            UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
-            Email = UserProfile.Email;
-            Organization = commandProvider.Find<Organization>(connection, OrganizationId);
-        }
-
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
-        {
-            if (CurrentAppId.HasValue)
-            {
-                CurrentApp = await commandProvider.FindAsync<Application>(connection, CurrentAppId.Value);
-            }
-
-            if (CurrentTeamId.HasValue)
-            {
-                CurrentTeam = await commandProvider.FindAsync<Team>(connection, CurrentTeamId.Value);
-            }
-
-            UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
-            Email = UserProfile.Email;
-            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
-        }
-
         public string GetDisplayName()
         {
             return DisplayName ?? Email;
@@ -199,6 +167,40 @@ namespace Ginseng.Models
         public bool AllowNotification()
         {
             return IsEnabled && NotifyOptionsImplementation.AllowNotification(this);
+        }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
+        {
+            if (CurrentAppId.HasValue)
+            {
+                CurrentApp = commandProvider.Find<Application>(connection, CurrentAppId.Value);
+            }
+
+            if (CurrentTeamId.HasValue)
+            {
+                CurrentTeam = commandProvider.Find<Team>(connection, CurrentTeamId.Value);
+            }
+
+            UserProfile = commandProvider.Find<UserProfile>(connection, UserId);
+            Email = UserProfile.Email;
+            Organization = commandProvider.Find<Organization>(connection, OrganizationId);
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
+        {
+            if (CurrentAppId.HasValue)
+            {
+                CurrentApp = await commandProvider.FindAsync<Application>(connection, CurrentAppId.Value);
+            }
+
+            if (CurrentTeamId.HasValue)
+            {
+                CurrentTeam = await commandProvider.FindAsync<Team>(connection, CurrentTeamId.Value);
+            }
+
+            UserProfile = await commandProvider.FindAsync<UserProfile>(connection, UserId);
+            Email = UserProfile.Email;
+            Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
         }
     }
 }

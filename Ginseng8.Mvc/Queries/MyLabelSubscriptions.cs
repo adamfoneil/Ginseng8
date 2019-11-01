@@ -11,12 +11,14 @@ namespace Ginseng.Mvc.Queries
             FROM
                 [dbo].[LabelSubscription] [ls]
             WHERE
-                [UserId]=@userId AND
-                [OrganizationId]=@orgId")
+                [UserId]=@userId AND                
+                [OrganizationId]=@orgId AND
+                [ApplicationId]=@appId")
         {
         }
 
         public int UserId { get; set; }
         public int OrgId { get; set; }
+        public int AppId { get; set; }
     }
 }

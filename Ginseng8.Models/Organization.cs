@@ -4,9 +4,11 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -116,18 +118,6 @@ namespace Ginseng.Models
             }
         }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
-        {
-            MilestoneWorkDay = commandProvider.FindWhere<WorkDay>(connection, new { Value = MilestoneWorkDayValue });
-            OwnerUser = commandProvider.Find<UserProfile>(connection, OwnerUserId);
-        }
-
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
-        {
-            MilestoneWorkDay = await commandProvider.FindAsync<WorkDay>(connection, MilestoneWorkDayValue);
-            OwnerUser = await commandProvider.FindAsync<UserProfile>(connection, OwnerUserId);
-        }
-
         public async Task<int> GetOrgIdAsync(IDbConnection connection)
         {
             return await Task.FromResult(Id);
@@ -136,6 +126,18 @@ namespace Ginseng.Models
         public bool UseFreshdesk()
         {
             return !string.IsNullOrEmpty(FreshdeskUrl) && !string.IsNullOrEmpty(FreshdeskApiKey);
+        }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
+        {
+            MilestoneWorkDay = commandProvider.FindWhere<WorkDay>(connection, new { Value = MilestoneWorkDayValue });
+            OwnerUser = commandProvider.Find<UserProfile>(connection, OwnerUserId);
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
+        {
+            MilestoneWorkDay = await commandProvider.FindAsync<WorkDay>(connection, MilestoneWorkDayValue);
+            OwnerUser = await commandProvider.FindAsync<UserProfile>(connection, OwnerUserId);
         }
     }
 }

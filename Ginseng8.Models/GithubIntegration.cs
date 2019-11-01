@@ -2,9 +2,11 @@
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -26,12 +28,11 @@ namespace Ginseng.Models
         [NotMapped]
         public string ApplicationName { get; set; }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
-        {
-            Application = commandProvider.Find<Application>(connection, ApplicationId);
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
+        {            
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Application = await commandProvider.FindAsync<Application>(connection, ApplicationId);
         }

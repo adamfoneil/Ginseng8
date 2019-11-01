@@ -4,9 +4,11 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -79,22 +81,22 @@ namespace Ginseng.Models
             return Id.GetHashCode();
         }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task<int> GetOrgIdAsync(IDbConnection connection)
+        {
+            var org = await connection.FindAsync<Organization>(OrganizationId);
+            return org.Id;
+        }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Organization = commandProvider.Find<Organization>(connection, OrganizationId);
             if (TeamId.HasValue) Team = commandProvider.Find<Team>(connection, TeamId.Value);
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Organization = await commandProvider.FindAsync<Organization>(connection, OrganizationId);
             if (TeamId.HasValue) Team = await commandProvider.FindAsync<Team>(connection, TeamId.Value);
-        }
-
-        public async Task<int> GetOrgIdAsync(IDbConnection connection)
-        {
-            var org = await connection.FindAsync<Organization>(OrganizationId);
-            return org.Id;
         }
     }
 }

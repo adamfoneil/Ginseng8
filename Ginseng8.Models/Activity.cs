@@ -3,9 +3,11 @@ using Ginseng.Models.Interfaces;
 using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -47,12 +49,12 @@ namespace Ginseng.Models
 
         public Responsibility Responsibility { get; set; }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Responsibility = commandProvider.Find<Responsibility>(connection, ResponsibilityId);
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Responsibility = await commandProvider.FindAsync<Responsibility>(connection, ResponsibilityId);
         }

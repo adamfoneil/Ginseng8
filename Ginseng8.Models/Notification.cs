@@ -4,8 +4,10 @@ using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -128,12 +130,12 @@ namespace Ginseng.Models
             });
         }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             EventLog = commandProvider.Find<EventLog>(connection, EventLogId);
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             EventLog = await commandProvider.FindAsync<EventLog>(connection, EventLogId);
         }

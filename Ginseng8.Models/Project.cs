@@ -5,8 +5,10 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -91,13 +93,13 @@ namespace Ginseng.Models
             if (action == SaveAction.Update) await SyncWorkItemsToProjectAsync(connection);
         }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Team = commandProvider.Find<Team>(connection, TeamId);
             if (ApplicationId.HasValue) Application = commandProvider.Find<Application>(connection, ApplicationId.Value);
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Team = await commandProvider.FindAsync<Team>(connection, TeamId);
             if (ApplicationId.HasValue) Application = await commandProvider.FindAsync<Application>(connection, ApplicationId.Value);

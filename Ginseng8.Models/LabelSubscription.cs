@@ -10,9 +10,13 @@ namespace Ginseng.Models
         [PrimaryKey]
         public int OrganizationId { get; set; }
 
+        [PrimaryKey]
+        [DefaultExpression("0")]
+        public int ApplicationId { get; set; }
+
         [References(typeof(UserProfile))]
         [PrimaryKey]
-        public int UserId { get; set; }
+        public int UserId { get; set; }        
 
         [References(typeof(Label))]
         [PrimaryKey]
