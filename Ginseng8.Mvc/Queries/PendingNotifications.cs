@@ -36,6 +36,11 @@ namespace Ginseng.Mvc.Queries
 		{
 			await connection.ExecuteAsync("UPDATE [dbo].[Notification] SET [DateDelivered]=getutcdate() WHERE [Id]=@id", new { Id });
 		}
+
+        public DateTime GetLocalDateCreated(int offset, bool adjustDst)
+        {
+            return UserProfile.GetLocalTime(DateCreated, offset, adjustDst);
+        }
 	}
 
 	public class PendingNotifications : Query<PendingNotificationResult>, ITestableQuery
@@ -75,6 +80,9 @@ namespace Ginseng.Mvc.Queries
 
 		[Where("[Method]=@method")]
 		public DeliveryMethod? Method { get; set; }
+
+        [Where("[SendTo]=@sendTo")]
+        public string SendTo { get; set; }
 
 		public IEnumerable<ITestableQuery> GetTestCases()
 		{

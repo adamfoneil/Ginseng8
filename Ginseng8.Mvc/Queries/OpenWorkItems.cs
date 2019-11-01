@@ -345,6 +345,9 @@ namespace Ginseng.Mvc.Queries
         [Join("INNER JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@activityUserId")]
         public bool InMyActivities { get; set; }
 
+        [Join("INNER JOIN [dbo].[FnAppNotifyWorkItems](@notifyUserName) [notify] ON [wi].[Id]=[notify].[WorkItemId]")]
+        public bool InMyNotifications { get; set; }
+
         /// <summary>
         /// Use this when InMyActivities = true or WithMyActivityOrder = true
         /// </summary>		
@@ -352,6 +355,11 @@ namespace Ginseng.Mvc.Queries
 
         [Join("LEFT JOIN [dbo].[FnWorkItemSchedule](@orgId, @scheduleUserId) [wis] ON [wi].[Number]=[wis].[Number]")]
         public bool WithWorkSchedule { get; set; }
+
+        /// <summary>
+        /// Use with InMyNotifications
+        /// </summary>
+        public string NotifyUserName { get; set; }
 
         /// <summary>
         /// Use this when WithWorkSchedule = true

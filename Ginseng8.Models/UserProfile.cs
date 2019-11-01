@@ -33,18 +33,20 @@ namespace Ginseng.Models
 
         public DateTime LocalTime
         {
-            get
-            {
-                int dst = GetDaylightSavingOffset();
-                return (TimeZoneOffset < 24) ?
-                    DateTime.UtcNow.AddHours(TimeZoneOffset + dst) :
-                    DateTime.UtcNow.AddMinutes(TimeZoneOffset + dst);
-            }
+            get { return GetLocalTime(DateTime.UtcNow, TimeZoneOffset, AdjustForDaylightSaving); }
         }
 
-        private int GetDaylightSavingOffset()
+        public static DateTime GetLocalTime(DateTime dateTime, int offset, bool adjustDst)
         {
-            return (!DateTime.UtcNow.IsDaylightSavingTime() && AdjustForDaylightSaving) ? 1 : 0;
+            int dst = GetDaylightSavingOffset(adjustDst);
+            return (offset < 24) ?
+                dateTime.AddHours(offset + dst) :
+                dateTime.AddMinutes(offset + dst);
+        }
+
+        private static int GetDaylightSavingOffset(bool adjustDst)
+        {
+            return (!DateTime.UtcNow.IsDaylightSavingTime() && adjustDst) ? 1 : 0;
         }
 
         internal static async Task<int> GetUserIdAsync(IDbConnection connection, string userName)
