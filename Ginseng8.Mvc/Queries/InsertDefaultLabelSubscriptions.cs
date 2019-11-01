@@ -11,18 +11,19 @@ namespace Ginseng.Mvc.Queries
             @"INSERT INTO [dbo].[LabelSubscription] (
                 [OrganizationId], [ApplicationId], [UserId], [LabelId], [SendEmail], [SendText], [InApp], [CreatedBy], [DateCreated]
             ) SELECT
-                @orgId, 0, @userId, [lbl].[Id], 0, 0, 0, @userName, getdate()
+                @orgId, @appId, @userId, [lbl].[Id], 0, 0, 0, @userName, getdate()
             FROM
                 [dbo].[Label] [lbl]
             WHERE
                 [lbl].[OrganizationId]=@orgId AND
-                NOT EXISTS(SELECT 1 FROM [dbo].[LabelSubscription] WHERE [OrganizationId]=@orgId AND [ApplicationId]=0 AND [UserId]=@userId AND [LabelId]=[lbl].[Id])")
+                NOT EXISTS(SELECT 1 FROM [dbo].[LabelSubscription] WHERE [OrganizationId]=@orgId AND [ApplicationId]=@appId AND [UserId]=@userId AND [LabelId]=[lbl].[Id])")
         {
         }
 
         public int OrgId { get; set; }
         public int UserId { get; set; }
-        public string UserName { get; set; }
+        public int AppId { get; set; }
+        public string UserName { get; set; }        
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {

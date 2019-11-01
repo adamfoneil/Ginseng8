@@ -24,7 +24,8 @@ namespace Ginseng.Models.Queries
 	            [el].[SourceTable]='WorkItemLabel' AND
 	            [el].[Id]=@id AND
 	            [ls].[SendEmail]=1 AND
-	            ([u].[EmailConfirmed]=1 OR [u].[PasswordHash] IS NULL)")
+	            ([u].[EmailConfirmed]=1 OR [u].[PasswordHash] IS NULL) AND
+                ([ls].[ApplicationId]=0 OR [ls].[ApplicationId]=[el].[ApplicationId])")
         {
         }
 

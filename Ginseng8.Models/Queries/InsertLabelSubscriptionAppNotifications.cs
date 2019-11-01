@@ -23,7 +23,8 @@ namespace Ginseng.Models.Queries
 	            [wil].[WorkItemId]=[el].[WorkItemId] AND
 	            [el].[SourceTable]='WorkItemLabel' AND
 	            [el].[Id]=@id AND
-	            [ls].[InApp]=1")
+	            [ls].[InApp]=1 AND
+                ([ls].[ApplicationId]=0 OR [ls].[ApplicationId]=[el].[ApplicationId])")
         {
         }
 
