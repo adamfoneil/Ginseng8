@@ -65,29 +65,26 @@ namespace Ginseng.Models
         public static async Task CreateFromEventSubscriptions(IDbConnection connection, int eventLogId)
         {
             await new InsertEventSubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
-            await new InsertEventSubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);
-            // todo: app notifications
+            await new InsertEventSubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);            
         }
 
         internal static async Task CreateFromLabelSubscriptions(IDbConnection connection, int eventLogId)
         {
             await new InsertLabelSubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
-            // todo: text and app notifications
+            // todo: text notifications
         }
 
         public static async Task CreateFromActivitySubscriptions(IDbConnection connection, int eventLogId)
         {
             await new InsertActivitySubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
-            await new InsertActivitySubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);
-            // todo: app notifications
+            await new InsertActivitySubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);            
         }
 
         public static async Task CreateFromWorkItemAssignment(IDbConnection connection, int eventLogId)
         {
             await new InsertAssignmentDevEmailNotification() { Id = eventLogId }.ExecuteAsync(connection);
             await new InsertAssignmentBizEmailNotification() { Id = eventLogId }.ExecuteAsync(connection);
-
-            // todo: text and app notifications
+            // todo: text notifications
         }
 
         internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, string senderName, OrganizationUser mentionUser)

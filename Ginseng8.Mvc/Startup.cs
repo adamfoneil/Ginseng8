@@ -94,6 +94,11 @@ namespace Ginseng.Mvc
 
 			app.UseAuthentication();
 
+            app.UseAzureSignalR(config =>
+            {
+                config.MapHub<AppNotificationHub>("notify");
+            });
+
 			app.UseMvc(routes =>
 			{
 				routes.MapRoute(name: "default", template: "{controller=Home}/{action=Index}/{id?}");
