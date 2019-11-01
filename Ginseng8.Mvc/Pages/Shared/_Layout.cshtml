@@ -96,8 +96,18 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-page="/Setup/Index">Setup</a>
+                                <a class="nav-link text-dark" asp-page="/Setup/Index">
+                                    <i class="fas fa-cog"></i>
+                                </a>
                             </li>
+                            @if (Html.HasNotifications())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-page="/Notifications">
+                                        <i class="fas fa-bell"></i>
+                                    </a>
+                                </li>
+                            }
                         }
                     </ul>
 
