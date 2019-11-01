@@ -9,14 +9,14 @@ namespace Ginseng.Mvc.Queries
     {
         public InsertDefaultLabelSubscriptions() : base(
             @"INSERT INTO [dbo].[LabelSubscription] (
-                [OrganizationId], [UserId], [LabelId], [SendEmail], [SendText], [InApp], [CreatedBy], [DateCreated]
+                [OrganizationId], [ApplicationId], [UserId], [LabelId], [SendEmail], [SendText], [InApp], [CreatedBy], [DateCreated]
             ) SELECT
-                @orgId, @userId, [lbl].[Id], 0, 0, 0, @userName, getdate()
+                @orgId, 0, @userId, [lbl].[Id], 0, 0, 0, @userName, getdate()
             FROM
                 [dbo].[Label] [lbl]
             WHERE
                 [lbl].[OrganizationId]=@orgId AND
-                NOT EXISTS(SELECT 1 FROM [dbo].[LabelSubscription] WHERE [OrganizationId]=@orgId AND [UserId]=@userId AND [LabelId]=[lbl].[Id])")
+                NOT EXISTS(SELECT 1 FROM [dbo].[LabelSubscription] WHERE [OrganizationId]=@orgId AND [ApplicationId]=0 AND [UserId]=@userId AND [LabelId]=[lbl].[Id])")
         {
         }
 

@@ -1,0 +1,5 @@
+﻿@model WorkItemTimeStamp
+
+<p class="text-muted small">
+    Created by @Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated, @Html.ElapsedTime(Model.WorkItem.DateCreated, Model.LocalTime) ago
+</p>
