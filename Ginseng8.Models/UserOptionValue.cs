@@ -4,10 +4,12 @@ using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -52,24 +54,6 @@ namespace Ginseng.Models
             set { _value = value; }
         }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
-        {
-            Option = commandProvider.Find<Option>(connection, OptionId);
-            OptionType = commandProvider.Find<OptionType>(connection, Option.TypeId);
-            StorageColumn = OptionType.StorageColumn;
-            OptionName = Option.Name;
-            TypeId = Option.TypeId;
-        }
-
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
-        {
-            Option = await commandProvider.FindAsync<Option>(connection, OptionId);
-            OptionType = await commandProvider.FindAsync<OptionType>(connection, Option.TypeId);
-            StorageColumn = OptionType.StorageColumn;
-            OptionName = Option.Name;
-            TypeId = Option.TypeId;
-        }
-
         public override async Task BeforeSaveAsync(IDbConnection connection, SaveAction action, IUser user)
         {
             await base.BeforeSaveAsync(connection, action, user);
@@ -98,6 +82,24 @@ namespace Ginseng.Models
                         break;
                 }
             }
+        }
+
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
+        {
+            Option = commandProvider.Find<Option>(connection, OptionId);
+            OptionType = commandProvider.Find<OptionType>(connection, Option.TypeId);
+            StorageColumn = OptionType.StorageColumn;
+            OptionName = Option.Name;
+            TypeId = Option.TypeId;
+        }
+
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
+        {
+            Option = await commandProvider.FindAsync<Option>(connection, OptionId);
+            OptionType = await commandProvider.FindAsync<OptionType>(connection, Option.TypeId);
+            StorageColumn = OptionType.StorageColumn;
+            OptionName = Option.Name;
+            TypeId = Option.TypeId;
         }
     }
 }

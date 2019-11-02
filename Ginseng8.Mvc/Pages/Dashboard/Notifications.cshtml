@@ -1,0 +1,12 @@
+﻿@page
+@model Ginseng.Mvc.Pages.Dashboard.NotificationsModel
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div id="accordion">
+@foreach (var item in Model.WorkItems)
+{
+    <partial name="Items/_Card" model="@(new WorkItemCardView(Model) { WorkItem = item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[item.Id], UserId = Model.UserId, Comments = Model.Comments[item.Id], AssignToUsers = Model.AssignToUsers, TitleViewField = Services.WorkItemTitleViewField.Application | Services.WorkItemTitleViewField.Project, Notifications = Model.Notifications[item.Id] })" />
+}
+</div>

@@ -62,7 +62,7 @@
         </div>
     }
 
-    @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Id, PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true, UploadFolderName = "WorkItems", OverrideId = Model.WorkItem.Number, CopyWorkItemLink = true })
+    @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Id, PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true, UploadFolderName = "WorkItems", OverrideId = Model.WorkItem.Number, CopyWorkItemLink = true, Notifications = Model.Notifications })
     <div id="comments-@Model.WorkItem.Id-WorkItem-output">
     @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, ObjectId = Model.WorkItem.Id, ObjectType = ObjectType.WorkItem, CommentBoxOpen = Model.CommentBoxOpen, IdPrefix = "work-item", LocalTime = Model.LocalTime })
     </div>

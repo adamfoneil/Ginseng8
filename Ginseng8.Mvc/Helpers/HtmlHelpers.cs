@@ -10,5 +10,11 @@ namespace Ginseng.Mvc.Helpers
         {
             return now.Subtract(then).Humanize();
         }
+
+        public static bool HasNotifications<T>(this IHtmlHelper<T> html)
+        {
+            var model = html.ViewContext.ViewData.Model as AppPageModel;
+            return (model != null) ? model.HasNotifications : false;
+        }
     }
 }

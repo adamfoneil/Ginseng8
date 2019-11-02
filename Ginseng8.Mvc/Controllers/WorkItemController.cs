@@ -615,6 +615,32 @@ namespace Ginseng.Mvc.Controllers
             }
         }
 
+        public async Task<JsonResult> ClearNotification(int id)
+        {
+            try
+            {
+                using (var cn = _data.GetConnection())
+                {
+                    var wi = await _data.FindWorkItemAsync(cn, id);
+                    await cn.ExecuteAsync(
+                        @"UPDATE [n] SET [DateDelivered]=@localDate
+                        FROM [dbo].[Notification] [n]
+                        INNER JOIN [dbo].[EventLog] [el] ON [el].[Id]=[n].[EventLogId]
+                        WHERE 
+                            [el].[WorkItemId]=@id AND 
+                            [n].[DateDelivered] IS NULL AND
+                            [n].[Method]=3 AND
+                            [n].[SendTo]=@userName", 
+                        new { id = wi.Id, localDate = _data.CurrentUser.LocalTime, userName = User.Identity.Name });
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
+        }
+
         public async Task<PartialViewResult> SetProject(int id, int projectId)
         {
             ProjectInfoResult prj = null;

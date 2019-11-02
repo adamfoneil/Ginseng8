@@ -249,9 +249,6 @@ function cancelCommentEditing(params) {
 	params.commentsList.show()
 }
 
-
-
-
 $('.htmlEditor').on('froalaEditor.image.beforeUpload', function(event, editor, images) {
     console.group('before upload image, update params');
     editor.opts.imageUploadParams = {
@@ -839,6 +836,26 @@ $(document).ready(function () {
 
     $('.ms-datepicker').click(function () {
         $(this).next('.ms-datepicker-input').datepicker('show');
+    });
+
+    $('.clear-notification').click(function (ev) {        
+        var data = {
+            id: $(ev.target).data("work-item-number")
+        };
+
+        var formData = getFormData(data);
+        fetch('/WorkItem/ClearNotification', {
+            method: 'post',
+            body: formData
+        }).then(function (response) {
+            return response.json();
+        }).then(function (data) {
+            if (data.success) {
+                RemoveWorkItem(ev);
+            } else {
+                console.log(data.message);
+            }
+        });        
     });
 });
 

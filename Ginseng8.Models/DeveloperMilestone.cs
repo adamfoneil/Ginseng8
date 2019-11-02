@@ -4,10 +4,12 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -31,12 +33,12 @@ namespace Ginseng.Models
 
         public Milestone Milestone { get; set; }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Milestone = commandProvider.Find<Milestone>(connection, MilestoneId);
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Milestone = await commandProvider.FindAsync<Milestone>(connection, MilestoneId);
         }

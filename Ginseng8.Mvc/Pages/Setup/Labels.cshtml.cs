@@ -27,9 +27,10 @@ namespace Ginseng.Mvc.Pages.Setup
             {
                 Labels = await new Labels() { OrgId = OrgId, IsActive = isActive }.ExecuteAsync(cn);
 
-                await new InsertDefaultLabelSubscriptions() { OrgId = OrgId, UserId = UserId, UserName = User.Identity.Name }.ExecuteAsync(cn);
+                int appId = CurrentOrgUser.CurrentAppId ?? 0;
+                await new InsertDefaultLabelSubscriptions() { OrgId = OrgId, UserId = UserId, AppId = appId, UserName = User.Identity.Name }.ExecuteAsync(cn);
 
-                var subscriptions = await new MyLabelSubscriptions() { OrgId = OrgId, UserId = UserId }.ExecuteAsync(cn);
+                var subscriptions = await new MyLabelSubscriptions() { OrgId = OrgId, UserId = UserId, AppId = appId }.ExecuteAsync(cn);
                 Subscriptions = subscriptions.ToDictionary(row => row.LabelId);
 
                 AllApps = await new Applications() { OrgId = OrgId, IsActive = true }.ExecuteAsync(cn);

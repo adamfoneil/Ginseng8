@@ -14,6 +14,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -135,7 +136,8 @@ namespace Ginseng.Models
                     }
                 }
 
-                await ParseLabelsAsync(connection);
+                var workItemLabels = await ParseLabelsAsync(connection);
+
                 await ParseProjectAsync(connection);
 
                 await EventLog.WriteAsync(connection, new EventLog()
@@ -149,6 +151,14 @@ namespace Ginseng.Models
                     TextBody = Title,
                     IconClass = IconCreated
                 }, user);
+
+                foreach (var wil in workItemLabels) 
+                {
+                    if (wil.LabelId != LabelId) // don't regen the same event for a label already recorded
+                    {
+                        await wil.AfterSaveAsync(connection, SaveAction.Insert, user);
+                    }                    
+                }
             }
 
             await ClosePlaceholderItemsAsync(connection, OrganizationId, MilestoneId, ProjectId, user);
@@ -177,7 +187,7 @@ namespace Ginseng.Models
             }
         }
 
-        private async Task ParseLabelsAsync(IDbConnection connection)
+        private async Task<IEnumerable<WorkItemLabel>> ParseLabelsAsync(IDbConnection connection)
         {
             var labelMatches = Regex.Matches(Title, @"#\w*");
             var labelNames = labelMatches.Cast<Match>().Select(m => m.Value.Substring(1)).Where(s => s.Length >= 2).ToArray();
@@ -200,8 +210,10 @@ namespace Ginseng.Models
                 foreach (var label in labelNames) newTitle = newTitle.Replace("#" + label, string.Empty);
                 await connection.ExecuteAsync(
                     "UPDATE [wi] SET [Title]=@title FROM [dbo].[WorkItem] [wi] WHERE [Id]=@id AND [OrganizationId]=@orgId",
-                    new { id = Id, orgId = OrganizationId, title = newTitle.Trim() });
+                    new { id = Id, orgId = OrganizationId, title = newTitle.Trim() });                
             }
+
+            return await connection.QueryAsync<WorkItemLabel>("SELECT * FROM [dbo].[WorkItemLabel] WHERE [WorkItemId]=@workItemId", new { workItemId = Id });
         }
 
         public async Task SetNumberAsync(IDbConnection connection)
@@ -343,14 +355,14 @@ namespace Ginseng.Models
             return await Task.FromResult(OrganizationId);
         }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Team = connection.Find<Team>(TeamId);
             WorkItemTicket = connection.FindWhere<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });
             Organization = connection.Find<Organization>(OrganizationId);
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Team = await connection.FindAsync<Team>(TeamId);
             WorkItemTicket = await connection.FindWhereAsync<WorkItemTicket>(new { this.OrganizationId, WorkItemNumber = Number });

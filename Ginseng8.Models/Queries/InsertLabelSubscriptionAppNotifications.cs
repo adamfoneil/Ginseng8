@@ -5,13 +5,13 @@ using System.Data;
 
 namespace Ginseng.Models.Queries
 {
-    public class InsertLabelSubscriptionEmailNotifications : Query<int>, ITestableQuery
+    public class InsertLabelSubscriptionAppNotifications : Query<int>, ITestableQuery
     {
-        public InsertLabelSubscriptionEmailNotifications() : base(
+        public InsertLabelSubscriptionAppNotifications() : base(
             @"INSERT INTO [dbo].[Notification] (
 				[EventLogId], [DateCreated], [Method], [SendTo], [Content], [SourceId], [SourceTable]
 			) SELECT
-	            @id, getutcdate(), 1, [u].[Email], [el].[HtmlBody], [ls].[Id], 'LabelSubscription'
+	            @id, getutcdate(), 3, [u].[UserName], [el].[HtmlBody], [ls].[Id], 'LabelSubscription'
             FROM
 	            [dbo].[EventLog] [el]
                 INNER JOIN [dbo].[WorkItemLabel] [wil] ON [el].[SourceId]=[wil].[Id]
@@ -23,8 +23,7 @@ namespace Ginseng.Models.Queries
 	            [wil].[WorkItemId]=[el].[WorkItemId] AND
 	            [el].[SourceTable]='WorkItemLabel' AND
 	            [el].[Id]=@id AND
-	            [ls].[SendEmail]=1 AND
-	            ([u].[EmailConfirmed]=1 OR [u].[PasswordHash] IS NULL) AND
+	            [ls].[InApp]=1 AND
                 ([ls].[ApplicationId]=0 OR [ls].[ApplicationId]=[el].[ApplicationId])")
         {
         }
@@ -33,7 +32,7 @@ namespace Ginseng.Models.Queries
 
         public IEnumerable<ITestableQuery> GetTestCases()
         {
-            throw new System.NotImplementedException();
+            yield return new InsertLabelSubscriptionAppNotifications() { Id = 0 };
         }
 
         public IEnumerable<dynamic> TestExecute(IDbConnection connection)

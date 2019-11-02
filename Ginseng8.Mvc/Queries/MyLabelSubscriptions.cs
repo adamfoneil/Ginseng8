@@ -1,5 +1,6 @@
 ﻿using Ginseng.Models;
 using Postulate.Base;
+using Postulate.Base.Attributes;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -7,16 +8,26 @@ namespace Ginseng.Mvc.Queries
     {
         public MyLabelSubscriptions() : base(
             @"SELECT
-                [ls].*
+                [ls].*,
+                [lbl].[Name] AS [LabelName],
+                COALESCE([app].[Name], '(all applications)') AS [ApplicationName]
             FROM
                 [dbo].[LabelSubscription] [ls]
+                INNER JOIN [dbo].[Label] [lbl] ON [ls].[LabelId]=[lbl].[Id]
+                LEFT JOIN [dbo].[Application] [app] ON [ls].[ApplicationId]=[app].[Id]
             WHERE
-                [UserId]=@userId AND
-                [OrganizationId]=@orgId")
+                [ls].[UserId]=@userId AND                
+                [ls].[OrganizationId]=@orgId {andWhere}")
         {
         }
 
         public int UserId { get; set; }
         public int OrgId { get; set; }
+
+        [Where("[ls].[ApplicationId]=@appId")]
+        public int? AppId { get; set; }
+
+        [Where("[ls].[InApp]=@inApp")]
+        public bool? InApp { get; set; }
     }
 }

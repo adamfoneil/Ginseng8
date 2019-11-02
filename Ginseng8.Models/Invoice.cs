@@ -3,8 +3,10 @@ using Postulate.Base;
 using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -33,14 +35,14 @@ namespace Ginseng.Models
         public InvoiceStatus Status { get; set; }
         public Organization Organization { get; set; }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Application = commandProvider.Find<Application>(connection, ApplicationId);
             Status = commandProvider.Find<InvoiceStatus>(connection, StatusId);
             Organization = commandProvider.Find<Organization>(connection, OrganizationId);
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             Application = await commandProvider.FindAsync<Application>(connection, ApplicationId);
             Status = await commandProvider.FindAsync<InvoiceStatus>(connection, StatusId);

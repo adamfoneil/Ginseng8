@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Postulate.Base.Classes;
+using Postulate.Base.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,7 @@ namespace Ginseng.Mvc
         public int OrgId { get { return CurrentUser?.OrganizationId ?? 0; } }
         public DateTime LocalTime { get { return CurrentUser.LocalTime; } }
         public Dictionary<string, UserOptionValue> Options { get; set; }
+        public bool HasNotifications { get; private set; }
 
         public string TeamUseApps { get; private set; } // this enables JS show-hides of app dropdown based on team selection
 
@@ -105,6 +107,8 @@ namespace Ginseng.Mvc
 
                     var options = new MyOptions() { UserId = UserId }.Execute(cn);
                     Options = options.ToDictionary(row => row.OptionName);
+
+                    HasNotifications = cn.RowExists("[dbo].[Notification] WHERE [SendTo]=@userName AND [Method]=3 AND [DateDelivered] IS NULL", new { userName = User.Identity.Name });
                 }
             }
         }

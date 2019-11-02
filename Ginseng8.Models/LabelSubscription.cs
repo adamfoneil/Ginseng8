@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
@@ -10,9 +11,13 @@ namespace Ginseng.Models
         [PrimaryKey]
         public int OrganizationId { get; set; }
 
+        [PrimaryKey]
+        [DefaultExpression("0")]
+        public int ApplicationId { get; set; }
+
         [References(typeof(UserProfile))]
         [PrimaryKey]
-        public int UserId { get; set; }
+        public int UserId { get; set; }        
 
         [References(typeof(Label))]
         [PrimaryKey]
@@ -30,5 +35,11 @@ namespace Ginseng.Models
         {
             return NotifyOptionsImplementation.AllowNotification(this);
         }
+
+        [NotMapped]
+        public string LabelName { get; set; }
+
+        [NotMapped]
+        public string ApplicationName { get; set; }
     }
 }

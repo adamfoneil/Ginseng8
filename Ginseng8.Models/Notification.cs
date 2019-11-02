@@ -4,8 +4,10 @@ using Postulate.Base.Attributes;
 using Postulate.Base.Interfaces;
 using Postulate.SqlServer.IntKey;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ginseng.Models
@@ -66,28 +68,32 @@ namespace Ginseng.Models
         {
             await new InsertEventSubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
             await new InsertEventSubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);
-            // todo: app notifications
+            await new InsertEventSubscriptionAppNotifications() { Id = eventLogId }.ExecuteAsync(connection);            
         }
 
         internal static async Task CreateFromLabelSubscriptions(IDbConnection connection, int eventLogId)
         {
             await new InsertLabelSubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
-            // todo: text and app notifications
+            await new InsertLabelSubscriptionAppNotifications() { Id = eventLogId }.ExecuteAsync(connection);
+            // todo: text notifications
         }
 
         public static async Task CreateFromActivitySubscriptions(IDbConnection connection, int eventLogId)
         {
             await new InsertActivitySubscriptionEmailNotifications() { Id = eventLogId }.ExecuteAsync(connection);
             await new InsertActivitySubscriptionTextNotifications() { Id = eventLogId }.ExecuteAsync(connection);
-            // todo: app notifications
+            await new InsertActivitySubscriptionAppNotifications() { Id = eventLogId }.ExecuteAsync(connection);            
         }
 
         public static async Task CreateFromWorkItemAssignment(IDbConnection connection, int eventLogId)
         {
             await new InsertAssignmentDevEmailNotification() { Id = eventLogId }.ExecuteAsync(connection);
             await new InsertAssignmentBizEmailNotification() { Id = eventLogId }.ExecuteAsync(connection);
+            
+            await new InsertAssignedDevAppNotification() { Id = eventLogId }.ExecuteAsync(connection);
+            await new InsertAssignmentBizAppNotification() { Id = eventLogId }.ExecuteAsync(connection);
 
-            // todo: text and app notifications
+            // todo: text notifications
         }
 
         internal static async Task CreateFromMentionAsync(IDbConnection connection, int eventLogId, Comment comment, string senderName, OrganizationUser mentionUser)
@@ -124,12 +130,12 @@ namespace Ginseng.Models
             });
         }
 
-        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider)
+        public void FindRelated(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             EventLog = commandProvider.Find<EventLog>(connection, EventLogId);
         }
 
-        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider)
+        public async Task FindRelatedAsync(IDbConnection connection, CommandProvider<int> commandProvider, IUser user = null, IEnumerable<Claim> claims = null)
         {
             EventLog = await commandProvider.FindAsync<EventLog>(connection, EventLogId);
         }
