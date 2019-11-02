@@ -28,4 +28,12 @@
             <i class="far fa-copy"></i>
         </button>
     }
+
+    @if (Model.AllowMarkAsRead)
+    {
+        <button class="btn btn-sm btn-light" title="clear this notification">
+            <i class="fas fa-check"></i>
+            Mark as Read
+        </button>
+    }
 </div>

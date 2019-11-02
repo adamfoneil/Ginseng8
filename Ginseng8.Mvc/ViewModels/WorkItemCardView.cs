@@ -22,6 +22,7 @@ namespace Ginseng.Mvc.ViewModels
         public bool ShowPins { get; set; }
         public bool IsPinned { get; set; }
         public bool CommentBoxOpen { get; set; }
+        public bool AllowMarkAsRead { get; set; }
 
         public WorkItemCardView()
         {

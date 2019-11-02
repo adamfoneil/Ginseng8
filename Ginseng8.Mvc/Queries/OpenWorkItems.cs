@@ -345,7 +345,7 @@ namespace Ginseng.Mvc.Queries
         [Join("INNER JOIN [dbo].[ActivitySubscription] [asub] ON [wi].[ActivityId]=[asub].[ActivityId] AND [wi].[ApplicationId]=[asub].[ApplicationId] AND [asub].[UserId]=@activityUserId")]
         public bool InMyActivities { get; set; }
 
-        [Join("INNER JOIN [dbo].[FnAppNotifyWorkItems](@notifyUserName) [notify] ON [wi].[Id]=[notify].[WorkItemId]")]
+        [Join("INNER JOIN [dbo].[FnAppNotifyWorkItems](@orgId, @notifyUserName) [notify] ON [wi].[Id]=[notify].[Id]")]
         public bool InMyNotifications { get; set; }
 
         /// <summary>
