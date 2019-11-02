@@ -1,6 +1,7 @@
 ﻿using Ginseng.Models.Conventions;
 using Ginseng.Models.Interfaces;
 using Postulate.Base.Attributes;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ginseng.Models
 {
@@ -34,5 +35,11 @@ namespace Ginseng.Models
         {
             return NotifyOptionsImplementation.AllowNotification(this);
         }
+
+        [NotMapped]
+        public string LabelName { get; set; }
+
+        [NotMapped]
+        public string ApplicationName { get; set; }
     }
 }
