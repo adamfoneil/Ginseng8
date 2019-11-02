@@ -31,7 +31,7 @@
 
     @if (Model.Notifications?.Any() ?? false)
     {
-        <button class="btn btn-sm btn-light clear-notification" title="clear this notification" data-work-item-id="@Model.Id">
+        <button class="btn btn-sm btn-light clear-notification" title="clear this notification" data-work-item-number="@Model.OverrideId">
             <i class="fas fa-check"></i>
             Mark as Read
         </button>
