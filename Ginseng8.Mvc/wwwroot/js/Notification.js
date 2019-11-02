@@ -1,4 +1,5 @@
-﻿$(document).on('click', '.toggleNotification', function () {         
+﻿$(document).on('click', '.toggleNotification', function (ev) {
+    ev.preventDefault();
     var id = $(this).attr('data-id');
 
     var data = {
