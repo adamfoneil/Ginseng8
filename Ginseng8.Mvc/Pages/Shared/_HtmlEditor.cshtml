@@ -29,11 +29,17 @@
         </button>
     }
 
-    @if (Model.AllowMarkAsRead)
+    @if (Model.Notifications?.Any() ?? false)
     {
-        <button class="btn btn-sm btn-light" title="clear this notification">
+        <button class="btn btn-sm btn-light clear-notification" title="clear this notification" data-work-item-id="@Model.Id">
             <i class="fas fa-check"></i>
             Mark as Read
         </button>
+        <ul class="text-muted mt-2 small">
+            @foreach (var notif in Model.Notifications)
+            {
+                <li>@Html.Raw(notif.HtmlBody)</li>
+            }
+        </ul>
     }
 </div>

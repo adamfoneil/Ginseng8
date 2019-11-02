@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Ginseng.Mvc.Queries;
+using System.Collections.Generic;
 
 namespace Ginseng.Mvc.ViewModels
 {
@@ -10,7 +11,7 @@ namespace Ginseng.Mvc.ViewModels
 		public string PostUrl { get; set; }
 		public bool AllowComments { get; set; }
         public bool CopyWorkItemLink { get; set; }
-        public bool AllowMarkAsRead { get; set; }
+        public IEnumerable<AppNotificationsResult> Notifications { get; set; }
 		public string UploadFolderName { get; set; }
 		public Dictionary<string, object> PostFields { get; set; }
 

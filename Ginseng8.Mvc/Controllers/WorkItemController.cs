@@ -615,6 +615,22 @@ namespace Ginseng.Mvc.Controllers
             }
         }
 
+        public async Task<JsonResult> ClearNotification(int id)
+        {
+            try
+            {
+                using (var cn = _data.GetConnection())
+                {
+
+                }
+                return Json(new { success = true });
+            }
+            catch (Exception exc)
+            {
+                return Json(new { success = false, message = exc.Message });
+            }
+        }
+
         public async Task<PartialViewResult> SetProject(int id, int projectId)
         {
             ProjectInfoResult prj = null;
