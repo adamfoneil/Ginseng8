@@ -24,13 +24,17 @@ namespace Ginseng.Mvc.Extensions
 			return new HtmlString(result);
 		}
 
-        public static Dictionary<string, string> ToRouteData(this HttpRequest request, params string[] except)
+        public static Dictionary<string, string> ToRouteData(this HttpRequest request, Dictionary<string, string> append = null)
         {
-            // meant to be used in asp-all-route-data argument of anchor tag
-            // note that I wasn't able to make use of this because I was calling it from a partial without a @page directive.
-            // in that case, you don't have access to HttpContext and Request. Major bummer
-            string[] fields = request.Query.Keys.Except(except ?? Enumerable.Empty<string>()).ToArray();
-            return fields.ToDictionary(field => field, field => request.Query[field].First());
+            var fields = request.Query.Keys.Except(append?.Select(kp => kp.Key) ?? Enumerable.Empty<string>());
+            var result = fields.ToDictionary(field => field, field => request.Query[field].First());
+
+            if (append != null)
+            {
+                foreach (var kp in append) result.Add(kp.Key, kp.Value);
+            }
+
+            return result;
         }
 	}
 }

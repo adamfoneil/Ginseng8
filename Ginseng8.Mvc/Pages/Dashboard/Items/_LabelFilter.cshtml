@@ -4,8 +4,11 @@
     @foreach (var grp in Model)
     {
         var label = grp.First();
-        <li class="list-inline-item">
-            <a asp-route-labelId="@grp.Key">
+        <li class="list-inline-item">            
+            <a asp-all-route-data="@(Context.Request.ToRouteData(new Dictionary<string, string>()
+                { 
+                    { "labelId", grp.Key.ToString() } 
+                }))">
                 <span class="badge" style="background-color:@label.BackColor;color:@label.ForeColor">
                 @label.Name - @grp.Count()
                 </span>
