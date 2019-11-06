@@ -1,8 +1,10 @@
 ﻿@model HtmlEditorView
 
-<div id="@Model.IdPrefix-view-@Model.Id">
+<div id="@Model.IdPrefix-view-@Model.Id" class="mt-4 mainItemBody xcomment-by-creator">
     @Html.Raw(Model.Content)
 </div>
+
+
 <div id="@Model.IdPrefix-edit-@Model.Id" style="display:none">
     <form>
         <input type="hidden" name="Id" value="@Model.Id" />
@@ -38,7 +40,7 @@
         <ul class="text-muted mt-2 small">
             @foreach (var notif in Model.Notifications)
             {
-                <li>@Html.Raw(notif.HtmlBody)</li>
+                <li class="notificationBody">@Html.Raw(notif.HtmlBody)</li>
             }
         </ul>
     }

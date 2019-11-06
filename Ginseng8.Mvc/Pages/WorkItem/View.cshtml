@@ -5,20 +5,20 @@
     var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id], ShowDetailsButton = false, AssignToUsers = Model.AssignToUsers, CommentBoxOpen = true, LocalTime = Model.LocalTime };
 }
 
-<div class="row">
-    <div class="col-2 text-right">
+<div class="row mt-5">
+    <div class="col-1 text-left">
         <h2>
             <partial name="/Pages/Dashboard/Items/_ItemNumber.cshtml" model="Model.Item" />
         </h2>
     </div>
-    <div class="col-10">
+    <div class="col-11">
         <h2><span class="editable" id="title-@Model.Item.Number" data-url="/Update/WorkItemTitle">@Model.Item.Title</span></h2>
     </div>
 </div>
 
 <div class="row mb-2">
-    <div class="col-2"></div>
-    <div class="col-8">
+    @*<div class="col-2"></div>*@
+    <div class="col-10">
         <partial name="Dashboard/Items/_LabelControls" model="cardView" />
     </div>
     <div class="col-2">
@@ -26,17 +26,18 @@
     </div>
 </div>
 
+@* This is the main request description block *@
 <div class="row">
-    <div class="col-2"></div>
-    <div class="col-10">
+    @*<div class="col-2"></div>*@
+    <div class="col-12">
         <partial name="/Pages/Dashboard/Items/_ItemInner.cshtml" model="cardView" />
         <hr />
     </div>
 </div>
 
 <div class="row">
-    <div class="col-2"></div>
-    <div class="col-10">
+    @*<div class="col-2"></div>*@
+    <div class="col-12">
         @if (Model.Attachments.Any())
         {
             <ul>
@@ -57,19 +58,26 @@
             <a asp-page-handler="DownloadAllAttachments" class="btn btn-light btn-sm mb-4">Download All Attachments</a>
         }
 
-        <form asp-controller="Upload" asp-action="Attachment" method="post" enctype="multipart/form-data">
+
+        @* Add 'attach file to work item' code here (should this be a partial?) *@
+        <form id="attachFile" asp-controller="Upload" asp-action="Attachment" method="post" enctype="multipart/form-data">
             <input type="hidden" name="Id" value="@Model.Item.Number" />
             <input type="hidden" name="FolderName" value="WorkItems" />
-            <input type="file" name="file" required="required"/>
-            <button class="btn btn-light" type="submit">Upload</button>
+            @*<input type="file" name="file" required="required" style="display:none;" />*@
+            @*<button class="btn btn-dark" type="submit">Upload</button>*@
+            <input type="file" id="file" name="file" style="display: none;" />
+            <input type="text" class="link" value="+ Attach File to Work Item" onclick="document.getElementById('file').click(); this.blur();" onchange="this.form.submit(); this.blur();" />
         </form>
+        @* End 'attach file to work item' code*@
+
         <hr />
+
     </div>
 </div>
 
 <div class="row mb-2">
-    <div class="col-2"></div>
-    <div class="col-10">
+    @*<div class="col-2"></div>*@
+    <div class="col-12">
         <partial name="/Pages/Shared/_ItemDateStamp.cshtml" model="@(new WorkItemTimeStamp() { WorkItem = Model.Item, LocalTime = Model.LocalTime })"/>
     </div>
 </div>
@@ -78,5 +86,5 @@
 
 @section Scripts {
     <script src="~/js/MultiSelect.js"></script>
-    <script src="~/js/Dashboard.js"></script>    
+    <script src="~/js/Dashboard.js"></script>   
 }
