@@ -55,15 +55,27 @@
         </div>
     }
 
-    @if  (!Model.WorkItem.CreatedBy.Equals(User.Identity.Name))
+    @*@if  (!Model.WorkItem.CreatedBy.Equals(User.Identity.Name))
     {
         <div>
             <partial name="/Pages/Shared/_ItemDateStamp.cshtml" model="@(new WorkItemTimeStamp() { WorkItem = Model.WorkItem, LocalTime = Model.LocalTime })"/>
         </div>
-    }
+    }*@
+<div class=" comment-by-creator">
+    <div>
+        @*<i class="@item.IconClass mr-1"></i>*@
+        <strong class="mr-1">@Model.WorkItem.CreatedByName</strong>
+        <span class="small text-muted mr-1">@Html.FormatValue(Model.WorkItem.DateCreated, "{0:ddd M/d}")</span>
+
+        @{
+            var elapsed = Model.LocalTime.Subtract(Model.WorkItem.DateCreated).Humanize();
+        }
+        <span class="small text-muted">@elapsed ago</span>
+    </div>
 
     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Id, PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true, UploadFolderName = "WorkItems", OverrideId = Model.WorkItem.Number, CopyWorkItemLink = true, Notifications = Model.Notifications })
+</div>    
     <div id="comments-@Model.WorkItem.Id-WorkItem-output">
-    @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, ObjectId = Model.WorkItem.Id, ObjectType = ObjectType.WorkItem, CommentBoxOpen = Model.CommentBoxOpen, IdPrefix = "work-item", LocalTime = Model.LocalTime })
+    @await  Html.PartialAsync("/Pages/Dashboard/Items/_Comments.cshtml", new CommentView() { Comments = Model.Comments, ObjectId = Model.WorkItem.Id, ObjectType = ObjectType.WorkItem, CommentBoxOpen = Model.CommentBoxOpen, IdPrefix = "work-item", LocalTime = Model.LocalTime, WorkItemCreatedBy = Model.WorkItem.CreatedBy })
     </div>
 </div>

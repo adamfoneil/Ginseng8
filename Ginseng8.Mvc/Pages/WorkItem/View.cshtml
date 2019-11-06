@@ -5,20 +5,20 @@
     var cardView = new WorkItemCardView() { WorkItem = Model.Item, Dropdowns = Model.Dropdowns, SelectedLabels = Model.SelectedLabels[Model.Item.Id], UserId = Model.UserId, Comments = Model.Comments[Model.Item.Id], ShowDetailsButton = false, AssignToUsers = Model.AssignToUsers, CommentBoxOpen = true, LocalTime = Model.LocalTime };
 }
 
-<div class="row">
-    <div class="col-2 text-right">
+<div class="row mt-5">
+    <div class="col-1 text-left">
         <h2>
             <partial name="/Pages/Dashboard/Items/_ItemNumber.cshtml" model="Model.Item" />
         </h2>
     </div>
-    <div class="col-10">
+    <div class="col-11">
         <h2><span class="editable" id="title-@Model.Item.Number" data-url="/Update/WorkItemTitle">@Model.Item.Title</span></h2>
     </div>
 </div>
 
 <div class="row mb-2">
-    <div class="col-2"></div>
-    <div class="col-8">
+    @*<div class="col-2"></div>*@
+    <div class="col-10">
         <partial name="Dashboard/Items/_LabelControls" model="cardView" />
     </div>
     <div class="col-2">
@@ -26,17 +26,18 @@
     </div>
 </div>
 
+@* This is the main request description block *@
 <div class="row">
-    <div class="col-2"></div>
-    <div class="col-10">
+    @*<div class="col-2"></div>*@
+    <div class="col-12">
         <partial name="/Pages/Dashboard/Items/_ItemInner.cshtml" model="cardView" />
         <hr />
     </div>
 </div>
 
 <div class="row">
-    <div class="col-2"></div>
-    <div class="col-10">
+    @*<div class="col-2"></div>*@
+    <div class="col-12">
         @if (Model.Attachments.Any())
         {
             <ul>
@@ -68,8 +69,8 @@
 </div>
 
 <div class="row mb-2">
-    <div class="col-2"></div>
-    <div class="col-10">
+    @*<div class="col-2"></div>*@
+    <div class="col-12">
         <partial name="/Pages/Shared/_ItemDateStamp.cshtml" model="@(new WorkItemTimeStamp() { WorkItem = Model.Item, LocalTime = Model.LocalTime })"/>
     </div>
 </div>

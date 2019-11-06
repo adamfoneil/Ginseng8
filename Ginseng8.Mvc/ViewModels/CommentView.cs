@@ -27,5 +27,17 @@ namespace Ginseng.Mvc.ViewModels
         public int UserId { get; set; }
         public int OrgId { get; set; }
         public DateTime LocalTime { get; set; }
+        public string WorkItemCreatedBy { get; set; }
+
+        public string GetCommentClass(Comment comment) 
+        {
+            string result = "comment-by-creator";
+            if (!comment.CreatedBy.Equals(this.WorkItemCreatedBy))
+            {
+                result = "comment-by-agent";
+            }
+            return result;
+        }
+
     }
 }
