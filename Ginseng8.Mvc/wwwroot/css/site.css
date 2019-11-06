@@ -225,7 +225,7 @@ img {
     overflow-x: hidden
 }
 
-.mainItemBody {
+/*.mainItemBody {
     background-color: #eef8e6;
     padding: 1rem;
 }
@@ -233,14 +233,19 @@ img {
 .notificationBody {
     background-color: aliceblue;
     padding: 1rem !important;
+}*/
+
+.authored-by-creator {
+    background-color: #f8f8d1; /*#eef8e6;*/
+    padding: 1rem;
+    border: solid 1px #DADFE3;
+    border-radius: 4px;
 }
-.comment-by-agent {
+.authored-by-other {
     background-color: aliceblue;
     padding: 1rem;
-}
-.comment-by-creator {
-    background-color: #eef8e6;
-    padding: 1rem;
+    border: solid 1px #DADFE3;
+    border-radius: 4px;
 }
 
 .btn-light {
@@ -249,4 +254,20 @@ img {
 
 .newCommentWrapper {
     background-color: #edeeef;
+    border: solid 1px #DADFE3;
+    border-radius: 4px;
 }
+
+.link { 
+    color:dodgerblue;
+    border:none !important;
+    width:100%; 
+    cursor:pointer;
+    outline:none;
+}
+.link:hover, .link:focus {
+    border: none !important;
+    color: #006bd3;
+    outline:none;
+}
+.attachFile, .attachFile:focus, .attachFile:hover { border:none !important;outline:none;}

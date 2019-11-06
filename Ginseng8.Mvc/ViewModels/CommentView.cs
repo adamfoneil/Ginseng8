@@ -31,10 +31,10 @@ namespace Ginseng.Mvc.ViewModels
 
         public string GetCommentClass(Comment comment) 
         {
-            string result = "comment-by-creator";
+            string result = "authored-by-creator";
             if (!comment.CreatedBy.Equals(this.WorkItemCreatedBy))
             {
-                result = "comment-by-agent";
+                result = "authored-by-other";
             }
             return result;
         }
