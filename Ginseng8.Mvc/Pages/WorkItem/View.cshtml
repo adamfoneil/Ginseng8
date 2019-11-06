@@ -76,11 +76,13 @@
         $(document).ready(function () {
             $('#selectFile').click(function (ev) {
                 document.getElementById('file').click();
+                ev.target.blur();
             });
 
             $('#file').change(function (ev) {
                 var e = document.getElementById('file');
                 e.form.submit();
+                ev.target.blur();
             });
         })
         
