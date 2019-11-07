@@ -271,3 +271,15 @@ img {
     outline:none;
 }
 .attachFile, .attachFile:focus, .attachFile:hover { border:none !important;outline:none;}
+
+.work-item-card {
+    border:none !important;
+}
+
+.backgroundEmphasis {
+    background-color: #d6d6d6;
+    padding: .5rem;
+}
+h4.backgroundEmphasis {
+    font-size: 1.3rem;
+}
