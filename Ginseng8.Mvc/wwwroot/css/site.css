@@ -283,3 +283,4 @@ img {
 h4.backgroundEmphasis {
     font-size: 1.3rem;
 }
+.work-item-card { border:none; }  /* To prevent doubling of border on cards...inner div already has a border on card, causing it to be thicker */
