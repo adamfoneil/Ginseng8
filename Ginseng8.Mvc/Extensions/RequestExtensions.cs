@@ -36,5 +36,10 @@ namespace Ginseng.Mvc.Extensions
 
             return result;
         }
+
+        public static bool PathContains(this HttpRequest request, string contains)
+        {
+            return request.Path.Value.Contains(contains);
+        }
 	}
 }

@@ -120,7 +120,14 @@
     else
     {
         <span>
-            <a asp-page="/Dashboard/Team" asp-route-id="@Model.WorkItem.AssignedUserId">@Model.WorkItem.ActivityStatus()</a>
+            @if (!Context.Request.PathContains("Dashboard/Team"))
+            {
+                <a href="/Dashboard/Team/@Model.WorkItem.AssignedUserId#@Model.WorkItem.Number">@Model.WorkItem.ActivityStatus()</a>
+            }
+            else
+            {
+                @Model.WorkItem.ActivityStatus()
+            }            
             <partial name="Dashboard/Items/_Priority" model="Model.WorkItem" />
         </span>
     }
