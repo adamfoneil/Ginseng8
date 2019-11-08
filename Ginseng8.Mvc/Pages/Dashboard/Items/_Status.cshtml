@@ -120,7 +120,7 @@
     else
     {
         <span>
-            @Model.WorkItem.ActivityStatus()
+            <a asp-page="/Dashboard/Team" asp-route-id="@Model.WorkItem.AssignedUserId">@Model.WorkItem.ActivityStatus()</a>
             <partial name="Dashboard/Items/_Priority" model="Model.WorkItem" />
         </span>
     }
