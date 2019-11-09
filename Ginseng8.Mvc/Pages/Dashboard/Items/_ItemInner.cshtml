@@ -13,16 +13,6 @@
             <i class="fas fa-check-circle" style="color:green;display:none" id="update-success-@Model.WorkItem.Number"></i>
             <i class="fas fa-exclamation-triangle" style="color:red;display:none" id="update-failed-@Model.WorkItem.Number"></i>
         </form>
-
-        <div class="d-flex flex-row-reverse align-items-center">
-            @if (Model.ShowDetailsButton)
-            {
-                <a class="btn btn-sm btn-light" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number" title="Created by @Model.WorkItem.CreatedByName on @Model.WorkItem.DateCreated">
-                    <i class="far fa-info-circle"></i>
-                    Details
-                </a>
-            }
-        </div>
     </div>
 
     @if (Model.WorkItem.FDTicketId != 0)
@@ -62,8 +52,7 @@
         </div>
     }*@
 <div class="authored-by-creator">
-    <div>
-        @*<i class="@item.IconClass mr-1"></i>*@
+    <div>        
         <strong class="mr-1">@Model.WorkItem.CreatedByName</strong>
         <span class="small text-muted mr-1">@Html.FormatValue(Model.WorkItem.DateCreated, "{0:ddd M/d}")</span>
 
@@ -71,6 +60,14 @@
             var elapsed = Model.LocalTime.Subtract(Model.WorkItem.DateCreated).Humanize();
         }
         <span class="small text-muted">@elapsed ago</span>
+
+        @if (Model.ShowDetailsButton)
+        {
+            <span> | </span>
+            <a class="small" asp-page="/WorkItem/View" asp-route-id="@Model.WorkItem.Number">                
+                Details
+            </a>
+        }
     </div>
 
     @await Html.PartialAsync("Shared/_HtmlEditor", new HtmlEditorView() { Id = Model.WorkItem.Id, PostUrl = "/Update/WorkItemBody", Content = Model.WorkItem.HtmlBody, AllowComments = true, UploadFolderName = "WorkItems", OverrideId = Model.WorkItem.Number, CopyWorkItemLink = true, Notifications = Model.Notifications })
