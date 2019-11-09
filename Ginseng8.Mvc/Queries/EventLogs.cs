@@ -144,6 +144,7 @@ namespace Ginseng.Mvc.Queries
 			yield return new EventLogs() { AppId = 0 };
 			yield return new EventLogs() { EventIds = new int[] { 1, 2, 3 } };
             yield return new EventLogs() { MyEvents = true, EventsUserId = 1 };
+            yield return new EventLogs() { ExcludeEventIds = new int[] { 1, 2, 3 } };
 		}
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)
