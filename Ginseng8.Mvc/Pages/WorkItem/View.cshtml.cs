@@ -32,17 +32,21 @@ namespace Ginseng.Mvc.Pages.WorkItem
 
         public OpenWorkItemsResult Item { get; set; }
         public IEnumerable<Attachment> Attachments { get; set; }
-
-        protected override void OnGetInternal(SqlConnection connection)
-        {
-            base.OnGetInternal(connection);
-
-            Item = WorkItems?.First();
-        }
+        public IEnumerable<EventLogsResult> EventLogs { get; set; }
 
         protected override async Task OnGetInternalAsync(SqlConnection connection)
-        {
+        {            
             Attachments = await new Attachments(QueryTraces) { OrgId = OrgId, ObjectType = ObjectType.WorkItem, ObjectId = Id, UserName = User.Identity.Name }.ExecuteAsync(connection);
+            
+            Item = WorkItems?.First();
+            EventLogs = await new EventLogs() 
+            { 
+                OrgId = OrgId, 
+                TeamId = Item?.TeamId ?? 0, 
+                WorkItemId = Item?.Id ?? 0,
+                OrderBy = EventLogsResultOrderBy.DateAsc,
+                ExcludeEventIds = new int[] { (int)SystemEvent.CommentAdded } // don't include comments in event history because they're already in this view
+            }.ExecuteAsync(connection);
         }
 
         protected override OpenWorkItems GetQuery()

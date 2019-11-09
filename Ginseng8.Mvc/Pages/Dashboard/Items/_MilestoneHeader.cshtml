@@ -1,6 +1,6 @@
 ﻿@model MilestoneHeaderView
 
-<div class="row mt-4">
+<div class="alt-row mt-4">
 <h5 data-milestone-id="@Model.Header.MilestoneId">
     <i class="fas fa-flag-checkered"></i>
     <span class="@((Model.Header.MilestoneId != 0) ? "editable" : string.Empty)" id="milestone-name-@Model.Header.MilestoneId" data-url="/Update/MilestoneName">@Model.Header.MilestoneName</span>

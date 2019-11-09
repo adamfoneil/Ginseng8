@@ -3,7 +3,7 @@
 <ul class="mt-3 list-unstyled js-comments-list">
 @foreach (var item in Model.Comments)
 {
-    <li class="border-top pt-2 pl-2 js-comment-list-item">
+    <li class="mt-4 border-top pt-2 pl-2 js-comment-list-item @Model.GetCommentClass(item)">
         <div class="d-flex align-items-center justify-content-between">
             <div>
                 <i class="@item.IconClass mr-1"></i>
@@ -31,14 +31,17 @@
 }
 </ul>
 
-<a class="addComment btn btn-sm btn-light" href="#" data-id="@Model.ObjectId" id="addCommentLink-@Model.IdPrefix-@Model.ObjectId" data-target="addComment-@Model.ObjectId" data-id-prefix="@Model.IdPrefix" title="Add comment">
-    <i class="far fa-comment-plus"></i>
-    Add Comment
-</a>
+@if (!Model.CommentBoxOpen)
+{
+    <a class="addComment btn btn-sm btn-light" href="#" data-id="@Model.ObjectId" id="addCommentLink-@Model.IdPrefix-@Model.ObjectId" data-target="addComment-@Model.ObjectId" data-id-prefix="@Model.IdPrefix" title="Add comment">
+        <i class="far fa-comment-plus"></i>
+        Add Comment
+    </a>
+}
 
 @{ var displayStyle = (Model.CommentBoxOpen) ? string.Empty : "display:none"; }
 
-<div class="mt-2 js-comment-form-wrapper" id="addComment-@Model.ObjectId" style="@displayStyle">
+<div class="mt-4 p-4 js-comment-form-wrapper newCommentWrapper" id="addComment-@Model.ObjectId" style="@displayStyle">
     <form method="post">
         <input type="hidden" name="ObjectId" value="@Model.ObjectId" />
         <input type="hidden" name="ObjectType" value="@Model.ObjectType" />
@@ -53,7 +56,7 @@
             <div class="col-4">
                 <select name="IsImpediment" class="form-control form-control-sm mr-2">
                     <option value="">Info Only</option>
-                    <option value="true">Help needed</option>
+                    <option value="true">Response needed</option>
                     <option value="false">Issue resolved</option>
                 </select>
             </div>

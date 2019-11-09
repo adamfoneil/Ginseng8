@@ -44,6 +44,7 @@ html {
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
+  /*background-color:lightgray;*/
 }
 .footer {
   position: absolute;
@@ -223,3 +224,61 @@ img {
     max-height: 300px;
     overflow-x: hidden
 }
+
+/*.mainItemBody {
+    background-color: #eef8e6;
+    padding: 1rem;
+}
+
+.notificationBody {
+    background-color: aliceblue;
+    padding: 1rem !important;
+}*/
+
+.authored-by-creator {
+    background-color: #fafae5; /*#eef8e6;*/
+    padding: 1rem;
+    border: solid 1px #DADFE3;
+    border-radius: 4px;
+}
+.authored-by-other {
+    background-color: aliceblue;
+    padding: 1rem;
+    border: solid 1px #DADFE3;
+    border-radius: 4px;
+}
+
+.btn-light {
+    background-color: #eeeeee;
+}
+
+.newCommentWrapper {
+    background-color: #edeeef;
+    border: solid 1px #DADFE3;
+    border-radius: 4px;
+}
+
+.link { 
+    color:dodgerblue;
+    border:none !important;
+    width:100%; 
+    cursor:pointer;
+    outline:none;
+}
+.link:hover, .link:focus {
+    border: none !important;
+    color: #006bd3;
+    outline:none;
+}
+.attachFile, .attachFile:focus, .attachFile:hover { border:none !important;outline:none;}
+
+.backgroundEmphasis {
+    background-color: #d6d6d6;
+    padding: .5rem;
+}
+h4.backgroundEmphasis {
+    font-size: 1.3rem;
+}
+.work-item-card { border:none; }  /* To prevent doubling of border on cards...inner div already has a border on card, causing it to be thicker */
+
+.alt-row { display: flex; } /* Used instead of "row" so we get the flex action without the -15 margin */

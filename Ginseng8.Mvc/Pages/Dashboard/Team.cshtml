@@ -35,7 +35,7 @@
 
         @foreach (var appGrp in milestoneGrp.OrderBy(row => Model.GroupingOption.GroupSortFunction(row)).GroupBy(row => Model.GroupingOption.GroupValueFunction(row)))
         {
-	        <h5 class="ml-3">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
+	        <h5 class="ml-3 mt-4 backgroundEmphasis">@Model.GroupingOption.GroupHeadingFunction(appGrp.First())</h5>
             <div id="app-@appGrp.Key-@milestoneGrp.Key" class="milestone-items" data-milestone-id="@milestoneGrp.Key">
             <div class="ml-3 sortable" data-user-id="@(Model.FilterUserId)" data-group-field="@Model.GroupingOption.FieldNameFunction(appGrp.First())" data-group-value="@appGrp.Key">
                 @foreach (var item in appGrp)
