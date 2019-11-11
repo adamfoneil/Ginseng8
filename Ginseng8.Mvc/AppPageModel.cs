@@ -21,8 +21,11 @@ namespace Ginseng.Mvc
 {
     public class AppPageModel : PageModel, IUserInfo
     {
+        protected readonly IConfiguration Config;
+
         public AppPageModel(IConfiguration config)
         {
+            Config = config;
             Data = new DataAccess(config);
         }
 

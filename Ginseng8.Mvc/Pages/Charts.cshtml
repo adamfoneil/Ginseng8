@@ -4,5 +4,13 @@
     ViewData["Title"] = "Charts";
 }
 
-<h1>Charts</h1>
+<canvas id="chart1"></canvas>
 
+<script>
+    var token = '@(Model.SqlChartifyToken)';
+
+    $(document).ready(function () {
+        await fetch('@(Model.SqlChartifyHost)', {
+        });
+    });
+</script>
