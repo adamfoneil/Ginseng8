@@ -18,8 +18,7 @@ namespace Ginseng.Mvc
 				.ConfigureAppConfiguration((hostingContext, config) =>
 				{										
 					config.AddJsonFile("config.json");
-					AddOptionalConfig(hostingContext, config, "aerie.json");
-					
+					AddOptionalConfig(hostingContext, config, "aerie.json");					
 				})
 				.UseStartup<Startup>();
 
