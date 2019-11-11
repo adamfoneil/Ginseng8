@@ -18,3 +18,5 @@ Ginseng is still focused on being a lightweight task and project management solu
 - who's waiting on who for testing, deployment to production, code review, development, etc
 - what am I supposed to be working on
 
+## Note on Contributing
+The source is open, but configuration is secret within my team at [Aerie](https://www.aeriehub.com/Home/About). At this time, I don't make a blank database nor default configuration available. I'm open to offering a blank database and default configuration, but haven't gotten around to it yet.
