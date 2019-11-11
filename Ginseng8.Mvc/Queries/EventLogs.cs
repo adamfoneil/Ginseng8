@@ -10,6 +10,12 @@ using System.Data;
 
 namespace Ginseng.Mvc.Queries
 {
+    public enum EventLogsResultOrderBy
+    {
+        DateDesc,
+        DateAsc
+    }
+
 	public class EventLogsResult : IWorkItemNumber, IWorkItemTitle
 	{
 		public string EventName { get; set; }
@@ -84,7 +90,7 @@ namespace Ginseng.Mvc.Queries
 				[el].[TeamId]=@teamId 
                 {andWhere}				
 			ORDER BY
-				[el].[DateCreated] DESC")
+				{orderBy}")
 		{
 		}
 
@@ -97,6 +103,10 @@ namespace Ginseng.Mvc.Queries
         {
             _traces?.Add(queryTrace);
         }
+
+        [OrderBy(EventLogsResultOrderBy.DateDesc, "[el].[DateCreated] DESC")]
+        [OrderBy(EventLogsResultOrderBy.DateAsc, "[el].[DateCreated] ASC")]
+        public EventLogsResultOrderBy OrderBy { get; set; } = EventLogsResultOrderBy.DateDesc;
 
         public int OrgId { get; set; }
 
@@ -116,11 +126,17 @@ namespace Ginseng.Mvc.Queries
         [Where("[el].[EventId]=@eventId")]
         public int? EventId { get; set; }
 
+        [Where("[el].[EventId] NOT IN @excludeEventIds")]
+        public int[] ExcludeEventIds { get; set; }
+
         [Where("[ou].[UserId]=@userId")]
         public int? UserId { get; set; }
 
         [Where("[wi].[CloseReasonId]=@closeReasonId")]
         public int? CloseReasonId { get; set; }
+
+        [Where("[el].[WorkItemId]=@workItemId")]
+        public int? WorkItemId { get; set; }
 
 		public IEnumerable<ITestableQuery> GetTestCases()
 		{
@@ -128,6 +144,7 @@ namespace Ginseng.Mvc.Queries
 			yield return new EventLogs() { AppId = 0 };
 			yield return new EventLogs() { EventIds = new int[] { 1, 2, 3 } };
             yield return new EventLogs() { MyEvents = true, EventsUserId = 1 };
+            yield return new EventLogs() { ExcludeEventIds = new int[] { 1, 2, 3 } };
 		}
 
 		public IEnumerable<dynamic> TestExecute(IDbConnection connection)

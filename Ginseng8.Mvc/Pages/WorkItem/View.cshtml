@@ -67,7 +67,8 @@
     </div>
 </div>
 
-@*activity feed*@
+<h4>Events</h4>
+<partial name="/Pages/Dashboard/Items/_EventLogs.cshtml" model="@Model.EventLogs"/>
 
 @section Scripts {
     <script src="~/js/MultiSelect.js"></script>
@@ -84,7 +85,6 @@
                 e.form.submit();
                 ev.target.blur();
             });
-        })
-        
+        });        
     </script>
 }
