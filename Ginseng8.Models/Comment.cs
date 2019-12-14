@@ -64,18 +64,18 @@ namespace Ginseng.Models
         public override async Task AfterSaveAsync(IDbConnection connection, SaveAction action, IUser user)
         {
             await base.AfterSaveAsync(connection, action, user);
-
-            if (action == SaveAction.Insert)
+            
+            if (ObjectType == ObjectType.WorkItem)
             {
-                if (ObjectType == ObjectType.WorkItem)
+                var workItem = await connection.FindAsync<WorkItem>(ObjectId);
+                if (IsImpediment.HasValue)
                 {
-                    var workItem = await connection.FindAsync<WorkItem>(ObjectId);
-                    if (IsImpediment.HasValue)
-                    {
-                        workItem.HasImpediment = IsImpediment.Value;
-                        await connection.UpdateAsync(workItem, user, r => r.HasImpediment);
-                    }
+                    workItem.HasImpediment = IsImpediment.Value;
+                    await connection.UpdateAsync(workItem, user, r => r.HasImpediment);
+                }
 
+                if (action == SaveAction.Insert || (IsImpediment ?? false))
+                {
                     await EventLog.WriteAsync(connection, new EventLog(ObjectId, user)
                     {
                         TeamId = workItem.TeamId,
@@ -86,11 +86,11 @@ namespace Ginseng.Models
                         TextBody = TextBody
                     });
                 }
-
-                await PendingWorkLog.FromCommentAsync(connection, this, user as UserProfile);
-                await ParseMentionsAsync(connection, this, user as UserProfile);
             }
-        }
+
+            await PendingWorkLog.FromCommentAsync(connection, this, user as UserProfile);
+            await ParseMentionsAsync(connection, this, user as UserProfile);
+        }        
 
         /// <summary>
         /// Queues notifications to people from comment text based on @ symbols
