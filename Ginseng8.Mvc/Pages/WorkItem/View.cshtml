@@ -64,6 +64,13 @@
 
         <hr />
 
+        @if  (Model.Item.DeveloperUserId.HasValue)
+        {
+            <form asp-page-handler="RemoveDeveloperUser">
+                <input type="hidden" name="Id" value="@Model.Item.Number" />
+                <button type="submit" class="btn btn-secondary btn-sm">Remove developer @Model.Item.DeveloperUserName</button>
+            </form>            
+        }
     </div>
 </div>
 

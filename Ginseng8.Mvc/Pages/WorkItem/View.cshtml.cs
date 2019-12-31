@@ -4,6 +4,7 @@ using Ginseng.Mvc.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage.Blob;
+using Postulate.SqlServer;
 using Postulate.SqlServer.IntKey;
 using System;
 using System.Collections.Generic;
@@ -92,6 +93,18 @@ namespace Ginseng.Mvc.Pages.WorkItem
                     return File(stream.ToArray(), "application/zip", $"WorkItem-{Id}.zip");
                 }
             }
+        }
+
+        public async Task<RedirectResult> OnPostRemoveDeveloperUser(int id)
+        {
+            using (var cn = Data.GetConnection())
+            {
+                var workItem = await Data.FindWorkItemAsync(cn, id);
+                workItem.DeveloperUserId = null;
+                await cn.UpdateAsync(workItem, Data.CurrentUser, r => r.DeveloperUserId);
+            }
+
+            return Redirect($"/WorkItem/View/{id}");
         }
     }
 }
