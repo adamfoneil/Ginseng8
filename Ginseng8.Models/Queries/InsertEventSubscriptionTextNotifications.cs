@@ -1,5 +1,5 @@
-﻿using Postulate.Base;
-using Postulate.Base.Interfaces;
+﻿using Dapper.QX;
+using Dapper.QX.Interfaces;
 using System.Collections.Generic;
 using System.Data;
 

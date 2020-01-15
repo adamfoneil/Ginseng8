@@ -3,7 +3,7 @@ using Ginseng.Mvc.Services;
 using Dapper.QX;
 using Dapper.QX.Attributes;
 //using Postulate.Base.Classes;
-//using Postulate.Base.Interfaces;
+//using Dapper.QX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -117,6 +117,7 @@ namespace Ginseng.Mvc.Queries
         [Join("INNER JOIN [dbo].[EventSubscription] [es] ON [el].[EventId]=[es].[EventId] AND [el].[ApplicationId]=[es].[ApplicationId] AND [es].[OrganizationId]=@orgId AND [es].[UserId]=@eventsUserId AND [es].[Visible]=1")]
         public bool MyEvents { get; set; }
 
+		[Parameter]
         public int? EventsUserId { get; set; }
 
         [Where("[el].[ApplicationId]=@appId")]

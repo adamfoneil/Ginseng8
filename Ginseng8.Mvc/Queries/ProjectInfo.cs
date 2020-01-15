@@ -1,7 +1,7 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Dapper.QX;
 using Dapper.QX.Attributes;
-using Postulate.Base.Interfaces;
+using Dapper.QX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

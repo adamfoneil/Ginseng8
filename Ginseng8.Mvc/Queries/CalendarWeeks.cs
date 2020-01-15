@@ -1,6 +1,6 @@
 ﻿using Ginseng.Mvc.Queries.Models;
 using Dapper.QX;
-using Postulate.Base.Interfaces;
+using Dapper.QX.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;

@@ -4,7 +4,7 @@ using System.Data;
 using Ginseng.Mvc.Interfaces;
 using Dapper.QX;
 using Dapper.QX.Attributes;
-using Postulate.Base.Interfaces;
+using Dapper.QX.Interfaces;
 
 namespace Ginseng.Mvc.Queries
 {

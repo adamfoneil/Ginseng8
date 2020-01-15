@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using Dapper.QX;
 using Dapper.QX.Attributes;
-using Postulate.Base.Interfaces;
+using Dapper.QX.Interfaces;
 
 namespace Ginseng.Mvc.Queries
 {

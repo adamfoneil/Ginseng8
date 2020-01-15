@@ -2,7 +2,7 @@
 using System.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Dapper.QX;
-using Postulate.Base.Interfaces;
+using Dapper.QX.Interfaces;
 
 namespace Ginseng.Mvc.Queries
 {

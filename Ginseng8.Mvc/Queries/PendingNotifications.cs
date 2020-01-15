@@ -6,7 +6,7 @@ using Dapper;
 using Ginseng.Models;
 using Dapper.QX;
 using Dapper.QX.Attributes;
-using Postulate.Base.Interfaces;
+using Dapper.QX.Interfaces;
 
 namespace Ginseng.Mvc.Queries
 {

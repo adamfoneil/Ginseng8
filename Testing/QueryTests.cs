@@ -1,3 +1,4 @@
+using Dapper.QX;
 using Ginseng.Models.Queries;
 using Ginseng.Mvc.Queries;
 using Microsoft.Extensions.Configuration;
@@ -27,196 +28,184 @@ namespace Testing
             return new SqlConnection(connectionStr);
         }
 
-        private void TestQuery<TQuery>() where TQuery : ITestableQuery, new()
-        {
-            var qry = new TQuery();
-            using (var cn = GetConnection())
-            {
-                foreach (var testCase in qry.GetTestCases())
-                {
-                    testCase.TestExecute(cn);
-                }
-            }
-        }
-
         [TestMethod]
         public void WorkItemsQuery()
         {
-            TestQuery<OpenWorkItems>();
+            QueryHelper.Test<OpenWorkItems>(GetConnection);
         }
 
         [TestMethod]
         public void EventLogsQuery()
         {
-            TestQuery<EventLogs>();
+            QueryHelper.Test<EventLogs>(GetConnection);
         }
 
         [TestMethod]
         public void EventSubscriptionEmailNotifications()
         {
-            TestQuery<InsertEventSubscriptionEmailNotifications>();
+            QueryHelper.Test<InsertEventSubscriptionEmailNotifications>(GetConnection);           
         }
 
         [TestMethod]
         public void EventSubscriptionTextNotifications()
         {
-            TestQuery<InsertEventSubscriptionTextNotifications>();
+            QueryHelper.Test<InsertEventSubscriptionTextNotifications>(GetConnection);
         }
 
         [TestMethod]
         public void ActivitySubscriptionEmailNotifications()
         {
-            TestQuery<InsertActivitySubscriptionEmailNotifications>();
+            QueryHelper.Test<InsertActivitySubscriptionEmailNotifications>(GetConnection);
         }
 
         [TestMethod]
         public void ActivitySubscriptionTextNotifications()
         {
-            TestQuery<InsertActivitySubscriptionTextNotifications>();
+            QueryHelper.Test<InsertActivitySubscriptionTextNotifications>(GetConnection);
         }
 
         [TestMethod]
         public void ProjectInfoQuery()
         {
-            TestQuery<ProjectInfo>();
+            QueryHelper.Test<ProjectInfo>(GetConnection);
         }
 
         [TestMethod]
         public void PendingNotificationsQuery()
         {
-            TestQuery<PendingNotifications>();
+            QueryHelper.Test<PendingNotifications>(GetConnection);
         }
 
         [TestMethod]
         public void OrgUserByNameQuery()
         {
-            TestQuery<OrgUserByName>();
+            QueryHelper.Test<OrgUserByName>(GetConnection);
         }
 
         [TestMethod]
         public void NextPriorityQuery()
         {
-            TestQuery<NextPriority>();
+            QueryHelper.Test<NextPriority>(GetConnection);
         }
 
         [TestMethod]
         public void AllPendingWorkLogsQuery()
         {
-            TestQuery<AllPendingWorkLogs>();
+            QueryHelper.Test<AllPendingWorkLogs>(GetConnection);
         }
 
         [TestMethod]
         public void AllInvoiceWorkItemsQuery()
         {
-            TestQuery<AllInvoiceWorkLogs>();
+            QueryHelper.Test<AllInvoiceWorkLogs>(GetConnection);
         }
 
         [TestMethod]
         public void CalendarWeeksQuery()
         {
-            TestQuery<CalendarWeeks>();
+            QueryHelper.Test<CalendarWeeks>(GetConnection);
         }
 
         [TestMethod]
         public void LabelsQuery()
         {
-            TestQuery<Labels>();
+            QueryHelper.Test<Labels>(GetConnection);
         }
 
         [TestMethod]
         public void MyWorkScheduleQuery()
         {
-            TestQuery<MyWorkSchedule>();
+            QueryHelper.Test<MyWorkSchedule>(GetConnection);
         }
 
         [TestMethod]
         public void MilestoneMetricsQuery()
         {
-            TestQuery<MilestoneMetrics>();
+            QueryHelper.Test<MilestoneMetrics>(GetConnection);
         }
 
         [TestMethod]
         public void InsertDefaultLabelSubscriptionsQuery()
         {
-            TestQuery<InsertDefaultLabelSubscriptions>();
+            QueryHelper.Test<InsertDefaultLabelSubscriptions>(GetConnection);
         }
 
         [TestMethod]
         public void MilestonesQuery()
         {
-            TestQuery<Milestones>();
+            QueryHelper.Test<Milestones>(GetConnection);
         }
 
         [TestMethod]
         public void MyOrgUsersQuery()
         {
-            TestQuery<MyOrgUsers>();
+            QueryHelper.Test<MyOrgUsers>(GetConnection);
         }
 
         [TestMethod]
         public void DevMilestoneWorkingHoursQuery()
         {
-            TestQuery<DevMilestoneWorkingHours>();
+            QueryHelper.Test<DevMilestoneWorkingHours>(GetConnection);
         }
 
         [TestMethod]
         public void TeamsQuery()
         {
-            TestQuery<Teams>();
+            QueryHelper.Test<Teams>(GetConnection);
         }
 
         [TestMethod]
         public void LabelSubscriptionUsersQuery()
         {
-            TestQuery<LabelSubscriptionUsers>();
+            QueryHelper.Test<LabelSubscriptionUsers>(GetConnection);
         }
 
         [TestMethod]
         public void CalendarProjectsQuery()
         {
-            TestQuery<DevCalendarProjects>();
+            QueryHelper.Test<DevCalendarProjects>(GetConnection);
         }
 
         [TestMethod]
         public void MyOptionsQuery()
         {
-            TestQuery<MyOptions>();
+            QueryHelper.Test<MyOptions>(GetConnection);
         }
 
         [TestMethod]
         public void MyActivityOrderQuery()
         {
-            TestQuery<MyActivityOrder>();
+            QueryHelper.Test<MyActivityOrder>(GetConnection);
         }
 
         [TestMethod]
         public void AllMilestonesQuery()
         {
-            TestQuery<AllMilestones>();
+            QueryHelper.Test<AllMilestones>(GetConnection);
         }
 
         [TestMethod]
         public void HiddenMilestonesQuery()
         {
-            TestQuery<HiddenMilestones>();
+            QueryHelper.Test<HiddenMilestones>(GetConnection);
         }
 
         [TestMethod]
         public void NewItemAppLabelsQuery()
         {
-            TestQuery<NewItemAppLabels>();
+            QueryHelper.Test<NewItemAppLabels>(GetConnection);
         }
 
         [TestMethod]
         public void TeamLabelsQuery()
         {
-            TestQuery<TeamLabels>();
+            QueryHelper.Test<TeamLabels>(GetConnection);
         }
 
         [TestMethod]
         public void ItemCountsByLabelQuery()
         {
-            TestQuery<ItemCountsByLabel>();
+            QueryHelper.Test<ItemCountsByLabel>(GetConnection);
         }
     }
 }

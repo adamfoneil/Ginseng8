@@ -1,12 +1,12 @@
 ﻿using Dapper.QX;
 using Dapper.QX.Attributes;
+using Dapper.QX.Interfaces;
 using Dapper.QX.Models;
 using Ginseng.Models;
 using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Models.Interfaces;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Services;
-using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
