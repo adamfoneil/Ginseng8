@@ -1,11 +1,11 @@
-﻿using Ginseng.Models;
+﻿using Dapper.QX;
+using Dapper.QX.Attributes;
+using Dapper.QX.Models;
+using Ginseng.Models;
 using Ginseng.Models.Enums.Freshdesk;
 using Ginseng.Models.Interfaces;
 using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Services;
-using Postulate.Base;
-using Postulate.Base.Attributes;
-using Postulate.Base.Classes;
 using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -326,7 +326,7 @@ namespace Ginseng.Mvc.Queries
             _traces = traces;
         }
 
-        protected override void OnQueryExecuted(QueryTrace queryTrace)
+        protected override void OnQueryExecuted(Dapper.QX.Models.QueryTrace queryTrace)
         {
             _traces?.Add(queryTrace);
         }

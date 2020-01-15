@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Postulate.Base.Classes;
 using Postulate.Base.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper.QX.Models;
 
 namespace Ginseng.Mvc
 {

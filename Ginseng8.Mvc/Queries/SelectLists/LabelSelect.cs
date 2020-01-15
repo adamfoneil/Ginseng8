@@ -1,5 +1,5 @@
 ﻿using Ginseng.Mvc.Classes;
-using Postulate.Base.Attributes;
+using Dapper.QX.Attributes;
 
 namespace Ginseng.Mvc.Queries.SelectLists
 {

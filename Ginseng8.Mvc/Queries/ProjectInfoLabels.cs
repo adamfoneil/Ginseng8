@@ -1,4 +1,4 @@
-﻿using Postulate.Base;
+﻿using Dapper.QX;
 using System;
 
 namespace Ginseng.Mvc.Queries

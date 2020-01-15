@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Postulate.Base;
+using Dapper.QX;
 using Postulate.Base.Interfaces;
 
 namespace Ginseng.Mvc.Queries

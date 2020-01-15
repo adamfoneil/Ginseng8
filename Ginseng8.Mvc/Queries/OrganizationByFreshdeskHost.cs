@@ -1,6 +1,6 @@
 ﻿using System;
 using Ginseng.Models;
-using Postulate.Base;
+using Dapper.QX;
 
 namespace Ginseng.Mvc.Queries
 {

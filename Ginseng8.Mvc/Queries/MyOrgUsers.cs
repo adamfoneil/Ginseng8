@@ -2,10 +2,10 @@
 using System.Data;
 using System.Threading.Tasks;
 using Ginseng.Models;
-using Postulate.Base;
-using Postulate.Base.Attributes;
-using Postulate.Base.Classes;
-using Postulate.Base.Interfaces;
+using Dapper.QX;
+using Dapper.QX.Attributes;
+using Dapper.QX.Interfaces;
+using Dapper.QX.Models;
 
 namespace Ginseng.Mvc.Queries
 {

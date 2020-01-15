@@ -1,4 +1,4 @@
-﻿using Postulate.Base;
+﻿using Dapper.QX;
 using Postulate.Base.Interfaces;
 using System.Collections.Generic;
 using System.Data;

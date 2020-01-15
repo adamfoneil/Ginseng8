@@ -1,12 +1,14 @@
 ﻿using Ginseng.Mvc.Interfaces;
 using Ginseng.Mvc.Services;
-using Postulate.Base;
-using Postulate.Base.Attributes;
-using Postulate.Base.Classes;
-using Postulate.Base.Interfaces;
+using Dapper.QX;
+using Dapper.QX.Attributes;
+//using Postulate.Base.Classes;
+//using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using Dapper.QX.Models;
+using Dapper.QX.Interfaces;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -99,10 +101,10 @@ namespace Ginseng.Mvc.Queries
             _traces = traces;
         }
 
-        protected override void OnQueryExecuted(QueryTrace queryTrace)
-        {
-            _traces?.Add(queryTrace);
-        }
+		protected override void OnQueryExecuted(Dapper.QX.Models.QueryTrace queryTrace)
+		{
+			_traces?.Add(queryTrace);
+		}
 
         [OrderBy(EventLogsResultOrderBy.DateDesc, "[el].[DateCreated] DESC")]
         [OrderBy(EventLogsResultOrderBy.DateAsc, "[el].[DateCreated] ASC")]

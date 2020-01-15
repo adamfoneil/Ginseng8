@@ -1,8 +1,8 @@
 ﻿using Ginseng.Models;
-using Postulate.Base;
-using Postulate.Base.Attributes;
-using Postulate.Base.Classes;
+using Dapper.QX;
+using Dapper.QX.Attributes;
 using System.Collections.Generic;
+using Dapper.QX.Models;
 
 namespace Ginseng.Mvc.Queries
 {
@@ -33,7 +33,7 @@ namespace Ginseng.Mvc.Queries
 
 		protected override void OnQueryExecuted(QueryTrace queryTrace)
 		{
-			_traces?.Add(queryTrace);
+			_traces?.Add(queryTrace);			
 		}
 	}
 }

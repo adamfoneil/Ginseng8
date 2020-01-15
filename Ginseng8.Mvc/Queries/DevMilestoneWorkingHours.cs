@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using Postulate.Base;
-using Postulate.Base.Attributes;
+using Dapper.QX;
+using Dapper.QX.Attributes;
 using Postulate.Base.Interfaces;
 
 namespace Ginseng.Mvc.Queries

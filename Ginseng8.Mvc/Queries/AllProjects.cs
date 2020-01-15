@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Postulate.Base;
+using Dapper.QX;
 
 namespace Ginseng.Mvc.Queries
 {

@@ -1,5 +1,5 @@
 ﻿using Ginseng.Mvc.Interfaces;
-using Postulate.Base;
+using Dapper.QX;
 
 namespace Ginseng.Mvc.Queries
 {

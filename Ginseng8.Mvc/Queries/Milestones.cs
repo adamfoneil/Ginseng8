@@ -1,6 +1,6 @@
 ﻿using Ginseng.Models;
-using Postulate.Base;
-using Postulate.Base.Attributes;
+using Dapper.QX;
+using Dapper.QX.Attributes;
 using Postulate.Base.Interfaces;
 using System;
 using System.Collections.Generic;

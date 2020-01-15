@@ -1,5 +1,5 @@
-﻿using Postulate.Base;
-using Postulate.Base.Attributes;
+﻿using Dapper.QX;
+using Dapper.QX.Attributes;
 using System;
 
 namespace Ginseng.Mvc.Queries

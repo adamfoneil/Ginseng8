@@ -4,8 +4,8 @@ using System.Data;
 using System.Threading.Tasks;
 using Dapper;
 using Ginseng.Models;
-using Postulate.Base;
-using Postulate.Base.Attributes;
+using Dapper.QX;
+using Dapper.QX.Attributes;
 using Postulate.Base.Interfaces;
 
 namespace Ginseng.Mvc.Queries
