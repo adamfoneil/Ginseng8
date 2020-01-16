@@ -47,6 +47,12 @@ namespace Testing
         }
 
         [TestMethod]
+        public void LabelsInUse()
+        {
+            QueryHelper.Test<LabelsInUse>(GetConnection);
+        }
+
+        [TestMethod]
         public void EventSubscriptionTextNotifications()
         {
             QueryHelper.Test<InsertEventSubscriptionTextNotifications>(GetConnection);
