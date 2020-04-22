@@ -217,48 +217,48 @@ namespace Ginseng.Mvc.Queries
 
         public OpenWorkItems() : base(
             $@"SELECT
-				[wi].[Id],
-				[wi].[Number],
-				[pri].[Value] AS [Priority],
-				[wi].[Title],
-				[wi].[TextBody], [wi].[HtmlBody],
-				[wi].[BusinessUserId],
-				[wi].[DeveloperUserId],
-				COALESCE([wi].[ApplicationId], 0) AS [ApplicationId], [app].[Name] AS [ApplicationName],
+	            [wi].[Id],
+	            [wi].[Number],
+	            [pri].[Value] AS [Priority],
+	            [wi].[Title],
+	            [wi].[TextBody], [wi].[HtmlBody],
+	            [wi].[BusinessUserId],
+	            [wi].[DeveloperUserId],
+	            COALESCE([wi].[ApplicationId], 0) AS [ApplicationId], [app].[Name] AS [ApplicationName],
                 [wi].[TeamId], [t].[Name] AS [TeamName],
-				[wi].[HasImpediment],
-				COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
-				COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
+	            [wi].[HasImpediment],
+	            COALESCE([createdBy_ou].[DisplayName], [wi].[CreatedBy]) AS [CreatedByName], [wi].[DateCreated],
+	            COALESCE([wi].[ProjectId], 0) AS [ProjectId], COALESCE([p].[Name], '(no project)') AS [ProjectName],
                 COALESCE([p].[Nickname], [p].[Name]) AS [DisplayProjectName],
-				[p].[Priority] AS [ProjectPriority],				
-				COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
-				[wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
-				COALESCE([wi].[ActivityId], 0) AS [ActivityId],
-				[act].[Name] AS [ActivityName],
-				[act].[Order] AS [ActivityOrder],
-				COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessUserName],
-				COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperUserName],
-				CASE [act].[ResponsibilityId]
-					WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
-					WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
-				END [AssignedUserName],
-				{AssignedUserExpression} AS [AssignedUserId],
-				[p].[DataModelId],
-				[sz].[Name] AS [WorkItemSize],
-				[wi].[SizeId],
-				[wid].[EstimateHours] AS [DevEstimateHours],
-				[sz].[EstimateHours] AS [SizeEstimateHours],
-				COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
-				[r].[WorkItemUserIdColumn],
-				COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition],
-				COALESCE([ho_ou].[DisplayName], [housr].[UserName]) AS [HandOffUserName],
-				[wi].[LastHandOffId],
-				[ho].[IsForward],
-				[from_act].[Name] AS [FromActivityName],
-				[ho].[HtmlBody] AS [HandOffBody],
-				[ho].[DateCreated] AS [HandOffDate],
-				{PriorityGroupExpression} AS [PriorityGroup],
-				[wi].[CreatedBy],
+	            [p].[Priority] AS [ProjectPriority],				
+	            COALESCE([wi].[MilestoneId], 0) AS [MilestoneId], COALESCE([ms].[Name], '(no milestone)') AS [MilestoneName], [ms].[Date] AS [MilestoneDate], COALESCE([ms].[Date], '12/31/9999') AS [SortMilestoneDate], DATEDIFF(d, getdate(), [ms].[Date]) AS [MilestoneDaysAway],
+	            [wi].[CloseReasonId], [cr].[Name] AS [CloseReasonName],
+	            COALESCE([wi].[ActivityId], 0) AS [ActivityId],
+	            [act].[Name] AS [ActivityName],
+	            [act].[Order] AS [ActivityOrder],
+	            COALESCE([biz_ou].[DisplayName], [ousr].[UserName]) AS [BusinessUserName],
+	            COALESCE([dev_ou].[DisplayName], [dusr].[UserName]) AS [DeveloperUserName],
+	            CASE [act].[ResponsibilityId]
+		            WHEN 1 THEN COALESCE([biz_ou].[DisplayName], [ousr].[UserName])
+		            WHEN 2 THEN COALESCE([dev_ou].[DisplayName], [dusr].[UserName])
+	            END [AssignedUserName],
+	            {AssignedUserExpression} AS [AssignedUserId],
+	            [p].[DataModelId],
+	            [sz].[Name] AS [WorkItemSize],
+	            [wi].[SizeId],
+	            [wid].[EstimateHours] AS [DevEstimateHours],
+	            [sz].[EstimateHours] AS [SizeEstimateHours],
+	            COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) AS [EstimateHours],
+	            [r].[WorkItemUserIdColumn],
+	            COALESCE([gp].[ColorGradientPosition], 0) AS [ColorGradientPosition],
+	            COALESCE([ho_ou].[DisplayName], [housr].[UserName]) AS [HandOffUserName],
+	            [wi].[LastHandOffId],
+	            [ho].[IsForward],
+	            [from_act].[Name] AS [FromActivityName],
+	            [ho].[HtmlBody] AS [HandOffBody],
+	            [ho].[DateCreated] AS [HandOffDate],
+	            {PriorityGroupExpression} AS [PriorityGroup],
+	            [wi].[CreatedBy],
                 CONVERT(bit, CASE
                     WHEN [wit].[Id] IS NOT NULL THEN 1
                     ELSE 0
@@ -273,51 +273,51 @@ namespace Ginseng.Mvc.Queries
                 [org].[FreshdeskUrl],
                 [t].[UseApplications],
                 [uao].[Value] AS [MyActivityOrder]
-			FROM
-				[dbo].[WorkItem] [wi]
+            FROM
+	            [dbo].[WorkItem] [wi]
                 INNER JOIN [dbo].[Organization] [org] ON [wi].[OrganizationId]=[org].[Id]
                 INNER JOIN [dbo].[Team] [t] ON [wi].[TeamId]=[t].[Id]				                
                 LEFT JOIN [dbo].[Application] [app] ON [wi].[ApplicationId]=[app].[Id]                
-				LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
-				LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
-				LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
-				LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
-				LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
-				LEFT JOIN [app].[CloseReason] [cr] ON [wi].[CloseReasonId]=[cr].[Id]
-				LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
-				LEFT JOIN [dbo].[HandOff] [ho] ON [wi].[LastHandOffId]=[ho].[Id]
-				LEFT JOIN [dbo].[OrganizationUser] [biz_ou] ON
-					[wi].[OrganizationId]=[biz_ou].[OrganizationId] AND
-					[wi].[BusinessUserId]=[biz_ou].[UserId]
-				LEFT JOIN [dbo].[AspNetUsers] [ousr] ON [wi].[BusinessUserId]=[ousr].[UserId]
-				LEFT JOIN [dbo].[OrganizationUser] [dev_ou] ON
-					[wi].[OrganizationId]=[dev_ou].[OrganizationId] AND
-					[wi].[DeveloperUserId]=[dev_ou].[UserId]
-				LEFT JOIN [dbo].[AspNetUsers] [housr] ON [ho].[FromUserId]=[housr].[UserId]
-				LEFT JOIN [dbo].[OrganizationUser] [ho_ou] ON
-					[wi].[OrganizationId]=[ho_ou].[OrganizationId] AND
-					[ho].[FromUserId]=[ho_ou].[UserId]
-				LEFT JOIN [dbo].[Activity] [from_act] ON [ho].[FromActivityId]=[from_act].[Id]
-				LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
-				LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
-				LEFT JOIN [dbo].[AspNetUsers] [createdBy_user] ON [wi].[CreatedBy]=[createdBy_user].[UserName]
-				LEFT JOIN [dbo].[OrganizationUser] [createdBy_ou] ON
-					[wi].[OrganizationId]=[createdBy_ou].[OrganizationId] AND
-					[createdBy_user].[UserId]=[createdBy_ou].[UserId]
-				LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
-					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
-					COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
+	            LEFT JOIN [dbo].[WorkItemPriority] [pri] ON [wi].[Id]=[pri].[WorkItemId]
+	            LEFT JOIN [dbo].[Project] [p] ON [wi].[ProjectId]=[p].[Id]
+	            LEFT JOIN [dbo].[Activity] [act] ON [wi].[ActivityId]=[act].[Id]
+	            LEFT JOIN [app].[Responsibility] [r] ON [act].[ResponsibilityId]=[r].[Id]
+	            LEFT JOIN [dbo].[Milestone] [ms] ON [wi].[MilestoneId]=[ms].[Id]
+	            LEFT JOIN [app].[CloseReason] [cr] ON [wi].[CloseReasonId]=[cr].[Id]
+	            LEFT JOIN [dbo].[WorkItemDevelopment] [wid] ON [wi].[Id]=[wid].[WorkItemId]
+	            LEFT JOIN [dbo].[HandOff] [ho] ON [wi].[LastHandOffId]=[ho].[Id]
+	            LEFT JOIN [dbo].[OrganizationUser] [biz_ou] ON
+		            [wi].[OrganizationId]=[biz_ou].[OrganizationId] AND
+		            [wi].[BusinessUserId]=[biz_ou].[UserId]
+	            LEFT JOIN [dbo].[AspNetUsers] [ousr] ON [wi].[BusinessUserId]=[ousr].[UserId]
+	            LEFT JOIN [dbo].[OrganizationUser] [dev_ou] ON
+		            [wi].[OrganizationId]=[dev_ou].[OrganizationId] AND
+		            [wi].[DeveloperUserId]=[dev_ou].[UserId]
+	            LEFT JOIN [dbo].[AspNetUsers] [housr] ON [ho].[FromUserId]=[housr].[UserId]
+	            LEFT JOIN [dbo].[OrganizationUser] [ho_ou] ON
+		            [wi].[OrganizationId]=[ho_ou].[OrganizationId] AND
+		            [ho].[FromUserId]=[ho_ou].[UserId]
+	            LEFT JOIN [dbo].[Activity] [from_act] ON [ho].[FromActivityId]=[from_act].[Id]
+	            LEFT JOIN [dbo].[AspNetUsers] [dusr] ON [wi].[DeveloperUserId]=[dusr].[UserId]
+	            LEFT JOIN [dbo].[WorkItemSize] [sz] ON [wi].[SizeId]=[sz].[Id]
+	            LEFT JOIN [dbo].[AspNetUsers] [createdBy_user] ON [wi].[CreatedBy]=[createdBy_user].[UserName]
+	            LEFT JOIN [dbo].[OrganizationUser] [createdBy_ou] ON
+		            [wi].[OrganizationId]=[createdBy_ou].[OrganizationId] AND
+		            [createdBy_user].[UserId]=[createdBy_ou].[UserId]
+	            LEFT JOIN [dbo].[FnColorGradientPositions](@orgId) [gp] ON
+		            COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) >= [gp].[MinHours] AND
+		            COALESCE([wid].[EstimateHours], [sz].[EstimateHours], 0) < [gp].[MaxHours]
                 LEFT JOIN [dbo].[WorkItemTicket] [wit] ON 
                     [wit].[OrganizationId]=[wi].[OrganizationId] AND
                     [wit].[WorkItemNumber]=[wi].[Number]   
                 LEFT JOIN [dbo].[UserActivityOrder] [uao] ON [wi].[ActivityId]=[uao].[ActivityId] AND [uao].[UserId]=@activityUserId
-				{{join}}
+	            {{join}}
             WHERE
-				[wi].[OrganizationId]=@orgId {{andWhere}}
+	            [wi].[OrganizationId]=@orgId {{andWhere}}
             ORDER BY
-				COALESCE([pri].[Value], 100000),
-				[wi].[Number]
-			{{offset}}")
+	            COALESCE([pri].[Value], 100000),
+	            [wi].[Number]
+            {{offset}}")
         {
         }
 
