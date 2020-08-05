@@ -53,7 +53,7 @@ namespace Ginseng.Mvc
                     options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("ClientSecret");
                 })
                 .AddCookie()
-                .AddAerieHub(Configuration)
+                //.AddAerieHub(Configuration)
                 .AddGitHub(Configuration);
 
             services
