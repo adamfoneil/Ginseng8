@@ -66,28 +66,13 @@ namespace Ginseng.Mvc.Pages.Dashboard
 
         protected override async Task InitializeAsync(SqlConnection connection)
         {
-            await connection.ExecuteAsync(
-                @"INSERT INTO [dbo].[MilestoneUserView] (
-                    [MilestoneId], [UserId], [IsVisible], [DateCreated], [CreatedBy]
-                ) SELECT 
-                    [ms].[Id], @userId, 1, @localDate, @userName
-                FROM 
-                    [dbo].[Milestone] [ms]
-                WHERE 
-                    [ms].[OrganizationId]=@orgId AND 
-                    NOT EXISTS(SELECT 1 FROM [dbo].[MilestoneUserView] WHERE [MilestoneId]=[ms].[Id] AND [UserId]=@userId)",
-                new { orgId = OrgId, userId = UserId, CurrentUser.UserName, localDate = CurrentUser.LocalTime });
-
-            await connection.ExecuteAsync(
-                @"INSERT INTO [dbo].[MilestoneUserView] (
-                    [MilestoneId], [UserId], [IsVisible], [DateCreated], [CreatedBy]
-                ) SELECT 
-                    0, @userId, 1, @localDate, @userName
-                FROM
-                    [dbo].[FnIntRange](0, 0)
-                WHERE
-                    NOT EXISTS(SELECT 1 FROM [dbo].[MilestoneUserView] WHERE [MilestoneId]=0 AND [UserId]=@userId)",
-                new { userId = UserId, CurrentUser.UserName, localDate = CurrentUser.LocalTime });
+            await new InitMilestoneView()
+            {
+                UserId = UserId,
+                OrgId = OrgId,
+                UserName = CurrentUser.UserName,
+                LocalDate = CurrentUser.LocalTime
+            }.ExecuteAsync(connection);
         }
 
         protected override OpenWorkItems GetQuery()
