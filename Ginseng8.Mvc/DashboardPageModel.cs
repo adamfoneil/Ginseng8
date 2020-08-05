@@ -23,6 +23,7 @@ namespace Ginseng.Mvc
         {
         }
 
+        #region some_irrelevant_stuff
         public bool ShowLabelFilter { get; set; } = true;
         public bool ShowExcelDownload { get; set; } = true;
         public IEnumerable<OpenWorkItemsResult> WorkItems { get; set; }
@@ -47,12 +48,14 @@ namespace Ginseng.Mvc
 
         [BindProperty(SupportsGet = true)]
         public int? LabelId { get; set; }
+        #endregion
 
         /// <summary>
         /// Implement this to get the query for the dashboard
         /// </summary>
         protected abstract OpenWorkItems GetQuery();
 
+        #region more_irrelevant_stuff
         protected virtual Func<ClosedWorkItemsResult, int> ClosedItemGrouping
         {
             get { return null; }
@@ -182,5 +185,6 @@ namespace Ginseng.Mvc
                 return wb.Deliver("OpenWorkItems.xlsx");
             }
         }
+        #endregion
     }
 }
