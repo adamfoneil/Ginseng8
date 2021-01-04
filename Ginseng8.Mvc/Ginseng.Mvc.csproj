@@ -30,7 +30,7 @@
     <PackageReference Include="ClosedXML.Extensions.Mvc" Version="0.2.2" />
     <PackageReference Include="GridEditor.RazorPages" Version="1.0.1-beta" />
     <PackageReference Include="Html2Markdown" Version="3.2.1.341" />
-    <PackageReference Include="HtmlSanitizer" Version="4.0.217" />
+    <PackageReference Include="HtmlSanitizer" Version="5.0.372" />
     <PackageReference Include="Humanizer" Version="2.7.9" />
     <PackageReference Include="JsonSettings.Library" Version="1.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
